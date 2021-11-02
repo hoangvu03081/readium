@@ -1,0 +1,52 @@
+version: '3.0'
+
+services:
+  readium-api:
+    build:
+      context: ./readium-api
+      args:
+        - NODE_ENV=development
+        - PORT=5000
+    command: bash -c "rm -rf /usr/local/app/node_modules/* && nodemon -L index.js"
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_USERNAME=readium-oniichan
+      - MONGO_PASSWORD=11410197100105117109451111101051059910497110
+      - MONGO_HOSTNAME=readium-db
+      - MONGO_DATABASE_NAME=readium
+      - MONGO_PORT=27017
+    volumes:
+      - ./readium-api/:/usr/local/app/
+      - exclude:/usr/local/app/node_modules/
+  
+  readium-db:
+    image: mongo
+    ports:
+      - "27017:27017"
+    environment:
+    - MONGO_INITDB_ROOT_USERNAME=readium-oniichan
+    - MONGO_INITDB_ROOT_PASSWORD=11410197100105117109451111101051059910497110
+    - MONGO_INITDB_DATABASE=readium
+
+  readium-flask-api:
+    build:
+      context: ./readium-flask-api
+      args:
+        - PORT=4000
+    ports:
+      - "4000:4000"
+    command: ["-m", "flask", "run","--host=0.0.0.0","--port=4000"]
+    environment:
+      - MONGO_USERNAME=readium-oniichan
+      - MONGO_PASSWORD=11410197100105117109451111101051059910497110
+      - MONGO_HOSTNAME=readium-db
+      - MONGO_DATABASE_NAME=readium
+      - MONGO_PORT=27017
+      - FLASK_DEBUG=1
+      - FLASK_APP=app
+    volumes:
+      - ./readium-flask-api:/app
+volumes:
+  exclude:
+    
