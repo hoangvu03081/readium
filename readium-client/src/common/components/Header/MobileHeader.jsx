@@ -2,12 +2,14 @@ import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { BiSearchAlt2 } from "react-icons/bi";
+import { useDispatch } from "react-redux";
 import {
   RiSettings3Line,
   RiHomeLine,
   RiNotification4Line,
 } from "react-icons/ri";
 import { FiEdit, FiBookmark } from "react-icons/fi";
+import { modalOpened } from "../../../slices/sign-in-slice";
 import { Logo, Avatar, SearchButton, SignInButton } from "./styles";
 
 const HeaderNav = styled.nav`
@@ -44,11 +46,16 @@ const MobileSignInButton = styled(SignInButton)`
   margin-top: 0;
 `;
 
+// TODO: Avatar
 export default function MobileHeader({ isLogin }) {
+  const dispatch = useDispatch();
+  const handleOpenModal = () => dispatch(modalOpened());
   return (
     <>
       <HeaderNav>
-        <MobileLogo className="ms-4">readium</MobileLogo>
+        <MobileLogo to="/" className="ms-4">
+          readium
+        </MobileLogo>
         {isLogin ? (
           <>
             <div className="ms-auto me-4">
@@ -65,7 +72,9 @@ export default function MobileHeader({ isLogin }) {
           </>
         ) : (
           <div className="ms-auto me-4">
-            <MobileSignInButton>Sign in</MobileSignInButton>
+            <MobileSignInButton onClick={handleOpenModal}>
+              Sign in
+            </MobileSignInButton>
           </div>
         )}
       </HeaderNav>

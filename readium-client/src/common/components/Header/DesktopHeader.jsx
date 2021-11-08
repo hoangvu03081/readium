@@ -1,8 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import { useDispatch } from "react-redux";
 import { RiSettings3Line, RiNotification4Line } from "react-icons/ri";
 import { FiEdit, FiBookmark } from "react-icons/fi";
+import { modalOpened } from "../../../slices/sign-in-slice";
 import {
   IconLink,
   Logo,
@@ -22,11 +24,16 @@ const Nav = styled.nav`
 `;
 
 export default function DesktopHeader({ isLogin }) {
+  const dispatch = useDispatch();
+  const handleOpenModal = () => dispatch(modalOpened());
+
   return (
     <Nav>
       <Logo to="/">readium</Logo>
       {!isLogin ? (
-        <SignInButton className="ms-sm-4">Sign in</SignInButton>
+        <SignInButton className="ms-sm-4" onClick={handleOpenModal}>
+          Sign in
+        </SignInButton>
       ) : (
         <>
           <IconLink to="/notifications" className="ms-sm-4">
