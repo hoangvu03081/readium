@@ -1,3 +1,6 @@
+require("./models/Collection");
+require("./models/Post");
+require("./models/User");
 // loading .env file
 require("dotenv").config();
 // require packages

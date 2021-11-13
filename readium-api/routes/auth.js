@@ -12,6 +12,13 @@ const errorHandler = (err, req, res, next) => {
 
 // pass in passport object
 module.exports = function (passport) {
+  router.get("/logout", (req, res, next) => {
+    req.session.destroy((err) => {
+      if (err) return next(err);
+      res.send({ message: ["Log out successfully"] });
+    });
+  });
+
   // * passport local routes
   router.post(
     "/login",
@@ -34,6 +41,16 @@ module.exports = function (passport) {
   // * create user
   router.post("/register", async (req, res) => {
     const { email, password, fullname } = req.body;
+
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const isValid = re.test(String(email).toLowerCase());
+
+    if (!isValid) {
+      return res
+        .status(400)
+        .send({ message: ["Email is not valid. Please input a valid email!"] });
+    }
+
     const newUser = new User({
       email,
       password,

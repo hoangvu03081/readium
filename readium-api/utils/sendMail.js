@@ -676,7 +676,7 @@ const sendWelcomeEmail = async ({ to, url }) => {
   };
 
   try {
-    await sgMail.send(msg);
+    // await sgMail.send(msg);
   } catch (err) {
     console.log(err.response.body.errors);
   }

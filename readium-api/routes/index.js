@@ -4,6 +4,7 @@ const router = require("express").Router();
 module.exports = function (passport) {
   const authRoute = require("./auth")(passport);
   const visitorsRoute = require("./api/visitors");
+  const usersRoute = require("./api/users");
   /**
    *! Route used in development for testing
    */
@@ -27,5 +28,6 @@ module.exports = function (passport) {
 
   router.use(authRoute);
   router.use(visitorsRoute);
+  router.use(usersRoute);
   return router;
 };

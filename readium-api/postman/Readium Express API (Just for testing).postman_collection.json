@@ -1,0 +1,60 @@
+{
+	"info": {
+		"_postman_id": "6f078fcf-838b-4834-a8f9-3ecd650d5d05",
+		"name": "Readium Express API (Just for testing)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get all users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/users",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete all users",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/users",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Test for authenticated route",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/protected",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"protected"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

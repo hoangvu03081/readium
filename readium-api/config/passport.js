@@ -41,7 +41,7 @@ module.exports = function (passport) {
           }
           const validPassword = await bcrypt.compare(password, user.password);
           if (!validPassword) {
-            req.flash("signInMessage", "Password is not valid");
+            req.flash("signInMessage", "Wrong password.");
             return done(null, false);
           }
           return done(null, user);

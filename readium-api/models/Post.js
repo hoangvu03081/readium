@@ -1,8 +1,12 @@
 const mongoose = require("mongoose");
 
-const { ObjectId } = mongoose.SchemaTypes;
+const {
+  model,
+  Schema,
+  Schema: { ObjectId },
+} = mongoose;
 
-const postSchema = new mongoose.Schema({
+const postSchema = new Schema({
   title: {
     type: String,
     required: true,
@@ -50,13 +54,21 @@ const postSchema = new mongoose.Schema({
   },
   comments: [
     {
-      content: String,
+      content: {
+        type: String,
+        required: true,
+      },
       user: {
         type: ObjectId,
         ref: "User",
       },
     },
   ],
+  tags: [String],
+  isPublished: {
+    type: Boolean,
+    required: true,
+  },
 });
 
-module.exports = mongoose.model("Post", postSchema);
+module.exports = model("Post", postSchema);
