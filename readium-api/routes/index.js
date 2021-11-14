@@ -1,33 +1,39 @@
+/**
+ * * This routes will forward all routes to the express app
+ */
+
 const router = require("express").Router();
-1;
 
-module.exports = function (passport) {
-  const authRoute = require("./auth")(passport);
-  const visitorsRoute = require("./api/visitors");
-  const usersRoute = require("./api/users");
-  /**
-   *! Route used in development for testing
-   */
-  const User = require("../models/User");
+// * The route for authentication
+const authRoute = require("./auth");
+// * The route for visitors
+const visitorsRoute = require("./api/visitors");
+// * The route for authenticated users
+const usersRoute = require("./api/users");
 
-  // ! GET ALL USERS
-  router.get("/users", async (req, res) => {
-    const users = await User.find({}, { avatar: 0 });
-    res.send(users);
-  });
+/**
+ *! Route used in development for testing
+ */
+const User = require("../models/User");
 
-  // ! DELETE ALL USERS
-  router.delete("/users", async (req, res) => {
-    await User.deleteMany();
-    res.send();
-  });
+// ! GET ALL USERS
+router.get("/users", async (req, res) => {
+  const users = await User.find({}, { avatar: 0 });
+  res.send(users);
+});
 
-  /**
-   *! Route used in development for testing
-   */
+// ! DELETE ALL USERS
+router.delete("/users", async (req, res) => {
+  await User.deleteMany();
+  res.send();
+});
 
-  router.use(authRoute);
-  router.use(visitorsRoute);
-  router.use(usersRoute);
-  return router;
-};
+/**
+ *! Route used in development for testing
+ */
+
+router.use('/auth', authRoute);
+router.use('/visitors', visitorsRoute);
+router.use('/users',usersRoute);
+
+module.exports = router;

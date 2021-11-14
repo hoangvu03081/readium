@@ -1,11 +1,11 @@
 const { once } = require("events");
-const LocalStrategy = require("passport-local").Strategy;
+const JwtStrategy = require("passport-jwt").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
-const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const { url } = require("./index");
 const imageUtil = require("../utils/getImageBufferFromUrl");
+const {jwtOptions} = require('../utils/auth');
 
 const downloadImageFromUrl = async (url) => {
   imageUtil.getImageBufferFromUrl(url);
@@ -23,33 +23,25 @@ module.exports = function (passport) {
   passport.serializeUser(function (user, done) {
     return done(null, user._id);
   });
+
   passport.deserializeUser(async function (id, done) {
     const user = await User.findById(id);
     return done(null, user);
   });
 
-  // local strategy
+  // JWT strategy
   passport.use(
-    new LocalStrategy(
-      { usernameField: "email", passReqToCallback: true },
-      async (req, email, password, done) => {
-        try {
-          const user = await User.findOne({ email });
-          if (!user) {
-            req.flash("signInMessage", "User not found");
-            return done(null, false);
-          }
-          const validPassword = await bcrypt.compare(password, user.password);
-          if (!validPassword) {
-            req.flash("signInMessage", "Wrong password.");
-            return done(null, false);
-          }
-          return done(null, user);
-        } catch (err) {
-          return done(err);
+    new JwtStrategy(jwtOptions, async (jwt_payload, done) => {
+      try {
+        const user = await User.findOne({ _id: jwt_payload.vux });
+        if (!user) {
+          return done(null, false, { message: ["User is not authorized"] });
         }
+        return done(null, user);
+      } catch (err) {
+        return done(err);
       }
-    )
+    })
   );
 
   // Facebook strategy
@@ -93,7 +85,7 @@ module.exports = function (passport) {
             activated: true,
           });
           await newUser.save();
-          console.log(newUser);
+          
           return done(null, newUser);
         } catch (err) {
           return done(err);
