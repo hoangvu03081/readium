@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
+import DimOverlay from "../DimOverlay";
 import { modalClosed } from "../../../slices/sign-in-slice";
 import ModalContent from "./ModalContent";
 
@@ -21,18 +22,6 @@ const StyledSignInModal = styled.div`
   @media only screen and (max-width: 600px) {
     width: 300px;
   }
-`;
-
-const DimOverlay = styled.div`
-  background-color: grey;
-  width: 100vw;
-  height: 100vh;
-  position: absolute;
-  top: 0;
-  left: 0;
-  opacity: 0.5;
-  z-index: 999;
-  overflow: hidden;
 `;
 
 export default function SignInModal() {

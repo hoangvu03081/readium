@@ -2,17 +2,12 @@ import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
-import { RiSettings3Line, RiNotification4Line } from "react-icons/ri";
+import { AiOutlineBell } from "react-icons/ai";
+import { RiSettings3Line } from "react-icons/ri";
 import { FiEdit, FiBookmark } from "react-icons/fi";
+import Avatar from "./Avatar";
 import { modalOpened } from "../../../slices/sign-in-slice";
-import {
-  IconLink,
-  Logo,
-  Avatar,
-  Clickable,
-  SearchInput,
-  SignInButton,
-} from "./styles";
+import { IconLink, Logo, SearchInput, SignInButton } from "./styles";
 
 const Nav = styled.nav`
   height: 80px;
@@ -37,14 +32,12 @@ export default function DesktopHeader({ isLogin }) {
       ) : (
         <>
           <IconLink to="/notifications" className="ms-sm-4">
-            <RiNotification4Line size={26} />
+            <AiOutlineBell size={26} />
           </IconLink>
-          <IconLink to="/saved" className="ms-sm-4">
+          <IconLink to="/saved" className="ms-sm-4 me-sm-4">
             <FiBookmark size={24} />
           </IconLink>
-          <Clickable className="ms-sm-4">
-            <Avatar src="https://i.pravatar.cc/150?img=47" alt="Avatar" />
-          </Clickable>
+          <Avatar />
         </>
       )}
       <SearchInput type="text" placeholder="Search" className="ms-sm-4" />
@@ -52,7 +45,7 @@ export default function DesktopHeader({ isLogin }) {
         <FiEdit size={26} />
       </IconLink>
       <IconLink to="/settings" className="ms-sm-4">
-        <RiSettings3Line size={26} />
+        <RiSettings3Line size={28} />
       </IconLink>
     </Nav>
   );
