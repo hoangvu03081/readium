@@ -32,8 +32,8 @@ router.delete("/users", async (req, res) => {
  *! Route used in development for testing
  */
 
-router.use('/auth', authRoute);
-router.use('/visitors', visitorsRoute);
-router.use('/users',usersRoute);
+router.use("/auth", authRoute);
+router.use("/users", usersRoute);
+router.use("/users", visitorsRoute);
 
 module.exports = router;
