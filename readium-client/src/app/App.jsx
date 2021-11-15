@@ -1,5 +1,5 @@
 import React from "react";
-import Body from "../common/components/Body";
+import FollowingRecommendedBtn from "../common/components/Buttons/FollowingRecommendedBtn";
 // import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 // import Header from "../common/components/Header";
 // import SignInModal from "../common/components/SignInModal";
@@ -7,10 +7,7 @@ import Body from "../common/components/Body";
 function App() {
   return (
     <div>
-      <Body
-        ContentLeft={<div>"Left"</div>}
-        ContentRight={<div>"Right"</div>}
-      />
+      <FollowingRecommendedBtn />
     </div>
   );
 }

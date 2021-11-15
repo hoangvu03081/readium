@@ -23,6 +23,10 @@ const theme = {
 
     FollowBtnBackground: "#ffffff",
     FollowBtnText: "#000000",
+
+    FollowingRecommendedBtnBackground: "#ffffff",
+    FollowingRecommendedBtnText: "#000000",
+    FollowingRecommendedBtnHover: "#E53170",
   },
 };
 

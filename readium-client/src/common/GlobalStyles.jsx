@@ -4,6 +4,7 @@ import Raleway from "../assets/fonts/Raleway-Regular.ttf";
 import RalewayBold from "../assets/fonts/Raleway-Bold.ttf";
 import PublicSans from "../assets/fonts/PublicaSans-Light.otf";
 import NunitoBold from "../assets/fonts/Nunito-Bold.ttf";
+import LatoBold from "../assets/fonts/Lato-Bold.ttf";
 
 const GlobalStyles = createGlobalStyle`
     *, *:after, *:before {
@@ -29,6 +30,11 @@ const GlobalStyles = createGlobalStyle`
     @font-face {
         font-family: "Nunito";
         src: url(${NunitoBold}) format('truetype'), local('Raleway');
+        font-weight: bold;
+    }
+    @font-face {
+        font-family: "Lato";
+        src: url(${LatoBold}) format('truetype'), local('Raleway');
         font-weight: bold;
     }
 
