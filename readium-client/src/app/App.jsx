@@ -7,6 +7,10 @@ import SignInModal from "../common/components/SignInModal";
 function App() {
   return (
     <Router>
+      <Body
+          ContentLeft={<div>"Left"</div>}
+          ContentRight={<div>"Right"</div>}
+      />
       <SignInModal />
       <MobileNavbar />
       <Header />
