@@ -8,7 +8,7 @@ import { ReactComponent as CommentIcon } from '../../../../assets/icons/comment_
 const LoveCommentStyle = styled.div`
     border: 2px solid black;
     border-radius: 4px;
-    width: 100%;
+    width: 116px;
     padding: 5px 0;
     display: flex;
     flex-direction: row;

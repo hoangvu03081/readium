@@ -1,5 +1,5 @@
 import React from "react";
-import Buttons from '../common/components/Buttons'
+import Body from "../common/components/Body";
 // import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 // import Header from "../common/components/Header";
 // import SignInModal from "../common/components/SignInModal";
@@ -7,7 +7,10 @@ import Buttons from '../common/components/Buttons'
 function App() {
   return (
     <div>
-      <Buttons/>
+      <Body
+        ContentLeft={<div>"Left"</div>}
+        ContentRight={<div>"Right"</div>}
+      />
     </div>
   );
 }
