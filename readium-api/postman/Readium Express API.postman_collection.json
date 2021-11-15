@@ -1,0 +1,147 @@
+{
+	"info": {
+		"_postman_id": "deb49b21-7785-4205-8e6d-c02297039f11",
+		"name": "Readium Express API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": []
+		},
+		{
+			"name": "Visitors",
+			"item": [
+				{
+					"name": "Get User Avatar",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/users/:id/avatar",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								":id",
+								"avatar"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6183718e2338dd7788081ee9"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"par14hour2\",\r\n    \"password\": \"test\",\r\n    \"fullname\": \"John Doe!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/auth/register",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"par14hour2@gmail.com\",\r\n    \"password\": \"testing123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/auth/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/auth/logout",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forget Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"par14hour2@gmail.com\",\r\n    \"password\": \"testing123\",\r\n    \"fullname\": \"John Leo\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/auth/forget",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"forget"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

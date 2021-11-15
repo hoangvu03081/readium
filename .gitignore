@@ -2,6 +2,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,node
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,node
 
+id_rsa_priv.pem
+
 ### Node ###
 # Logs
 logs
