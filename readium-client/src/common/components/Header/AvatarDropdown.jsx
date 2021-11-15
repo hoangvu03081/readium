@@ -1,9 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { FiEdit } from "react-icons/fi";
+import { FiEdit, FiSettings } from "react-icons/fi";
 import { FaRegUserCircle } from "react-icons/fa";
-import { RiSettings3Line, RiDraftLine } from "react-icons/ri";
+import { RiDraftLine } from "react-icons/ri";
 import { BiHelpCircle } from "react-icons/bi";
 import { AiOutlineLogout } from "react-icons/ai";
 import StyledLink from "../StyledLink";
@@ -11,7 +11,7 @@ import useHover from "../../hooks/useHover";
 
 const StyledAvatarDropdown = styled.nav`
   position: absolute;
-  top: 50px;
+  top: 40px;
   right: -100px;
   width: 240px;
   height: 293px;
@@ -89,7 +89,7 @@ export default function AvatarDropdown() {
         <FiEdit />
       </StyledDropdownItem>
       <StyledDropdownItem to="/settings" text="Settings">
-        <RiSettings3Line />
+        <FiSettings />
       </StyledDropdownItem>
       <StyledDropdownItem to="/help" text="Help">
         <BiHelpCircle />

@@ -10,6 +10,8 @@ import { modalOpened } from "../../../slices/sign-in-slice";
 import { IconLink, Logo, SearchInput, SignInButton } from "./styles";
 
 const Nav = styled.nav`
+  position: fixed;
+  top: 0;
   height: 80px;
   width: 100%;
   display: flex;
