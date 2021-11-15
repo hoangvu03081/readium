@@ -32,6 +32,6 @@ export default function Body({ ContentLeft, ContentRight }) {
 }
 
 Body.propTypes = {
-  ContentLeft: PropTypes.objectOf(PropTypes.object()).isRequired,
-  ContentRight: PropTypes.objectOf(PropTypes.object()).isRequired,
+  ContentLeft: PropTypes.objectOf(PropTypes.object).isRequired,
+  ContentRight: PropTypes.objectOf(PropTypes.object).isRequired,
 };
