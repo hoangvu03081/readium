@@ -1,14 +1,18 @@
 import React from "react";
-import FollowingRecommendedBtn from "../common/components/Buttons/FollowingRecommendedBtn";
-// import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-// import Header from "../common/components/Header";
-// import SignInModal from "../common/components/SignInModal";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Body from "../common/components/Body";
+import Header from "../common/components/Header";
+import MobileNavbar from "../common/components/Header/MobileNavbar";
+import SignInModal from "../common/components/SignInModal";
 
 function App() {
   return (
-    <div>
-      <FollowingRecommendedBtn />
-    </div>
+    <Router>
+      {/* <Body ContentLeft={<div>"Left"</div>} ContentRight={<div>"Right"</div>} /> */}
+      <SignInModal />
+      <MobileNavbar />
+      <Header />
+    </Router>
   );
 }
 
