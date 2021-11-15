@@ -1,12 +1,18 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
+export const AvatarImage = styled.img`
+  vertical-align: middle;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+`;
+
 export const Logo = styled(Link)`
   text-decoration: none;
   font-family: "Publica Sans", Arial, Helvetica, sans-serif;
   font-size: 30px;
   color: black;
-  padding-top: 10px;
 `;
 
 export const IconLink = styled(Link)`
@@ -20,20 +26,11 @@ export const IconLink = styled(Link)`
   &:active {
     text-decoration: none;
   }
-
-  padding-top: 12px;
 `;
 
 export const Clickable = styled.div`
+  position: relative;
   cursor: pointer;
-`;
-
-export const Avatar = styled.img`
-  margin-top: 5px;
-  vertical-align: middle;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
 `;
 
 export const SearchInput = styled.input`
@@ -41,7 +38,6 @@ export const SearchInput = styled.input`
     outline: none;
   }
   -webkit-appearance: none;
-  margin-top: 5px;
   width: 300px;
   height: 38px;
   border: 2px solid black;
