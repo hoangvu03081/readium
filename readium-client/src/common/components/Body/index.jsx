@@ -6,8 +6,8 @@ import PropTypes from "prop-types";
 const Layout = styled.div`
   display: flex;
   flex-direction: row;
-  border-top: 2px solid black;
   min-height: 100vh;
+  margin-top: 80px;
 `;
 
 const ColumnLeft = styled.div`
@@ -32,6 +32,6 @@ export default function Body({ ContentLeft, ContentRight }) {
 }
 
 Body.propTypes = {
-  ContentLeft: PropTypes.objectOf(PropTypes.object).isRequired,
-  ContentRight: PropTypes.objectOf(PropTypes.object).isRequired,
+  ContentLeft: PropTypes.element.isRequired,
+  ContentRight: PropTypes.element.isRequired,
 };

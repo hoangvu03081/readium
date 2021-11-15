@@ -27,6 +27,9 @@ const theme = {
     FollowingRecommendedBtnBackground: "#ffffff",
     FollowingRecommendedBtnText: "#000000",
     FollowingRecommendedBtnHover: "#E53170",
+
+    TrendingTopicsBackground: "#FEF9F1",
+    TrendingTopicsText: "#707070",
   },
 };
 
