@@ -46,7 +46,6 @@ const authMiddleware = (req, res, next) => {
   })(req, res, next);
 };
 
-
 const pathToPubKey = path.join(
   __dirname,
   "../../",

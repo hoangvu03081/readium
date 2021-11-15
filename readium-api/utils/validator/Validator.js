@@ -48,10 +48,8 @@ class Validator {
   }
 
   validateFullname(fullname) {
-    const re = /^[a-zA-Z]$/g;
+    const re = /^[a-zA-Z ]+$/g;
     const isValid = re.test(fullname);
-
-    console.log(isValid);
 
     if (!isValid) {
       this.errors.fullname.push(

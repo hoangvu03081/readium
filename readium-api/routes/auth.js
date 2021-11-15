@@ -12,7 +12,25 @@ const Validator = require("../utils/validator/Validator");
 
 const validator = new Validator();
 
+// * login routes
+router.post("/", async (req, res, next) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user)
+      return res.status(401).json({ message: ["Could not find user"] });
+
+    const isValid = await bcrypt.compare(req.body.password, user.password);
+    if (!isValid) return res.status(400).json({ message: ["Wrong password"] });
+
+    const token = issueJWT(user);
+    return res.json({ message: ["Login successfully"], token });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 router.get("/logout", (req, res, next) => {
+  req.logOut();
   req.session.destroy((err) => {
     if (err) return next(err);
     res.send({ message: ["Log out successfully"] });
@@ -46,31 +64,16 @@ router.post("/register", async (req, res) => {
   const activation_link = `${url}/activate/${newUser._id}`;
   newUser.activation_link = activation_link;
   await sendWelcomeEmail({ to: email, url: activation_link });
-
-  await newUser.save();
-
+  try {
+    await newUser.save();
+  } catch (err) {
+    return res.status(400).send({ message: ["Your email is already used"] });
+  }
   const token = issueJWT(newUser);
   return res.status(201).send({
     message: ["Please activate your account with the link sent to your email!"],
     token,
   });
-});
-
-// * login routes
-router.post("/login", async (req, res, next) => {
-  try {
-    const user = await User.findOne({ email: req.body.email });
-    if (!user)
-      return res.status(401).json({ message: ["Could not find user"] });
-
-    const isValid = await bcrypt.compare(req.body.password, user.password);
-    if (!isValid) return res.status(400).json({ message: ["Wrong password"] });
-
-    const token = issueJWT(user);
-    return res.json({ message: ["Login successfully"], token });
-  } catch (err) {
-    return next(err);
-  }
 });
 
 // * activate api
@@ -151,8 +154,8 @@ router.get("/google/login-succeeded", (req, res) => {
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    successRedirect: "/google/login-succeeded",
-    failureRedirect: "/google/login-failed",
+    successRedirect: "/auth/google/login-succeeded",
+    failureRedirect: "/auth/google/login-failed",
   })
 );
 
