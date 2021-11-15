@@ -4,9 +4,5 @@ import DesktopHeader from "./DesktopHeader";
 import MobileHeader from "./MobileHeader";
 
 export default function Header() {
-  return isMobile ? (
-    <MobileHeader isLogin={false} />
-  ) : (
-    <DesktopHeader isLogin={false} />
-  );
+  return isMobile ? <MobileHeader isLogin /> : <DesktopHeader isLogin />;
 }

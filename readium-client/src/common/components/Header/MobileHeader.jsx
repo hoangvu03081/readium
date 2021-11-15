@@ -3,14 +3,12 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import { BiSearchAlt2 } from "react-icons/bi";
 import { useDispatch } from "react-redux";
-import {
-  RiSettings3Line,
-  RiHomeLine,
-  RiNotification4Line,
-} from "react-icons/ri";
+import { AiOutlineBell } from "react-icons/ai";
+import { RiSettings3Line, RiHomeLine } from "react-icons/ri";
 import { FiEdit, FiBookmark } from "react-icons/fi";
+import { avatarClicked } from "../../../slices/navbar-slice";
 import { modalOpened } from "../../../slices/sign-in-slice";
-import { Logo, Avatar, SearchButton, SignInButton } from "./styles";
+import { Logo, SearchButton, SignInButton, AvatarImage } from "./styles";
 
 const HeaderNav = styled.nav`
   position: fixed;
@@ -25,9 +23,6 @@ const HeaderNav = styled.nav`
 
 const MobileLogo = styled(Logo)`
   padding-top: 0;
-`;
-const MobileAvatar = styled(Avatar)`
-  margin-top: 0;
 `;
 
 const FooterNav = styled.nav`
@@ -45,18 +40,17 @@ const FooterNav = styled.nav`
 const MobileSignInButton = styled(SignInButton)`
   margin-top: 0;
 `;
-
-// TODO: Avatar
 export default function MobileHeader({ isLogin }) {
   const dispatch = useDispatch();
   const handleOpenModal = () => dispatch(modalOpened());
+  const handleAvatarClicked = () => dispatch(avatarClicked());
   return (
     <>
       <HeaderNav>
         <MobileLogo to="/" className="ms-4">
           readium
         </MobileLogo>
-        {isLogin ? (
+        {isLogin && (
           <>
             <div className="ms-auto me-4">
               <SearchButton>
@@ -64,13 +58,15 @@ export default function MobileHeader({ isLogin }) {
               </SearchButton>
             </div>
             <div className="me-4">
-              <MobileAvatar
+              <AvatarImage
+                onClick={handleAvatarClicked}
                 src="https://i.pinimg.com/280x280_RS/fd/d8/4a/fdd84a2fb86dbef973a86d9fb59d1f5a.jpg"
                 alt="Avatar"
               />
             </div>
           </>
-        ) : (
+        )}
+        {!isLogin && (
           <div className="ms-auto me-4">
             <MobileSignInButton onClick={handleOpenModal}>
               Sign in
@@ -82,7 +78,7 @@ export default function MobileHeader({ isLogin }) {
         <RiHomeLine size={28} />
         <FiBookmark size={28} />
         <FiEdit size={28} />
-        <RiNotification4Line size={28} />
+        <AiOutlineBell size={28} />
         <RiSettings3Line size={28} />
       </FooterNav>
     </>
