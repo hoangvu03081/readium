@@ -23,14 +23,16 @@ const userSchema = new Schema({
   biography: String,
   job: String,
   avatar: Buffer,
-  followers: {
+  followers: [
+    {
+      type: ObjectId,
+      ref: "User",
+    },
+  ],
+  followings: [{
     type: ObjectId,
     ref: "User",
-  },
-  followings: {
-    type: ObjectId,
-    ref: "User",
-  },
+  }],
   notifications: [
     // limit to 50 notifications, no longer than 3 months
     {

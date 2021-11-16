@@ -18,12 +18,16 @@ const User = require("../models/User");
 
 // ! GET ALL USERS
 router.get("/users", async (req, res) => {
+  // #swagger.tags = ['Dev']
+  // #swagger.description = 'Get all users'
   const users = await User.find({}, { avatar: 0 });
   res.send(users);
 });
 
 // ! DELETE ALL USERS
 router.delete("/users", async (req, res) => {
+  // #swagger.tags = ['Dev']
+  // #swagger.description = 'Delete all users'
   await User.deleteMany();
   res.send();
 });

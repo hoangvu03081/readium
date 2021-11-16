@@ -122,7 +122,6 @@ module.exports = function (passport) {
             activated: true,
           });
           await newUser.save();
-          console.log(newUser);
           return done(null, newUser);
         } catch (err) {
           return done(err);

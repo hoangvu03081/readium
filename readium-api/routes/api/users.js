@@ -11,6 +11,12 @@ const { authMiddleware } = require("../../utils/auth");
 
 // ! check authenticated route
 router.get("/protected", authMiddleware, (req, res) => {
+  // #swagger.tags = ['User']
+  // #swagger.summary = 'Route for testing authenticated users'
+  /* #swagger.security = [{
+        "bearerAuth": []
+  }] */
+
   res.send({ message: ["User is authenticated"] });
 });
 /**

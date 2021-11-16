@@ -5,14 +5,17 @@ const express = require("express");
 const app = express();
 
 const passport = require("passport");
-const cookieParser = require("cookie-parser");
+// const cookieParser = require("cookie-parser");
 const sessions = require("express-session");
 const MongoStore = require("connect-mongo");
 // cors
 const cors = require("cors");
+// swagger
+const swaggerUi = require("swagger-ui-express");
+const swaggerDoc = require("./utils/swagger/swagger_output.json");
 
 // loading config
-const {getUrl} = require("./config/db");
+const { getUrl } = require("./config/db");
 
 // config passport use strategies
 require("./config/passport")(passport);
@@ -23,7 +26,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // read cookie from browser
-app.use(cookieParser());
+// app.use(cookieParser());
 // session
 app.use(
   sessions({
@@ -50,9 +53,10 @@ app.use(passport.initialize());
 // create a persistent login session
 app.use(passport.session());
 
-
 // use routes
 app.use(require("./routes"));
+
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
 // error handling
 app.use((err, req, res, next) => {
