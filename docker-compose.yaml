@@ -19,6 +19,10 @@ services:
     volumes:
       - ./readium-api/:/usr/local/app/
       - exclude:/usr/local/app/node_modules/
+    depends_on:
+      - readium-db
+      - readium-rabbit
+      - elasticsearch
   
   readium-db:
     image: mongo
@@ -42,7 +46,7 @@ services:
         - PORT=4000
     ports:
       - "4000:4000"
-    command: ["-m", "flask", "run","--host=0.0.0.0","--port=4000"]
+    # command: ["-m", "flask", "run","--host=0.0.0.0","--port=4000"]
     environment:
       - MONGO_USERNAME=readium-oniichan
       - MONGO_PASSWORD=11410197100105117109451111101051059910497110
@@ -64,6 +68,8 @@ services:
     environment:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
       discovery.type: single-node
+    depends_on:
+      - readium-rabbit
 
   kibana:
     image: kibana:7.14.2

@@ -4,6 +4,7 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 
+const rabbitmq = require("./utils/rabbitmq");
 const passport = require("passport");
 const cookieParser = require("cookie-parser");
 const sessions = require("express-session");
