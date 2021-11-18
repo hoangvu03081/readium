@@ -7,6 +7,8 @@ const theme = {
     accent: "#E53170",
     gray: "#636776",
 
+    HeaderBackground: "#ffffff",
+
     TrendingBtnBackground: "#6A655F",
     TrendingBtnText: "#ffffff",
 

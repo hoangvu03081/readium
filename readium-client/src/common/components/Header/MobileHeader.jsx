@@ -12,6 +12,8 @@ import { Logo, SearchButton, SignInButton, AvatarImage } from "./styles";
 
 const HeaderNav = styled.nav`
   position: fixed;
+  background-color: ${({ theme }) => theme.colors.HeaderBackground};
+  z-index: 10;
   top: 0;
   width: 100%;
   height: 64px;

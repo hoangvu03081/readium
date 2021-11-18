@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 const Outline = styled.div`
@@ -10,6 +10,7 @@ const Outline = styled.div`
   flex-direction: row;
   justify-content: space-around;
   position: relative;
+  z-index: 1;
 `;
 
 const Button = styled.button`
@@ -25,10 +26,11 @@ const Button = styled.button`
 
   &:hover {
     color: ${({ theme }) => theme.colors.FollowingRecommendedBtnHover};
+    cursor: pointer;
     transition: all 0.3s;
   }
 
-  &:focus {
+  &.active {
     color: ${({ theme }) => theme.colors.FollowingRecommendedBtnHover};
   }
 
@@ -48,7 +50,7 @@ const Button = styled.button`
     opacity: 0;
   }
 
-  &:focus::after {
+  &.active::after {
     opacity: 1;
     width: 65%;
     transition: all 0.4s;
@@ -64,11 +66,22 @@ const Line = styled.div`
 `;
 
 export default function FollowingRecommendedBtn() {
+  const [active, setActive] = useState(0);
   return (
     <Outline>
-      <Button>FOLLOWING</Button>
+      <Button
+        className={active === 0 ? "active" : ""}
+        onClick={() => setActive(0)}
+      >
+        FOLLOWING
+      </Button>
       <Line />
-      <Button>RECOMMENDED</Button>
+      <Button
+        className={active === 1 ? "active" : ""}
+        onClick={() => setActive(1)}
+      >
+        RECOMMENDED
+      </Button>
     </Outline>
   );
 }
