@@ -14,7 +14,7 @@ const downloadImageFromUrl = async (url) => {
 };
 
 const activateUser = (user) => {
-  user.activation_link = undefined;
+  user.activationLink = undefined;
   user.activated = true;
 };
 
@@ -81,7 +81,7 @@ module.exports = function (passport) {
           const newUser = new User({
             avatar: avatar[0],
             email: profile.emails[0].value,
-            fullname: profile.displayName,
+            displayName: profile.displayName,
             activated: true,
           });
           await newUser.save();
@@ -118,7 +118,7 @@ module.exports = function (passport) {
           const newUser = new User({
             avatar: avatar[0],
             email: profile.emails[0].value,
-            fullname: profile.displayName,
+            displayName: profile.displayName,
             activated: true,
           });
           await newUser.save();

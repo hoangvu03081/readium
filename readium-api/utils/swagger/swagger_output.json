@@ -102,7 +102,7 @@
             "description": "Account created"
           },
           "400": {
-            "description": "Email has already been used or Fields have erros"
+            "description": "Email has already been used or fields have errors"
           }
         },
         "requestBody": {
@@ -117,19 +117,26 @@
         }
       }
     },
-    "/auth/activate/{id}": {
+    "/auth/confirm": {
       "get": {
         "tags": [
           "Auth"
         ],
-        "summary": "User Activate their account",
+        "summary": "User CONFIRM their account",
         "description": "",
         "parameters": [
           {
+            "name": "iv",
+            "in": "query",
+            "type": "string",
+            "required": "true"
+          },
+          {
             "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
+            "in": "query",
+            "type": "string",
+            "description": "hashed user id",
+            "required": "true"
           }
         ],
         "responses": {
@@ -174,26 +181,62 @@
         ],
         "summary": "Users forget password",
         "description": "",
-        "parameters": [
-          {
-            "name": "obj",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "email": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Request change password successfully"
           },
           "404": {
             "description": "User not found"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Email"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/reset": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Users reset password",
+        "description": "",
+        "parameters": [
+          {
+            "name": "iv",
+            "in": "query",
+            "type": "string",
+            "required": "true"
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "type": "string",
+            "description": "hashed user id",
+            "required": "true"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Retype wrong"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPassword"
+              }
+            }
           }
         }
       }
@@ -214,7 +257,172 @@
         ]
       }
     },
-    "/users/{id}/avatar": {
+    "/users/following/posts": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Get following posts from following authors",
+        "description": "",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer",
+            "description": "A page = 10 posts"
+          },
+          {
+            "name": "utc",
+            "in": "query",
+            "type": "string",
+            "description": "utc date string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully get posts"
+          },
+          "500": {
+            "description": "Error finding in mongodb"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/follow/{id}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "User follow users",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "User Object ID string."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "User should not follow him or herself && Please provide user id to follow other users"
+          },
+          "500": {
+            "description": "Error saving changes to mongodb"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/recommended": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Get recommended writers",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully recommend users"
+          },
+          "500": {
+            "description": "Error while finding in mongoose."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/profile": {
+      "patch": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Edit profile",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully edit profile"
+          },
+          "400": {
+            "description": "User input displayName with errors"
+          },
+          "500": {
+            "description": "Some errors occured when saving to mongodb"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditProfile"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/change-password": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "User change password",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Saving changed password successfully"
+          },
+          "400": {
+            "description": "Typed in wrong password or the password and password2 is not match"
+          },
+          "500": {
+            "description": "Saving user to mongodb has some errors"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePassword"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/avatar/{id}": {
       "get": {
         "tags": [
           "User"
@@ -226,12 +434,19 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "user id"
           }
         ],
         "responses": {
           "200": {
             "description": "Send back user avatar"
+          },
+          "400": {
+            "description": "Send back user avatar"
+          },
+          "500": {
+            "description": "Object Id is error or mongodb error"
           }
         }
       }
@@ -246,7 +461,7 @@
             "type": "string",
             "example": "john@example.com"
           },
-          "fullname": {
+          "displayName": {
             "type": "string",
             "example": "John Doe"
           },
@@ -306,7 +521,7 @@
               }
             }
           },
-          "activation_link": {
+          "activationLink": {
             "type": "string",
             "example": "http://localhost:5000/auth/activate/:id"
           },
@@ -334,7 +549,7 @@
         },
         "required": [
           "email",
-          "fullname"
+          "displayName"
         ]
       },
       "RegisterUser": {
@@ -347,16 +562,11 @@
           "password": {
             "type": "string",
             "example": "testing"
-          },
-          "fullname": {
-            "type": "string",
-            "example": "John Doe"
           }
         },
         "required": [
           "email",
-          "password",
-          "fullname"
+          "password"
         ]
       },
       "LoginUser": {
@@ -374,6 +584,74 @@
         "required": [
           "email",
           "password"
+        ]
+      },
+      "ChangePassword": {
+        "type": "object",
+        "properties": {
+          "oldPassword": {
+            "type": "string",
+            "example": "testing"
+          },
+          "password": {
+            "type": "string",
+            "example": "testing123"
+          },
+          "password2": {
+            "type": "string",
+            "example": "testing123"
+          }
+        },
+        "required": [
+          "oldPassword",
+          "password",
+          "password2"
+        ]
+      },
+      "ResetPassword": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "example": "testing123"
+          },
+          "password2": {
+            "type": "string",
+            "example": "testing123"
+          }
+        },
+        "required": [
+          "password",
+          "password2"
+        ]
+      },
+      "EditProfile": {
+        "type": "object",
+        "properties": {
+          "displayName": {
+            "type": "string",
+            "example": "John Updated Doe"
+          },
+          "biography": {
+            "type": "string",
+            "example": "I'm being updated in Edit profile endpoint."
+          },
+          "job": {
+            "type": "string",
+            "example": "Neet"
+          }
+        }
+      },
+      "Email": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "john@example.com"
+          }
+        },
+        "required": [
+          "email"
         ]
       }
     },

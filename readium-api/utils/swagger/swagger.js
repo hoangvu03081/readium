@@ -31,7 +31,7 @@ const doc = {
   definitions: {
     User: {
       $email: "john@example.com",
-      $fullname: "John Doe",
+      $displayName: "John Doe",
       password: "johnpassword",
       biography: "Hello, I'm a software engineer",
       job: "Software enginner",
@@ -46,7 +46,7 @@ const doc = {
           url: "http://localhost:5000/hackyourfacebook",
         },
       ],
-      activation_link: "http://localhost:5000/auth/activate/:id",
+      activationLink: "http://localhost:5000/auth/activate/:id",
       activated: false,
       collections: [
         {
@@ -58,11 +58,27 @@ const doc = {
     RegisterUser: {
       $email: "john@example.com",
       $password: "testing",
-      $fullname: "John Doe",
     },
     LoginUser: {
       $email: "john@example.com",
       $password: "testing",
+    },
+    ChangePassword: {
+      $oldPassword: "testing",
+      $password: "testing123",
+      $password2: "testing123",
+    },
+    ResetPassword: {
+      $password: "testing123",
+      $password2: "testing123",
+    },
+    EditProfile: {
+      displayName: "John Updated Doe",
+      biography: "I'm being updated in Edit profile endpoint.",
+      job: "Neet",
+    },
+    Email: {
+      $email: "john@example.com",
     },
   },
   securityDefinitions: {
@@ -72,7 +88,6 @@ const doc = {
       bearerFormat: "JWT",
     },
   },
-  
 };
 
 swaggerAutogen(outputFile, endpointsFiles, doc);
