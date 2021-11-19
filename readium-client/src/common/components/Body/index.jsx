@@ -13,6 +13,9 @@ const Layout = styled.div`
 const ColumnLeft = styled.div`
   padding: ${(props) => (props.isMobile ? "48px 36px" : "30px 80px 0")};
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const ColumnRight = styled.div`

@@ -14,6 +14,7 @@ const theme = {
 
     TagBtnBackground: "#000000",
     TagBtnText: "#ffffff",
+    TagBtnHover: "#E53170",
 
     InteractionsBackground: "#ffffff",
     WatchText: "#000000",
@@ -32,6 +33,9 @@ const theme = {
 
     TrendingTopicsBackground: "#FEF9F1",
     TrendingTopicsText: "#707070",
+
+    PopularPostBlack: "#000000",
+    PopularPostUser: "#707070",
   },
 };
 

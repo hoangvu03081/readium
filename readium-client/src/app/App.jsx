@@ -7,6 +7,7 @@ import Body from "../common/components/Body";
 import FollowingRecommendedBtn from "../common/components/Buttons/FollowingRecommendedBtn";
 import TrendingTopics from "../common/components/TrendingTopics";
 import RecommendedWriters from "../common/components/RecommendedWriters";
+import PopularPost from "../common/components/PopularPost";
 
 function App() {
   return (
@@ -15,7 +16,22 @@ function App() {
       <MobileNavbar />
       <Header />
       <Body
-        ContentLeft={<FollowingRecommendedBtn />}
+        ContentLeft={
+          <>
+            <PopularPost />
+            <hr
+              style={{
+                color: "#000000",
+                backgroundColor: "#000000",
+                width: 692,
+                height: 0.5,
+                borderColor: "#000000",
+                margin: 0,
+              }}
+            />
+            <FollowingRecommendedBtn />
+          </>
+        }
         ContentRight={
           <>
             <TrendingTopics />
