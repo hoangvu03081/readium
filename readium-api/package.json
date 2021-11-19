@@ -10,7 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@elastic/elasticsearch": "^7.15.0",
     "@sendgrid/mail": "^7.6.0",
+    "amqplib": "^0.8.0",
     "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
     "connect-flash": "^0.1.1",
