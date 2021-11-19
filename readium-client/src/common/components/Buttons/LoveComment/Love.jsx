@@ -10,7 +10,7 @@ const Love = styled.button`
   svg {
     fill: ${({ theme }) => theme.colors.LoveCommentText};
     stroke: ${({ theme }) => theme.colors.LoveCommentText};
-    stroke-width: 0.5;
+    stroke-width: 0.8;
     font-size: 18px;
   }
   span {

@@ -17,7 +17,7 @@ function App() {
       <MobileNavbar />
       <Header />
       <Body
-        ContentLeft={
+        contentLeft={
           <>
             <PopularPost />
             <hr
@@ -36,7 +36,7 @@ function App() {
             <Card />
           </>
         }
-        ContentRight={
+        contentRight={
           <>
             <TrendingTopics />
             <RecommendedWriters />

@@ -23,32 +23,32 @@ const InteractionStyle = styled.div`
 `;
 
 export default function Interactions({
-  WatchNumber,
-  LoveNumber,
-  CommentNumber,
+  watchNumber,
+  loveNumber,
+  commentNumber,
 }) {
   return (
     <InteractionStyle>
       <Watch>
         <WatchIcon />
-        <span>{WatchNumber}</span>
+        <span>{watchNumber}</span>
       </Watch>
 
       <Love>
         <LoveIcon />
-        <span>{LoveNumber}</span>
+        <span>{loveNumber}</span>
       </Love>
 
       <Comment>
         <CommentIcon />
-        <span>{CommentNumber}</span>
+        <span>{commentNumber}</span>
       </Comment>
     </InteractionStyle>
   );
 }
 
 Interactions.propTypes = {
-  WatchNumber: PropTypes.number.isRequired,
-  LoveNumber: PropTypes.number.isRequired,
-  CommentNumber: PropTypes.number.isRequired,
+  watchNumber: PropTypes.number.isRequired,
+  loveNumber: PropTypes.number.isRequired,
+  commentNumber: PropTypes.number.isRequired,
 };

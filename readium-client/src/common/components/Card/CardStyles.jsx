@@ -57,7 +57,7 @@ const Middle = styled.div`
   }
   p {
     margin: 0;
-    font-family: "Raleway";
+    font-family: "PT Sans";
     font-size: 13px;
     color: ${({ theme }) => theme.colors.CardContent};
     &:hover {
@@ -98,9 +98,26 @@ const Right = styled.div`
     color: ${({ theme }) => theme.colors.CardBlack};
     position: absolute;
     right: 5px;
-    bottom: 50px;
+    bottom: 51px;
     &:hover {
       cursor: pointer;
+    }
+    &:after {
+      content: "";
+      border: 1px solid ${({ theme }) => theme.colors.CardBlack};
+      width: 100%;
+      opacity: 0;
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      margin-left: auto;
+      margin-right: auto;
+      transition: all 0.3s;
+    }
+    &:hover::after {
+      opacity: 1;
+      transition: all 0.3s;
     }
   }
   img {
@@ -129,26 +146,26 @@ const Corner = styled.div`
 `;
 
 export default function CardStyles({
-  Preview,
-  Title,
-  Content,
-  Tags,
-  Duration,
-  User,
-  UserAvatar,
-  LoveNumber,
-  CommentNumber,
+  preview,
+  title,
+  content,
+  tags,
+  duration,
+  user,
+  userAvatar,
+  loveNumber,
+  commentNumber,
 }) {
   return (
     <Card className="row">
       <Left className="col-3">
-        <img src={Preview} alt="" />
+        <img src={preview} alt="" />
       </Left>
       <Middle className="col-7">
-        <h1>{Title}</h1>
-        <p>{Content}</p>
+        <h1>{title}</h1>
+        <p>{content}</p>
         <div>
-          {Tags.map((item, index) => (
+          {tags.map((item, index) => (
             // eslint-disable-next-line react/no-array-index-key
             <TagBtn key={index}>{item}</TagBtn>
           ))}
@@ -157,24 +174,24 @@ export default function CardStyles({
       <Right className="col-2">
         <AddCollection />
         <CardOptions />
-        <p>{Duration > 1 ? `${Duration} mins read` : `${Duration} min read`}</p>
-        <img src={UserAvatar} alt="" />
+        <p>{duration > 1 ? `${duration} mins read` : `${duration} min read`}</p>
+        <img src={userAvatar} alt="" />
       </Right>
       <Corner>
-        <LoveComment LoveNumber={LoveNumber} CommentNumber={CommentNumber} />
+        <LoveComment loveNumber={loveNumber} commentNumber={commentNumber} />
       </Corner>
     </Card>
   );
 }
 
 CardStyles.propTypes = {
-  Preview: PropTypes.string.isRequired,
-  Title: PropTypes.string.isRequired,
-  Content: PropTypes.string.isRequired,
-  Tags: PropTypes.arrayOf(PropTypes.string).isRequired,
-  Duration: PropTypes.number.isRequired,
-  User: PropTypes.string.isRequired,
-  UserAvatar: PropTypes.string.isRequired,
-  LoveNumber: PropTypes.number.isRequired,
-  CommentNumber: PropTypes.number.isRequired,
+  preview: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  content: PropTypes.string.isRequired,
+  tags: PropTypes.arrayOf(PropTypes.string).isRequired,
+  duration: PropTypes.number.isRequired,
+  user: PropTypes.string.isRequired,
+  userAvatar: PropTypes.string.isRequired,
+  loveNumber: PropTypes.number.isRequired,
+  commentNumber: PropTypes.number.isRequired,
 };

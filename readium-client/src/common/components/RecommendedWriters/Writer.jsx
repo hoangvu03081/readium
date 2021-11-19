@@ -49,13 +49,13 @@ const Info = styled.div`
   }
 `;
 
-export default function Writer({ Name, Type, Avatar }) {
+export default function Writer({ name, type, avatar }) {
   return (
     <Card>
-      <img src={Avatar} alt="" />
+      <img src={avatar} alt="" />
       <Info>
-        <h1>{Name}</h1>
-        <h2>{Type}</h2>
+        <h1>{name}</h1>
+        <h2>{type}</h2>
       </Info>
       <FollowBtn />
     </Card>
@@ -63,7 +63,7 @@ export default function Writer({ Name, Type, Avatar }) {
 }
 
 Writer.propTypes = {
-  Name: PropTypes.string.isRequired,
-  Type: PropTypes.string.isRequired,
-  Avatar: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
+  avatar: PropTypes.string.isRequired,
 };

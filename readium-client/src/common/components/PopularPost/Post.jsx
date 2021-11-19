@@ -111,43 +111,43 @@ const BottomRight = styled.div`
 `;
 
 export default function Post({
-  Title,
-  User,
-  UserAvatar,
-  Date,
-  Tags,
-  Preview,
-  Content,
-  WatchNumber,
-  LoveNumber,
-  CommentNumber,
+  title,
+  user,
+  userAvatar,
+  date,
+  tags,
+  preview,
+  content,
+  watchNumber,
+  loveNumber,
+  commentNumber,
 }) {
   return (
     <Card>
       <Top className="row">
         <TopLeft className="col-9">
-          <p>{Title}</p>
-          {Tags.map((item, index) => (
+          <p>{title}</p>
+          {tags.map((item, index) => (
             // eslint-disable-next-line react/no-array-index-key
             <TagBtn key={index}>{item}</TagBtn>
           ))}
         </TopLeft>
         <TopRight className="col-3">
-          <h1>{Date}</h1>
-          <h2>by {User}</h2>
-          <img src={UserAvatar} alt="" />
+          <h1>{date}</h1>
+          <h2>by {user}</h2>
+          <img src={userAvatar} alt="" />
         </TopRight>
       </Top>
       <Bottom className="row">
         <BottomLeft className="col-6">
-          <img src={Preview} alt="" />
+          <img src={preview} alt="" />
         </BottomLeft>
         <BottomRight className="col-6">
-          <p>{Content}</p>
+          <p>{content}</p>
           <Interactions
-            WatchNumber={WatchNumber}
-            LoveNumber={LoveNumber}
-            CommentNumber={CommentNumber}
+            watchNumber={watchNumber}
+            loveNumber={loveNumber}
+            commentNumber={commentNumber}
           />
         </BottomRight>
       </Bottom>
@@ -156,14 +156,14 @@ export default function Post({
 }
 
 Post.propTypes = {
-  Title: PropTypes.string.isRequired,
-  User: PropTypes.string.isRequired,
-  UserAvatar: PropTypes.string.isRequired,
-  Date: PropTypes.string.isRequired,
-  Tags: PropTypes.arrayOf(PropTypes.string).isRequired,
-  Preview: PropTypes.string.isRequired,
-  Content: PropTypes.string.isRequired,
-  WatchNumber: PropTypes.number.isRequired,
-  LoveNumber: PropTypes.number.isRequired,
-  CommentNumber: PropTypes.number.isRequired,
+  title: PropTypes.string.isRequired,
+  user: PropTypes.string.isRequired,
+  userAvatar: PropTypes.string.isRequired,
+  date: PropTypes.string.isRequired,
+  tags: PropTypes.arrayOf(PropTypes.string).isRequired,
+  preview: PropTypes.string.isRequired,
+  content: PropTypes.string.isRequired,
+  watchNumber: PropTypes.number.isRequired,
+  loveNumber: PropTypes.number.isRequired,
+  commentNumber: PropTypes.number.isRequired,
 };

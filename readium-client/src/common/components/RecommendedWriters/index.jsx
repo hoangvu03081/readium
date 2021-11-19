@@ -17,19 +17,19 @@ export default function RecommendedWriters() {
     <Background>
       <p>RECOMMENDED WRITERS</p>
       <Writer
-        Name="Yasuo Brain Dog"
-        Type="Pick Lock/AFK/Pro Ngu"
-        Avatar="./src/assets/images/yasuo.png"
+        name="Yasuo Brain Dog"
+        type="Pick Lock/AFK/Pro Ngu"
+        avatar="./src/assets/images/yasuo.png"
       />
       <Writer
-        Name="Son Dep"
-        Type="Teacher"
-        Avatar="./src/assets/images/yasuo.png"
+        name="Son Dep"
+        type="Teacher"
+        avatar="./src/assets/images/yasuo.png"
       />
       <Writer
-        Name="Hai Xinh"
-        Type="Beautiful boy"
-        Avatar="./src/assets/images/yasuo.png"
+        name="Hai Xinh"
+        type="Beautiful boy"
+        avatar="./src/assets/images/yasuo.png"
       />
     </Background>
   );

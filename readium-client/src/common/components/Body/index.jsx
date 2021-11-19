@@ -28,16 +28,16 @@ const ColumnRight = styled.div`
   flex-shrink: 0;
 `;
 
-export default function Body({ ContentLeft, ContentRight }) {
+export default function Body({ contentLeft, contentRight }) {
   return (
     <Layout>
-      <ColumnLeft isMobile={isMobile}>{ContentLeft}</ColumnLeft>
-      <ColumnRight className="d-none d-xl-block">{ContentRight}</ColumnRight>
+      <ColumnLeft isMobile={isMobile}>{contentLeft}</ColumnLeft>
+      <ColumnRight className="d-none d-xl-block">{contentRight}</ColumnRight>
     </Layout>
   );
 }
 
 Body.propTypes = {
-  ContentLeft: PropTypes.element.isRequired,
-  ContentRight: PropTypes.element.isRequired,
+  contentLeft: PropTypes.element.isRequired,
+  contentRight: PropTypes.element.isRequired,
 };
