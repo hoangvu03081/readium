@@ -6,23 +6,31 @@ const Background = styled.div`
   margin-top: 58px;
   p {
     font-family: "Raleway";
-    font-size: 24px;
+    font-size: 22px;
     text-align: center;
-    margin: 0 0 58px 0;
+    margin: 0 0 35px 0;
   }
-`;
-
-const Content = styled.div`
-  background-color: white;
 `;
 
 export default function RecommendedWriters() {
   return (
     <Background>
       <p>RECOMMENDED WRITERS</p>
-      <Content>
-        <Writer Name="Yasuo" Type="Pick Lock/AFK" />
-      </Content>
+      <Writer
+        Name="Yasuo Brain Dog"
+        Type="Pick Lock/AFK/Pro Ngu"
+        Avatar="./src/assets/images/yasuo.png"
+      />
+      <Writer
+        Name="Son Dep"
+        Type="Teacher"
+        Avatar="./src/assets/images/yasuo.png"
+      />
+      <Writer
+        Name="Hai Xinh"
+        Type="Beautiful boy"
+        Avatar="./src/assets/images/yasuo.png"
+      />
     </Background>
   );
 }

@@ -3,12 +3,13 @@ import styled from "styled-components";
 const TrendingButton = styled.button`
   font-family: "Raleway";
   font-weight: bold;
-  font-size: 16px;
+  font-size: 15px;
   padding: 5px 10px;
   background-color: ${({ theme }) => theme.colors.TrendingBtnBackground};
   color: ${({ theme }) => theme.colors.TrendingBtnText};
   border: none;
   border-radius: 31px;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   position: relative;
   transition: all 0.5s;
   &:hover {
