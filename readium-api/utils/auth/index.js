@@ -1,4 +1,5 @@
 const passport = require("passport");
+const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 const jsonwebtoken = require("jsonwebtoken");
@@ -11,7 +12,7 @@ const pathToPrivKey = path.join(
 );
 const PRIV_KEY = fs.readFileSync(pathToPrivKey, "utf-8");
 
-function issueJWT(user) {
+const issueJWT = (user) => {
   const _id = user._id;
 
   const expiresIn = "10y";
@@ -30,7 +31,7 @@ function issueJWT(user) {
     token: "Bearer " + signedToken,
     expires: expiresIn,
   };
-}
+};
 
 const authMiddleware = (req, res, next) => {
   if (req.isAuthenticated()) return next();
@@ -60,4 +61,31 @@ const jwtOptions = {
   algorithms: ["RS256"],
 };
 
-module.exports = { authMiddleware, issueJWT, jwtOptions };
+const algorithm = "aes-256-ctr";
+const iv = crypto.randomBytes(16);
+const secretKey = PRIV_KEY.slice(4, 36);
+
+const encrypt = (text) => {
+  const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
+
+  const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
+
+  return [iv.toString("hex"), encrypted.toString("hex")];
+};
+
+const decrypt = ([iv, content]) => {
+  const decipher = crypto.createDecipheriv(
+    algorithm,
+    secretKey,
+    Buffer.from(iv, "hex")
+  );
+
+  const decrpyted = Buffer.concat([
+    decipher.update(Buffer.from(content, "hex")),
+    decipher.final(),
+  ]);
+
+  return decrpyted.toString();
+};
+
+module.exports = { authMiddleware, issueJWT, jwtOptions, encrypt, decrypt };

@@ -16,21 +16,26 @@ const userSchema = new Schema({
     unique: true,
   },
   password: String,
-  fullname: {
+  displayName: {
+    // display name
     type: String,
     required: true,
   },
   biography: String,
   job: String,
   avatar: Buffer,
-  followers: {
-    type: ObjectId,
-    ref: "User",
-  },
-  followings: {
-    type: ObjectId,
-    ref: "User",
-  },
+  followers: [
+    {
+      type: ObjectId,
+      ref: "User",
+    },
+  ],
+  followings: [
+    {
+      type: ObjectId,
+      ref: "User",
+    },
+  ],
   notifications: [
     // limit to 50 notifications, no longer than 3 months
     {
@@ -50,7 +55,6 @@ const userSchema = new Schema({
       },
     },
   ],
-  activation_link: String,
   activated: {
     type: Boolean,
     required: true,
@@ -64,6 +68,9 @@ const userSchema = new Schema({
     ],
     type: [collectionSchema],
   },
+  activationLink: String,
+  resetLink: String,
+  //profileId:
 });
 
 const saltRounds = 10;

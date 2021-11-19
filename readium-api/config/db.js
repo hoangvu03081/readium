@@ -11,7 +11,6 @@ const {
 const getUrl = (db) =>
   `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}:${MONGO_PORT}/${db}?authSource=admin`;
 
-// connect to mongodb
 mongoose
   .connect(getUrl(MONGO_DATABASE_NAME))
   .then(console.log("successfully connect to mongodb"))

@@ -1,43 +1,33 @@
-// loading .env file
 require("dotenv").config();
-// require packages
 const express = require("express");
 const app = express();
 
 const elasticsearch = require("./utils/elasticsearch")
 const rabbitmq = require("./utils/rabbitmq");
 const passport = require("passport");
-const cookieParser = require("cookie-parser");
 const sessions = require("express-session");
 const MongoStore = require("connect-mongo");
-// cors
+
 const cors = require("cors");
 
-// loading config
-const {getUrl} = require("./config/db");
+const swaggerUi = require("swagger-ui-express");
+const swaggerDoc = require("./utils/swagger/swagger_output.json");
 
-// config passport use strategies
+const { getUrl } = require("./config/db");
+
 require("./config/passport")(passport);
 
-// parsing json data sent from the request.body
 app.use(express.json());
-// parsing data sent from a form action.
 app.use(express.urlencoded({ extended: false }));
 
-// read cookie from browser
-app.use(cookieParser());
-// session
 app.use(
   sessions({
     secret: process.env.SESSION_SECRET,
-    // saveUnitialized allow setting the user cookie before they acknowledge :D
     saveUninitialized: true,
     cookie: {
-      // expires in 10 year
       maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
     },
     resave: false,
-    // create a database for storing session
     store: MongoStore.create({
       mongoUrl: getUrl("session"),
     }),
@@ -47,16 +37,13 @@ app.use(
 // allow React application to make HTTP requests to Express application
 app.use(cors());
 
-// initialize passport
 app.use(passport.initialize());
-// create a persistent login session
-app.use(passport.session());
+app.use(passport.session()); // create a persistent login session
 
-
-// use routes
 app.use(require("./routes"));
 
-// error handling
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
+
 app.use((err, req, res, next) => {
   console.log(err);
   if (err.message === "No auth token")

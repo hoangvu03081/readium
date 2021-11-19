@@ -3,7 +3,7 @@ class Validator {
     this.errors = {
       email: [],
       password: [],
-      fullname: [],
+      displayName: [],
     };
   }
 
@@ -11,12 +11,12 @@ class Validator {
     this.errors = {
       email: [],
       password: [],
-      fullname: [],
+      displayName: [],
     };
   }
 
   checkEmpty(field, value) {
-    // field: email, password, fullname.
+    // field: email, password, displayName.
     let isValid = true;
     if (!value) {
       this.errors[field].push(`${field} must not be empty!`);
@@ -26,10 +26,12 @@ class Validator {
   }
 
   validateEmail(email) {
-    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    const isValid = re.test(email);
+    let isValid = this.checkEmpty("email", email);
 
-    if (!isValid) {
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    if (!re.test(email)) {
+      isValid = false;
       this.errors.email.push("Your email is not valid");
     }
 
@@ -37,28 +39,34 @@ class Validator {
   }
 
   validatePassword(password) {
-    const re = /^[a-zA-Z0-9$&+,:;=?@#|'<>.^*()%!-]{6,}$/;
-    const isValid = re.test(password);
+    let isValid = this.checkEmpty("password", password);
 
-    if (!isValid) {
-      this.errors.password.push("Your password must be greater than 6 characters");
+    const re = /^[a-zA-Z0-9$&+,:;=?@#|'<>.^*()%!-]{6,}$/;
+
+    if (!re.test(password)) {
+      isValid = false;
+      this.errors.password.push(
+        "Your password must be greater than 6 characters"
+      );
     }
 
     return isValid;
   }
 
-  validateFullname(fullname) {
-    const re = /^[a-zA-Z ]+$/g;
-    const isValid = re.test(fullname);
+  validateDisplayName(displayName) {
+    let isValid = this.checkEmpty("displayName", displayName);
 
-    if (!isValid) {
-      this.errors.fullname.push(
-        "Your fullname must be a string"
-      );
+    const re = /^[a-zA-Z ]+$/g;
+
+    if (!re.test(displayName)) {
+      isValid = false;
+      this.errors.displayName.push("Your displayName must be a string");
     }
 
     return isValid;
   }
 }
 
-module.exports = Validator;
+const validator = new Validator();
+
+module.exports = validator;
