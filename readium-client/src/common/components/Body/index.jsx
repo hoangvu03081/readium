@@ -16,6 +16,9 @@ const ColumnLeft = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  @media (max-width: 750px) {
+    padding: 48px 36px;
+  }
 `;
 
 const ColumnRight = styled.div`

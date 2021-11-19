@@ -5,7 +5,7 @@ import TagBtn from "../Buttons/TagBtn";
 import Interactions from "../Buttons/Interactions";
 
 const Card = styled.div`
-  margin-bottom: 63px;
+  margin-bottom: 50px;
   border: 2px solid ${({ theme }) => theme.colors.PopularPostBlack};
   border-radius: 6px;
   padding: 30px;
@@ -76,6 +76,7 @@ const BottomLeft = styled.div`
   img {
     width: 100%;
     height: 100%;
+    object-fit: cover;
     transition: all 0.5s;
     &:hover {
       cursor: pointer;

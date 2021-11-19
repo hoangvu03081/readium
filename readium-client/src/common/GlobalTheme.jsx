@@ -36,6 +36,9 @@ const theme = {
 
     PopularPostBlack: "#000000",
     PopularPostUser: "#707070",
+
+    CardBlack: "#000000",
+    CardContent: "#5B5C62",
   },
 };
 

@@ -4,7 +4,7 @@ import TrendingBtn from "../Buttons/TrendingBtn";
 
 const Background = styled.div`
   border-radius: 5px;
-  padding: 30px 30px 12px 30px;
+  padding: 30px 18px 12px 30px;
   background-color: ${({ theme }) => theme.colors.TrendingTopicsBackground};
   box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 1px, rgba(0, 0, 0, 0.07) 0px 2px 2px,
     rgba(0, 0, 0, 0.07) 0px 4px 4px, rgba(0, 0, 0, 0.07) 0px 8px 8px,

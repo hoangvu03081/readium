@@ -8,6 +8,7 @@ import FollowingRecommendedBtn from "../common/components/Buttons/FollowingRecom
 import TrendingTopics from "../common/components/TrendingTopics";
 import RecommendedWriters from "../common/components/RecommendedWriters";
 import PopularPost from "../common/components/PopularPost";
+import Card from "../common/components/Card";
 
 function App() {
   return (
@@ -30,6 +31,9 @@ function App() {
               }}
             />
             <FollowingRecommendedBtn />
+            <Card />
+            <Card />
+            <Card />
           </>
         }
         ContentRight={
