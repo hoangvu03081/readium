@@ -18,6 +18,9 @@ const Love = styled.button`
   }
   display: flex;
   align-items: center;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 export default Love;

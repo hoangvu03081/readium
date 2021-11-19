@@ -11,6 +11,8 @@ import { IconLink, Logo, SearchInput, SignInButton } from "./styles";
 
 const Nav = styled.nav`
   position: fixed;
+  background-color: ${({ theme }) => theme.colors.HeaderBackground};
+  z-index: 10;
   top: 0;
   height: 80px;
   width: 100%;

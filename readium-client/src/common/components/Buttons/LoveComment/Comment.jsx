@@ -16,6 +16,9 @@ const Comment = styled.button`
   }
   display: flex;
   align-items: center;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 export default Comment;

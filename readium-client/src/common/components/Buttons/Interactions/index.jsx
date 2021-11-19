@@ -17,6 +17,9 @@ const InteractionStyle = styled.div`
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 export default function Interactions({

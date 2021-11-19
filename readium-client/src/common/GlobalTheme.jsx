@@ -7,11 +7,14 @@ const theme = {
     accent: "#E53170",
     gray: "#636776",
 
+    HeaderBackground: "#ffffff",
+
     TrendingBtnBackground: "#6A655F",
     TrendingBtnText: "#ffffff",
 
     TagBtnBackground: "#000000",
     TagBtnText: "#ffffff",
+    TagBtnHover: "#E53170",
 
     InteractionsBackground: "#ffffff",
     WatchText: "#000000",
@@ -30,6 +33,12 @@ const theme = {
 
     TrendingTopicsBackground: "#FEF9F1",
     TrendingTopicsText: "#707070",
+
+    PopularPostBlack: "#000000",
+    PopularPostUser: "#707070",
+
+    CardBlack: "#000000",
+    CardContent: "#5B5C62",
   },
 };
 
