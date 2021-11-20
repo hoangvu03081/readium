@@ -28,11 +28,19 @@ const ColumnRight = styled.div`
   flex-shrink: 0;
 `;
 
+const FixedRight = styled.div`
+  position: fixed;
+  margin-left: 0;
+  width: 322px;
+`;
+
 export default function Body({ contentLeft, contentRight }) {
   return (
-    <Layout>
+    <Layout className="container">
       <ColumnLeft isMobile={isMobile}>{contentLeft}</ColumnLeft>
-      <ColumnRight className="d-none d-xl-block">{contentRight}</ColumnRight>
+      <ColumnRight className="d-none d-xl-block">
+        <FixedRight>{contentRight}</FixedRight>
+      </ColumnRight>
     </Layout>
   );
 }
