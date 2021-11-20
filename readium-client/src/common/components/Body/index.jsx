@@ -8,39 +8,41 @@ const Layout = styled.div`
   flex-direction: row;
   min-height: 100vh;
   margin-top: 80px;
+  justify-content: space-between;
 `;
 
 const ColumnLeft = styled.div`
-  padding: ${(props) => (props.isMobile ? "48px 36px" : "30px 80px 0")};
+  padding: ${(props) => (props.isMobile ? "48px 36px" : "30px 0 0 0")};
+  margin-right: 420px;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  @media (max-width: 1199px) {
+    margin-right: 0;
+    padding: 30px 80px;
+  }
   @media (max-width: 750px) {
     padding: 48px 36px;
   }
 `;
 
 const ColumnRight = styled.div`
-  width: 420px;
-  padding: 30px 48px 0;
-  border-left: 2px solid black;
-  flex-shrink: 0;
-`;
-
-const FixedRight = styled.div`
   position: fixed;
-  margin-left: 0;
-  width: 322px;
+  top: 80px;
+  bottom: 0;
+  right: 0;
+  width: 420px;
+  padding: 30px 48px;
+  overflow-y: scroll;
+  border-left: 2px solid black;
 `;
 
 export default function Body({ contentLeft, contentRight }) {
   return (
-    <Layout className="container">
+    <Layout className={isMobile ? "" : "container-xl"}>
       <ColumnLeft isMobile={isMobile}>{contentLeft}</ColumnLeft>
-      <ColumnRight className="d-none d-xl-block">
-        <FixedRight>{contentRight}</FixedRight>
-      </ColumnRight>
+      <ColumnRight className="d-none d-xl-block">{contentRight}</ColumnRight>
     </Layout>
   );
 }

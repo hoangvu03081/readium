@@ -31,6 +31,21 @@ export default function RecommendedWriters() {
         type="Beautiful boy"
         avatar="./src/assets/images/yasuo.png"
       />
+      <Writer
+        name="Hai Xinh"
+        type="Beautiful boy"
+        avatar="./src/assets/images/yasuo.png"
+      />
+      <Writer
+        name="Hai Xinh"
+        type="Beautiful boy"
+        avatar="./src/assets/images/yasuo.png"
+      />
+      <Writer
+        name="Hai Xinh"
+        type="Beautiful boy"
+        avatar="./src/assets/images/yasuo.png"
+      />
     </Background>
   );
 }

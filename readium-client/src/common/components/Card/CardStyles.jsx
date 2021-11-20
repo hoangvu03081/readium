@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import TagBtn from "../Buttons/TagBtn";
 import LoveComment from "../Buttons/LoveComment";
 import { ReactComponent as AddCollection } from "../../../assets/icons/add_collection.svg";
+import { ReactComponent as AddedCollection } from "../../../assets/icons/added_collection.svg";
 import { ReactComponent as CardOptions } from "../../../assets/icons/card_options.svg";
+import More from "./More";
 
 const Card = styled.div`
   border: 2px solid ${({ theme }) => theme.colors.CardBlack};
@@ -77,17 +79,50 @@ const Right = styled.div`
     position: absolute;
     right: 50px;
     top: -4px;
+    transition: all 0.3s;
     &:hover {
       cursor: pointer;
+      transform: scale(1.2);
+      transition: all 0.3s;
+    }
+    &.hide {
+      display: none;
+    }
+    &.unhide {
+      display: block;
     }
   }
   svg:nth-child(2) {
     font-size: 30px;
     position: absolute;
-    right: 5px;
-    top: 0;
+    right: 50px;
+    top: 1px;
+    transition: all 0.3s;
     &:hover {
       cursor: pointer;
+      transform: scale(1.2);
+      transition: all 0.3s;
+    }
+    &.hide {
+      display: none;
+    }
+    &.unhide {
+      display: block;
+    }
+  }
+  svg:nth-child(3) {
+    font-size: 30px;
+    position: absolute;
+    right: 5px;
+    top: 0;
+    transition: all 0.3s;
+    &:hover {
+      cursor: pointer;
+      transform: scale(1.2);
+      transition: all 0.3s;
+    }
+    &.active {
+      transform: scale(1.2);
     }
   }
   p {
@@ -133,11 +168,26 @@ const Right = styled.div`
   }
 `;
 
+const CardOptionsClick = styled.div`
+  position: absolute;
+  top: 30px;
+  left: 39px;
+  z-index: 10;
+  &.hide {
+    opacity: 0;
+    transition: all 0.3s;
+  }
+  &.unhide {
+    opacity: 1;
+    transition: all 0.3s;
+  }
+`;
+
 const Corner = styled.div`
-  width: 140px;
+  width: auto;
   padding: 0;
   position: absolute;
-  right: -70px;
+  right: -41px;
   top: -21px;
   @media (max-width: 950px) {
     right: -30px;
@@ -156,6 +206,8 @@ export default function CardStyles({
   loveNumber,
   commentNumber,
 }) {
+  const [more, setMore] = useState(0);
+  const [add, setAdd] = useState(0);
   return (
     <Card className="row">
       <Left className="col-3">
@@ -172,8 +224,27 @@ export default function CardStyles({
         </div>
       </Middle>
       <Right className="col-2">
-        <AddCollection />
-        <CardOptions />
+        <AddCollection
+          className={add === 0 ? "unhide" : "hide"}
+          onClick={() => setAdd(1)}
+        />
+        <AddedCollection
+          className={add === 0 ? "hide" : "unhide"}
+          onClick={() => setAdd(0)}
+        />
+        <CardOptions
+          className={more === 1 ? "active" : ""}
+          onClick={() => {
+            if (more === 0) {
+              setMore(1);
+            } else {
+              setMore(0);
+            }
+          }}
+        />
+        <CardOptionsClick className={more === 0 ? "hide" : "unhide"}>
+          <More />
+        </CardOptionsClick>
         <p>{duration > 1 ? `${duration} mins read` : `${duration} min read`}</p>
         <img src={userAvatar} alt="" />
       </Right>

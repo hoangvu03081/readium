@@ -34,6 +34,16 @@ const TopLeft = styled.div`
       font-size: 32px;
     }
   }
+  @media (max-width: 800px) {
+    p {
+      font-size: 28px;
+    }
+  }
+  @media (max-width: 700px) {
+    p {
+      font-size: 24px;
+    }
+  }
 `;
 
 const TopRight = styled.div`
@@ -55,6 +65,7 @@ const TopRight = styled.div`
     font-family: "Raleway";
     font-weight: bold;
     font-size: 18px;
+    text-align: right;
     color: ${({ theme }) => theme.colors.PopularPostUser};
     &:hover {
       cursor: pointer;
@@ -101,11 +112,24 @@ const BottomRight = styled.div`
     }
   }
   @media (max-width: 900px) {
-    p {
+    p,
+    button,
+    svg {
       font-size: 16px;
     }
-    button {
-      font-size: 16px;
+  }
+  @media (max-width: 800px) {
+    p,
+    button,
+    svg {
+      font-size: 15px;
+    }
+  }
+  @media (max-width: 700px) {
+    p,
+    button,
+    svg {
+      font-size: 14px;
     }
   }
 `;
