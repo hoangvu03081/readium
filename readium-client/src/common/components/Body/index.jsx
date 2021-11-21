@@ -12,8 +12,7 @@ const Layout = styled.div`
 `;
 
 const ColumnLeft = styled.div`
-  padding: ${(props) => (props.isMobile ? "48px 36px" : "30px 0 0 0")};
-  margin-right: 420px;
+  padding: ${(props) => (props.isMobile ? "48px 36px" : "30px 80px 0 0")};
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -28,7 +27,7 @@ const ColumnLeft = styled.div`
 `;
 
 const ColumnRight = styled.div`
-  position: fixed;
+  position: sticky;
   top: 80px;
   bottom: 0;
   right: 0;
@@ -38,11 +37,18 @@ const ColumnRight = styled.div`
   border-left: 2px solid black;
 `;
 
+const FixedRight = styled.div`
+  width: 420px;
+  position: relative;
+`;
+
 export default function Body({ contentLeft, contentRight }) {
   return (
     <Layout className={isMobile ? "" : "container-xl"}>
       <ColumnLeft isMobile={isMobile}>{contentLeft}</ColumnLeft>
-      <ColumnRight className="d-none d-xl-block">{contentRight}</ColumnRight>
+      <FixedRight className="d-none d-xl-block">
+        <ColumnRight>{contentRight}</ColumnRight>
+      </FixedRight>
     </Layout>
   );
 }
