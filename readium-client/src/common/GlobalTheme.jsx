@@ -39,6 +39,9 @@ const theme = {
 
     CardBlack: "#000000",
     CardContent: "#5B5C62",
+
+    MoreBackground: "#ffffff",
+    MoreBlack: "#000000",
   },
 };
 

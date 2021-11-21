@@ -39,6 +39,9 @@ export default function TrendingTopics() {
         <TrendingBtn>#Blockchain</TrendingBtn>
         <TrendingBtn>#Devops</TrendingBtn>
         <TrendingBtn>#Technique</TrendingBtn>
+        <TrendingBtn>#Technique</TrendingBtn>
+        <TrendingBtn>#Technique</TrendingBtn>
+        <TrendingBtn>#Henry</TrendingBtn>
       </Content>
     </Background>
   );
