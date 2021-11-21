@@ -74,6 +74,14 @@ const Middle = styled.div`
 
 const Right = styled.div`
   position: relative;
+  svg {
+    &.hide {
+      display: none;
+    }
+    &.unhide {
+      display: block;
+    }
+  }
   svg:first-child {
     font-size: 37px;
     position: absolute;
@@ -85,29 +93,17 @@ const Right = styled.div`
       transform: scale(1.2);
       transition: all 0.3s;
     }
-    &.hide {
-      display: none;
-    }
-    &.unhide {
-      display: block;
-    }
   }
   svg:nth-child(2) {
-    font-size: 30px;
+    font-size: 31px;
     position: absolute;
     right: 50px;
-    top: 1px;
+    top: 0;
     transition: all 0.3s;
     &:hover {
       cursor: pointer;
       transform: scale(1.2);
       transition: all 0.3s;
-    }
-    &.hide {
-      display: none;
-    }
-    &.unhide {
-      display: block;
     }
   }
   svg:nth-child(3) {
@@ -168,21 +164,6 @@ const Right = styled.div`
   }
 `;
 
-const CardOptionsClick = styled.div`
-  position: absolute;
-  top: 30px;
-  left: 39px;
-  z-index: 10;
-  &.hide {
-    opacity: 0;
-    transition: all 0.3s;
-  }
-  &.unhide {
-    opacity: 1;
-    transition: all 0.3s;
-  }
-`;
-
 const Corner = styled.div`
   width: auto;
   padding: 0;
@@ -192,6 +173,23 @@ const Corner = styled.div`
   @media (max-width: 950px) {
     right: -30px;
     top: -30px;
+  }
+`;
+
+const CardOptionsClick = styled.div`
+  position: absolute;
+  top: 66px;
+  right: -27px;
+  width: 135px;
+  padding: 0;
+  z-index: 10;
+  &.hide {
+    opacity: 0;
+    transition: all 0.3s;
+  }
+  &.unhide {
+    opacity: 1;
+    transition: all 0.3s;
   }
 `;
 
@@ -213,6 +211,7 @@ export default function CardStyles({
       <Left className="col-3">
         <img src={preview} alt="" />
       </Left>
+
       <Middle className="col-7">
         <h1>{title}</h1>
         <p>{content}</p>
@@ -223,6 +222,7 @@ export default function CardStyles({
           ))}
         </div>
       </Middle>
+
       <Right className="col-2">
         <AddCollection
           className={add === 0 ? "unhide" : "hide"}
@@ -242,15 +242,17 @@ export default function CardStyles({
             }
           }}
         />
-        <CardOptionsClick className={more === 0 ? "hide" : "unhide"}>
-          <More />
-        </CardOptionsClick>
         <p>{duration > 1 ? `${duration} mins read` : `${duration} min read`}</p>
         <img src={userAvatar} alt="" />
       </Right>
+
       <Corner>
         <LoveComment loveNumber={loveNumber} commentNumber={commentNumber} />
       </Corner>
+
+      <CardOptionsClick className={more === 0 ? "hide" : "unhide"}>
+        <More />
+      </CardOptionsClick>
     </Card>
   );
 }

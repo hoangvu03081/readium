@@ -10,7 +10,7 @@ const LoveCommentStyle = styled.div`
   background-color: white;
   border: 2px solid black;
   border-radius: 4px;
-  padding: 5px 0;
+  padding: 4px;
   display: flex;
   flex-direction: row;
   justify-content: space-around;

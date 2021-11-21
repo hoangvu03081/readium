@@ -6,9 +6,14 @@ import PropTypes from "prop-types";
 const Layout = styled.div`
   display: flex;
   flex-direction: row;
-  min-height: 100vh;
   margin-top: 80px;
   justify-content: space-between;
+  @media (max-width: 1399px) {
+    padding: 0 30px 0 80px;
+  }
+  @media (max-width: 1299px) {
+    padding: 0 30px 0 60px;
+  }
 `;
 
 const ColumnLeft = styled.div`
@@ -17,9 +22,15 @@ const ColumnLeft = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  border-right: 2px solid black;
+  min-height: 100vh;
+  @media (max-width: 1299px) {
+    padding: 30px 60px 0 0;
+  }
   @media (max-width: 1199px) {
     margin-right: 0;
     padding: 30px 80px;
+    border: none;
   }
   @media (max-width: 750px) {
     padding: 48px 36px;
@@ -27,24 +38,22 @@ const ColumnLeft = styled.div`
 `;
 
 const ColumnRight = styled.div`
-  position: sticky;
-  top: 80px;
-  bottom: 0;
-  right: 0;
-  width: 420px;
-  padding: 30px 48px;
+  width: 380px;
+  height: calc(100vh - 80px);
   overflow-y: scroll;
-  border-left: 2px solid black;
+  padding: 30px 18px 30px 48px;
 `;
 
 const FixedRight = styled.div`
-  width: 420px;
-  position: relative;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 80px;
+  height: 0;
 `;
 
 export default function Body({ contentLeft, contentRight }) {
   return (
-    <Layout className={isMobile ? "" : "container-xl"}>
+    <Layout className={isMobile ? "" : "container-xxl"}>
       <ColumnLeft isMobile={isMobile}>{contentLeft}</ColumnLeft>
       <FixedRight className="d-none d-xl-block">
         <ColumnRight>{contentRight}</ColumnRight>
