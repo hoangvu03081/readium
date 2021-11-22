@@ -16,7 +16,7 @@ function App() {
       <SignInModal />
       <MobileNavbar />
       <Header />
-      <Body
+      {/* <Body
         ContentLeft={
           <>
             <PopularPost />
@@ -42,7 +42,7 @@ function App() {
             <RecommendedWriters />
           </>
         }
-      />
+      /> */}
     </Router>
   );
 }
