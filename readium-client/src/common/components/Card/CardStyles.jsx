@@ -33,6 +33,7 @@ const Left = styled.div`
     height: 138px;
     object-fit: cover;
     border-radius: 8px;
+    padding-left: 5px;
     transition: all 0.4s;
     &:hover {
       cursor: pointer;
@@ -43,7 +44,7 @@ const Left = styled.div`
 `;
 
 const Middle = styled.div`
-  padding: 0 0 0 20px;
+  padding: 0 5px 0 25px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
