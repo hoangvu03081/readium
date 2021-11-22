@@ -130,6 +130,7 @@ const Right = styled.div`
     position: absolute;
     right: 5px;
     bottom: 51px;
+    z-index: 10;
     &:hover {
       cursor: pointer;
     }
@@ -158,6 +159,7 @@ const Right = styled.div`
     position: absolute;
     right: 5px;
     bottom: 0;
+    z-index: 10;
     &:hover {
       cursor: pointer;
     }
@@ -182,13 +184,14 @@ const CardOptionsClick = styled.div`
   right: -27px;
   width: 135px;
   padding: 0;
-  z-index: 10;
   &.hide {
     opacity: 0;
+    z-index: 1;
     transition: all 0.3s;
   }
   &.unhide {
     opacity: 1;
+    z-index: 100;
     transition: all 0.3s;
   }
 `;
