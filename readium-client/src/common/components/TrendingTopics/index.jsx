@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import TrendingBtn from "../Buttons/TrendingBtn";
 
@@ -33,7 +34,9 @@ export default function TrendingTopics() {
     <Background>
       <p>TRENDING TOPICS</p>
       <Content>
-        <TrendingBtn>#Programming</TrendingBtn>
+        <Link to="/write">
+          <TrendingBtn>#Programming</TrendingBtn>
+        </Link>
         <TrendingBtn>#Designing</TrendingBtn>
         <TrendingBtn>#NFT</TrendingBtn>
         <TrendingBtn>#Blockchain</TrendingBtn>
