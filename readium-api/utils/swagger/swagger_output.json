@@ -20,6 +20,10 @@
       "description": "Users' endpoints"
     },
     {
+      "name": "Profile",
+      "description": "Users' profiles related endpoints"
+    },
+    {
       "name": "Dev",
       "description": "Testing routes"
     }
@@ -184,10 +188,7 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Request change password successfully"
-          },
-          "404": {
-            "description": "User not found"
+            "description": "Request change password successfully or User not found but Mlem "
           }
         },
         "requestBody": {
@@ -226,7 +227,7 @@
         ],
         "responses": {
           "400": {
-            "description": "Retype wrong"
+            "description": "User not found but for security send 400"
           }
         },
         "requestBody": {
@@ -350,42 +351,6 @@
         ]
       }
     },
-    "/users/profile": {
-      "patch": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Edit profile",
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Successfully edit profile"
-          },
-          "400": {
-            "description": "User input displayName with errors"
-          },
-          "500": {
-            "description": "Some errors occured when saving to mongodb"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/EditProfile"
-              }
-            }
-          }
-        }
-      }
-    },
     "/users/change-password": {
       "post": {
         "tags": [
@@ -422,7 +387,109 @@
         }
       }
     },
-    "/users/avatar/{id}": {
+    "/users/profile/": {
+      "get": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Get my profile",
+        "description": "",
+        "parameters": [],
+        "responses": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Edit profile",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully edit profile"
+          },
+          "400": {
+            "description": "User input displayName with errors"
+          },
+          "500": {
+            "description": "Some errors occured when saving to mongodb"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditProfile"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/profile\r/": {
+      "post": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Upload avatar",
+        "description": "",
+        "parameters": [],
+        "responses": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "avatar": {
+                    "type": "file"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/profile/{profileId}": {
+      "get": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Get others",
+        "description": "",
+        "parameters": [
+          {
+            "name": "profileId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/users/profile/avatar/{id}": {
       "get": {
         "tags": [
           "User"
@@ -614,15 +681,10 @@
           "password": {
             "type": "string",
             "example": "testing123"
-          },
-          "password2": {
-            "type": "string",
-            "example": "testing123"
           }
         },
         "required": [
-          "password",
-          "password2"
+          "password"
         ]
       },
       "EditProfile": {
