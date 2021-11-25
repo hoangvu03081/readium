@@ -10,8 +10,7 @@ const LoveCommentStyle = styled.div`
   background-color: white;
   border: 2px solid black;
   border-radius: 4px;
-  width: 140px;
-  padding: 5px 0;
+  padding: 4px;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
@@ -30,23 +29,23 @@ const convert = (n) => {
   return n;
 };
 
-export default function LoveComment({ LoveNumber, CommentNumber }) {
+export default function LoveComment({ loveNumber, commentNumber }) {
   return (
     <LoveCommentStyle>
       <Love>
         <LoveIcon />
-        <span>{convert(LoveNumber)}</span>
+        <span>{convert(loveNumber)}</span>
       </Love>
 
       <Comment>
         <CommentIcon />
-        <span>{convert(CommentNumber)}</span>
+        <span>{convert(commentNumber)}</span>
       </Comment>
     </LoveCommentStyle>
   );
 }
 
 LoveComment.propTypes = {
-  LoveNumber: PropTypes.number.isRequired,
-  CommentNumber: PropTypes.number.isRequired,
+  loveNumber: PropTypes.number.isRequired,
+  commentNumber: PropTypes.number.isRequired,
 };

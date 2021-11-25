@@ -24,6 +24,10 @@ const doc = {
       description: "Users' endpoints",
     },
     {
+      name: "Profile",
+      description: "Users' profiles related endpoints",
+    },
+    {
       name: "Dev",
       description: "Testing routes",
     },
@@ -70,7 +74,6 @@ const doc = {
     },
     ResetPassword: {
       $password: "testing123",
-      $password2: "testing123",
     },
     EditProfile: {
       displayName: "John Updated Doe",
@@ -80,6 +83,7 @@ const doc = {
     Email: {
       $email: "john@example.com",
     },
+    
   },
   securityDefinitions: {
     bearerAuth: {

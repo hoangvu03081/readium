@@ -40,6 +40,8 @@ const Button = styled.button`
     width: 0;
     border: 2px solid
       ${({ theme }) => theme.colors.FollowingRecommendedBtnHover};
+    background-color: ${({ theme }) =>
+      theme.colors.FollowingRecommendedBtnHover};
     position: absolute;
     margin-left: auto;
     margin-right: auto;

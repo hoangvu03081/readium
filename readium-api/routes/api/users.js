@@ -7,7 +7,6 @@ const bcrypt = require("bcrypt");
 const Post = require("../../models/Post");
 const User = require("../../models/User");
 const { authMiddleware } = require("../../utils/auth");
-const validator = require("../../utils/validator/Validator");
 
 /**
  *! Dev routes
@@ -51,15 +50,16 @@ router.get("/following/posts", authMiddleware, async (req, res) => {
 
   // Date() === new Date(new Date().toUTCString()).toString()
   const { page = 1, utc = Date() } = req.query;
+  const date = new Date(utc);
 
   const posts = [];
   const authors = req.user.followings;
 
-  for (let i = 0; i < authors.length; i++) {
+  for (let author of authors) {
     try {
       const postsOfAuthor = await Post.find({
-        author: authors[i],
-        publishDate: { $lte: new Date(utc) },
+        author,
+        publishDate: { $lte: date },
       });
       posts.push(...postsOfAuthor);
       if (posts.length > page * 10) {
@@ -87,12 +87,11 @@ router.get("/follow/:id", authMiddleware, async (req, res) => {
       type: 'string',
       description: 'User Object ID string.'
     }
-  */
-  /*
     #swagger.security = [{
       "bearerAuth": []
     }]
-   */
+  */
+
   const id = req.params.id;
   const followings = req.user.followings;
 
@@ -146,6 +145,7 @@ router.get("/follow/:id", authMiddleware, async (req, res) => {
 router.get("/recommended", authMiddleware, async (req, res) => {
   // #swagger.tags = ['User']
   // #swagger.summary = 'Get recommended writers'
+
   /*
     #swagger.security = [{
       "bearerAuth": []
@@ -154,6 +154,7 @@ router.get("/recommended", authMiddleware, async (req, res) => {
   let users = [];
   try {
     users = await User.find().limit(10);
+    users = await users.map((user) => user.getPublicProfile());
   } catch (err) {
     // #swagger.responses[500] = { description: 'Error while finding in mongoose.' }
     return res
@@ -163,63 +164,6 @@ router.get("/recommended", authMiddleware, async (req, res) => {
 
   // #swagger.responses[200] = { description: 'Successfully recommend users' }
   res.send(users);
-});
-
-router.patch("/profile", authMiddleware, async (req, res) => {
-  // #swagger.tags = ['User']
-  // #swagger.summary = 'Edit profile'
-  /*
-    #swagger.security = [{
-      "bearerAuth": []
-    }]
-   */
-  /*
-    #swagger.requestBody = {
-      required: true,
-      content: {
-        "application/json": {
-          schema: {
-            $ref: "#/definitions/EditProfile"
-          }  
-        }
-      }
-    }
-  */
-
-  const { displayName, biography, job } = req.body;
-  const user = req.user;
-
-  user.displayName = displayName || user.displayName;
-  user.biography = biography || user.biography;
-  user.job = job || user.job;
-
-  // validation for displayName
-  validator.resetErrors();
-  const isValid =
-    validator.checkEmpty("displayName", user.displayName) &
-    validator.validateDisplayName(user.displayName);
-
-  if (!isValid) {
-    // #swagger.responses[400] = { description: 'User input displayName with errors' }
-    return res.status(400).send({ errors: validator.errors });
-  }
-
-  try {
-    await user.save();
-  } catch (err) {
-    // #swagger.responses[500] = { description: 'Some errors occured when saving to mongodb' }
-    return res
-      .status(500)
-      .send({ message: ["Some errors occured when editing the profile"] });
-  }
-
-  const resObj = {};
-  if (displayName) resObj.displayName = displayName;
-  if (biography) resObj.biography = biography;
-  if (job) resObj.job = job;
-
-  // #swagger.responses[200] = { description: 'Successfully edit profile' }
-  return res.send(resObj);
 });
 
 router.post("/change-password", authMiddleware, async (req, res) => {

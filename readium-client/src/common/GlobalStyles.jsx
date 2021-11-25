@@ -6,6 +6,7 @@ import PublicSans from "../assets/fonts/PublicaSans-Light.otf";
 import NunitoBold from "../assets/fonts/Nunito-Bold.ttf";
 import LatoBold from "../assets/fonts/Lato-Bold.ttf";
 import PTSansBold from "../assets/fonts/PTSans-Bold.ttf";
+import PTSansRegular from "../assets/fonts/PTSans-Regular.ttf";
 
 const GlobalStyles = createGlobalStyle`
     *, *:after, *:before {
@@ -42,6 +43,10 @@ const GlobalStyles = createGlobalStyle`
         font-family: "PT Sans";
         src: url(${PTSansBold}) format('truetype'), local('PT Sans Bold');
         font-weight: bold;
+    }
+    @font-face {
+        font-family: "PT Sans";
+        src: url(${PTSansRegular}) format('truetype'), local('PT Sans Regular');
     }
 
     body {
