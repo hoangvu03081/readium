@@ -21,8 +21,8 @@ router.get("/protected", authMiddleware, (req, res) => {
       "bearerAuth": []
     }]
    */
-
-  res.send({ message: ["User is authenticated"] });
+  res.responseObj.messages = ["User is authenticated"];
+  res.send({ ...res.responseObj });
 });
 /**
  *! Dev routes
