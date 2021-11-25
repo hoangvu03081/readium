@@ -3,11 +3,9 @@ class Response {
     this.messages = messages;
     this.errors = errors;
   }
-  get response() {
-    return {
-      body: { messages: this.messages },
-      errors: this.errors,
-    };
+  reset() {
+    this.messages = [];
+    this.errors = {};
   }
 }
 

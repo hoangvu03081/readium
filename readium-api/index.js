@@ -53,10 +53,10 @@ app.use((err, req, res, next) => {
   const { responseObj } = res;
   if (err.message === "No auth token") {
     responseObj.messages = ["Unauthenticated"];
-    return res.status(401).send({ ...responseObj.response });
+    return res.status(401).send(responseObj);
   }
   responseObj.messages = ["Some errors"];
-  return res.status(500).send({ ...responseObj.response });
+  return res.status(500).send(responseObj);
 });
 
 const port = process.env.PORT || 5000;

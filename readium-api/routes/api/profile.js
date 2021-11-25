@@ -137,7 +137,7 @@ router.post(
     console.log(err);
     const { responseObj } = res;
     responseObj.messages = [err.message];
-    return res.status(400).send({ ...responseObj.response });
+    return res.status(400).send(responseObj);
   }
 );
 
@@ -149,7 +149,7 @@ router.get("/:profileId", async (req, res) => {
   if (user) return res.send(user.getPublicProfile());
   const { responseObj } = res;
   responseObj.messages = ["User not found"];
-  return res.status(404).send({ ...responseObj.response });
+  return res.status(404).send(responseObj);
 });
 
 router.get("/avatar/:id", async (req, res) => {
@@ -166,7 +166,7 @@ router.get("/avatar/:id", async (req, res) => {
   if (!req.params.id) {
     responseObj.messages = ["Please send user id"];
     // #swagger.responses[400] = { description: 'Send back user avatar' }
-    return res.status(400).send({ ...responseObj.response });
+    return res.status(400).send(responseObj);
   }
   try {
     const avatar = await User.findById(req.params.id, { avatar: 1 });
@@ -176,7 +176,7 @@ router.get("/avatar/:id", async (req, res) => {
   } catch (err) {
     responseObj.messages = ["Error when fetching avatar"];
     // #swagger.responses[500] = { description: 'Object Id is error or mongodb error' }
-    return res.status(500).send({ ...responseObj.response });
+    return res.status(500).send(responseObj);
   }
 });
 
