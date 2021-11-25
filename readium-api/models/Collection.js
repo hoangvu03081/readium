@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 
 const {
-  model,
   Schema,
   Schema: { ObjectId },
 } = mongoose;
@@ -11,16 +10,16 @@ const collectionSchema = new Schema({
     type: String,
     required: true,
   },
-  posts: [
-    {
-      type: ObjectId,
-      required: true,
-      ref: "Post",
-    },
-  ],
+  posts: {
+    default: [],
+    type: [
+      {
+        type: ObjectId,
+        required: true,
+        ref: "Post",
+      },
+    ],
+  },
 });
 
-module.exports = {
-  collectionSchema,
-  Collection: model("Collection", collectionSchema),
-};
+module.exports = collectionSchema;

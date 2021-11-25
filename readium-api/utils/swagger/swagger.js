@@ -28,6 +28,10 @@ const doc = {
       description: "Users' profiles related endpoints",
     },
     {
+      name: "Collection",
+      description: "Users' collections related endpoints",
+    },
+    {
       name: "Dev",
       description: "Testing routes",
     },
@@ -83,7 +87,10 @@ const doc = {
     Email: {
       $email: "john@example.com",
     },
-    
+    PostToCollection: {
+      $postId: "post object id",
+      $collectionName: "collection name",
+    },
   },
   securityDefinitions: {
     bearerAuth: {

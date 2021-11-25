@@ -77,11 +77,18 @@ module.exports = function (passport) {
             if (!user.activated || !user.avatar) await user.save();
             return done(null, user);
           }
+
+          const count = await User.find({
+            displayName: profile.displayName,
+          }).countDocuments();
+          const profileId = profile.displayName + (count ? count : "");
+
           const newUser = new User({
             avatar: avatar[0],
             email: profile.emails[0].value,
             displayName: profile.displayName,
             activated: true,
+            profileId,
           });
           await newUser.save();
 
@@ -114,11 +121,17 @@ module.exports = function (passport) {
             if (!user.activated || !user.avatar) await user.save();
             return done(null, user);
           }
+          const count = await User.find({
+            displayName: profile.displayName,
+          }).countDocuments();
+          const profileId = profile.displayName + (count ? count : "");
+
           const newUser = new User({
             avatar: avatar[0],
             email: profile.emails[0].value,
             displayName: profile.displayName,
             activated: true,
+            profileId,
           });
           await newUser.save();
           return done(null, newUser);
