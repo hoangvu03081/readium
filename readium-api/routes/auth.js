@@ -98,9 +98,9 @@ router.post("/register", async (req, res) => {
       required: true,
       content: {
         "application/json": {
-            schema: {
-                $ref: "#/definitions/RegisterUser"
-            }  
+          schema: {
+            $ref: "#/definitions/RegisterUser"
+          }  
         }
       }
     } 

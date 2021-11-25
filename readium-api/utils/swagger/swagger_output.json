@@ -24,6 +24,10 @@
       "description": "Users' profiles related endpoints"
     },
     {
+      "name": "Collection",
+      "description": "Users' collections related endpoints"
+    },
+    {
       "name": "Dev",
       "description": "Testing routes"
     }
@@ -34,7 +38,8 @@
         "tags": [
           "Dev"
         ],
-        "description": "Get all users",
+        "summary": "Get all users",
+        "description": "",
         "parameters": [],
         "responses": {}
       },
@@ -42,7 +47,30 @@
         "tags": [
           "Dev"
         ],
-        "description": "Delete all users",
+        "summary": "Delete all users",
+        "description": "",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/collections": {
+      "get": {
+        "tags": [
+          "Dev"
+        ],
+        "summary": "Get all users' collections",
+        "description": "",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/": {
+      "delete": {
+        "tags": [
+          "Dev"
+        ],
+        "summary": "Delete all data",
+        "description": "",
         "parameters": [],
         "responses": {}
       }
@@ -437,6 +465,55 @@
         }
       }
     },
+    "/users/profile/?": {
+      "patch": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Edit subfield",
+        "description": "",
+        "parameters": [
+          {
+            "name": "displayName",
+            "in": "query",
+            "type": "boolean"
+          },
+          {
+            "name": "biography",
+            "in": "query",
+            "type": "boolean"
+          },
+          {
+            "name": "job",
+            "in": "query",
+            "type": "boolean"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "User input displayName with errors"
+          },
+          "500": {
+            "description": "Some errors occured when saving to mongodb"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditProfile"
+              }
+            }
+          }
+        }
+      }
+    },
     "/users/profile\r/": {
       "post": {
         "tags": [
@@ -514,6 +591,105 @@
           },
           "500": {
             "description": "Object Id is error or mongodb error"
+          }
+        }
+      }
+    },
+    "/users/collections/": {
+      "post": {
+        "tags": [
+          "Collection"
+        ],
+        "summary": "Create new collection",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "default": "collection name"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/collections/posts": {
+      "post": {
+        "tags": [
+          "Collection"
+        ],
+        "summary": "Add post to collection",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostToCollection"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Collection"
+        ],
+        "summary": "Delete post from collection",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostToCollection"
+              }
+            }
           }
         }
       }
@@ -714,6 +890,23 @@
         },
         "required": [
           "email"
+        ]
+      },
+      "PostToCollection": {
+        "type": "object",
+        "properties": {
+          "postId": {
+            "type": "string",
+            "example": "post object id"
+          },
+          "collectionName": {
+            "type": "string",
+            "example": "collection name"
+          }
+        },
+        "required": [
+          "postId",
+          "collectionName"
         ]
       }
     },
