@@ -1,15 +1,15 @@
 import axios from "axios";
 import PropTypes from "prop-types";
 import React, { useState, useEffect, useContext, createContext } from "react";
-import { useCookies } from "react-cookie";
 import { useDispatch } from "react-redux";
 import { modalClosed } from "../../slices/sign-in-slice";
 
 const isDev = process.env.NODE_ENV === "development";
 const LOCAL_URL = "http://localhost:5000";
+const HOST_URL = "";
 
 function getURL(endpoint) {
-  return isDev ? LOCAL_URL + endpoint : "";
+  return isDev ? LOCAL_URL + endpoint : HOST_URL + endpoint;
 }
 
 const REGISTER_API = getURL("/auth/register");
@@ -34,13 +34,20 @@ function useProvideAuth() {
   const [hasData, setHasData] = useState(false);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
-  const [cookies, setCookie, removeCookie] = useCookies();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    axios.defaults.headers.common.Authorization = cookies.Authorization;
-    axios.get(LOCAL_URL + "/users/protected", { withCredentials: true });
-  }, [isAuth]);
+  useEffect(async () => {
+    try {
+      const token = localStorage.getItem("Authorization");
+      if (token) {
+        axios.defaults.headers.common.Authorization = token;
+        await axios.get(`${LOCAL_URL}/users/protected`);
+        setAuth(true);
+      }
+    } catch (e) {
+      setAuth(false);
+    }
+  }, []);
 
   const clearState = () => {
     setLoading(false);
@@ -50,8 +57,20 @@ function useProvideAuth() {
     setData(null);
   };
 
+  const signOut = () => {
+    try {
+      axios.get(LOGOUT_API);
+      localStorage.removeItem("Authorization");
+      axios.defaults.headers.common.Authorization = null;
+      setAuth(false);
+    } catch (e) {
+      setError(e);
+    }
+  };
+
   const signIn = async (email, password) => {
     try {
+      console.log(password);
       clearState();
       setLoading(true);
       const response = await axios.post(LOGIN_API, {
@@ -59,16 +78,9 @@ function useProvideAuth() {
         password,
       });
 
-      //TODO: parse expires?
       const { token } = response.data.token;
+      localStorage.setItem("Authorization", token);
 
-      const expireTime = new Date(Date.now());
-      expireTime.setDate(expireTime.getDate() + 3600);
-
-      setCookie("Authorization", token, {
-        expires: expireTime,
-        // httpOnly: true,
-      });
       setAuth(true);
       dispatch(modalClosed());
     } catch (e) {
@@ -97,6 +109,14 @@ function useProvideAuth() {
     }
   };
 
+  const signInWithGoogle = async () => {
+    axios.get(GOOGLE_API);
+  };
+
+  const signInWithFacebook = async () => {
+    axios.get(FACEBOOK_API);
+  };
+
   return {
     isAuth,
     isLoading,
@@ -106,6 +126,9 @@ function useProvideAuth() {
     error,
     signIn,
     signUp,
+    signOut,
+    signInWithGoogle,
+    signInWithFacebook,
     clearState,
   };
 }

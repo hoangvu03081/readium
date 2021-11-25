@@ -62,7 +62,12 @@ export default function EmailLogin({ setModalType }) {
         className="mt-4"
         onClick={() => signIn(emailInput, passwordInput)}
         disabled={
-          !isSubmittable(emailInput, passwordInput, emailError, passwordError)
+          !isSubmittable(
+            emailInput,
+            passwordInput,
+            emailError,
+            passwordError
+          ) || isLoading
         }
       >
         Log In

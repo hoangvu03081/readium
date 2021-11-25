@@ -12,8 +12,10 @@ import {
   LoginText,
 } from "./styles";
 import ModalType from "./ModalType";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function SignInOptions({ setModalType }) {
+  const { signInWithGoogle, signInWithFacebook } = useAuth();
   const handleChangeModaltype = (modalType) => setModalType(modalType);
 
   return (
@@ -29,13 +31,13 @@ export default function SignInOptions({ setModalType }) {
         </LeadingIcon>
         <span>Sign in with email</span>
       </SignInOptionButton>
-      <SignInOptionButton className="mb-3">
+      <SignInOptionButton className="mb-3" onClick={signInWithFacebook}>
         <LeadingIcon>
           <BsFacebook size={22} />
         </LeadingIcon>
         <span>Sign in with Facebook</span>
       </SignInOptionButton>
-      <SignInOptionButton className="mb-4">
+      <SignInOptionButton className="mb-4" onClick={signInWithGoogle}>
         <LeadingIcon>
           <FcGoogle size={22} />
         </LeadingIcon>

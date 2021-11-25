@@ -67,7 +67,7 @@ export default function SignUp({ setModalType }) {
   return (
     <>
       <Logo>readium</Logo>
-      <h2>Log in</h2>
+      <h2>Sign Up</h2>
       <InputText>
         <span>Email</span>
         <ErrorText className="ms-auto">{emailError}</ErrorText>
@@ -111,7 +111,7 @@ export default function SignUp({ setModalType }) {
             emailError,
             passwordError,
             confirmPasswordError
-          )
+          ) || isLoading
         }
       >
         Sign up
