@@ -1,24 +1,25 @@
-require("dotenv").config();
+if (process.env.NODE_ENV === "development") require("dotenv").config();
 const express = require("express");
 const app = express();
 
-const elasticsearch = require("./utils/elasticsearch")
+const elasticsearch = require("./utils/elasticsearch");
 const rabbitmq = require("./utils/rabbitmq");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const sessions = require("express-session");
 const MongoStore = require("connect-mongo");
 
-const cors = require("cors");
-
+const response = require("./middleware/response");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDoc = require("./utils/swagger/swagger_output.json");
 
 const { getUrl } = require("./config/db");
-
 require("./config/passport")(passport);
 
+app.use(cookieParser());
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+// app.use(express.urlencoded({ extended: false }));
 
 app.use(
   sessions({
@@ -40,15 +41,22 @@ app.use(cors());
 app.use(passport.initialize());
 app.use(passport.session()); // create a persistent login session
 
+app.use(response);
+
 app.use(require("./routes"));
 
-app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
+if (process.env.NODE_ENV === "development")
+  app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
 app.use((err, req, res, next) => {
   console.log(err);
-  if (err.message === "No auth token")
-    return res.status(401).send({ message: ["Unauthenticated"] });
-  return res.status(500).send({ message: ["Some error"] });
+  const { responseObj } = res;
+  if (err.message === "No auth token") {
+    responseObj.messages = ["Unauthenticated"];
+    return res.status(401).send({ ...responseObj.response });
+  }
+  responseObj.messages = ["Some errors"];
+  return res.status(500).send({ ...responseObj.response });
 });
 
 const port = process.env.PORT || 5000;
