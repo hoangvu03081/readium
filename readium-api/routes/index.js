@@ -7,6 +7,7 @@ const router = require("express").Router();
 const authRoute = require("./auth");
 const visitorsRoute = require("./api/visitors");
 const usersRoute = require("./api/users");
+const postRoute = require("./api/posts")
 
 /**
  *! Dev routes
@@ -34,5 +35,6 @@ router.delete("/users", async (req, res) => {
 router.use("/auth", authRoute);
 router.use("/users", usersRoute);
 router.use("/users", visitorsRoute);
+router.use("/posts", postRoute)
 
 module.exports = router;
