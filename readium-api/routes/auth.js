@@ -39,7 +39,7 @@ router.post("/", async (req, res, next) => {
   if (!isValid) {
     const { displayName, ...errors } = validator.errors;
     responseObj.errors = errors;
-    return res.status(400).send({ ...responseObj.response });
+    return res.status(400).send(responseObj);
   }
 
   try {
@@ -47,14 +47,14 @@ router.post("/", async (req, res, next) => {
     if (!user) {
       responseObj.messages = ["Could not find user"];
       // #swagger.responses[404] = { description: 'Could not find user' }
-      return res.status(404).json({ ...responseObj.response });
+      return res.status(404).json(responseObj);
     }
 
     isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
       responseObj.messages = ["Wrong password"];
       // #swagger.responses[400] = { description: 'Wrong password' }
-      return res.status(400).json({ ...responseObj.response });
+      return res.status(400).json(responseObj);
     }
     // cookie
     // const token = issueJWT(user);
@@ -65,7 +65,7 @@ router.post("/", async (req, res, next) => {
 
     responseObj.messages = ["Login successfully"];
     // #swagger.responses[200] = { description: 'Login successfully' }
-    return res.send({ ...responseObj.response, token: issueJWT(user) });
+    return res.send({ ...responseObj, token: issueJWT(user) });
   } catch (err) {
     return next(err);
   }
@@ -84,8 +84,9 @@ router.get("/logout", (req, res, next) => {
     if (err) return next(err);
 
     const { responseObj } = res;
+    responseObj.messages = ["Logout successfully"];
     // #swagger.responses[200] = { description: 'Logout successfully' }
-    res.send({ ...responseObj.response });
+    res.send(responseObj);
   });
 });
 
@@ -97,9 +98,9 @@ router.post("/register", async (req, res) => {
       required: true,
       content: {
         "application/json": {
-            schema: {
-                $ref: "#/definitions/RegisterUser"
-            }  
+          schema: {
+            $ref: "#/definitions/RegisterUser"
+          }  
         }
       }
     } 
@@ -116,7 +117,7 @@ router.post("/register", async (req, res) => {
     const { displayName, ...errors } = validator.errors;
     responseObj.errors = errors;
     // #swagger.responses[400] = { description: 'Fields have errors' }
-    return res.status(400).send({ ...responseObj.response });
+    return res.status(400).send(responseObj);
   }
 
   const displayName = req.body.displayName || email.split("@")[0];
@@ -142,14 +143,14 @@ router.post("/register", async (req, res) => {
   } catch (err) {
     responseObj.messages = ["Your email is already used"];
     // #swagger.responses[400] = { description: 'Email has already been used or fields have errors' }
-    return res.status(400).send({ ...responseObj.response });
+    return res.status(400).send(responseObj);
   }
   responseObj.messages = [
     "Please activate your account with the link sent to your email!",
   ];
   // #swagger.responses[201] = { description: 'Account created' }
   return res.status(201).send({
-    ...responseObj.response,
+    ...responseObj,
   });
 });
 
@@ -179,11 +180,11 @@ router.get("/confirm", async (req, res) => {
   if (!user) {
     responseObj.messages = ["User not found"];
     // #swagger.responses[404] = { description: 'User not found' }
-    return res.status(404).send({ ...responseObj.response });
+    return res.status(404).send(responseObj);
   } else if (user.activated) {
     responseObj.messages = ["You went wrong"];
     // #swagger.responses[400] = { description: 'Account has already activated' }
-    return res.status(400).send({ ...responseObj.response });
+    return res.status(400).send(responseObj);
   } else {
     user.activationLink = undefined;
     user.activated = true;
@@ -199,7 +200,7 @@ router.get("/confirm", async (req, res) => {
     responseObj.messages = ["You have activated your account successfully."];
     // #swagger.responses[200] = { description: 'Activate successfully' }
     return res.send({
-      ...responseObj.response,
+      ...responseObj,
       token: issueJWT(user),
     });
   }
@@ -284,10 +285,10 @@ router.post("/forget", async (req, res, next) => {
   try {
     const user = await User.findOne({ email: req.body.email });
     const { responseObj } = res;
-    
+
     responseObj.messages = ["Please check your mail and reset your password!"];
     if (!user) {
-      return res.status(200).send({ ...responseObj.response });
+      return res.status(200).send(responseObj);
     }
 
     const due = new Date();
@@ -346,7 +347,7 @@ router.post("/reset", async (req, res, next) => {
         "Reset link dued, please request again to change your password",
       ];
       return res.status(400).send({
-        ...responseObj.response,
+        ...responseObj,
       });
     }
     const user = await User.findById(id);
@@ -354,21 +355,21 @@ router.post("/reset", async (req, res, next) => {
     if (!user) {
       responseObj.messages = ["Bad request"];
       // #swagger.responses[400] = { description: 'User not found but for security send 400' }
-      return res.status(400).send({ ...responseObj.response });
+      return res.status(400).send(responseObj);
     }
 
     validator.resetErrors();
     const isValid = validator.validatePassword(password);
     if (!isValid) {
       responseObj.messages = [validator.errors.password];
-      return res.status(400).send({ ...responseObj.response });
+      return res.status(400).send(responseObj);
     }
 
     user.password = password;
     user.resetLink = undefined;
     await user.save();
     responseObj.messages = ["Reset password successfully"];
-    return res.send({ ...responseObj.response });
+    return res.send(responseObj);
   } catch (err) {
     return next(err);
   }

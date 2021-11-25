@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
-const { collectionSchema } = require("./Collection");
+const collectionSchema = require("./Collection");
 
 const {
   model,
