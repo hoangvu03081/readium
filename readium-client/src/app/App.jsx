@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 import SignInModal from "../common/components/SignInModal";
 import MobileNavbar from "../common/components/Header/MobileNavbar";
 import Header from "../common/components/Header";
@@ -13,7 +13,7 @@ import Card from "../common/components/Card";
 
 function App() {
   return (
-    <Router>
+    <>
       <SignInModal />
       <MobileNavbar />
       <Header />
@@ -35,7 +35,7 @@ function App() {
           </>
         }
       />
-    </Router>
+    </>
   );
 }
 

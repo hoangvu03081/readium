@@ -4,7 +4,6 @@ import {
   useLocation,
   useHistory,
   useRouteMatch,
-  Redirect,
 } from "react-router-dom";
 import queryString from "query-string";
 
@@ -25,7 +24,6 @@ export default function useRouter() {
       match,
       location,
       history,
-      Redirect,
     }),
     [params, match, location, history]
   );

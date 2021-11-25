@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 import React, { useState, useEffect, useContext, createContext } from "react";
 import { useDispatch } from "react-redux";
 import { modalClosed } from "../../slices/sign-in-slice";
+// import useRouter from "./useRouter";
+import useRouter from "./useRouter";
 
 const isDev = process.env.NODE_ENV === "development";
 const LOCAL_URL = "http://localhost:5000";
@@ -35,6 +37,7 @@ function useProvideAuth() {
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
   const dispatch = useDispatch();
+  const { replace } = useRouter();
 
   useEffect(async () => {
     try {
@@ -57,9 +60,10 @@ function useProvideAuth() {
     setData(null);
   };
 
-  const signOut = () => {
+  const signOut = async () => {
     try {
-      axios.get(LOGOUT_API);
+      clearState();
+      await axios.get(LOGOUT_API);
       localStorage.removeItem("Authorization");
       axios.defaults.headers.common.Authorization = null;
       setAuth(false);
@@ -70,7 +74,6 @@ function useProvideAuth() {
 
   const signIn = async (email, password) => {
     try {
-      console.log(password);
       clearState();
       setLoading(true);
       const response = await axios.post(LOGIN_API, {
@@ -78,7 +81,7 @@ function useProvideAuth() {
         password,
       });
 
-      const { token } = response.data.token;
+      const { token } = response.data;
       localStorage.setItem("Authorization", token);
 
       setAuth(true);
@@ -110,11 +113,13 @@ function useProvideAuth() {
   };
 
   const signInWithGoogle = async () => {
-    axios.get(GOOGLE_API);
+    clearState();
+    window.location.href = GOOGLE_API;
   };
 
   const signInWithFacebook = async () => {
-    axios.get(FACEBOOK_API);
+    clearState();
+    window.location.href = FACEBOOK_API;
   };
 
   return {
