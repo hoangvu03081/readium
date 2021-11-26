@@ -15,7 +15,7 @@ const Nav = styled.nav`
   z-index: 10;
   top: 0;
   height: 80px;
-  width: 100%;
+  width: 100vw;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -38,7 +38,7 @@ export default function DesktopHeader({ isLogin }) {
           <IconLink to="/notifications" className="ms-sm-4">
             <AiOutlineBell size={26} />
           </IconLink>
-          <IconLink to="/saved" className="ms-sm-4 me-sm-4">
+          <IconLink to="/collections" className="ms-sm-4 me-sm-4">
             <FiBookmark size={24} />
           </IconLink>
           <Avatar />

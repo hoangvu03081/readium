@@ -11,11 +11,18 @@ import PopularPost from "../common/components/PopularPost";
 import HorizontalLine from "../common/components/HorizontalLine";
 import Card from "../common/components/Card";
 import Page404 from "../screens/Page404";
+import ConfirmEmail from "../screens/ConfirmEmail";
 
 function App() {
   return (
     <Switch>
-      <Route path="/auth">123</Route>
+      <Route path="/auth">
+        <Switch>
+          <Route path="/auth/confirm">
+            <ConfirmEmail />
+          </Route>
+        </Switch>
+      </Route>
       <Route path="/404">
         <Page404 />
       </Route>

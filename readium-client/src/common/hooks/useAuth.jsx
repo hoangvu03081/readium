@@ -3,8 +3,6 @@ import PropTypes from "prop-types";
 import React, { useState, useEffect, useContext, createContext } from "react";
 import { useDispatch } from "react-redux";
 import { modalClosed } from "../../slices/sign-in-slice";
-// import useRouter from "./useRouter";
-import useRouter from "./useRouter";
 
 const isDev = process.env.NODE_ENV === "development";
 const LOCAL_URL = "http://localhost:5000";
@@ -17,7 +15,7 @@ function getURL(endpoint) {
 const REGISTER_API = getURL("/auth/register");
 const LOGOUT_API = getURL("/auth/logout");
 const LOGIN_API = getURL("/auth");
-const CONFIRM_API = getURL("/auth/confirm");
+const CONFIRM_API = (iv, id) => `${getURL("/auth/confirm")}?iv=${iv}&id=${id}`;
 const FACEBOOK_API = getURL("/auth/facebook");
 const GOOGLE_API = getURL("/auth/google");
 const FORGET_API = getURL("/auth/forget");
@@ -36,7 +34,24 @@ function useProvideAuth() {
   const [hasData, setHasData] = useState(false);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
+  const [tokenReceived, setTokenReceived] = useState(false);
   const dispatch = useDispatch();
+
+  const handleData = (d) => {
+    setData(d);
+    setHasData(true);
+  };
+
+  const handleError = (e) => {
+    setError(e);
+    setIsError(true);
+  };
+
+  const handleToken = (t) => {
+    axios.defaults.headers.common.Authorization = t;
+    localStorage.setItem("Authorization", t);
+    setTokenReceived(true);
+  };
 
   useEffect(async () => {
     try {
@@ -49,8 +64,10 @@ function useProvideAuth() {
       setAuth(true);
     } catch (e) {
       setAuth(false);
+    } finally{
+      setTokenReceived(false);
     }
-  }, []);
+  }, [tokenReceived]);
 
   const clearState = () => {
     setLoading(false);
@@ -80,11 +97,9 @@ function useProvideAuth() {
         email,
         password,
       });
-
+      console.log(response);
       const { token } = response.data;
-      localStorage.setItem("Authorization", token);
-
-      setAuth(true);
+      handleToken(token);
       dispatch(modalClosed());
     } catch (e) {
       setError(e.data.message);
@@ -102,11 +117,9 @@ function useProvideAuth() {
         email,
         password,
       });
-      setData(response.data.message);
-      setHasData(true);
+      handleData(response.data.message);
     } catch (e) {
-      setError(e.response.data.message);
-      setIsError(true);
+      handleError(e.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -130,6 +143,22 @@ function useProvideAuth() {
     }
   };
 
+  const confirmEmail = async (iv, id) => {
+    try {
+      console.log("ALOHA");
+      clearState();
+      setLoading(true);
+      const response = await axios.get(CONFIRM_API(iv, id));
+      handleData(true);
+      handleToken(response.data.token);
+    } catch (e) {
+      setIsError(true);
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     isAuth,
     isLoading,
@@ -142,6 +171,7 @@ function useProvideAuth() {
     signOut,
     signInWithGoogle,
     signInWithFacebook,
+    confirmEmail,
     clearState,
   };
 }
