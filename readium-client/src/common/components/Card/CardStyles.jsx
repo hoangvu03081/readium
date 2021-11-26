@@ -63,9 +63,6 @@ const Middle = styled.div`
     font-family: "PT Sans";
     font-size: 13px;
     color: ${({ theme }) => theme.colors.CardContent};
-    &:hover {
-      cursor: pointer;
-    }
   }
   button {
     margin-right: 10px;

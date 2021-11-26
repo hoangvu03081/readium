@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import ReactQuill from "react-quill";
 import styled from "styled-components";
 
@@ -20,10 +20,21 @@ const InputTitle = styled.input`
   &:focus {
     outline: none;
   }
+  ::-webkit-input-placeholder {
+    font-style: italic;
+  }
+  :-moz-placeholder {
+    font-style: italic;
+  }
+  ::-moz-placeholder {
+    font-style: italic;
+  }
+  :-ms-input-placeholder {
+    font-style: italic;
+  }
 `;
 
 const TextEditorLayout = styled.div`
-  border: 1px solid #bebebe;
   border-radius: 5px;
   margin-top: 50px;
 `;
@@ -60,7 +71,9 @@ const editorModules = {
 };
 
 export default function TextEditor() {
+  const quill = useRef(null);
   const handleChange = (event) => {
+    console.log(quill.current.getEditor().getText());
     console.log(event);
   };
   return (
@@ -68,6 +81,7 @@ export default function TextEditor() {
       <InputTitle placeholder="Title" />
       <TextEditorLayout>
         <ReactQuill
+          ref={quill}
           theme="snow"
           onChange={handleChange}
           value=""

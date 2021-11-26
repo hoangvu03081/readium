@@ -22,8 +22,7 @@ const Love = styled.button`
     padding-left: 3px;
   }
   &:hover {
-    cursor: pointer;
-    color: white;
+    color: ${({ theme }) => theme.colors.LoveCommentBackground};
     background-color: ${({ theme }) => theme.colors.LoveCommentText};
     border-radius: 4px;
     svg {
