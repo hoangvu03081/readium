@@ -1,7 +1,4 @@
 import React from "react";
-import SignInModal from "../common/components/SignInModal";
-import MobileNavbar from "../common/components/Header/MobileNavbar";
-import Header from "../common/components/Header";
 import Body from "../common/components/Body";
 import PopularPost from "../common/components/PopularPost";
 import HorizontalLine from "../common/components/HorizontalLine";
@@ -13,9 +10,6 @@ import RecommendedWriters from "../common/components/RecommendedWriters";
 export default function Home() {
   return (
     <div>
-      <SignInModal />
-      <MobileNavbar />
-      <Header />
       <Body
         contentLeft={
           <>

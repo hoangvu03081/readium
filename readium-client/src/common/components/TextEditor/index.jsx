@@ -4,9 +4,12 @@ import styled from "styled-components";
 
 const Layout = styled.div`
   margin-top: 150px;
-  width: 80%;
+  width: 60%;
   margin-left: auto;
   margin-right: auto;
+  @media (max-width: 1000px) {
+    width: 70%;
+  }
 `;
 
 const InputTitle = styled.input`
@@ -14,35 +17,41 @@ const InputTitle = styled.input`
   border-radius: 5px;
   width: 100%;
   padding: 12px 15px;
+  &:focus {
+    outline: none;
+  }
 `;
 
 const TextEditorLayout = styled.div`
-  border: 2px solid #bebebe;
+  border: 1px solid #bebebe;
   border-radius: 5px;
   margin-top: 50px;
 `;
 
-const editorFormats = [
-  "header",
-  "font",
-  "size",
-  "bold",
-  "italic",
-  "underline",
-  "strike",
-  "blockquote",
-  "list",
-  "bullet",
-  "indent",
-  "link",
-  "image",
-  "video",
-];
+const PostBtn = styled.button`
+  border: none;
+  border-radius: 50px;
+  color: white;
+  background-color: black;
+  font-family: "PT Sans";
+  font-weight: bold;
+  font-size: 16px;
+  padding: 4px 20px;
+  margin-top: 20px;
+  float: right;
+  transition: all 0.25s;
+  &:hover {
+    cursor: pointer;
+    opacity: 0.8;
+    transition: all 0.25s;
+  }
+`;
 
 const editorModules = {
   toolbar: [
-    ["bold", "italic", "link"],
+    ["bold", "italic"],
     [{ header: "1" }, { header: "2" }, "blockquote"],
+    ["link", "image", "video"],
   ],
   clipboard: {
     // toggle to add extra line breaks when pasting HTML:
@@ -51,20 +60,22 @@ const editorModules = {
 };
 
 export default function TextEditor() {
-  const handleChange = () => {};
+  const handleChange = (event) => {
+    console.log(event);
+  };
   return (
     <Layout>
       <InputTitle placeholder="Title" />
       <TextEditorLayout>
         <ReactQuill
-          theme="bubble"
+          theme="snow"
           onChange={handleChange}
           value=""
           modules={editorModules}
-          formats={editorFormats}
           placeholder="Tell your story..."
         />
       </TextEditorLayout>
+      <PostBtn>POST</PostBtn>
     </Layout>
   );
 }
