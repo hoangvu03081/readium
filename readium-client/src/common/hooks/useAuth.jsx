@@ -37,16 +37,16 @@ function useProvideAuth() {
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
   const dispatch = useDispatch();
-  const { replace } = useRouter();
 
   useEffect(async () => {
     try {
+      axios.defaults.withCredentials = true;
+
       const token = localStorage.getItem("Authorization");
-      if (token) {
-        axios.defaults.headers.common.Authorization = token;
-        await axios.get(`${LOCAL_URL}/users/protected`);
-        setAuth(true);
-      }
+      if (token) axios.defaults.headers.common.Authorization = token;
+
+      await axios.get(`${LOCAL_URL}/users/protected`);
+      setAuth(true);
     } catch (e) {
       setAuth(false);
     }
@@ -113,13 +113,21 @@ function useProvideAuth() {
   };
 
   const signInWithGoogle = async () => {
-    clearState();
-    window.location.href = GOOGLE_API;
+    try {
+      clearState();
+      window.location.href = GOOGLE_API;
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const signInWithFacebook = async () => {
-    clearState();
-    window.location.href = FACEBOOK_API;
+    try {
+      clearState();
+      window.location.href = FACEBOOK_API;
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return {
