@@ -42,7 +42,7 @@ const editorFormats = [
 const editorModules = {
   toolbar: [
     ["bold", "italic", "link"],
-    [{header: "1"}, {header: "2"}, "blockquote"],
+    [{ header: "1" }, { header: "2" }, "blockquote"],
   ],
   clipboard: {
     // toggle to add extra line breaks when pasting HTML:
@@ -51,9 +51,7 @@ const editorModules = {
 };
 
 export default function TextEditor() {
-  const handleChange = () => {
-    
-  }
+  const handleChange = () => {};
   return (
     <Layout>
       <InputTitle placeholder="Title" />
