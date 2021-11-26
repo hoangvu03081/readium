@@ -3,17 +3,18 @@ const JwtStrategy = require("passport-jwt").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
 const User = require("../models/User");
-const { serverUrl } = require("./index");
+const { url } = require("./index");
 const imageUtil = require("../utils/getImageBufferFromUrl");
-const { jwtOptions } = require("../utils/auth");
+const {jwtOptions} = require('../utils/auth');
 
 const downloadImageFromUrl = async (url) => {
   imageUtil.getImageBufferFromUrl(url);
-  return once(imageUtil.bufferEmitter, "downloaded"); // avatar
+  const avatar = await once(imageUtil.bufferEmitter, "downloaded");
+  return avatar;
 };
 
 const activateUser = (user) => {
-  user.activationLink = undefined;
+  user.activation_link = undefined;
   user.activated = true;
 };
 
@@ -49,7 +50,7 @@ module.exports = function (passport) {
       {
         clientID: process.env.FACEBOOK_APP_ID,
         clientSecret: process.env.FACEBOOK_APP_SECRET,
-        callbackURL: `${serverUrl}/auth/facebook/callback`,
+        callbackURL: `${url}/auth/facebook/callback`,
         profileFields: [
           "id",
           "displayName",
@@ -77,21 +78,14 @@ module.exports = function (passport) {
             if (!user.activated || !user.avatar) await user.save();
             return done(null, user);
           }
-
-          const count = await User.find({
-            displayName: profile.displayName,
-          }).countDocuments();
-          const profileId = profile.displayName + (count ? count : "");
-
           const newUser = new User({
             avatar: avatar[0],
             email: profile.emails[0].value,
-            displayName: profile.displayName,
+            fullname: profile.displayName,
             activated: true,
-            profileId,
           });
           await newUser.save();
-
+          
           return done(null, newUser);
         } catch (err) {
           return done(err);
@@ -106,7 +100,7 @@ module.exports = function (passport) {
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: `${serverUrl}/auth/google/callback`,
+        callbackURL: `${url}/auth/google/callback`,
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
@@ -114,26 +108,21 @@ module.exports = function (passport) {
           const avatar = await downloadImageFromUrl(profile.photos[0].value);
 
           if (user) {
-            if (!user.activated) activateUser(user);
+            if (!user.activated) activateUesr(user);
             if (!user.avatar) {
               user.avatar = avatar[0];
             }
             if (!user.activated || !user.avatar) await user.save();
             return done(null, user);
           }
-          const count = await User.find({
-            displayName: profile.displayName,
-          }).countDocuments();
-          const profileId = profile.displayName + (count ? count : "");
-
           const newUser = new User({
             avatar: avatar[0],
             email: profile.emails[0].value,
-            displayName: profile.displayName,
+            fullname: profile.displayName,
             activated: true,
-            profileId,
           });
           await newUser.save();
+          console.log(newUser);
           return done(null, newUser);
         } catch (err) {
           return done(err);

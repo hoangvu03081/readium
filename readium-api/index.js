@@ -1,34 +1,41 @@
-if (process.env.NODE_ENV === "development") require("dotenv").config();
+// loading .env file
+require("dotenv").config();
+// require packages
 const express = require("express");
 const app = express();
 
-const elasticsearch = require("./utils/elasticsearch");
-const rabbitmq = require("./utils/rabbitmq");
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
 const passport = require("passport");
+const cookieParser = require("cookie-parser");
 const sessions = require("express-session");
 const MongoStore = require("connect-mongo");
+// cors
+const cors = require("cors");
 
-const response = require("./middleware/response");
-const swaggerUi = require("swagger-ui-express");
-const swaggerDoc = require("./utils/swagger/swagger_output.json");
+// loading config
+const {getUrl} = require("./config/db");
 
-const { getUrl } = require("./config/db");
+// config passport use strategies
 require("./config/passport")(passport);
 
-app.use(cookieParser());
+// parsing json data sent from the request.body
 app.use(express.json());
-// app.use(express.urlencoded({ extended: false }));
+// parsing data sent from a form action.
+app.use(express.urlencoded({ extended: false }));
 
+// read cookie from browser
+app.use(cookieParser());
+// session
 app.use(
   sessions({
     secret: process.env.SESSION_SECRET,
+    // saveUnitialized allow setting the user cookie before they acknowledge :D
     saveUninitialized: true,
     cookie: {
+      // expires in 10 year
       maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
     },
     resave: false,
+    // create a database for storing session
     store: MongoStore.create({
       mongoUrl: getUrl("session"),
     }),
@@ -36,47 +43,23 @@ app.use(
 );
 
 // allow React application to make HTTP requests to Express application
-var allowedOrigins = [
-  "http://localhost:3000",
-  "http://localhost:5000",
-  "http://localhost" /** other domains if any */,
-];
-const corsOptions = {
-  credentials: true,
-  origin: function (origin, callback) {
-    // allow requests with no origin
-    // (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      var msg =
-        "The CORS policy for this site does not " +
-        "allow access from the specified Origin.";
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  },
-};
-app.use(cors(corsOptions));
+app.use(cors());
 
+// initialize passport
 app.use(passport.initialize());
-app.use(passport.session()); // create a persistent login session
+// create a persistent login session
+app.use(passport.session());
 
-app.use(response);
 
+// use routes
 app.use(require("./routes"));
 
-if (process.env.NODE_ENV === "development")
-  app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
-
+// error handling
 app.use((err, req, res, next) => {
   console.log(err);
-  const { responseObj } = res;
-  if (err.message === "No auth token") {
-    responseObj.messages = ["Unauthenticated"];
-    return res.status(401).send(responseObj);
-  }
-  responseObj.messages = ["Some errors"];
-  return res.status(500).send(responseObj);
+  if (err.message === "No auth token")
+    return res.status(401).send({ message: ["Unauthenticated"] });
+  return res.status(500).send({ message: ["Some error"] });
 });
 
 const port = process.env.PORT || 5000;

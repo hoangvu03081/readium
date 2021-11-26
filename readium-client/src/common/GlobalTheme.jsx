@@ -5,7 +5,7 @@ const theme = {
     background: "#FEFBF3",
     text: "#F6F6F6",
     accent: "#E53170",
-    grey: "#636776",
+    gray: "#636776",
 
     HeaderBackground: "#ffffff",
 

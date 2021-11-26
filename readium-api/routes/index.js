@@ -4,58 +4,36 @@
 
 const router = require("express").Router();
 
+// * The route for authentication
 const authRoute = require("./auth");
+// * The route for visitors
+const visitorsRoute = require("./api/visitors");
+// * The route for authenticated users
 const usersRoute = require("./api/users");
-const profileRoute = require("./api/profile");
-const collectionRoute = require("./api/collection");
 
 /**
- *! Dev routes
+ *! Route used in development for testing
  */
 const User = require("../models/User");
-const collectionSchema = require("../models/Collection");
-const Post = require("../models/Post");
 
+// ! GET ALL USERS
 router.get("/users", async (req, res) => {
-  // #swagger.tags = ['Dev']
-  // #swagger.summary = 'Get all users'
-  const users = await User.find({});
+  const users = await User.find({}, { avatar: 0 });
   res.send(users);
 });
 
-router.get("/collections", async (req, res) => {
-  // #swagger.tags = ['Dev']
-  // #swagger.summary = "Get all users' collections"
-  const users = await User.find();
-  const collections = users
-    .map((user) => user.collections)
-    .reduce((acc, collections) => [...acc, ...collections], []);
-
-  res.send(collections);
-});
-
+// ! DELETE ALL USERS
 router.delete("/users", async (req, res) => {
-  // #swagger.tags = ['Dev']
-  // #swagger.summary = 'Delete all users'
   await User.deleteMany();
-  res.send();
-});
-
-router.delete("/", async (req, res) => {
-  // #swagger.tags = ['Dev']
-  // #swagger.summary = 'Delete all data'
-  await User.deleteMany();
-  await Post.deleteMany();
   res.send();
 });
 
 /**
- *! Dev routes
+ *! Route used in development for testing
  */
 
 router.use("/auth", authRoute);
 router.use("/users", usersRoute);
-router.use("/users/profile", profileRoute);
-router.use("/users/collections", collectionRoute);
+router.use("/users", visitorsRoute);
 
 module.exports = router;

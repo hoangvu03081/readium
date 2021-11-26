@@ -3,7 +3,7 @@ class Validator {
     this.errors = {
       email: [],
       password: [],
-      displayName: [],
+      fullname: [],
     };
   }
 
@@ -11,12 +11,12 @@ class Validator {
     this.errors = {
       email: [],
       password: [],
-      displayName: [],
+      fullname: [],
     };
   }
 
   checkEmpty(field, value) {
-    // field: email, password, displayName.
+    // field: email, password, fullname.
     let isValid = true;
     if (!value) {
       this.errors[field].push(`${field} must not be empty!`);
@@ -26,12 +26,10 @@ class Validator {
   }
 
   validateEmail(email) {
-    let isValid = this.checkEmpty("email", email);
-
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const isValid = re.test(email);
 
-    if (!re.test(email)) {
-      isValid = false;
+    if (!isValid) {
       this.errors.email.push("Your email is not valid");
     }
 
@@ -39,34 +37,28 @@ class Validator {
   }
 
   validatePassword(password) {
-    let isValid = this.checkEmpty("password", password);
-
     const re = /^[a-zA-Z0-9$&+,:;=?@#|'<>.^*()%!-]{6,}$/;
+    const isValid = re.test(password);
 
-    if (!re.test(password)) {
-      isValid = false;
-      this.errors.password.push(
-        "Your password must be greater than 6 characters"
-      );
+    if (!isValid) {
+      this.errors.password.push("Your password must be greater than 6 characters");
     }
 
     return isValid;
   }
 
-  validateDisplayName(displayName) {
-    let isValid = this.checkEmpty("displayName", displayName);
-
+  validateFullname(fullname) {
     const re = /^[a-zA-Z ]+$/g;
+    const isValid = re.test(fullname);
 
-    if (!re.test(displayName)) {
-      isValid = false;
-      this.errors.displayName.push("Your displayName must be a string");
+    if (!isValid) {
+      this.errors.fullname.push(
+        "Your fullname must be a string"
+      );
     }
 
     return isValid;
   }
 }
 
-const validator = new Validator();
-
-module.exports = validator;
+module.exports = Validator;
