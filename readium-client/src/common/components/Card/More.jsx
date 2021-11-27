@@ -7,17 +7,21 @@ const Layout = styled.div`
   flex-direction: column;
   border: 2px solid ${({ theme }) => theme.colors.MoreBlack};
   width: 135px;
-  padding: 5px 0;
+  padding: 0;
   h1 {
     margin: 0;
-    padding: 5px;
+    padding: 8px 0;
     font-family: "Raleway";
     font-weight: 500;
     font-size: 16px;
     text-align: center;
     color: ${({ theme }) => theme.colors.MoreBlack};
+    transition: all 0.15s;
     &:hover {
       cursor: pointer;
+      color: ${({ theme }) => theme.colors.MoreBackground};
+      background-color: ${({ theme }) => theme.colors.MoreBlack};
+      transition: all 0.15s;
     }
   }
 `;

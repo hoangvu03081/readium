@@ -1,17 +1,13 @@
 import React from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
+import ConfirmEmail from "../screens/ConfirmEmail";
 import SignInModal from "../common/components/SignInModal";
 import MobileNavbar from "../common/components/Header/MobileNavbar";
 import Header from "../common/components/Header";
-import Body from "../common/components/Body";
-import FollowingRecommendedBtn from "../common/components/Buttons/FollowingRecommendedBtn";
-import TrendingTopics from "../common/components/TrendingTopics";
-import RecommendedWriters from "../common/components/RecommendedWriters";
-import PopularPost from "../common/components/PopularPost";
-import HorizontalLine from "../common/components/HorizontalLine";
-import Card from "../common/components/Card";
+import Home from "../screens/Home";
 import Page404 from "../screens/Page404";
-import ConfirmEmail from "../screens/ConfirmEmail";
+import WritePost from "../screens/WritePost";
+import "./App.css";
 
 function App() {
   return (
@@ -32,26 +28,11 @@ function App() {
         <Header />
         <Switch>
           <Route exact path="/">
-            <Body
-              contentLeft={
-                <>
-                  <PopularPost />
-                  <HorizontalLine />
-                  <FollowingRecommendedBtn />
-                  <Card />
-                  <Card />
-                  <Card />
-                </>
-              }
-              contentRight={
-                <>
-                  <TrendingTopics />
-                  <RecommendedWriters />
-                </>
-              }
-            />
+            <Home />
           </Route>
-          <Route path="/write">write</Route>
+          <Route path="/write">
+            <WritePost />
+          </Route>
           <Route path="/settings">settings</Route>
           <Route path="/profile">profile</Route>
           <Route path="/post">post</Route>
