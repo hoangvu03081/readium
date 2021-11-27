@@ -10,7 +10,6 @@ const passport = require("passport");
 const sessions = require("express-session");
 const MongoStore = require("connect-mongo");
 
-const response = require("./middleware/response");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDoc = require("./utils/swagger/swagger_output.json");
 
@@ -41,8 +40,6 @@ app.use(cors());
 app.use(passport.initialize());
 app.use(passport.session()); // create a persistent login session
 
-app.use(response);
-
 app.use(require("./routes"));
 
 if (process.env.NODE_ENV === "development")
@@ -50,13 +47,10 @@ if (process.env.NODE_ENV === "development")
 
 app.use((err, req, res, next) => {
   console.log(err);
-  const { responseObj } = res;
   if (err.message === "No auth token") {
-    responseObj.messages = ["Unauthenticated"];
-    return res.status(401).send(responseObj);
+    return res.status(401).send({message: "Unauthenticated"});
   }
-  responseObj.messages = ["Some errors"];
-  return res.status(500).send(responseObj);
+  return res.status(500).send({message: "Some errors"});
 });
 
 const port = process.env.PORT || 5000;
