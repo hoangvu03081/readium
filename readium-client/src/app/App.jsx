@@ -1,36 +1,15 @@
 import React from "react";
-<<<<<<< HEAD
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-=======
 import { Switch, Route, Redirect } from "react-router-dom";
->>>>>>> parent of 8cdc833 (Revert "Merge remote-tracking branch 'origin/frontend-authentication' into Body")
 import SignInModal from "../common/components/SignInModal";
 import MobileNavbar from "../common/components/Header/MobileNavbar";
 import Header from "../common/components/Header";
 import Home from "../screens/Home";
-<<<<<<< HEAD
-=======
 import Page404 from "../screens/Page404";
->>>>>>> parent of 8cdc833 (Revert "Merge remote-tracking branch 'origin/frontend-authentication' into Body")
 import WritePost from "../screens/WritePost";
 
 function App() {
   return (
-<<<<<<< HEAD
-    <Router>
-      <SignInModal />
-      <MobileNavbar />
-      <Header />
-      <Switch>
-        <Route exact path="/">
-          <Home />
-        </Route>
-        <Route path="/write">
-          <WritePost />
-        </Route>
-      </Switch>
-    </Router>
-=======
     <Switch>
       <Route path="/auth">123</Route>
       <Route path="/404">
@@ -59,7 +38,6 @@ function App() {
         </Switch>
       </Route>
     </Switch>
->>>>>>> parent of 8cdc833 (Revert "Merge remote-tracking branch 'origin/frontend-authentication' into Body")
   );
 }
 
