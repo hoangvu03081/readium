@@ -1,17 +1,18 @@
 import React, { useRef } from "react";
 import styled from "styled-components";
-import ReactQuill from "react-quill";
 import TextareaAutosize from "react-textarea-autosize";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.bubble.css";
 
 const Layout = styled.div`
   margin-top: 80px;
-  margin-bottom: 80px;
   padding-top: 60px;
+  padding-bottom: 60px;
 `;
 
 const StoryInformation = styled.div`
   text-align: center;
-  margin-bottom: 60px;
+  margin-bottom: 80px;
   h1 {
     margin: 0 0 60px 0;
     padding: 0;
@@ -162,9 +163,9 @@ const SubmitBtn = styled.button`
 
 const editorModules = {
   toolbar: [
-    ["bold", "italic"],
-    [{ header: "1" }, { header: "2" }, "blockquote"],
-    ["link", "image", "video"],
+    ["bold", "italic", "link"],
+    [{ header: "1" }, { header: "2" }, { list: "ordered" }, { list: "bullet" }],
+    ["blockquote", "code", "code-block", "image"],
   ],
   clipboard: {
     // toggle to add extra line breaks when pasting HTML:
