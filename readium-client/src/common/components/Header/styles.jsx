@@ -58,7 +58,6 @@ export const SearchButton = styled.button`
 export const SignInButton = styled.button`
   width: 96px;
   height: 30px;
-  margin-top: 8px;
   border-radius: 90px;
   border: 2px solid black;
   font-weight: bold;

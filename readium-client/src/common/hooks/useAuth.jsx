@@ -19,7 +19,7 @@ const CONFIRM_API = (iv, id) => `${getURL("/auth/confirm")}?iv=${iv}&id=${id}`;
 const FACEBOOK_API = getURL("/auth/facebook");
 const GOOGLE_API = getURL("/auth/google");
 const FORGET_API = getURL("/auth/forget");
-const RESET_API = getURL("/auth/reset");
+const RESET_API = (iv, id) => `${getURL("/auth/reset")}?iv=${iv}&id=${id}`;
 
 const authContext = createContext();
 
@@ -64,7 +64,7 @@ function useProvideAuth() {
       setAuth(true);
     } catch (e) {
       setAuth(false);
-    } finally{
+    } finally {
       setTokenReceived(false);
     }
   }, [tokenReceived]);
@@ -102,7 +102,7 @@ function useProvideAuth() {
       handleToken(token);
       dispatch(modalClosed());
     } catch (e) {
-      setError(e.data.message);
+      setError(e);
       setIsError(true);
     } finally {
       setLoading(false);
@@ -119,7 +119,9 @@ function useProvideAuth() {
       });
       handleData(response.data.message);
     } catch (e) {
-      handleError(e.response.data.message);
+      console.log(e);
+      handleError("ERROR");
+      //handleError(e.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -159,6 +161,39 @@ function useProvideAuth() {
     }
   };
 
+  const forgotPassword = async (email) => {
+    try {
+      clearState();
+      setLoading(true);
+
+      const response = await axios.post(FORGET_API, { email });
+      handleData(true);
+    } catch (e) {
+      handleError(true);
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetPassword = async (password, iv, id) => {
+    try {
+      clearState();
+      setLoading(true);
+
+      const response = await axios.post(RESET_API(iv, id), {
+        password,
+      });
+      console.log(response);
+      handleData(true);
+    } catch (e) {
+      handleError(true);
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     isAuth,
     isLoading,
@@ -172,6 +207,8 @@ function useProvideAuth() {
     signInWithGoogle,
     signInWithFacebook,
     confirmEmail,
+    forgotPassword,
+    resetPassword,
     clearState,
   };
 }

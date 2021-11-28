@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import PuffLoader from "react-spinners/PuffLoader";
+import { AiOutlineMail } from "react-icons/ai";
 import {
   Logo,
   InputText,
   Input,
-  LoginButton,
+  SubmitButton,
   AllSignInOptions,
   ErrorText,
   EmailConfirmation,
@@ -16,7 +18,6 @@ import {
 } from "./validation";
 import ModalType from "./ModalType";
 import useInput from "../../hooks/useInput";
-import { AiOutlineMail } from "react-icons/ai";
 import { useAuth } from "../../hooks/useAuth";
 
 function isSubmittable(
@@ -64,6 +65,8 @@ export default function SignUp({ setModalType }) {
       </>
     );
 
+  if (isLoading) return <PuffLoader />;
+
   return (
     <>
       <Logo>readium</Logo>
@@ -101,7 +104,7 @@ export default function SignUp({ setModalType }) {
         className="mb-2"
       />
       <ErrorText className="mb-2">{error}</ErrorText>
-      <LoginButton
+      <SubmitButton
         onClick={() => signUp(emailInput, passwordInput)}
         disabled={
           !isSubmittable(
@@ -115,7 +118,7 @@ export default function SignUp({ setModalType }) {
         }
       >
         Sign up
-      </LoginButton>
+      </SubmitButton>
       <AllSignInOptions className="mt-3" onClick={handleChangeModalType}>
         All sign in options
       </AllSignInOptions>

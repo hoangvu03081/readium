@@ -8,6 +8,15 @@ const ScreenCenter = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    text-align: center;
+  }
 `;
 
 const Logo = styled.div`

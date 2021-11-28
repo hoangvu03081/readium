@@ -13,7 +13,7 @@ import { Logo, SearchButton, SignInButton, AvatarImage } from "./styles";
 const HeaderNav = styled.nav`
   position: fixed;
   background-color: ${({ theme }) => theme.colors.HeaderBackground};
-  z-index: 10;
+  z-index: 99;
   top: 0;
   width: 100%;
   height: 64px;
@@ -32,6 +32,7 @@ const FooterNav = styled.nav`
   bottom: 0;
   width: 100%;
   height: 64px;
+  z-index: 50;
   background-color: white;
   border-top: 1px solid #c5c5c5;
   display: flex;

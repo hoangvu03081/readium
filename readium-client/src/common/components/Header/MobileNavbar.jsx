@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
-import { CSSTransition, TransitionGroup } from "react-transition-group";
+import { CSSTransition } from "react-transition-group";
 import { useSelector, useDispatch } from "react-redux";
 import { FiEdit } from "react-icons/fi";
 import { FaRegUserCircle } from "react-icons/fa";
+import {
+  disableBodyScroll,
+  enableBodyScroll,
+  clearAllBodyScrollLocks,
+} from "body-scroll-lock";
 import { RiSettings3Line, RiDraftLine } from "react-icons/ri";
 import { BiHelpCircle } from "react-icons/bi";
 import { AiOutlineLogout } from "react-icons/ai";
@@ -13,11 +18,12 @@ import DimOverlay from "../DimOverlay";
 import StyledLink from "../StyledLink";
 
 const StyledNav = styled.nav`
-  position: absolute;
+  position: fixed;
   background-color: white;
   width: 325px;
   height: 100vh;
-  z-index: 9999;
+  top: 0;
+  z-index: 1000;
   display: flex;
   flex-direction: column;
 
@@ -116,6 +122,12 @@ export default function MobileNavbar() {
   const dispatch = useDispatch();
   const handleCloseNav = () => dispatch(navClosed());
   const isNavOpen = useSelector((state) => state.navbar);
+
+  useEffect(() => {
+    if (isNavOpen) disableBodyScroll(null);
+    if (!isNavOpen) enableBodyScroll(null);
+    return () => enableBodyScroll(null);
+  }, [isNavOpen]);
   return (
     <>
       <CSSTransition

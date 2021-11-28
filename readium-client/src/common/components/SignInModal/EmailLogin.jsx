@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import PuffLoader from "react-spinners/PuffLoader";
 import {
   Logo,
   InputText,
   Input,
-  LoginButton,
+  SubmitButton,
   AllSignInOptions,
-  ForgotPassword,
+  ForgotPasswordText,
   LoginText,
   ErrorText,
 } from "./styles";
@@ -21,8 +22,9 @@ function isSubmittable(email, password, emailError, passwordError) {
   );
 }
 export default function EmailLogin({ setModalType }) {
-  const handleChangeModalType = () => setModalType(ModalType.SIGN_IN_OPTIONS);
-  const { isLoading, signIn } = useAuth();
+  const toSignInOptions = () => setModalType(ModalType.SIGN_IN_OPTIONS);
+  const toForgotPassword = () => setModalType(ModalType.FORGOT_PASSWORD);
+  const { isLoading, signIn, clearState } = useAuth();
 
   const [emailInput, handleEmailInput] = useInput("");
   const [passwordInput, handlePasswordInput] = useInput("");
@@ -33,6 +35,9 @@ export default function EmailLogin({ setModalType }) {
     setEmailError(validateEmail(emailInput));
     setPasswordError(validatePassword(passwordInput));
   }, [emailInput, passwordInput]);
+  useEffect(() => () => clearState(), []);
+
+  if (isLoading) return <PuffLoader />;
 
   return (
     <>
@@ -58,7 +63,7 @@ export default function EmailLogin({ setModalType }) {
         value={passwordInput}
         onChange={handlePasswordInput}
       />
-      <LoginButton
+      <SubmitButton
         className="mt-4"
         onClick={() => signIn(emailInput, passwordInput)}
         disabled={
@@ -71,9 +76,11 @@ export default function EmailLogin({ setModalType }) {
         }
       >
         Log In
-      </LoginButton>
-      <ForgotPassword className="mt-4">Forgot password</ForgotPassword>
-      <AllSignInOptions className="mt-2" onClick={handleChangeModalType}>
+      </SubmitButton>
+      <ForgotPasswordText className="mt-4" onClick={toForgotPassword}>
+        Forgot password
+      </ForgotPasswordText>
+      <AllSignInOptions className="mt-2" onClick={toSignInOptions}>
         All sign in options
       </AllSignInOptions>
     </>
