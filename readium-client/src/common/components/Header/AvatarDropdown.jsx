@@ -8,6 +8,7 @@ import { BiHelpCircle } from "react-icons/bi";
 import { AiOutlineLogout } from "react-icons/ai";
 import StyledLink from "../StyledLink";
 import useHover from "../../hooks/useHover";
+import { useAuth } from "../../hooks/useAuth";
 
 const StyledAvatarDropdown = styled.nav`
   position: absolute;
@@ -57,29 +58,43 @@ const DropdownText = styled.span`
 
 function StyledDropdownItem({ children, to, text }) {
   const [isHover, { onMouseOver, onMouseOut }] = useHover();
+  if (to) {
+    return (
+      <DropdownItem
+        className="mt-sm-3"
+        onMouseOver={onMouseOver}
+        onMouseOut={onMouseOut}
+      >
+        <StyledLink to={to}>
+          <DropdownIcon>{children}</DropdownIcon>
+          <DropdownText className={isHover ? "hovering" : ""}>
+            {text}
+          </DropdownText>
+        </StyledLink>
+      </DropdownItem>
+    );
+  }
   return (
     <DropdownItem
       className="mt-sm-3"
       onMouseOver={onMouseOver}
       onMouseOut={onMouseOut}
     >
-      <StyledLink to={to}>
-        <DropdownIcon>{children}</DropdownIcon>
-        <DropdownText className={isHover ? "hovering" : ""}>
-          {text}
-        </DropdownText>
-      </StyledLink>
+      <DropdownIcon>{children}</DropdownIcon>
+      <DropdownText className={isHover ? "hovering" : ""}>{text}</DropdownText>
     </DropdownItem>
   );
 }
 
 StyledDropdownItem.propTypes = {
   children: PropTypes.element.isRequired,
-  to: PropTypes.string.isRequired,
+  // eslint-disable-next-line react/require-default-props
+  to: PropTypes.string,
   text: PropTypes.string.isRequired,
 };
 
 export default function AvatarDropdown() {
+  const { signOut } = useAuth();
   return (
     <StyledAvatarDropdown>
       <StyledDropdownItem to="/" text="My profile">
@@ -97,9 +112,11 @@ export default function AvatarDropdown() {
       <StyledDropdownItem to="/draft" text="My draft">
         <RiDraftLine />
       </StyledDropdownItem>
-      <StyledDropdownItem to="/logout" text="Logout">
-        <AiOutlineLogout />
-      </StyledDropdownItem>
+      <div onClick={signOut} role="button" tabIndex={0} onKeyPress={signOut}>
+        <StyledDropdownItem text="Logout">
+          <AiOutlineLogout />
+        </StyledDropdownItem>
+      </div>
     </StyledAvatarDropdown>
   );
   // return (

@@ -678,7 +678,7 @@ const sendWelcomeEmail = async ({ to, url }) => {
   };
 
   try {
-    // await sgMail.send(msg);
+    await sgMail.send(msg);
     console.log("sent");
   } catch (err) {
     console.log(err);
@@ -1624,7 +1624,7 @@ const sendResetPasswordEmail = async ({ to, url }) => {
   };
 
   try {
-    // await sgMail.send(msg);
+    await sgMail.send(msg);
     console.log("sent");
   } catch (err) {
     console.log(err);
