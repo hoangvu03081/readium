@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import DimOverlay from "../DimOverlay";
@@ -8,7 +8,7 @@ import ModalContent from "./ModalContent";
 const StyledSignInModal = styled.div`
   width: 400px;
   height: 500px;
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
   background-color: white;
@@ -27,6 +27,13 @@ const StyledSignInModal = styled.div`
 export default function SignInModal() {
   const isModalOpened = useSelector((state) => state.signInModal);
   const dispatch = useDispatch();
+  useEffect(() => {
+    if (isModalOpened) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+  }, [isModalOpened]);
   if (isModalOpened)
     return (
       <>

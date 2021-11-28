@@ -56,9 +56,6 @@ const TopRight = styled.div`
     font-weight: bold;
     font-size: 18px;
     color: ${({ theme }) => theme.colors.PopularPostBlack};
-    &:hover {
-      cursor: pointer;
-    }
   }
   h2 {
     margin: 0 0 5px 0;
@@ -107,9 +104,6 @@ const BottomRight = styled.div`
     font-weight: bold;
     font-size: 18px;
     color: ${({ theme }) => theme.colors.PopularPostBlack};
-    &:hover {
-      cursor: pointer;
-    }
   }
   @media (max-width: 900px) {
     p,

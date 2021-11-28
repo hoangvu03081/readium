@@ -38,6 +38,11 @@ export const LoginButton = styled.button`
   &:active {
     transform: scale(0.99);
   }
+
+  &:disabled {
+    background-color: ${({ theme }) => theme.colors.grey};
+    cursor: not-allowed;
+  }
 `;
 
 export const InputText = styled.div`
@@ -45,7 +50,17 @@ export const InputText = styled.div`
   width: 100%;
   padding-bottom: 6px;
   padding-left: 5%;
+  padding-right: 5%;
   font-weight: bold;
+  display: flex;
+`;
+
+export const EmailConfirmation = styled.div`
+  padding-left: 10px;
+  padding-right: 10px;
+  font-weight: bold;
+  text-align: center;
+  font-size: 18px;
 `;
 
 export const AllSignInOptions = styled.span`
@@ -103,4 +118,27 @@ export const LoginText = styled.span`
   font-size: 34px;
   font-weight: bold;
   cursor: pointer;
+`;
+
+export const ErrorText = styled.span`
+  color: red;
+  font-weight: 400;
+`;
+
+export const EmailError = styled(ErrorText)`
+  position: absolute;
+  right: 25px;
+  top: 143px;
+`;
+
+export const PasswordError = styled(ErrorText)`
+  position: absolute;
+  right: 25px;
+  top: 224px;
+`;
+
+export const ConfirmPasswordError = styled(ErrorText)`
+  position: absolute;
+  right: 25px;
+  top: 305px;
 `;

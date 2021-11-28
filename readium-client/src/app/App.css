@@ -1,43 +1,43 @@
 *, *:after, *:before {
-  box-sizing: border-box;
-}
-body{
-  margin: 0;
-}
-
-@font-face {
-  font-family: "Raleway";
-  src: url(../assets/fonts/Raleway-Regular.ttf) format('truetype'), local('Raleway');
-}
-@font-face {
-  font-family: "Raleway";
-  src: url(../assets/fonts/Raleway-Bold.ttf) format('truetype'), local('Raleway Bold');
-  font-weight: bold;
-}
-@font-face {
-  font-family: "Publica Sans";
-  src: url(../assets/fonts/PublicaSans-Light.otf) format('opentype'), local('Publica Sans Light')
-}
-@font-face {
-  font-family: "Nunito";
-  src: url(../assets/fonts/Nunito-Bold.ttf) format('truetype'), local('Nunito Bold');
-  font-weight: bold;
-}
-@font-face {
-  font-family: "Lato";
-  src: url(../assets/fonts/Lato-Bold.ttf) format('truetype'), local('Lato Bold');
-  font-weight: bold;
-}
-@font-face {
-  font-family: "PT Sans";
-  src: url(../assets/fonts/PTSans-Bold.ttf) format('truetype'), local('PT Sans Bold');
-  font-weight: bold;
-}
-@font-face {
-  font-family: "PT Sans";
-  src: url(../assets/fonts/PTSans-Regular.ttf) format('truetype'), local('PT Sans Regular');
-}
-
-body {
-  font-family: 'Raleway', Arial, 'Segoe UI';
-}
+    box-sizing: border-box;
+  }
+  body{
+    margin: 0;
+  }
+  
+  @font-face {
+    font-family: "Raleway";
+    src: url(../assets/fonts/Raleway-Regular.ttf) format('truetype'), local('Raleway');
+  }
+  @font-face {
+    font-family: "Raleway";
+    src: url(../assets/fonts/Raleway-Bold.ttf) format('truetype'), local('Raleway Bold');
+    font-weight: bold;
+  }
+  @font-face {
+    font-family: "Publica Sans";
+    src: url(../assets/fonts/PublicaSans-Light.otf) format('opentype'), local('Publica Sans Light')
+  }
+  @font-face {
+    font-family: "Nunito";
+    src: url(../assets/fonts/Nunito-Bold.ttf) format('truetype'), local('Nunito Bold');
+    font-weight: bold;
+  }
+  @font-face {
+    font-family: "Lato";
+    src: url(../assets/fonts/Lato-Bold.ttf) format('truetype'), local('Lato Bold');
+    font-weight: bold;
+  }
+  @font-face {
+    font-family: "PT Sans";
+    src: url(../assets/fonts/PTSans-Bold.ttf) format('truetype'), local('PT Sans Bold');
+    font-weight: bold;
+  }
+  @font-face {
+    font-family: "PT Sans";
+    src: url(../assets/fonts/PTSans-Regular.ttf) format('truetype'), local('PT Sans Regular');
+  }
+  
+  body {
+    font-family: 'Raleway', Arial, 'Segoe UI';
+  }

@@ -20,7 +20,6 @@ const Comment = styled.button`
   align-items: center;
   transition: all 0.4s;
   &:hover {
-    cursor: pointer;
     background-color: ${({ theme }) => theme.colors.CommentText};
     color: ${({ theme }) => theme.colors.InteractionsBackground};
     svg {
