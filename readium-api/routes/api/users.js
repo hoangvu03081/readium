@@ -21,8 +21,8 @@ router.get("/protected", authMiddleware, (req, res) => {
       "bearerAuth": []
     }]
    */
-  res.responseObj.messages = ["User is authenticated"];
-  res.send({ ...res.responseObj });
+
+  res.send({ message: "User is authenticated" });
 });
 /**
  *! Dev routes
@@ -70,7 +70,7 @@ router.get("/following/posts", authMiddleware, async (req, res) => {
       // #swagger.responses[500] = { description: 'Error finding in mongodb' }
       return res
         .status(500)
-        .send({ message: ["Some errors occur in get following posts"] });
+        .send({ message: "Some errors occur in get following posts" });
     }
   }
 
@@ -99,7 +99,7 @@ router.get("/follow/:id", authMiddleware, async (req, res) => {
     // #swagger.responses[400] = { description: 'Please provide user id to follow' }
     return res
       .status(400)
-      .send({ message: ["Please provide user id to follow"] });
+      .send({ message: "Please provide user id to follow" });
   }
 
   if (req.user._id.toString() === id) {
@@ -107,7 +107,7 @@ router.get("/follow/:id", authMiddleware, async (req, res) => {
     // #swagger.responses[400] = { description: 'User should not follow him or herself && Please provide user id to follow other users' }
     return res
       .status(400)
-      .send({ message: ["User should not follow him or herself"] });
+      .send({ message: "User should not follow him or herself" });
   }
 
   const authorIndex = followings.findIndex(
@@ -129,14 +129,13 @@ router.get("/follow/:id", authMiddleware, async (req, res) => {
     // #swagger.responses[500] = { description: 'Error saving changes to mongodb' }
     return res
       .status(500)
-      .send({ message: ["Some errors occur in follow user"] });
+      .send({ message: "Some errors occur in follow user" });
   }
 
-  const message = [
+  const message =
     authorIndex === -1
       ? `${req.user._id} follows ${req.params.id}.`
-      : `${req.user._id} unfollows ${req.params.id}.`,
-  ];
+      : `${req.user._id} unfollows ${req.params.id}.`;
 
   // #swagger.responses[200] = { description: 'Success' }
   return res.send({ message });
@@ -159,7 +158,7 @@ router.get("/recommended", authMiddleware, async (req, res) => {
     // #swagger.responses[500] = { description: 'Error while finding in mongoose.' }
     return res
       .status(500)
-      .send({ message: ["Error while get recommended users"] });
+      .send({ message: "Error while get recommended users" });
   }
 
   // #swagger.responses[200] = { description: 'Successfully recommend users' }
@@ -186,23 +185,30 @@ router.post("/change-password", authMiddleware, async (req, res) => {
       }
     }
   */
-  const { oldPassword, password, password2 } = req.body;
+  const { oldPassword, password } = req.body;
   const user = req.user;
+
+  if (!oldPassword || !password) {
+    return res
+      .status(400)
+      .send({ message: "Please provide both old password and new password" });
+  }
 
   const isSamePassword = await bcrypt.compare(oldPassword, user.password);
 
   if (!isSamePassword) {
     // #swagger.responses[400] = { description: 'Typed in wrong password' }
-    return res.status(400).send({ message: ["You typed in wrong password!"] });
+    return res.status(400).send({ message: "Wrong password." });
   }
 
   if (password !== password2) {
     // #swagger.responses[400] = { description: 'The password and password2 is not match' }
     // #swagger.responses[400] = { description: 'Typed in wrong password or the password and password2 is not match' }
-    return res.status(400).send({ message: ["Your new password must match!"] });
+    return res.status(400).send({ message: "Your new password must match!" });
   }
 
   user.password = password;
+  await user.hashPassword();
 
   try {
     await user.save();
@@ -210,11 +216,11 @@ router.post("/change-password", authMiddleware, async (req, res) => {
     // #swagger.responses[500] = { description: 'Saving user to mongodb has some errors' }
     return res
       .status(500)
-      .send({ message: ["some errors occured when changing the password"] });
+      .send({ message: "Some errors occured when changing the password" });
   }
 
   // #swagger.responses[200] = { description: 'Saving changed password successfully' }
-  return res.send({ message: ["Change the password successfully"] });
+  return res.send({ message: "Change the password successfully" });
 });
 
 module.exports = router;

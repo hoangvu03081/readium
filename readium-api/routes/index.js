@@ -19,7 +19,7 @@ const Post = require("../models/Post");
 router.get("/users", async (req, res) => {
   // #swagger.tags = ['Dev']
   // #swagger.summary = 'Get all users'
-  const users = await User.find({});
+  const users = await User.find({}, {avatar: 0});
   res.send(users);
 });
 

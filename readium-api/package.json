@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "swagger": "node ./utils/swagger/swagger.js"
+    "swagger": "node ./utils/swagger/swagger.js",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -34,6 +35,7 @@
   },
   "devDependencies": {
     "dotenv": "^10.0.0",
+    "jest": "^27.3.1",
     "nodemon": "^2.0.14",
     "swagger-autogen": "^2.12.6",
     "swagger-ui-express": "^4.1.6"
