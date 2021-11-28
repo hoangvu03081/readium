@@ -32,26 +32,28 @@ router.post("/", authMiddleware, async (req, res) => {
     }]
   */
   const { name } = req.body;
-  const { responseObj } = res;
   if (!name) {
-    responseObj.messages = ["Please provides the collection's name"];
-    return res.status(400).send(responseObj);
+    return res
+      .status(400)
+      .send({ message: "Please provides the collection's name" });
   }
 
   const existed = req.user.collections.some(
     (collection) => collection.name === name
   );
   if (existed) {
-    responseObj.messages = ["You have already created this collection!"];
-    return res.status(400).send(responseObj);
+    return res
+      .status(400)
+      .send({ message: "You have already created this collection!" });
   }
+
   const collection = { name, posts: [] };
   req.user.collections.push(collection);
   await req.user.save();
   return res.send(collection);
 });
 
-// didn't test
+// TODO need merge and test
 router.post("/posts", authMiddleware, async (req, res) => {
   // #swagger.tags = ['Collection']
   // #swagger.summary = 'Add post to collection'
@@ -71,31 +73,30 @@ router.post("/posts", authMiddleware, async (req, res) => {
     }]
   */
   const { postId, collectionName } = req.body;
-  const { responseObj } = res;
 
-  if (!postId) responseObj.messages.push("Missing post id");
-  if (!collectionName) responseObj.messages.push("Missing collection's name");
-  if (!responseObj.messages.length !== 0) {
-    return res.status(400).send(responseObj);
+  if (!postId) {
+    return res.status(400).send({ message: "Missing post id" });
+  }
+  if (!collectionName) {
+    return res.status(400).send({ message: "Missing collection's name" });
   }
 
   const post = await Post.findById(postId);
   if (!post) {
-    responseObj.messages = ["Invalid post id"];
-    return res.status(404).send(responseObj);
+    return res.status(404).send({ message: "Invalid post id" });
   }
 
-  const collection = req.user.collections.find(
+  const collection = await req.user.collections.findOne(
     (col) => col.name === collectionName
   );
   if (!collection) {
-    responseObj.messages = ["Collection name is not valid."];
-    return res.status(404).send(responseObj);
+    return res.status(404).send({ message: "User doesn't have this collection." });
   }
 
-  if (collection.some((post) => post._id.toString() === postId)) {
-    responseObj.messages = ["Post is already added in the collection"];
-    return res.status(400).send(responseObj);
+  if (collection.posts.some((post) => post._id.toString() === postId)) {
+    return res
+      .status(400)
+      .send({ message: "Post is already added in the collection" });
   }
 
   // found post & found collections -> valid id & valid collection name -> add to collection
@@ -103,10 +104,10 @@ router.post("/posts", authMiddleware, async (req, res) => {
 
   await req.user.save();
 
-  return res.send(req.user.collections);
+  return res.send(collection);
 });
 
-// didn't test
+// TODO need merge and test
 router.delete("/posts", authMiddleware, async (req, res) => {
   // #swagger.tags = ['Collection']
   // #swagger.summary = 'Delete post from collection'
@@ -126,41 +127,40 @@ router.delete("/posts", authMiddleware, async (req, res) => {
     }]
   */
   const { postId, collectionName } = req.body;
-  const { responseObj } = res;
 
-  if (!postId) responseObj.messages.push("Missing post id");
-  if (!collectionName) responseObj.messages.push("Missing collection's name");
-  if (!responseObj.messages.length !== 0) {
-    return res.status(400).send(responseObj);
+  if (!postId) {
+    return res.status(400).send({ message: "Missing post id" });
+  }
+  if (!collectionName) {
+    return res.status(400).send({ message: "Missing collection's name" });
   }
 
   const post = await Post.findById(postId);
   if (!post) {
-    responseObj.messages = ["Invalid post id"];
-    return res.status(404).send(responseObj);
+    return res.status(404).send({ message: "Invalid post id" });
   }
 
-  const collection = req.user.collections.find(
+  const collection = await req.user.collections.findOne(
     (col) => col.name === collectionName
   );
   if (!collection) {
-    responseObj.messages = ["Collection name is not valid."];
-    return res.status(404).send(responseObj);
+    return res.status(404).send({ message: "Collection name is not valid." });
   }
 
-  const postIndex = collection.findIndex(
+  const postIndex = collection.posts.findIndex(
     (post) => post._id.toString() === postId
   );
   if (postIndex === -1) {
-    responseObj.messages = ["Post is not in the collection to be removed"];
-    return res.status(400).send(responseObj);
+    return res
+      .status(404)
+      .send({ message: "Post is not in the collection to be removed!" });
   }
 
   // found post & found collections -> valid id & valid collection name -> add to collection
   collection.posts.splice(postIndex, 1);
   await req.user.save();
 
-  return res.send(req.user.collections);
+  return res.send(collection);
 });
 
 module.exports = router;

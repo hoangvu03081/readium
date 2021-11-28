@@ -34,7 +34,7 @@ module.exports = function (passport) {
       try {
         const user = await User.findOne({ _id: jwt_payload.vux });
         if (!user) {
-          return done(null, false, { message: ["User is not authorized"] });
+          return done(null, false, { message: "User is not authorized" });
         }
         return done(null, user);
       } catch (err) {
