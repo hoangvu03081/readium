@@ -74,7 +74,6 @@ const doc = {
     ChangePassword: {
       $oldPassword: "testing",
       $password: "testing123",
-      $password2: "testing123",
     },
     ResetPassword: {
       $password: "testing123",

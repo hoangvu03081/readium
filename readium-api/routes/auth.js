@@ -361,6 +361,7 @@ router.post("/reset", async (req, res, next) => {
     }
 
     user.password = password;
+    await user.hashPassword();
     user.resetLink = undefined;
     await user.save();
 

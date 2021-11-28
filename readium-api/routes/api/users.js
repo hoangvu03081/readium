@@ -185,8 +185,14 @@ router.post("/change-password", authMiddleware, async (req, res) => {
       }
     }
   */
-  const { oldPassword, password, password2 } = req.body;
+  const { oldPassword, password } = req.body;
   const user = req.user;
+
+  if (!oldPassword || !password) {
+    return res
+      .status(400)
+      .send({ message: "Please provide both old password and new password" });
+  }
 
   const isSamePassword = await bcrypt.compare(oldPassword, user.password);
 
@@ -202,6 +208,7 @@ router.post("/change-password", authMiddleware, async (req, res) => {
   }
 
   user.password = password;
+  await user.hashPassword();
 
   try {
     await user.save();
