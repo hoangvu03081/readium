@@ -85,7 +85,7 @@ function useProvideAuth() {
       axios.defaults.headers.common.Authorization = null;
       setAuth(false);
     } catch (e) {
-      setError(e);
+      setError(e.data.message);
     }
   };
 
@@ -97,13 +97,12 @@ function useProvideAuth() {
         email,
         password,
       });
-      console.log(response);
       const { token } = response.data;
+      handleData(response.data.message);
       handleToken(token);
       dispatch(modalClosed());
     } catch (e) {
-      setError(e);
-      setIsError(true);
+      handleError(e.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -119,9 +118,7 @@ function useProvideAuth() {
       });
       handleData(response.data.message);
     } catch (e) {
-      console.log(e);
-      handleError("ERROR");
-      //handleError(e.response.data.message);
+      handleError(e.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -147,15 +144,13 @@ function useProvideAuth() {
 
   const confirmEmail = async (iv, id) => {
     try {
-      console.log("ALOHA");
       clearState();
       setLoading(true);
       const response = await axios.get(CONFIRM_API(iv, id));
-      handleData(true);
+      handleData(response.data.message);
       handleToken(response.data.token);
     } catch (e) {
-      setIsError(true);
-      console.error(e);
+      handleError(e.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -167,10 +162,9 @@ function useProvideAuth() {
       setLoading(true);
 
       const response = await axios.post(FORGET_API, { email });
-      handleData(true);
+      handleData(response.data.message);
     } catch (e) {
-      handleError(true);
-      console.error(e);
+      handleError(e.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -184,11 +178,9 @@ function useProvideAuth() {
       const response = await axios.post(RESET_API(iv, id), {
         password,
       });
-      console.log(response);
-      handleData(true);
+      handleData(response.data.message);
     } catch (e) {
-      handleError(true);
-      console.error(e);
+      handleError(e.response.data.message);
     } finally {
       setLoading(false);
     }

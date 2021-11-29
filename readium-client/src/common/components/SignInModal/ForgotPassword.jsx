@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 import { AiOutlineMail } from "react-icons/ai";
+import { IoIosArrowBack } from "react-icons/io";
+import { PuffLoader } from "react-spinners";
 import { useAuth } from "../../hooks/useAuth";
 import useInput from "../../hooks/useInput";
 import { InputText, ErrorText, Input, SubmitButton } from "./styles";
 import { validateEmail } from "./validation";
+import ModalType from "./ModalType";
 
-const ReturnButton = styled.button`
+const ReturnButton = styled.div`
   position: absolute;
+  left: 11px;
+  top: 19px;
+  cursor: pointer;
 `;
 
 function isSubmittable(email, emailError) {
@@ -18,6 +25,10 @@ export default function ForgotPassword({ setModalType }) {
   const { forgotPassword, hasData, isError, isLoading, clearState } = useAuth();
   const [emailInput, handleEmailInput] = useInput("");
   const [emailError, setEmailError] = useState("");
+
+  const handleReturn = () => {
+    setModalType(ModalType.EMAIL_SIGN_IN);
+  };
 
   useEffect(() => {
     setEmailError(validateEmail(emailInput));
@@ -35,8 +46,13 @@ export default function ForgotPassword({ setModalType }) {
       </>
     );
 
+  if (isLoading) return <PuffLoader />;
+
   return (
     <>
+      <ReturnButton onClick={handleReturn}>
+        <IoIosArrowBack size={30} />
+      </ReturnButton>
       <h3>Please input your email</h3>
       <InputText className="mt-3">
         <span>Email</span>
@@ -58,3 +74,7 @@ export default function ForgotPassword({ setModalType }) {
     </>
   );
 }
+
+ForgotPassword.propTypes = {
+  setModalType: PropTypes.func.isRequired,
+};

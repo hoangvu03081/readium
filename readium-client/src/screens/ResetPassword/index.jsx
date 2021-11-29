@@ -59,7 +59,7 @@ export default function ResetPassword() {
     );
   }, [passwordInput, confirmPasswordInput]);
 
-  useEffect(() => () => clearState());
+  useEffect(() => () => clearState(), []);
 
   if (isLoading)
     return (

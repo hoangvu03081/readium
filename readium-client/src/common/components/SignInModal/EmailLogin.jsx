@@ -24,7 +24,7 @@ function isSubmittable(email, password, emailError, passwordError) {
 export default function EmailLogin({ setModalType }) {
   const toSignInOptions = () => setModalType(ModalType.SIGN_IN_OPTIONS);
   const toForgotPassword = () => setModalType(ModalType.FORGOT_PASSWORD);
-  const { isLoading, signIn, clearState } = useAuth();
+  const { isLoading, signIn, clearState, error } = useAuth();
 
   const [emailInput, handleEmailInput] = useInput("");
   const [passwordInput, handlePasswordInput] = useInput("");
@@ -62,9 +62,10 @@ export default function EmailLogin({ setModalType }) {
         type="password"
         value={passwordInput}
         onChange={handlePasswordInput}
+        className="mb-2"
       />
+      <ErrorText className="mb-2">{error}</ErrorText>
       <SubmitButton
-        className="mt-4"
         onClick={() => signIn(emailInput, passwordInput)}
         disabled={
           !isSubmittable(

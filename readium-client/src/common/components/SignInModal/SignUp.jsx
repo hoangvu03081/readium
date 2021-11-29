@@ -46,8 +46,8 @@ export default function SignUp({ setModalType }) {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
-  const { signUp, isLoading, isError, error, data, hasData, clearState } =
-    useAuth();
+  const { signUp, isLoading, error, data, hasData, clearState } = useAuth();
+
   useEffect(() => {
     setEmailError(validateEmail(emailInput));
     setPasswordError(validatePassword(passwordInput));

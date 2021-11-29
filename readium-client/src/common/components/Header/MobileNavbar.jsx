@@ -1,14 +1,10 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import { CSSTransition } from "react-transition-group";
+import { disablePageScroll, enablePageScroll } from "scroll-lock";
 import { useSelector, useDispatch } from "react-redux";
 import { FiEdit } from "react-icons/fi";
 import { FaRegUserCircle } from "react-icons/fa";
-import {
-  disableBodyScroll,
-  enableBodyScroll,
-  clearAllBodyScrollLocks,
-} from "body-scroll-lock";
 import { RiSettings3Line, RiDraftLine } from "react-icons/ri";
 import { BiHelpCircle } from "react-icons/bi";
 import { AiOutlineLogout } from "react-icons/ai";
@@ -16,6 +12,7 @@ import { MdOutlineClose } from "react-icons/md";
 import { navClosed } from "../../../slices/navbar-slice";
 import DimOverlay from "../DimOverlay";
 import StyledLink from "../StyledLink";
+import { useAuth } from "../../hooks/useAuth";
 
 const StyledNav = styled.nav`
   position: fixed;
@@ -75,11 +72,30 @@ const NavIcon = styled.i`
   left: 70px;
 `;
 
-function NavItem({ text, to, icon }) {
+function NavItem({ text, to, icon, signOut }) {
+  const dispatch = useDispatch();
+  const handleCloseNav = () => dispatch(navClosed());
+  if (signOut) {
+    const handleLogout = () => {
+      signOut();
+      handleCloseNav();
+    };
+    return (
+      <StyledNavItem className="mt-3">
+        <AlignMiddle>
+          <StyledLink onClick={handleLogout} to="/">
+            <NavIcon>{icon}</NavIcon>
+            {text}
+          </StyledLink>
+        </AlignMiddle>
+      </StyledNavItem>
+    );
+  }
+
   return (
     <StyledNavItem className="mt-3">
       <AlignMiddle>
-        <StyledLink to={to}>
+        <StyledLink onClick={handleCloseNav} to={to}>
           <NavIcon>{icon}</NavIcon>
           {text}
         </StyledLink>
@@ -89,6 +105,7 @@ function NavItem({ text, to, icon }) {
 }
 
 function NavContent() {
+  const { signOut } = useAuth();
   return (
     <>
       <NavItem text="My profile" to="/profile" icon={<FaRegUserCircle />} />
@@ -96,7 +113,12 @@ function NavContent() {
       <NavItem text="Settings" to="/settings" icon={<RiSettings3Line />} />
       <NavItem text="Help" to="/help" icon={<BiHelpCircle />} />
       <NavItem text="My draft" to="/draft" icon={<RiDraftLine />} />
-      <NavItem text="Logout" to="/logout" icon={<AiOutlineLogout />} />
+      <NavItem
+        text="Logout"
+        to="/"
+        signOut={signOut}
+        icon={<AiOutlineLogout />}
+      />
     </>
   );
 }
@@ -122,11 +144,9 @@ export default function MobileNavbar() {
   const dispatch = useDispatch();
   const handleCloseNav = () => dispatch(navClosed());
   const isNavOpen = useSelector((state) => state.navbar);
-
   useEffect(() => {
-    if (isNavOpen) disableBodyScroll(null);
-    if (!isNavOpen) enableBodyScroll(null);
-    return () => enableBodyScroll(null);
+    if (isNavOpen) disablePageScroll();
+    if (!isNavOpen) enablePageScroll();
   }, [isNavOpen]);
   return (
     <>
