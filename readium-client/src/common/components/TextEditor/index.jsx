@@ -19,6 +19,7 @@ const Layout = styled.div`
   padding-bottom: 80px;
 `;
 
+// STORY INFORMATION
 const StoryInformation = styled.div`
   text-align: center;
   margin-bottom: 100px;
@@ -175,8 +176,9 @@ const UploadImage = styled.div`
   }
 `;
 
+// STORY CONTENT
 const StoryContent = styled.div`
-  h1 {
+  > h1 {
     margin: 0 0 40px 0;
     padding: 0;
     font-family: "Raleway";
@@ -197,6 +199,9 @@ const TextEditorLayout = styled.div`
     font-weight: 500;
     font-size: 18px;
   }
+  .ql-bubble .ql-tooltip {
+    z-index: 1;
+  }
   .ql-code {
     color: #ccc;
   }
@@ -208,7 +213,7 @@ const Buttons = styled.div`
   height: 100%;
   div {
     position: sticky;
-    top: 460px;
+    top: 300px;
     display: flex;
     flex-direction: column;
   }
