@@ -188,7 +188,7 @@ const StoryContent = styled.div`
   }
 `;
 const TextEditorLayout = styled.div`
-  width: 75%;
+  width: 68%;
   margin: auto;
   position: relative;
   .ql-editor {
@@ -211,7 +211,7 @@ const Buttons = styled.div`
   height: 100%;
   div {
     position: sticky;
-    top: 260px;
+    top: 250px;
     display: flex;
     flex-direction: column;
   }

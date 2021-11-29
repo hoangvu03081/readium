@@ -128,7 +128,7 @@ const Right = styled.div`
     position: absolute;
     right: 5px;
     bottom: 51px;
-    z-index: 10;
+    z-index: 5;
     &:hover {
       cursor: pointer;
     }
@@ -157,7 +157,7 @@ const Right = styled.div`
     position: absolute;
     right: 5px;
     bottom: 0;
-    z-index: 10;
+    z-index: 5;
     &:hover {
       cursor: pointer;
     }
@@ -184,12 +184,13 @@ const CardOptionsClick = styled.div`
   padding: 0;
   &.hide {
     opacity: 0;
+    pointer-events: none;
     z-index: 1;
     transition: all 0.3s;
   }
   &.unhide {
     opacity: 1;
-    z-index: 100;
+    z-index: 9;
     transition: all 0.3s;
   }
 `;
@@ -205,8 +206,8 @@ export default function CardStyles({
   loveNumber,
   commentNumber,
 }) {
-  const [more, setMore] = useState(0);
   const [add, setAdd] = useState(0);
+  const [more, setMore] = useState(0);
   return (
     <Card className="row">
       <Left className="col-3">
