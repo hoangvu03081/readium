@@ -15,9 +15,6 @@ const LoveCommentStyle = styled.div`
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
-  &:hover {
-    cursor: pointer;
-  }
 `;
 
 const convert = (n) => {

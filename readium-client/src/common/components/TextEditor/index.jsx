@@ -170,7 +170,7 @@ const UploadImage = styled.div`
   }
   &:hover {
     cursor: pointer;
-    border: 1px solid #000000;
+    border: 1px solid #a3a3a3;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
     transition: all 0.25s;
   }
@@ -192,9 +192,7 @@ const TextEditorLayout = styled.div`
   margin: auto;
   position: relative;
   .ql-editor {
-    border: 1px solid black;
-    border-radius: 5px;
-    min-height: 250px;
+    min-height: 310px;
     font-family: "PT Sans";
     font-weight: 500;
     font-size: 18px;
@@ -213,7 +211,7 @@ const Buttons = styled.div`
   height: 100%;
   div {
     position: sticky;
-    top: 300px;
+    top: 260px;
     display: flex;
     flex-direction: column;
   }
