@@ -1,14 +1,14 @@
 const router = require("express").Router();
+const { authMiddleware } = require("../../utils/auth");
 const Post = require("../../models/Post");
 
-router.post('/posts', async (req, res) => {
+router.post('/posts',authMiddleware, async (req, res) => {
     const post = new Post(req.body)
-
     try {
         await post.save()
         res.status(201).send(post)
     } catch {
-        res.status(400).send({ message: ["Some errors occur in create posts"] })
+        res.status(400).send({ message: "Some errors occur in create posts" })
     }
 })
 
@@ -16,9 +16,9 @@ router.get('/posts', async (req, res) => {
 
     try {
         const post = await Post.find({})
-        res.status(201).send(post)
+        res.send(post)
     } catch {
-        res.status(500).send({ message: ["Some errors occur in finding posts"] })
+        res.status(500).send({ message: "Some errors occur in finding posts" })
     }
 })
 
@@ -28,26 +28,31 @@ router.get('/posts/:id', async (req, res) => {
     try {
         const post = await Post.findById(_id)
         if (!post){
-            return res.status(404).send({ message: ["Cannot find post with ID"] })
+            return res.status(404).send({ message: "Cannot find post with ID" })
         }
-        res.status(201).send(post)
+        res.send(post)
     } catch {
-        res.status(500).send({ message: ["Error in finding post with ID"] })
+        res.status(500).send({ message: "Error in finding post with ID" })
     }
 
 })
 
-router.delete('/posts/:id', async (req, res) => {
+router.delete('/posts/:id', authMiddleware, async (req, res) => {
     try {
-        const post = await Post.findByIdAndDelete(req.params.id)
-
+        const post = await Post.findById(req.params.id)
         if (!post){
-            res.status(404).send({ message: ["Cannot find post with ID"] })
+            res.status(404).send({ message: "Cannot find post with ID" })
         }
 
-        res.send(post)
+        if (req.user._id==post.author._id){
+            await Post.deleteOne({id: req.params.id})
+            res.send(post)
+        }
+        else{
+            res.status(404).send({message: "User_id does not match with author"})
+        }
     } catch (e) {
-        res.status(500).send({ message: ["Error in deleting post with ID"] })
+        res.status(500).send({ message: "Error in deleting post with ID" })
     }
 })
 
