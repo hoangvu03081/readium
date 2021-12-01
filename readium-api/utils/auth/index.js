@@ -12,14 +12,20 @@ const pathToPrivKey = path.join(
 );
 const PRIV_KEY = fs.readFileSync(pathToPrivKey, "utf-8");
 
-const issueJWT = (user) => {
-  const _id = user._id;
+const pathToPubKey = path.join(
+  __dirname,
+  "../../",
+  "config/jwt/id_rsa_pub.pem"
+);
 
+const PUB_KEY = fs.readFileSync(pathToPubKey, "utf8");
+
+const issueJWT = (_id) => {
   const expiresIn = "10y";
 
   const payload = {
-    vux: _id,
     iat: Date.now(),
+    vux: _id,
   };
 
   const signedToken = jsonwebtoken.sign(payload, PRIV_KEY, {
@@ -27,7 +33,13 @@ const issueJWT = (user) => {
     algorithm: "RS256",
   });
 
-  return "Bearer " + signedToken;
+  const token = "Bearer " + signedToken;
+
+  return token;
+};
+
+const decodeJWT = (token) => {
+  return jsonwebtoken.verify(token, PUB_KEY);
 };
 
 const authMiddleware = (req, res, next) => {
@@ -41,14 +53,6 @@ const authMiddleware = (req, res, next) => {
     }
   })(req, res, next);
 };
-
-const pathToPubKey = path.join(
-  __dirname,
-  "../../",
-  "config/jwt/id_rsa_pub.pem"
-);
-
-const PUB_KEY = fs.readFileSync(pathToPubKey, "utf8");
 
 // cookie
 // const re = /(\S+)\s+(\S+)/;
@@ -97,4 +101,11 @@ const decrypt = ([iv, content]) => {
   return JSON.parse(decrpyted.toString());
 };
 
-module.exports = { authMiddleware, issueJWT, jwtOptions, encrypt, decrypt };
+module.exports = {
+  authMiddleware,
+  issueJWT,
+  decodeJWT,
+  jwtOptions,
+  encrypt,
+  decrypt,
+};

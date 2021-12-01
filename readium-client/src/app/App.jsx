@@ -7,17 +7,17 @@ import Header from "../common/components/Header";
 import Home from "../screens/Home";
 import Page404 from "../screens/Page404";
 import WritePost from "../screens/WritePost";
+import ResetPassword from "../screens/ResetPassword";
 import "./App.css";
 
 function App() {
   return (
     <Switch>
-      <Route path="/auth">
-        <Switch>
-          <Route path="/auth/confirm">
-            <ConfirmEmail />
-          </Route>
-        </Switch>
+      <Route path="/auth/confirm">
+        <ConfirmEmail />
+      </Route>
+      <Route path="/auth/reset">
+        <ResetPassword />
       </Route>
       <Route path="/404">
         <Page404 />

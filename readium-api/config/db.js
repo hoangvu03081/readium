@@ -1,19 +1,7 @@
 const mongoose = require("mongoose");
-
-const {
-  MONGO_USERNAME,
-  MONGO_PASSWORD,
-  MONGO_HOSTNAME,
-  MONGO_DATABASE_NAME,
-  MONGO_PORT,
-} = process.env;
-
-const getUrl = (db) =>
-  `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}:${MONGO_PORT}/${db}?authSource=admin`;
+const { getUrl } = require("../utils/db");
 
 mongoose
-  .connect(getUrl(MONGO_DATABASE_NAME))
-  .then(console.log("successfully connect to mongodb"))
+  .connect(getUrl())
+  .then(() => {})
   .catch((err) => console.log(err));
-
-module.exports = { getUrl };

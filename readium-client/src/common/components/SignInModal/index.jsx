@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
+import { disablePageScroll, enablePageScroll } from "scroll-lock";
 import DimOverlay from "../DimOverlay";
 import { modalClosed } from "../../../slices/sign-in-slice";
 import ModalContent from "./ModalContent";
@@ -28,11 +29,8 @@ export default function SignInModal() {
   const isModalOpened = useSelector((state) => state.signInModal);
   const dispatch = useDispatch();
   useEffect(() => {
-    if (isModalOpened) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
+    if (isModalOpened) disablePageScroll();
+    if (!isModalOpened) enablePageScroll();
   }, [isModalOpened]);
   if (isModalOpened)
     return (

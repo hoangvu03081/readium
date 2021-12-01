@@ -3,10 +3,9 @@ const router = require("express").Router();
 const bcrypt = require("bcrypt");
 const passport = require("passport");
 
-const { decrypt, encrypt, issueJWT } = require("../utils/auth");
+const { decrypt, encrypt, issueJWT, authMiddleware } = require("../utils/auth");
 const User = require("../models/User");
-const Response = require("../models/Response");
-const { clientUrl } = require("../config");
+const { clientUrl } = require("../config/url");
 const validator = require("../utils/validator/Validator");
 const {
   sendWelcomeEmail,
@@ -32,61 +31,88 @@ router.post("/", async (req, res, next) => {
   const { email, password } = req.body;
 
   validator.resetErrors();
-  let isValid =
-    validator.validateEmail(email) & validator.validatePassword(password);
+  let isValid = validator.validateEmail(email);
 
-  const { responseObj } = res;
   if (!isValid) {
-    const { displayName, ...errors } = validator.errors;
-    responseObj.errors = errors;
-    return res.status(400).send(responseObj);
+    const { email } = validator.errors;
+    return res.status(400).send({ message: email[0] });
+  }
+
+  isValid = validator.validatePassword(password);
+  if (!isValid) {
+    const { password } = validator.errors;
+    return res.status(400).send({ message: password[0] });
   }
 
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      responseObj.messages = ["Could not find user"];
-      // #swagger.responses[404] = { description: 'Could not find user' }
-      return res.status(404).json(responseObj);
+      // #swagger.responses[404] = { description: 'Wrong email' }
+      return res.status(404).json({ message: "Wrong email" });
     }
 
     isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
-      responseObj.messages = ["Wrong password"];
       // #swagger.responses[400] = { description: 'Wrong password' }
-      return res.status(400).json(responseObj);
+      return res.status(400).json({ message: "Wrong password" });
     }
-    // cookie
-    // const token = issueJWT(user);
-    // res.cookie("jwt", token, {
-    //   httpOnly: true,
-    //   secure: process.env.NODE_ENV === "production",
-    // });
 
-    responseObj.messages = ["Login successfully"];
+    const token = issueJWT(user._id);
+
+    if (!user.tokens) user.tokens = [];
+    user.tokens.push(token);
+    await user.save();
+
     // #swagger.responses[200] = { description: 'Login successfully' }
-    return res.send({ ...responseObj, token: issueJWT(user) });
+    return res.send({
+      message: "Login successfully",
+      token,
+    });
   } catch (err) {
     return next(err);
   }
 });
 
-router.get("/logout", (req, res, next) => {
+router.get("/logout", authMiddleware, async (req, res, next) => {
   // #swagger.tags = ['Auth']
   // #swagger.summary = 'User Logout'
+  /**
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+   */
+  const index = req.user.tokens.indexOf(req.headers.authorization);
+  if (index !== -1) req.user.tokens.splice(index, 1);
+  await req.user.save();
 
-  // clear jwt cookie
-  // res.clearCookie("jwt");
   res.clearCookie("connect.sid");
-
   req.logOut();
+
   req.session.destroy((err) => {
     if (err) return next(err);
-
-    const { responseObj } = res;
-    responseObj.messages = ["Logout successfully"];
     // #swagger.responses[200] = { description: 'Logout successfully' }
-    res.send(responseObj);
+    res.send({ message: "Logout successfully" });
+  });
+});
+
+router.get("/logout-all", authMiddleware, async (req, res, next) => {
+  // #swagger.tags = ['Auth']
+  // #swagger.summary = 'User Logout from all devices'
+  /**
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+   */
+  req.user.tokens = [];
+  await req.user.save();
+
+  res.clearCookie("connect.sid");
+  req.logOut();
+
+  req.session.destroy((err) => {
+    if (err) return next(err);
+    // #swagger.responses[200] = { description: 'Logout successfully' }
+    res.send({ message: "Logout successfully" });
   });
 });
 
@@ -106,21 +132,23 @@ router.post("/register", async (req, res) => {
     } 
   */
 
-  const { email, password } = req.body;
+  const { email, password, displayName: dN } = req.body;
 
   validator.resetErrors();
-  const isValid =
-    validator.validateEmail(email) & validator.validatePassword(password);
-
-  const { responseObj } = res;
+  let isValid = validator.validateEmail(email);
   if (!isValid) {
-    const { displayName, ...errors } = validator.errors;
-    responseObj.errors = errors;
+    const { email: emailErr } = validator.errors;
     // #swagger.responses[400] = { description: 'Fields have errors' }
-    return res.status(400).send(responseObj);
+    return res.status(400).send({ message: emailErr[0] });
   }
 
-  const displayName = req.body.displayName || email.split("@")[0];
+  isValid = validator.validatePassword(password);
+  if (!isValid) {
+    const { password: passwordErr } = validator.errors;
+    return res.status(400).send({ message: passwordErr[0] });
+  }
+
+  const displayName = dN || email.split("@")[0];
   const count = await User.find({ displayName }).countDocuments();
   const profileId = displayName + (count ? count : "");
 
@@ -129,7 +157,6 @@ router.post("/register", async (req, res) => {
     password,
     profileId,
     displayName,
-    activated: false,
   });
 
   const [iv, encryptedId] = encrypt(newUser._id.toString());
@@ -141,16 +168,13 @@ router.post("/register", async (req, res) => {
     await newUser.save();
     await sendWelcomeEmail({ to: email, url: activationLink });
   } catch (err) {
-    responseObj.messages = ["Your email is already used"];
     // #swagger.responses[400] = { description: 'Email has already been used or fields have errors' }
-    return res.status(400).send(responseObj);
+    return res.status(400).send({ message: "Your email is already used" });
   }
-  responseObj.messages = [
-    "Please activate your account with the link sent to your email!",
-  ];
   // #swagger.responses[201] = { description: 'Account created' }
   return res.status(201).send({
-    ...responseObj,
+    message: "Please activate your account with the link sent to your email!",
+    user: newUser.getPublicProfile(),
   });
 });
 
@@ -160,48 +184,54 @@ router.get("/confirm", async (req, res) => {
   /*
     #swagger.parameters['iv'] = {
       in: 'query',
-      required: 'true',
+      required: true,
       type: 'string',
     }
     #swagger.parameters['id'] = {
       description: 'hashed user id',
       in: 'query',
-      required: 'true',
+      required: true,
       type: 'string',
     }
   */
 
   const { iv, id: hashedId } = req.query;
-  const decryptedId = decrypt([iv, hashedId]);
+  if (!iv || !hashedId) {
+    return res.status(400).send({
+      message: "Please provide enough query params. Missing iv or id",
+    });
+  }
+  let decryptedId;
+  try {
+    decryptedId = decrypt([iv, hashedId]);
+  } catch (err) {
+    return res
+      .status(400)
+      .send({ message: "Please provide correct parameters to this endpoint" });
+  }
 
   const user = await User.findById(decryptedId);
 
-  const { responseObj } = res;
   if (!user) {
-    responseObj.messages = ["User not found"];
     // #swagger.responses[404] = { description: 'User not found' }
-    return res.status(404).send(responseObj);
+    return res.status(404).send({ message: "User not found" });
   } else if (user.activated) {
-    responseObj.messages = ["You went wrong"];
     // #swagger.responses[400] = { description: 'Account has already activated' }
-    return res.status(400).send(responseObj);
+    return res.status(400).send({ message: "Account is already activated" });
   } else {
+    const token = issueJWT(user._id);
+
+    if (!user.tokens) user.tokens = [];
+    user.tokens.push(token);
+
     user.activationLink = undefined;
     user.activated = true;
     await user.save();
 
-    // cookie
-    // const token = issueJWT(user);
-    // res.cookie("jwt", token, {
-    //   httpOnly: true,
-    //   secure: process.env.NODE_ENV === "production",
-    // });
-
-    responseObj.messages = ["You have activated your account successfully."];
     // #swagger.responses[200] = { description: 'Activate successfully' }
     return res.send({
-      ...responseObj,
-      token: issueJWT(user),
+      message: "You have activated your account successfully.",
+      token,
     });
   }
 });
@@ -228,14 +258,9 @@ router.get(
   })
 );
 
-router.get("/facebook/login-succeeded", (req, res) => {
-  // #swagger.ignore = true
-  res.send({ message: ["Facebook login successfully"] });
-});
-
 router.get("/facebook/login-failed", (req, res) => {
   // #swagger.ignore = true
-  res.status(500).send({ message: ["Facebook login failed for some reason"] });
+  res.status(500).send({ message: "Facebook login failed for some reason" });
 });
 
 // redirect users to google
@@ -261,11 +286,6 @@ router.get("/google/login-failed", (req, res) => {
   res.status(500).send({ message: "Google Login failed for some reason" });
 });
 
-router.get("/google/login-succeeded", (req, res) => {
-  // #swagger.ignore = true
-  res.send({ message: "Google Login successfully" });
-});
-
 router.post("/forget", async (req, res, next) => {
   // #swagger.tags = ['Auth']
   // #swagger.summary = 'Users forget password'
@@ -284,11 +304,11 @@ router.post("/forget", async (req, res, next) => {
 
   try {
     const user = await User.findOne({ email: req.body.email });
-    const { responseObj } = res;
 
-    responseObj.messages = ["Please check your mail and reset your password!"];
     if (!user) {
-      return res.status(200).send(responseObj);
+      return res
+        .status(200)
+        .send({ message: "Please check your mail and reset your password!" });
     }
 
     const due = new Date();
@@ -302,7 +322,7 @@ router.post("/forget", async (req, res, next) => {
 
     // #swagger.responses[200] = { description: 'Request change password successfully or User not found but Mlem ' }
     return res.send({
-      message: ["Please check your mail and reset your password!"],
+      message: "Please check your mail and reset your password!",
     });
   } catch (err) {
     return next(err);
@@ -316,13 +336,13 @@ router.post("/reset", async (req, res, next) => {
   /*
     #swagger.parameters['iv'] = {
       in: 'query',
-      required: 'true',
+      required: true,
       type: 'string',
     }
     #swagger.parameters['id'] = {
       description: 'hashed user id',
       in: 'query',
-      required: 'true',
+      required: true,
       type: 'string',
     }
     #swagger.requestBody = {
@@ -340,36 +360,46 @@ router.post("/reset", async (req, res, next) => {
     const { iv, id: hashedId } = req.query;
     const { password } = req.body;
 
-    const { due, id } = decrypt([iv, hashedId]);
-    const { responseObj } = res;
-    if (new Date() >= new Date(due)) {
-      responseObj.messages = [
-        "Reset link dued, please request again to change your password",
-      ];
+    if (!iv || !hashedId) {
       return res.status(400).send({
-        ...responseObj,
+        message: "Please provide both iv and id to reset your password",
+      });
+    }
+
+    const { due, id } = decrypt([iv, hashedId]);
+    const dueDate = new Date(due);
+
+    if (!due || !id || dueDate.toString() === "Invalid Date") {
+      return res
+        .status(400)
+        .send({ message: "Your reset link is wrong. Please try again!" });
+    }
+
+    if (new Date() >= dueDate) {
+      return res.status(400).send({
+        message:
+          "Reset link dued, please request again to change your password",
       });
     }
     const user = await User.findById(id);
 
     if (!user) {
-      responseObj.messages = ["Bad request"];
       // #swagger.responses[400] = { description: 'User not found but for security send 400' }
-      return res.status(400).send(responseObj);
+      return res.status(400).send({ message: "Bad request" });
     }
 
     validator.resetErrors();
     const isValid = validator.validatePassword(password);
     if (!isValid) {
-      responseObj.messages = [validator.errors.password];
-      return res.status(400).send(responseObj);
+      return res.status(400).send({ message: validator.errors.password[0] });
     }
 
     user.password = password;
+    await user.hashPassword();
     user.resetLink = undefined;
     await user.save();
-    responseObj.messages = ["Reset password successfully"];
-    return res.send(responseObj);
+
+    return res.send({ message: "Reset password successfully" });
   } catch (err) {
     return next(err);
   }

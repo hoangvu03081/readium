@@ -23,7 +23,7 @@ export const Input = styled.input`
   }
 `;
 
-export const LoginButton = styled.button`
+export const SubmitButton = styled.button`
   width: 90%;
   height: 40px;
   background-color: ${({ theme }) => theme.colors.accent};
@@ -91,7 +91,7 @@ export const SignInOptionButton = styled.button`
   }
 `;
 
-export const ForgotPassword = styled.span`
+export const ForgotPasswordText = styled.span`
   font-weight: bold;
   cursor: pointer;
   color: black;
@@ -117,7 +117,6 @@ export const LoginText = styled.span`
   display: inline-block;
   font-size: 34px;
   font-weight: bold;
-  cursor: pointer;
 `;
 
 export const ErrorText = styled.span`

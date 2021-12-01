@@ -16,6 +16,14 @@ const doc = {
   // produces: ["application/json", "image/png"],
   tags: [
     {
+      name: "Comment",
+      description: "Comments' related endpoints",
+    },
+    {
+      name: "Post",
+      description: "Posts' related endpoints",
+    },
+    {
       name: "Auth",
       description: "Auth endpoints",
     },
@@ -74,7 +82,6 @@ const doc = {
     ChangePassword: {
       $oldPassword: "testing",
       $password: "testing123",
-      $password2: "testing123",
     },
     ResetPassword: {
       $password: "testing123",
@@ -90,6 +97,9 @@ const doc = {
     PostToCollection: {
       $postId: "post object id",
       $collectionName: "collection name",
+    },
+    Comment: {
+      $content: "Comment Content",
     },
   },
   securityDefinitions: {
