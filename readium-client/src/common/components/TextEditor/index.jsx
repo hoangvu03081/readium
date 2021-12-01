@@ -192,7 +192,7 @@ const TextEditorLayout = styled.div`
   margin: auto;
   position: relative;
   .ql-editor {
-    min-height: 310px;
+    min-height: 350px;
     font-family: "PT Sans";
     font-weight: 500;
     font-size: 18px;
@@ -211,7 +211,7 @@ const Buttons = styled.div`
   height: 100%;
   div {
     position: sticky;
-    top: 250px;
+    top: 130px;
     display: flex;
     flex-direction: column;
   }
@@ -288,9 +288,10 @@ export default function TextEditor() {
       matchVisual: false,
     },
   };
-  const handleChange = (event) => {
-    console.log(quill.current.getEditor().getText());
+  const handleChange = (event, delta) => {
+    console.log(quill.current.getEditor().getContents());
     console.log(event);
+    console.log(delta);
   };
   const addImage = () => {
     document.getElementsByClassName("ql-image")[0].click();

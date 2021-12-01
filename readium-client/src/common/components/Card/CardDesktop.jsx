@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import TagBtn from "../Buttons/TagBtn";
@@ -7,6 +7,7 @@ import { ReactComponent as AddCollection } from "../../../assets/icons/add_colle
 import { ReactComponent as AddedCollection } from "../../../assets/icons/added_collection.svg";
 import { ReactComponent as CardOptions } from "../../../assets/icons/card_options.svg";
 import More from "./More";
+import useOutsideClickAlerter from "../../hooks/useOutsideClickAlerter";
 
 const Card = styled.div`
   border: 2px solid ${({ theme }) => theme.colors.CardBlack};
@@ -83,7 +84,7 @@ const Right = styled.div`
       display: block;
     }
   }
-  svg:first-child {
+  > svg:first-child {
     font-size: 37px;
     position: absolute;
     right: 50px;
@@ -95,7 +96,7 @@ const Right = styled.div`
       transition: all 0.3s;
     }
   }
-  svg:nth-child(2) {
+  > svg:nth-child(2) {
     font-size: 31px;
     position: absolute;
     right: 50px;
@@ -107,7 +108,7 @@ const Right = styled.div`
       transition: all 0.3s;
     }
   }
-  svg:nth-child(3) {
+  > svg:nth-child(3) {
     font-size: 30px;
     position: absolute;
     right: 5px;
@@ -198,6 +199,22 @@ const CardOptionsClick = styled.div`
   }
 `;
 
+const Reff = styled.div`
+  font-size: 30px;
+  position: absolute;
+  right: 5px;
+  top: 0;
+  transition: all 0.3s;
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.2);
+    transition: all 0.3s;
+  }
+  &.active {
+    transform: scale(1.2);
+  }
+`;
+
 export default function CardDesktop({
   preview,
   title,
@@ -210,6 +227,10 @@ export default function CardDesktop({
 }) {
   const [add, setAdd] = useState(0);
   const [more, setMore] = useState(0);
+  const refBtn = useRef(null);
+  useOutsideClickAlerter(refBtn, () => {
+    setMore(0);
+  });
   return (
     <Card className="row">
       <Left className="col-3">
@@ -236,7 +257,8 @@ export default function CardDesktop({
           className={add === 0 ? "hide" : "unhide"}
           onClick={() => setAdd(0)}
         />
-        <CardOptions
+        <Reff
+          ref={refBtn}
           className={more === 1 ? "active" : ""}
           onClick={() => {
             if (more === 0) {
@@ -245,7 +267,9 @@ export default function CardDesktop({
               setMore(0);
             }
           }}
-        />
+        >
+          <CardOptions />
+        </Reff>
         <p>{duration > 1 ? `${duration} mins read` : `${duration} min read`}</p>
         <img src={userAvatar} alt="" />
       </Right>
