@@ -1,11 +1,13 @@
 const { once } = require("events");
+
 const JwtStrategy = require("passport-jwt").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
+
 const User = require("../models/User");
-const { serverUrl } = require("./index");
+const { serverUrl } = require("./url");
 const imageUtil = require("../utils/getImageBufferFromUrl");
-const { jwtOptions } = require("../utils/auth");
+const { decodeJWT, jwtOptions } = require("../utils/auth");
 
 const downloadImageFromUrl = async (url) => {
   imageUtil.getImageBufferFromUrl(url);
@@ -33,11 +35,19 @@ module.exports = function (passport) {
     new JwtStrategy(jwtOptions, async (jwt_payload, done) => {
       try {
         const user = await User.findOne({ _id: jwt_payload.vux });
-        if (!user) {
+        if (!user || !user.tokens) {
+          return done(null, false, { message: "User is not authorized" });
+        }
+        const isAuth = user.tokens.some((token) => {
+          const decoded = decodeJWT(token.split(" ")[1]);
+          return JSON.stringify(decoded) === JSON.stringify(jwt_payload);
+        });
+        if (!isAuth) {
           return done(null, false, { message: "User is not authorized" });
         }
         return done(null, user);
       } catch (err) {
+        console.log(err);
         return done(err);
       }
     })

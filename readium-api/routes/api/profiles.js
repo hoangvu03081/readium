@@ -1,7 +1,3 @@
-/**
- ** Profile related routes
- */
-
 const router = require("express").Router();
 
 const sizeOf = require("image-size");

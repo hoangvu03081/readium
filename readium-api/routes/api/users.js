@@ -1,7 +1,3 @@
-/**
- ** Authenticated users routes
- */
-
 const router = require("express").Router();
 const bcrypt = require("bcrypt");
 const Post = require("../../models/Post");
@@ -22,7 +18,7 @@ router.get("/protected", authMiddleware, (req, res) => {
     }]
    */
 
-  res.send({ message: "User is authenticated" });
+  return res.send({ message: "User is authenticated" });
 });
 /**
  *! Dev routes

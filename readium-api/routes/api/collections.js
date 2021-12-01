@@ -86,11 +86,13 @@ router.post("/posts", authMiddleware, async (req, res) => {
     return res.status(404).send({ message: "Invalid post id" });
   }
 
-  const collection = await req.user.collections.findOne(
+  const collection = req.user.collections.find(
     (col) => col.name === collectionName
   );
   if (!collection) {
-    return res.status(404).send({ message: "User doesn't have this collection." });
+    return res
+      .status(404)
+      .send({ message: "User doesn't have this collection." });
   }
 
   if (collection.posts.some((post) => post._id.toString() === postId)) {
@@ -140,7 +142,7 @@ router.delete("/posts", authMiddleware, async (req, res) => {
     return res.status(404).send({ message: "Invalid post id" });
   }
 
-  const collection = await req.user.collections.findOne(
+  const collection = req.user.collections.find(
     (col) => col.name === collectionName
   );
   if (!collection) {
