@@ -33,6 +33,7 @@ const Left = styled.div`
     height: 138px;
     object-fit: cover;
     border-radius: 8px;
+    padding-left: 5px;
     transition: all 0.4s;
     &:hover {
       cursor: pointer;
@@ -43,7 +44,7 @@ const Left = styled.div`
 `;
 
 const Middle = styled.div`
-  padding: 0 0 0 20px;
+  padding: 0 5px 0 25px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -62,9 +63,6 @@ const Middle = styled.div`
     font-family: "PT Sans";
     font-size: 13px;
     color: ${({ theme }) => theme.colors.CardContent};
-    &:hover {
-      cursor: pointer;
-    }
   }
   button {
     margin-right: 10px;
@@ -130,6 +128,7 @@ const Right = styled.div`
     position: absolute;
     right: 5px;
     bottom: 51px;
+    z-index: 10;
     &:hover {
       cursor: pointer;
     }
@@ -158,6 +157,7 @@ const Right = styled.div`
     position: absolute;
     right: 5px;
     bottom: 0;
+    z-index: 10;
     &:hover {
       cursor: pointer;
     }
@@ -182,13 +182,14 @@ const CardOptionsClick = styled.div`
   right: -27px;
   width: 135px;
   padding: 0;
-  z-index: 10;
   &.hide {
     opacity: 0;
+    z-index: 1;
     transition: all 0.3s;
   }
   &.unhide {
     opacity: 1;
+    z-index: 100;
     transition: all 0.3s;
   }
 `;

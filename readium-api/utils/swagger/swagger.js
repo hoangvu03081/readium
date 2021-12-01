@@ -24,6 +24,14 @@ const doc = {
       description: "Users' endpoints",
     },
     {
+      name: "Profile",
+      description: "Users' profiles related endpoints",
+    },
+    {
+      name: "Collection",
+      description: "Users' collections related endpoints",
+    },
+    {
       name: "Dev",
       description: "Testing routes",
     },
@@ -66,11 +74,9 @@ const doc = {
     ChangePassword: {
       $oldPassword: "testing",
       $password: "testing123",
-      $password2: "testing123",
     },
     ResetPassword: {
       $password: "testing123",
-      $password2: "testing123",
     },
     EditProfile: {
       displayName: "John Updated Doe",
@@ -79,6 +85,10 @@ const doc = {
     },
     Email: {
       $email: "john@example.com",
+    },
+    PostToCollection: {
+      $postId: "post object id",
+      $collectionName: "collection name",
     },
   },
   securityDefinitions: {

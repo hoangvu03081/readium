@@ -5,7 +5,7 @@ const passport = require("passport");
 
 const { decrypt, encrypt, issueJWT } = require("../utils/auth");
 const User = require("../models/User");
-const { url } = require("../config");
+const { clientUrl } = require("../config");
 const validator = require("../utils/validator/Validator");
 const {
   sendWelcomeEmail,
@@ -31,29 +31,40 @@ router.post("/", async (req, res, next) => {
   const { email, password } = req.body;
 
   validator.resetErrors();
-  let isValid =
-    validator.validateEmail(email) & validator.validatePassword(password);
+  let isValid = validator.validateEmail(email);
 
   if (!isValid) {
-    const { displayName, ...errors } = validator.errors;
-    return res.status(400).send({ errors });
+    const { email } = validator.errors;
+    return res.status(400).send({ message: email[0] });
+  }
+
+  isValid = validator.validatePassword(password);
+  if (!isValid) {
+    const { password } = validator.errors;
+    return res.status(400).send({ message: password[0] });
   }
 
   try {
     const user = await User.findOne({ email });
     if (!user) {
       // #swagger.responses[404] = { description: 'Could not find user' }
-      return res.status(404).json({ message: ["Could not find user"] });
+      return res.status(404).json({ message: "Could not find user" });
     }
 
     isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
       // #swagger.responses[400] = { description: 'Wrong password' }
-      return res.status(400).json({ message: ["Wrong password"] });
+      return res.status(400).json({ message: "Wrong password" });
     }
+    // cookie
+    // const token = issueJWT(user);
+    // res.cookie("jwt", token, {
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === "production",
+    // });
 
     // #swagger.responses[200] = { description: 'Login successfully' }
-    return res.send({ message: ["Login successfully"], token: issueJWT(user) });
+    return res.send({ message: "Login successfully", token: issueJWT(user) });
   } catch (err) {
     return next(err);
   }
@@ -63,11 +74,16 @@ router.get("/logout", (req, res, next) => {
   // #swagger.tags = ['Auth']
   // #swagger.summary = 'User Logout'
 
+  // clear jwt cookie
+  // res.clearCookie("jwt");
+  res.clearCookie("connect.sid");
+
   req.logOut();
   req.session.destroy((err) => {
     if (err) return next(err);
+
     // #swagger.responses[200] = { description: 'Logout successfully' }
-    res.send({ message: ["Log out successfully"] });
+    res.send({ message: "Logout successfully" });
   });
 });
 
@@ -79,9 +95,9 @@ router.post("/register", async (req, res) => {
       required: true,
       content: {
         "application/json": {
-            schema: {
-                $ref: "#/definitions/RegisterUser"
-            }  
+          schema: {
+            $ref: "#/definitions/RegisterUser"
+          }  
         }
       }
     } 
@@ -90,36 +106,46 @@ router.post("/register", async (req, res) => {
   const { email, password } = req.body;
 
   validator.resetErrors();
-  const isValid =
-    validator.validateEmail(email) & validator.validatePassword(password);
-
+  let isValid = validator.validateEmail(email);
   if (!isValid) {
-    const { displayName, ...errors } = validator.errors;
+    const { email } = validator.errors;
     // #swagger.responses[400] = { description: 'Fields have errors' }
-    return res.status(400).send({ errors });
+    return res.status(400).send({ message: email[0] });
   }
+
+  isValid = validator.validatePassword(password);
+  if (!isValid) {
+    const { password } = validator.errors;
+    return res.status(400).send({ message: password[0] });
+  }
+
+  const displayName = req.body.displayName || email.split("@")[0];
+  const count = await User.find({ displayName }).countDocuments();
+  const profileId = displayName + (count ? count : "");
 
   const newUser = new User({
     email,
     password,
-    displayName: email.split('@')[0],
+    profileId,
+    displayName,
     activated: false,
   });
 
   const [iv, encryptedId] = encrypt(newUser._id.toString());
 
-  const activationLink = `${url}/auth/confirm?iv=${iv}&id=${encryptedId}`;
+  const activationLink = `${clientUrl}/auth/confirm?iv=${iv}&id=${encryptedId}`;
   newUser.activationLink = activationLink;
   try {
-    await sendWelcomeEmail({ to: email, url: activationLink });
+    await newUser.hashPassword();
     await newUser.save();
+    await sendWelcomeEmail({ to: email, url: activationLink });
   } catch (err) {
     // #swagger.responses[400] = { description: 'Email has already been used or fields have errors' }
-    return res.status(400).send({ message: ["Your email is already used"] });
+    return res.status(400).send({ message: "Your email is already used" });
   }
   // #swagger.responses[201] = { description: 'Account created' }
   return res.status(201).send({
-    message: ["Please activate your account with the link sent to your email!"],
+    message: "Please activate your account with the link sent to your email!",
   });
 });
 
@@ -141,16 +167,28 @@ router.get("/confirm", async (req, res) => {
   */
 
   const { iv, id: hashedId } = req.query;
-  const decryptedId = decrypt([iv, hashedId]);
+  if (!iv || !hashedId) {
+    return res.status(400).send({
+      message: "Please provide enough query params. Missing iv or id",
+    });
+  }
+  let decryptedId;
+  try {
+    decryptedId = decrypt([iv, hashedId]);
+  } catch (err) {
+    return res
+      .status(400)
+      .send({ message: "Please provide correct parameters to this endpoint" });
+  }
 
   const user = await User.findById(decryptedId);
 
   if (!user) {
     // #swagger.responses[404] = { description: 'User not found' }
-    return res.status(404).send({ message: ["User not found"] });
+    return res.status(404).send({ message: "User not found" });
   } else if (user.activated) {
     // #swagger.responses[400] = { description: 'Account has already activated' }
-    return res.status(400).send({ message: ["You went wrong"] });
+    return res.status(400).send({ message: "Account is already activated" });
   } else {
     user.activationLink = undefined;
     user.activated = true;
@@ -158,7 +196,7 @@ router.get("/confirm", async (req, res) => {
 
     // #swagger.responses[200] = { description: 'Activate successfully' }
     return res.send({
-      message: ["You have activated your account successfully."],
+      message: "You have activated your account successfully.",
       token: issueJWT(user),
     });
   }
@@ -181,19 +219,14 @@ router.get(
   "/facebook/callback",
   // #swagger.ignore = true
   passport.authenticate("facebook", {
-    successRedirect: "/auth/facebook/login-succeeded",
+    successRedirect: clientUrl,
     failureRedirect: "/auth/facebook/login-failed",
   })
 );
 
-router.get("/facebook/login-succeeded", (req, res) => {
-  // #swagger.ignore = true
-  res.send({ message: ["Facebook login successfully"] });
-});
-
 router.get("/facebook/login-failed", (req, res) => {
   // #swagger.ignore = true
-  res.status(500).send({ message: ["Facebook login failed for some reason"] });
+  res.status(500).send({ message: "Facebook login failed for some reason" });
 });
 
 // redirect users to google
@@ -209,7 +242,7 @@ router.get(
   "/google/callback",
   // #swagger.ignore = true
   passport.authenticate("google", {
-    successRedirect: "/auth/google/login-succeeded",
+    successRedirect: clientUrl,
     failureRedirect: "/auth/google/login-failed",
   })
 );
@@ -217,11 +250,6 @@ router.get(
 router.get("/google/login-failed", (req, res) => {
   // #swagger.ignore = true
   res.status(500).send({ message: "Google Login failed for some reason" });
-});
-
-router.get("/google/login-succeeded", (req, res) => {
-  // #swagger.ignore = true
-  res.send({ message: "Google Login successfully" });
 });
 
 router.post("/forget", async (req, res, next) => {
@@ -244,19 +272,23 @@ router.post("/forget", async (req, res, next) => {
     const user = await User.findOne({ email: req.body.email });
 
     if (!user) {
-      // #swagger.responses[404] = { description: 'User not found' }
-      return res.status(404).send({ message: ["User is not found"] });
+      return res
+        .status(200)
+        .send({ message: "Please check your mail and reset your password!" });
     }
 
-    const [iv, hashedId] = encrypt(user._id.toString());
-    const resetLink = `${url}/auth/reset?iv=${iv}&id=${hashedId}`;
+    const due = new Date();
+    due.setDate(due.getDate() + 7);
+
+    const [iv, hashedId] = encrypt({ due, id: user._id.toString() });
+    const resetLink = `${clientUrl}/auth/reset?iv=${iv}&id=${hashedId}`;
     user.resetLink = resetLink;
     await user.save();
     await sendResetPasswordEmail({ to: user.email, url: resetLink });
 
-    // #swagger.responses[200] = { description: 'Request change password successfully' }
+    // #swagger.responses[200] = { description: 'Request change password successfully or User not found but Mlem ' }
     return res.send({
-      message: ["Please check your mail and reset your password!"],
+      message: "Please check your mail and reset your password!",
     });
   } catch (err) {
     return next(err);
@@ -292,35 +324,48 @@ router.post("/reset", async (req, res, next) => {
   */
   try {
     const { iv, id: hashedId } = req.query;
-    const { password, password2 } = req.body;
+    const { password } = req.body;
 
-    const id = decrypt([iv, hashedId]);
+    if (!iv || !hashedId) {
+      return res.status(400).send({
+        message: "Please provide both iv and id to reset your password",
+      });
+    }
+
+    const { due, id } = decrypt([iv, hashedId]);
+    const dueDate = new Date(due);
+
+    if (!due || !id || dueDate.toString() === "Invalid Date") {
+      return res
+        .status(400)
+        .send({ message: "Your reset link is wrong. Please try again!" });
+    }
+
+    if (new Date() >= dueDate) {
+      return res.status(400).send({
+        message:
+          "Reset link dued, please request again to change your password",
+      });
+    }
     const user = await User.findById(id);
 
     if (!user) {
-      // #swagger.responses[400] = { description: 'User not found' }
-      return res.status(400).send({ message: ["Bad request"] });
-    }
-
-    if (password !== password2) {
-      // #swagger.responses[400] = { description: 'Retype wrong' }
-      return res.status(400).send({
-        message: ["Your password must match"],
-      });
+      // #swagger.responses[400] = { description: 'User not found but for security send 400' }
+      return res.status(400).send({ message: "Bad request" });
     }
 
     validator.resetErrors();
     const isValid = validator.validatePassword(password);
     if (!isValid) {
-      return res
-        .status(400)
-        .send({ errors: { password: validator.errors.password } });
+      return res.status(400).send({ message: validator.errors.password[0] });
     }
 
     user.password = password;
+    await user.hashPassword();
     user.resetLink = undefined;
     await user.save();
-    return res.send({ message: ["Reset password successfully"] });
+
+    return res.send({ message: "Reset password successfully" });
   } catch (err) {
     return next(err);
   }

@@ -20,6 +20,14 @@
       "description": "Users' endpoints"
     },
     {
+      "name": "Profile",
+      "description": "Users' profiles related endpoints"
+    },
+    {
+      "name": "Collection",
+      "description": "Users' collections related endpoints"
+    },
+    {
       "name": "Dev",
       "description": "Testing routes"
     }
@@ -30,7 +38,8 @@
         "tags": [
           "Dev"
         ],
-        "description": "Get all users",
+        "summary": "Get all users",
+        "description": "",
         "parameters": [],
         "responses": {}
       },
@@ -38,7 +47,30 @@
         "tags": [
           "Dev"
         ],
-        "description": "Delete all users",
+        "summary": "Delete all users",
+        "description": "",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/collections": {
+      "get": {
+        "tags": [
+          "Dev"
+        ],
+        "summary": "Get all users' collections",
+        "description": "",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/": {
+      "delete": {
+        "tags": [
+          "Dev"
+        ],
+        "summary": "Delete all data",
+        "description": "",
         "parameters": [],
         "responses": {}
       }
@@ -184,10 +216,7 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Request change password successfully"
-          },
-          "404": {
-            "description": "User not found"
+            "description": "Request change password successfully or User not found but Mlem "
           }
         },
         "requestBody": {
@@ -226,7 +255,7 @@
         ],
         "responses": {
           "400": {
-            "description": "Retype wrong"
+            "description": "User not found but for security send 400"
           }
         },
         "requestBody": {
@@ -350,42 +379,6 @@
         ]
       }
     },
-    "/users/profile": {
-      "patch": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Edit profile",
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Successfully edit profile"
-          },
-          "400": {
-            "description": "User input displayName with errors"
-          },
-          "500": {
-            "description": "Some errors occured when saving to mongodb"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/EditProfile"
-              }
-            }
-          }
-        }
-      }
-    },
     "/users/change-password": {
       "post": {
         "tags": [
@@ -422,7 +415,158 @@
         }
       }
     },
-    "/users/avatar/{id}": {
+    "/users/profile/": {
+      "get": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Get my profile",
+        "description": "",
+        "parameters": [],
+        "responses": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Edit profile",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully edit profile"
+          },
+          "400": {
+            "description": "User input displayName with errors"
+          },
+          "500": {
+            "description": "Some errors occured when saving to mongodb"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditProfile"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/profile/?": {
+      "patch": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Edit subfield",
+        "description": "",
+        "parameters": [
+          {
+            "name": "displayName",
+            "in": "query",
+            "type": "boolean"
+          },
+          {
+            "name": "biography",
+            "in": "query",
+            "type": "boolean"
+          },
+          {
+            "name": "job",
+            "in": "query",
+            "type": "boolean"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "User input displayName with errors"
+          },
+          "500": {
+            "description": "Some errors occured when saving to mongodb"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditProfile"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/profile\r/": {
+      "post": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Upload avatar",
+        "description": "",
+        "parameters": [],
+        "responses": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "avatar": {
+                    "type": "file"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/profile/{profileId}": {
+      "get": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Get others",
+        "description": "",
+        "parameters": [
+          {
+            "name": "profileId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/users/profile/avatar/{id}": {
       "get": {
         "tags": [
           "User"
@@ -447,6 +591,105 @@
           },
           "500": {
             "description": "Object Id is error or mongodb error"
+          }
+        }
+      }
+    },
+    "/users/collections/": {
+      "post": {
+        "tags": [
+          "Collection"
+        ],
+        "summary": "Create new collection",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "default": "collection name"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/collections/posts": {
+      "post": {
+        "tags": [
+          "Collection"
+        ],
+        "summary": "Add post to collection",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostToCollection"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Collection"
+        ],
+        "summary": "Delete post from collection",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostToCollection"
+              }
+            }
           }
         }
       }
@@ -614,15 +857,10 @@
           "password": {
             "type": "string",
             "example": "testing123"
-          },
-          "password2": {
-            "type": "string",
-            "example": "testing123"
           }
         },
         "required": [
-          "password",
-          "password2"
+          "password"
         ]
       },
       "EditProfile": {
@@ -652,6 +890,23 @@
         },
         "required": [
           "email"
+        ]
+      },
+      "PostToCollection": {
+        "type": "object",
+        "properties": {
+          "postId": {
+            "type": "string",
+            "example": "post object id"
+          },
+          "collectionName": {
+            "type": "string",
+            "example": "collection name"
+          }
+        },
+        "required": [
+          "postId",
+          "collectionName"
         ]
       }
     },
