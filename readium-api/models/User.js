@@ -57,7 +57,7 @@ const userSchema = new Schema({
   ],
   activated: {
     type: Boolean,
-    required: true,
+    default: false,
   },
   collections: {
     default: [
@@ -74,12 +74,24 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  tokens: [String],
+  liked: [
+    {
+      type: ObjectId,
+      required: true,
+      ref: "Post",
+    },
+  ],
+  facebook: String,
+  twitter: String,
+  instagram: String,
 });
 
 userSchema.methods.getPublicProfile = function () {
   const user = this;
   const userObject = user.toObject();
   delete userObject.password;
+  delete userObject.tokens;
   delete userObject.notifications;
   delete userObject.activated;
   delete userObject.activationLink;

@@ -3,9 +3,9 @@ const router = require("express").Router();
 const bcrypt = require("bcrypt");
 const passport = require("passport");
 
-const { decrypt, encrypt, issueJWT } = require("../utils/auth");
+const { decrypt, encrypt, issueJWT, authMiddleware } = require("../utils/auth");
 const User = require("../models/User");
-const { clientUrl } = require("../config");
+const { clientUrl } = require("../config/url");
 const validator = require("../utils/validator/Validator");
 const {
   sendWelcomeEmail,
@@ -47,8 +47,8 @@ router.post("/", async (req, res, next) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      // #swagger.responses[404] = { description: 'Could not find user' }
-      return res.status(404).json({ message: "Could not find user" });
+      // #swagger.responses[404] = { description: 'Wrong email' }
+      return res.status(404).json({ message: "Wrong email" });
     }
 
     isValid = await bcrypt.compare(password, user.password);
@@ -56,32 +56,61 @@ router.post("/", async (req, res, next) => {
       // #swagger.responses[400] = { description: 'Wrong password' }
       return res.status(400).json({ message: "Wrong password" });
     }
-    // cookie
-    // const token = issueJWT(user);
-    // res.cookie("jwt", token, {
-    //   httpOnly: true,
-    //   secure: process.env.NODE_ENV === "production",
-    // });
+
+    const token = issueJWT(user._id);
+
+    if (!user.tokens) user.tokens = [];
+    user.tokens.push(token);
+    await user.save();
 
     // #swagger.responses[200] = { description: 'Login successfully' }
-    return res.send({ message: "Login successfully", token: issueJWT(user) });
+    return res.send({
+      message: "Login successfully",
+      token,
+    });
   } catch (err) {
     return next(err);
   }
 });
 
-router.get("/logout", (req, res, next) => {
+router.get("/logout", authMiddleware, async (req, res, next) => {
   // #swagger.tags = ['Auth']
   // #swagger.summary = 'User Logout'
+  /**
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+   */
+  const index = req.user.tokens.indexOf(req.headers.authorization);
+  if (index !== -1) req.user.tokens.splice(index, 1);
+  await req.user.save();
 
-  // clear jwt cookie
-  // res.clearCookie("jwt");
   res.clearCookie("connect.sid");
-
   req.logOut();
+
   req.session.destroy((err) => {
     if (err) return next(err);
+    // #swagger.responses[200] = { description: 'Logout successfully' }
+    res.send({ message: "Logout successfully" });
+  });
+});
 
+router.get("/logout-all", authMiddleware, async (req, res, next) => {
+  // #swagger.tags = ['Auth']
+  // #swagger.summary = 'User Logout from all devices'
+  /**
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+   */
+  req.user.tokens = [];
+  await req.user.save();
+
+  res.clearCookie("connect.sid");
+  req.logOut();
+
+  req.session.destroy((err) => {
+    if (err) return next(err);
     // #swagger.responses[200] = { description: 'Logout successfully' }
     res.send({ message: "Logout successfully" });
   });
@@ -103,23 +132,23 @@ router.post("/register", async (req, res) => {
     } 
   */
 
-  const { email, password } = req.body;
+  const { email, password, displayName: dN } = req.body;
 
   validator.resetErrors();
   let isValid = validator.validateEmail(email);
   if (!isValid) {
-    const { email } = validator.errors;
+    const { email: emailErr } = validator.errors;
     // #swagger.responses[400] = { description: 'Fields have errors' }
-    return res.status(400).send({ message: email[0] });
+    return res.status(400).send({ message: emailErr[0] });
   }
 
   isValid = validator.validatePassword(password);
   if (!isValid) {
-    const { password } = validator.errors;
-    return res.status(400).send({ message: password[0] });
+    const { password: passwordErr } = validator.errors;
+    return res.status(400).send({ message: passwordErr[0] });
   }
 
-  const displayName = req.body.displayName || email.split("@")[0];
+  const displayName = dN || email.split("@")[0];
   const count = await User.find({ displayName }).countDocuments();
   const profileId = displayName + (count ? count : "");
 
@@ -128,7 +157,6 @@ router.post("/register", async (req, res) => {
     password,
     profileId,
     displayName,
-    activated: false,
   });
 
   const [iv, encryptedId] = encrypt(newUser._id.toString());
@@ -146,6 +174,7 @@ router.post("/register", async (req, res) => {
   // #swagger.responses[201] = { description: 'Account created' }
   return res.status(201).send({
     message: "Please activate your account with the link sent to your email!",
+    user: newUser.getPublicProfile(),
   });
 });
 
@@ -155,13 +184,13 @@ router.get("/confirm", async (req, res) => {
   /*
     #swagger.parameters['iv'] = {
       in: 'query',
-      required: 'true',
+      required: true,
       type: 'string',
     }
     #swagger.parameters['id'] = {
       description: 'hashed user id',
       in: 'query',
-      required: 'true',
+      required: true,
       type: 'string',
     }
   */
@@ -190,6 +219,11 @@ router.get("/confirm", async (req, res) => {
     // #swagger.responses[400] = { description: 'Account has already activated' }
     return res.status(400).send({ message: "Account is already activated" });
   } else {
+    const token = issueJWT(user._id);
+
+    if (!user.tokens) user.tokens = [];
+    user.tokens.push(token);
+
     user.activationLink = undefined;
     user.activated = true;
     await user.save();
@@ -197,7 +231,7 @@ router.get("/confirm", async (req, res) => {
     // #swagger.responses[200] = { description: 'Activate successfully' }
     return res.send({
       message: "You have activated your account successfully.",
-      token: issueJWT(user),
+      token,
     });
   }
 });
@@ -302,13 +336,13 @@ router.post("/reset", async (req, res, next) => {
   /*
     #swagger.parameters['iv'] = {
       in: 'query',
-      required: 'true',
+      required: true,
       type: 'string',
     }
     #swagger.parameters['id'] = {
       description: 'hashed user id',
       in: 'query',
-      required: 'true',
+      required: true,
       type: 'string',
     }
     #swagger.requestBody = {

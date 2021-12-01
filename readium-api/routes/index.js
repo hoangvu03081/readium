@@ -6,24 +6,25 @@ const router = require("express").Router();
 
 const authRoute = require("./auth");
 const usersRoute = require("./api/users");
-const profileRoute = require("./api/profile");
-const collectionRoute = require("./api/collection");
+const profilesRoute = require("./api/profiles");
+const collectionsRoute = require("./api/collections");
+const postsRoute = require("./api/posts");
+const commentsRoute = require("./api/comments");
 
 /**
  *! Dev routes
  */
 const User = require("../models/User");
-const collectionSchema = require("../models/Collection");
 const Post = require("../models/Post");
 
-router.get("/users", async (req, res) => {
+router.get("/dev/users", async (req, res) => {
   // #swagger.tags = ['Dev']
   // #swagger.summary = 'Get all users'
-  const users = await User.find({}, {avatar: 0});
+  const users = await User.find({}, { avatar: 0 });
   res.send(users);
 });
 
-router.get("/collections", async (req, res) => {
+router.get("/dev/collections", async (req, res) => {
   // #swagger.tags = ['Dev']
   // #swagger.summary = "Get all users' collections"
   const users = await User.find();
@@ -34,14 +35,21 @@ router.get("/collections", async (req, res) => {
   res.send(collections);
 });
 
-router.delete("/users", async (req, res) => {
+router.get("/dev/posts", async (req, res) => {
+  // #swagger.tags = ['Dev']
+  // #swagger.summary = "Get all posts"
+  const posts = await Post.find({}, { coverImage: 0 });
+  return res.send(posts);
+});
+
+router.delete("/dev/users", async (req, res) => {
   // #swagger.tags = ['Dev']
   // #swagger.summary = 'Delete all users'
   await User.deleteMany();
   res.send();
 });
 
-router.delete("/", async (req, res) => {
+router.delete("/dev", async (req, res) => {
   // #swagger.tags = ['Dev']
   // #swagger.summary = 'Delete all data'
   await User.deleteMany();
@@ -55,7 +63,9 @@ router.delete("/", async (req, res) => {
 
 router.use("/auth", authRoute);
 router.use("/users", usersRoute);
-router.use("/users/profile", profileRoute);
-router.use("/users/collections", collectionRoute);
+router.use("/users/profiles", profilesRoute);
+router.use("/users/collections", collectionsRoute);
+router.use("/posts", postsRoute);
+router.use("/posts/:id/comments", commentsRoute);
 
 module.exports = router;

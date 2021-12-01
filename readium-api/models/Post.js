@@ -7,6 +7,7 @@ const {
 } = mongoose;
 
 const postSchema = new Schema({
+  // required
   title: {
     type: String,
     required: true,
@@ -24,16 +25,40 @@ const postSchema = new Schema({
     type: String,
     required: true,
   },
-  publishDate: {
-    // when users publish the draft
-    type: Date,
-    required: true,
-  },
   author: {
     type: ObjectId,
     required: true,
   },
-  summary: String,
+  // required
+  views: {
+    type: Number,
+    default: 0,
+  },
+  likes: [
+    {
+      type: ObjectId,
+      required: true,
+      ref: "User",
+    },
+  ],
+  comments: [
+    {
+      content: {
+        type: String,
+        required: true,
+      },
+      user: {
+        type: ObjectId,
+        required: true,
+        ref: "User",
+      },
+    },
+  ],
+  tags: [String],
+  isPublished: {
+    type: Boolean,
+    default: false,
+  },
   textConnection: [
     {
       // the relevant connection to the post toPost
@@ -44,31 +69,8 @@ const postSchema = new Schema({
       score: Number,
     },
   ],
-  views: {
-    type: Number,
-    required: true,
-  },
-  likes: {
-    type: Number,
-    required: true,
-  },
-  comments: [
-    {
-      content: {
-        type: String,
-        required: true,
-      },
-      user: {
-        type: ObjectId,
-        ref: "User",
-      },
-    },
-  ],
-  tags: [String],
-  isPublished: {
-    type: Boolean,
-    required: true,
-  },
+  publishDate: Date,
+  summary: String,
 });
 
 module.exports = model("Post", postSchema);
