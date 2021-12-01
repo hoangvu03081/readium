@@ -56,7 +56,7 @@ const DropdownText = styled.span`
   }
 `;
 
-function StyledDropdownItem({ children, to, text }) {
+function StyledDropdownItem({ children, to, text, toggleDropdown }) {
   const [isHover, { onMouseOver, onMouseOut }] = useHover();
   if (to) {
     return (
@@ -65,7 +65,7 @@ function StyledDropdownItem({ children, to, text }) {
         onMouseOver={onMouseOver}
         onMouseOut={onMouseOut}
       >
-        <StyledLink to={to}>
+        <StyledLink onClick={toggleDropdown} to={to}>
           <DropdownIcon>{children}</DropdownIcon>
           <DropdownText className={isHover ? "hovering" : ""}>
             {text}
@@ -91,25 +91,46 @@ StyledDropdownItem.propTypes = {
   // eslint-disable-next-line react/require-default-props
   to: PropTypes.string,
   text: PropTypes.string.isRequired,
+  toggleDropdown: PropTypes.func.isRequired,
 };
 
-export default function AvatarDropdown() {
+export default function AvatarDropdown({ handleToggleDropdown }) {
   const { signOut } = useAuth();
   return (
     <StyledAvatarDropdown>
-      <StyledDropdownItem to="/" text="My profile">
+      <StyledDropdownItem
+        toggleDropdown={handleToggleDropdown}
+        to="/"
+        text="My profile"
+      >
         <FaRegUserCircle />
       </StyledDropdownItem>
-      <StyledDropdownItem to="/write" text="Write story">
+      <StyledDropdownItem
+        toggleDropdown={handleToggleDropdown}
+        to="/write"
+        text="Write story"
+      >
         <FiEdit />
       </StyledDropdownItem>
-      <StyledDropdownItem to="/settings" text="Settings">
+      <StyledDropdownItem
+        toggleDropdown={handleToggleDropdown}
+        to="/settings"
+        text="Settings"
+      >
         <FiSettings />
       </StyledDropdownItem>
-      <StyledDropdownItem to="/help" text="Help">
+      <StyledDropdownItem
+        toggleDropdown={handleToggleDropdown}
+        to="/help"
+        text="Help"
+      >
         <BiHelpCircle />
       </StyledDropdownItem>
-      <StyledDropdownItem to="/draft" text="My draft">
+      <StyledDropdownItem
+        toggleDropdown={handleToggleDropdown}
+        to="/draft"
+        text="My draft"
+      >
         <RiDraftLine />
       </StyledDropdownItem>
       <div onClick={signOut} role="button" tabIndex={0} onKeyPress={signOut}>
@@ -119,55 +140,4 @@ export default function AvatarDropdown() {
       </div>
     </StyledAvatarDropdown>
   );
-  // return (
-  //   <StyledAvatarDropdown>
-  //     <StyledDropdownItem to="/" text="My profile">
-  //       <FaRegUserCircle />
-  //     </StyledDropdownItem>
-  //     <DropdownItem className="mt-sm-3 mb-sm-3">
-  //       <StyledLink to="/">
-  //         <DropdownIcon>
-  //           <FaRegUserCircle />
-  //         </DropdownIcon>
-  //         <span>My profile</span>
-  //       </StyledLink>
-  //     </DropdownItem>
-  //     <DropdownItem className="mb-sm-3">
-  //       <DropdownIcon>
-  //         <FiEdit />
-  //       </DropdownIcon>
-  //       Write story
-  //     </DropdownItem>
-  //     <DropdownItem className="mb-sm-3">
-  //       <DropdownIcon>
-  //         <RiSettings3Line size={22} />
-  //       </DropdownIcon>
-  //       Settings
-  //     </DropdownItem>
-  //     <DropdownItem className="mb-sm-3">
-  //       <DropdownIcon>
-  //         <BiHelpCircle size={22} />
-  //       </DropdownIcon>
-  //       Help
-  //     </DropdownItem>
-  //     <DropdownItem className="mb-sm-3">
-  //       <DropdownIcon>
-  //         <GrLanguage size={22} />
-  //       </DropdownIcon>
-  //       Languages
-  //     </DropdownItem>
-  //     <DropdownItem className="mb-sm-3">
-  //       <DropdownIcon>
-  //         <RiDraftLine size={22} />
-  //       </DropdownIcon>
-  //       My draft
-  //     </DropdownItem>
-  //     <DropdownItem className="mb-sm-3">
-  //       <DropdownIcon>
-  //         <AiOutlineLogout size={22} />
-  //       </DropdownIcon>
-  //       Logout
-  //     </DropdownItem>
-  //   </StyledAvatarDropdown>
-  // );
 }

@@ -19,7 +19,7 @@ const CONFIRM_API = (iv, id) => `${getURL("/auth/confirm")}?iv=${iv}&id=${id}`;
 const FACEBOOK_API = getURL("/auth/facebook");
 const GOOGLE_API = getURL("/auth/google");
 const FORGET_API = getURL("/auth/forget");
-const RESET_API = getURL("/auth/reset");
+const RESET_API = (iv, id) => `${getURL("/auth/reset")}?iv=${iv}&id=${id}`;
 
 const authContext = createContext();
 
@@ -64,7 +64,7 @@ function useProvideAuth() {
       setAuth(true);
     } catch (e) {
       setAuth(false);
-    } finally{
+    } finally {
       setTokenReceived(false);
     }
   }, [tokenReceived]);
@@ -85,7 +85,7 @@ function useProvideAuth() {
       axios.defaults.headers.common.Authorization = null;
       setAuth(false);
     } catch (e) {
-      setError(e);
+      setError(e.data.message);
     }
   };
 
@@ -97,13 +97,12 @@ function useProvideAuth() {
         email,
         password,
       });
-      console.log(response);
       const { token } = response.data;
+      handleData(response.data.message);
       handleToken(token);
       dispatch(modalClosed());
     } catch (e) {
-      setError(e.data.message);
-      setIsError(true);
+      handleError(e.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -145,15 +144,43 @@ function useProvideAuth() {
 
   const confirmEmail = async (iv, id) => {
     try {
-      console.log("ALOHA");
       clearState();
       setLoading(true);
       const response = await axios.get(CONFIRM_API(iv, id));
-      handleData(true);
+      handleData(response.data.message);
       handleToken(response.data.token);
     } catch (e) {
-      setIsError(true);
-      console.error(e);
+      handleError(e.response.data.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const forgotPassword = async (email) => {
+    try {
+      clearState();
+      setLoading(true);
+
+      const response = await axios.post(FORGET_API, { email });
+      handleData(response.data.message);
+    } catch (e) {
+      handleError(e.response.data.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetPassword = async (password, iv, id) => {
+    try {
+      clearState();
+      setLoading(true);
+
+      const response = await axios.post(RESET_API(iv, id), {
+        password,
+      });
+      handleData(response.data.message);
+    } catch (e) {
+      handleError(e.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -172,6 +199,8 @@ function useProvideAuth() {
     signInWithGoogle,
     signInWithFacebook,
     confirmEmail,
+    forgotPassword,
+    resetPassword,
     clearState,
   };
 }
