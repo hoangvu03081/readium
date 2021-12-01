@@ -6,6 +6,7 @@ const router = require("express").Router();
 
 const authRoute = require("./auth");
 const usersRoute = require("./api/users");
+const postRoute = require("./api/posts")
 const profileRoute = require("./api/profile");
 const collectionRoute = require("./api/collection");
 
@@ -55,6 +56,8 @@ router.delete("/", async (req, res) => {
 
 router.use("/auth", authRoute);
 router.use("/users", usersRoute);
+router.use("/users", visitorsRoute);
+router.use("/posts", postRoute)
 router.use("/users/profile", profileRoute);
 router.use("/users/collections", collectionRoute);
 
