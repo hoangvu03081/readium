@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
+import PuffLoader from "react-spinners/PuffLoader";
 import { useAuth } from "../../common/hooks/useAuth";
 import LogoPage from "../../common/components/LogoPage";
 import useRouter from "../../common/hooks/useRouter";
@@ -25,8 +26,9 @@ export default function ConfirmEmail() {
     redirect();
     return (
       <LogoPage>
+        <h2>Your account has been successfully activated</h2>
         <div>
-          <h2>Browser will be automatically redirected after 5 seconds</h2>
+          <h3>Browser will be automatically redirected after 5 seconds</h3>
         </div>
         <div>
           <Link to="/">Click here to immediately redirect to home</Link>
@@ -39,13 +41,16 @@ export default function ConfirmEmail() {
     return (
       <LogoPage>
         <h1>Some error</h1>
+        <div>
+          <Link to="/">Click here to redirect to homepage</Link>
+        </div>
       </LogoPage>
     );
   }
 
   return (
     <LogoPage>
-      <div>loading</div>
+      <PuffLoader />
     </LogoPage>
   );
 }

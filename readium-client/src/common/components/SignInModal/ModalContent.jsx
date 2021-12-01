@@ -4,6 +4,7 @@ import EmailLogin from "./EmailLogin";
 import ModalType from "./ModalType";
 import SignInOptions from "./SignInOptions";
 import SignUp from "./SignUp";
+import ForgotPassword from "./ForgotPassword";
 
 const ContentFlow = styled.div`
   width: 100%;
@@ -12,6 +13,15 @@ const ContentFlow = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    text-align: center;
+  }
 `;
 
 export default function ModalContent() {
@@ -26,6 +36,9 @@ export default function ModalContent() {
       )}
       {modalType === ModalType.SIGN_UP && (
         <SignUp setModalType={setModalType} />
+      )}
+      {modalType === ModalType.FORGOT_PASSWORD && (
+        <ForgotPassword setModalType={setModalType} />
       )}
     </ContentFlow>
   );

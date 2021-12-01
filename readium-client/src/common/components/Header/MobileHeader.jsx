@@ -9,11 +9,12 @@ import { FiEdit, FiBookmark } from "react-icons/fi";
 import { avatarClicked } from "../../../slices/navbar-slice";
 import { modalOpened } from "../../../slices/sign-in-slice";
 import { Logo, SearchButton, SignInButton, AvatarImage } from "./styles";
+import { Link } from "react-router-dom";
 
 const HeaderNav = styled.nav`
   position: fixed;
   background-color: ${({ theme }) => theme.colors.HeaderBackground};
-  z-index: 10;
+  z-index: 99;
   top: 0;
   width: 100%;
   height: 64px;
@@ -32,6 +33,7 @@ const FooterNav = styled.nav`
   bottom: 0;
   width: 100%;
   height: 64px;
+  z-index: 50;
   background-color: white;
   border-top: 1px solid #c5c5c5;
   display: flex;
@@ -41,6 +43,11 @@ const FooterNav = styled.nav`
 
 const MobileSignInButton = styled(SignInButton)`
   margin-top: 0;
+`;
+
+const UnstyledLink = styled(Link)`
+  text-decoration: none;
+  color: black;
 `;
 export default function MobileHeader({ isLogin }) {
   const dispatch = useDispatch();
@@ -77,11 +84,21 @@ export default function MobileHeader({ isLogin }) {
         )}
       </HeaderNav>
       <FooterNav>
-        <RiHomeLine size={28} />
-        <FiBookmark size={28} />
-        <FiEdit size={28} />
-        <AiOutlineBell size={28} />
-        <RiSettings3Line size={28} />
+        <UnstyledLink to="/">
+          <RiHomeLine size={28} />
+        </UnstyledLink>
+        <UnstyledLink to="collections">
+          <FiBookmark size={28} />
+        </UnstyledLink>
+        <UnstyledLink to="/write">
+          <FiEdit size={28} />
+        </UnstyledLink>
+        <UnstyledLink to="/notifications">
+          <AiOutlineBell size={28} />
+        </UnstyledLink>
+        <UnstyledLink to="/settings">
+          <RiSettings3Line size={28} />
+        </UnstyledLink>
       </FooterNav>
     </>
   );
