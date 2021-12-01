@@ -25,7 +25,7 @@ export default function Interactions({
   commentNumber,
 }) {
   return (
-    <InteractionStyle>
+    <InteractionStyle className="interactions">
       <Watch>
         <WatchIcon />
         <span>{watchNumber}</span>

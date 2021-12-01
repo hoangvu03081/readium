@@ -9,6 +9,9 @@ const Card = styled.div`
   border: 2px solid ${({ theme }) => theme.colors.PopularPostBlack};
   border-radius: 6px;
   padding: 30px;
+  @media (max-width: 650px) {
+    display: none;
+  }
 `;
 
 const Top = styled.div`
@@ -128,7 +131,7 @@ const BottomRight = styled.div`
   }
 `;
 
-export default function Post({
+export default function PostDesktop({
   title,
   user,
   userAvatar,
@@ -173,7 +176,7 @@ export default function Post({
   );
 }
 
-Post.propTypes = {
+PostDesktop.propTypes = {
   title: PropTypes.string.isRequired,
   user: PropTypes.string.isRequired,
   userAvatar: PropTypes.string.isRequired,

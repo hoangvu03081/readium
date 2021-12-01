@@ -12,6 +12,9 @@ const Outline = styled.div`
   justify-content: space-around;
   position: relative;
   z-index: 1;
+  @media (max-width: 650px) {
+    margin: 50px 0;
+  }
 `;
 
 const Button = styled.button`

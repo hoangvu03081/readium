@@ -20,6 +20,9 @@ const Card = styled.div`
     width: 100%;
     padding: 20px;
   }
+  @media (max-width: 650px) {
+    display: none;
+  }
 `;
 
 const Left = styled.div`
@@ -195,13 +198,12 @@ const CardOptionsClick = styled.div`
   }
 `;
 
-export default function CardStyles({
+export default function CardDesktop({
   preview,
   title,
   content,
   tags,
   duration,
-  user,
   userAvatar,
   loveNumber,
   commentNumber,
@@ -259,13 +261,12 @@ export default function CardStyles({
   );
 }
 
-CardStyles.propTypes = {
+CardDesktop.propTypes = {
   preview: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
   duration: PropTypes.number.isRequired,
-  user: PropTypes.string.isRequired,
   userAvatar: PropTypes.string.isRequired,
   loveNumber: PropTypes.number.isRequired,
   commentNumber: PropTypes.number.isRequired,

@@ -32,6 +32,12 @@ const ColumnLeft = styled.div`
   @media (max-width: 750px) {
     padding: 48px 36px;
   }
+  @media (max-width: 650px) {
+    padding: 48px 60px;
+  }
+  @media (max-width: 460px) {
+    padding: 48px 20px;
+  }
 `;
 
 const FixedScroll = styled.div`
