@@ -57,15 +57,14 @@ router.patch("/", authMiddleware, async (req, res) => {
 
   try {
     await user.save();
+    // #swagger.responses[200] = { description: 'Successfully edit profile' }
+    return res.send(user.getPublicProfile());
   } catch (err) {
     // #swagger.responses[500] = { description: 'Some errors occured when saving to mongodb' }
     return res
       .status(500)
       .send({ message: "Some errors occured when editing the profile" });
   }
-
-  // #swagger.responses[200] = { description: 'Successfully edit profile' }
-  return res.send(user.getPublicProfile());
 });
 
 const uploadAva = multer({
