@@ -1,6 +1,7 @@
 const router = require("express").Router();
 
 const multer = require("multer");
+const { serverUrl } = require("../../config/url");
 
 const Post = require("../../models/Post");
 const { authMiddleware } = require("../../utils/auth");
@@ -12,14 +13,16 @@ const uploadCover = multer({
     files: 1,
   },
   fileFilter(req, file, cb) {
-    const mimeRe = /^image\/(jpeg|png|webp|avif|tiff|gif|svg\+xml)$/;
-    const nameRe = /\.(jpeg|png|webp|avif|tiff|gif|svg)$/;
+    const mimeRe = /^image\/(jpg|jpeg|png|webp|avif|tiff|gif|svg\+xml)$/;
+    const nameRe = /\.(jpg|jpeg|png|webp|avif|tiff|gif|svg)$/;
     if (mimeRe.test(file.mimetype) && nameRe.test(file.originalname)) {
       return cb(null, true);
     }
     return cb(new Error("Your type of file is not acceptable"));
   },
 });
+
+const getImageUrl = (postId) => `${serverUrl}/posts/${postId}/cover-image`;
 
 router.post(
   "/",
@@ -107,7 +110,10 @@ router.get("/popular", async (req, res) => {
     #swagger.summary = 'Get 1 popular post'
   */
   try {
-    const post = await Post.findOne({});
+    const post = JSON.parse(
+      JSON.stringify(await Post.findOne({}, { coverImage: 0 }))
+    );
+    post.imageUrl = getImageUrl(post._id);
     res.send(post);
   } catch {
     res
@@ -139,24 +145,41 @@ router.get("/", async (req, res) => {
 
   if (date.toString() === "Invalid Date") {
     // { isPublished: true }
-    const posts = await Post.find({}, { coverImage: 0 })
-      .skip(skip)
-      // .sort({ publishDate: -1 })
-      .limit(5);
+    let posts = JSON.parse(
+      JSON.stringify(
+        await Post.find({}, { coverImage: 0 })
+          .skip(skip)
+          // .sort({ publishDate: -1 })
+          .limit(5)
+      )
+    );
+    posts = posts.map((post) => {
+      post.imageUrl = getImageUrl(post._id);
+      return post;
+    });
     return res.send(posts);
   }
 
   try {
-    const posts = await Post.find(
-      {
-        // isPublished: true,
-        // publishDate: { $lte: date },
-      },
-      { coverImage: 0 }
-    )
-      .skip(skip)
-      // .sort({ publishDate: -1 })
-      .limit(5);
+    let posts = JSON.parse(
+      JSON.stringify(
+        await Post.find(
+          {
+            // isPublished: true,
+            // publishDate: { $lte: date },
+          },
+          { coverImage: 0 }
+        )
+          .skip(skip)
+          // .sort({ publishDate: -1 })
+          .limit(5)
+      )
+    );
+    posts = posts.map((post) => {
+      post.imageUrl = getImageUrl(post._id);
+      return post;
+    });
+
     if (posts.length === 0) return res.send({ posts });
     return res.send({ posts, next: skip + 5 });
   } catch (err) {
@@ -189,7 +212,21 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/:id", authMiddleware, async (req, res) => {
+router.get("/:id/cover-image", async (req, res) => {
+  /*
+    #swagger.tags = ['Post']
+    #swagger.summary = 'Get post's cover image'
+  */
+  const post = await Post.findById(req.params.id);
+  res.set("Content-Type", "image/png");
+  res.send(post.coverImage);
+});
+
+router.post("/like/:id", authMiddleware, async (req, res) => {
+  /*
+    #swagger.tags = ['Post']
+    #swagger.summary = 'Like post'
+  */
   const { id } = req.params;
 
   try {
@@ -207,7 +244,7 @@ router.post("/:id", authMiddleware, async (req, res) => {
       return res.send(post);
     }
     req.user.liked.splice(isLikedIndex, 1);
-    post.splice(
+    post.likes.splice(
       post.likes.findIndex((uId) => uId === req.user_id),
       1
     );
@@ -220,15 +257,29 @@ router.post("/:id", authMiddleware, async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authMiddleware, async (req, res) => {
+  /*
+    #swagger.tags = ['Post']
+    #swagger.summary = 'Delete a post'
+  */
   try {
-    const post = await Post.findByIdAndDelete(req.params.id);
+    const { id } = req.params;
+    const post = await Post.findById(id);
 
     if (!post) {
-      res.status(404).send({ message: "Cannot find post with ID" });
+      return res
+        .status(404)
+        .send({ message: `Cannot find post with ID: ${id}` });
     }
 
-    res.send(post);
+    if (post.author !== req.user._id) {
+      return res
+        .status(400)
+        .send({ message: "You must own this post to delete it!" });
+    }
+
+    await Post.deleteOne({ _id: id });
+    return res.send(post);
   } catch (e) {
     res.status(500).send({ message: "Error in deleting post with ID" });
   }

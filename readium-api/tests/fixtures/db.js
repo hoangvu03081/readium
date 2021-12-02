@@ -13,6 +13,21 @@ let jwt;
 
 const getJWT = () => jwt;
 
+const dbConfigOneUserTest = async () => {
+  await User.deleteMany();
+  
+  user = new User(users[0]);
+  await user.hashPassword();
+  await user.save();
+
+  const response = await request(app)
+    .post("/auth")
+    .send({ email: users[0].email, password: users[0].password })
+    .expect(200);
+
+  jwt = response.body.token;
+};
+
 const dbConfig = async () => {
   await User.deleteMany();
   await Post.deleteMany();
@@ -39,6 +54,7 @@ const dbConfig = async () => {
 module.exports = {
   users,
   posts,
+  dbConfigOneUserTest,
   dbConfig,
   getJWT,
 };

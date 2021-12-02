@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "swagger": "node ./utils/swagger/swagger.js",
-    "test": "set NODE_ENV=test&& jest --watch --detectOpenHandles"
+    "test": "set NODE_ENV=test&& jest --watch --detectOpenHandles --runInBand"
   },
   "jest": {
     "testEnvironment": "node"
