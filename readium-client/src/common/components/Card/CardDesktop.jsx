@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import TagBtn from "../Buttons/TagBtn";
@@ -7,6 +7,7 @@ import { ReactComponent as AddCollection } from "../../../assets/icons/add_colle
 import { ReactComponent as AddedCollection } from "../../../assets/icons/added_collection.svg";
 import { ReactComponent as CardOptions } from "../../../assets/icons/card_options.svg";
 import More from "./More";
+import useOutsideClickAlerter from "../../hooks/useOutsideClickAlerter";
 
 const Card = styled.div`
   border: 2px solid ${({ theme }) => theme.colors.CardBlack};
@@ -19,6 +20,9 @@ const Card = styled.div`
   @media (max-width: 930px) {
     width: 100%;
     padding: 20px;
+  }
+  @media (max-width: 650px) {
+    display: none;
   }
 `;
 
@@ -80,7 +84,7 @@ const Right = styled.div`
       display: block;
     }
   }
-  svg:first-child {
+  > svg:first-child {
     font-size: 37px;
     position: absolute;
     right: 50px;
@@ -92,7 +96,7 @@ const Right = styled.div`
       transition: all 0.3s;
     }
   }
-  svg:nth-child(2) {
+  > svg:nth-child(2) {
     font-size: 31px;
     position: absolute;
     right: 50px;
@@ -104,7 +108,7 @@ const Right = styled.div`
       transition: all 0.3s;
     }
   }
-  svg:nth-child(3) {
+  > svg:nth-child(3) {
     font-size: 30px;
     position: absolute;
     right: 5px;
@@ -128,7 +132,7 @@ const Right = styled.div`
     position: absolute;
     right: 5px;
     bottom: 51px;
-    z-index: 10;
+    z-index: 5;
     &:hover {
       cursor: pointer;
     }
@@ -157,7 +161,7 @@ const Right = styled.div`
     position: absolute;
     right: 5px;
     bottom: 0;
-    z-index: 10;
+    z-index: 5;
     &:hover {
       cursor: pointer;
     }
@@ -184,29 +188,49 @@ const CardOptionsClick = styled.div`
   padding: 0;
   &.hide {
     opacity: 0;
+    pointer-events: none;
     z-index: 1;
     transition: all 0.3s;
   }
   &.unhide {
     opacity: 1;
-    z-index: 100;
+    z-index: 9;
     transition: all 0.3s;
   }
 `;
 
-export default function CardStyles({
+const OutsideClickOptions = styled.div`
+  font-size: 30px;
+  position: absolute;
+  right: 5px;
+  top: 0;
+  transition: all 0.3s;
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.2);
+    transition: all 0.3s;
+  }
+  &.active {
+    transform: scale(1.2);
+  }
+`;
+
+export default function CardDesktop({
   preview,
   title,
   content,
   tags,
   duration,
-  user,
   userAvatar,
   loveNumber,
   commentNumber,
 }) {
-  const [more, setMore] = useState(0);
   const [add, setAdd] = useState(0);
+  const [more, setMore] = useState(0);
+  const outsideClickOptionsBtn = useRef(null);
+  useOutsideClickAlerter(outsideClickOptionsBtn, () => {
+    setMore(0);
+  });
   return (
     <Card className="row">
       <Left className="col-3">
@@ -233,7 +257,8 @@ export default function CardStyles({
           className={add === 0 ? "hide" : "unhide"}
           onClick={() => setAdd(0)}
         />
-        <CardOptions
+        <OutsideClickOptions
+          ref={outsideClickOptionsBtn}
           className={more === 1 ? "active" : ""}
           onClick={() => {
             if (more === 0) {
@@ -242,7 +267,9 @@ export default function CardStyles({
               setMore(0);
             }
           }}
-        />
+        >
+          <CardOptions />
+        </OutsideClickOptions>
         <p>{duration > 1 ? `${duration} mins read` : `${duration} min read`}</p>
         <img src={userAvatar} alt="" />
       </Right>
@@ -258,13 +285,12 @@ export default function CardStyles({
   );
 }
 
-CardStyles.propTypes = {
+CardDesktop.propTypes = {
   preview: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
   duration: PropTypes.number.isRequired,
-  user: PropTypes.string.isRequired,
   userAvatar: PropTypes.string.isRequired,
   loveNumber: PropTypes.number.isRequired,
   commentNumber: PropTypes.number.isRequired,

@@ -7,6 +7,9 @@ const HorizontalLine = styled.hr`
   height: 0.5px;
   border-color: #000000;
   margin: 0;
+  @media (max-width: 650px) {
+    display: none;
+  }
 `;
 
 export default HorizontalLine;
