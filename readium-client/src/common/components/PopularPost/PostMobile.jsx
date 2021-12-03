@@ -24,6 +24,9 @@ const Title = styled.p`
   margin: 0;
   margin: 20px 30px;
   text-align: center;
+  @media (max-width: 360px) {
+    font-size: 22px;
+  }
 `;
 
 const Preview = styled.img`

@@ -15,6 +15,39 @@ const LoveCommentStyle = styled.div`
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
+  @media (max-width: 650px) {
+    > button:first-child {
+      color: ${({ theme }) => theme.colors.LoveText};
+      path,
+      svg {
+        fill: ${({ theme }) => theme.colors.LoveText};
+        stroke: ${({ theme }) => theme.colors.LoveText};
+      }
+      &:hover {
+        background-color: ${({ theme }) => theme.colors.LoveText};
+        color: ${({ theme }) => theme.colors.LoveCommentBackground};
+        path {
+          fill: ${({ theme }) => theme.colors.LoveCommentBackground};
+          stroke: ${({ theme }) => theme.colors.LoveCommentBackground};
+          transition: all 0.3s;
+        }
+        transition: all 0.3s;
+      }
+    }
+    > button:nth-child(2) {
+      color: ${({ theme }) => theme.colors.CommentText};
+      svg {
+        fill: ${({ theme }) => theme.colors.CommentText};
+      }
+      &:hover {
+        background-color: ${({ theme }) => theme.colors.CommentText};
+        color: ${({ theme }) => theme.colors.LoveCommentBackground};
+        svg {
+          fill: ${({ theme }) => theme.colors.LoveCommentBackground};
+        }
+      }
+    }
+  }
 `;
 
 const convert = (n) => {

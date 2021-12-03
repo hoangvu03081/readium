@@ -3,17 +3,18 @@ import PropTypes from "prop-types";
 import CardDesktop from "./CardDesktop";
 import CardMobile from "./CardMobile";
 
-export default function Card({
-  preview,
-  title,
-  content,
-  tags,
-  duration,
-  user,
-  userAvatar,
-  loveNumber,
-  commentNumber,
-}) {
+export default function Card() {
+  //   {
+  //   preview,
+  //   title,
+  //   content,
+  //   tags,
+  //   duration,
+  //   user,
+  //   userAvatar,
+  //   loveNumber,
+  //   commentNumber,
+  // }
   return (
     <>
       {/* <CardDesktop
@@ -58,14 +59,14 @@ export default function Card({
   );
 }
 
-Card.propTypes = {
-  preview: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  content: PropTypes.string.isRequired,
-  tags: PropTypes.arrayOf(PropTypes.string).isRequired,
-  duration: PropTypes.number.isRequired,
-  user: PropTypes.string.isRequired,
-  userAvatar: PropTypes.string.isRequired,
-  loveNumber: PropTypes.number.isRequired,
-  commentNumber: PropTypes.number.isRequired,
-};
+// Card.propTypes = {
+//   preview: PropTypes.string.isRequired,
+//   title: PropTypes.string.isRequired,
+//   content: PropTypes.string.isRequired,
+//   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
+//   duration: PropTypes.number.isRequired,
+//   user: PropTypes.string.isRequired,
+//   userAvatar: PropTypes.string.isRequired,
+//   loveNumber: PropTypes.number.isRequired,
+//   commentNumber: PropTypes.number.isRequired,
+// };

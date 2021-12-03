@@ -17,6 +17,11 @@ const InteractionStyle = styled.div`
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
+  @media (max-width: 360px) {
+    span {
+      font-size: 15px;
+    }
+  }
 `;
 
 export default function Interactions({

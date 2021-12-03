@@ -9,16 +9,16 @@ export default function CardList() {
   const fetchPosts = ({ pageParam = 0 }) =>
     axios.get(`http://localhost:5000/posts/?skip=${pageParam}`);
 
-  const {
-    fetchNextPage,
-    // fetchPreviousPage,
-    // hasNextPage,
-    // hasPreviousPage,
-    // isFetchingNextPage,
-    // isFetchingPreviousPage,
-  } = useInfiniteQuery("posts", fetchPosts, {
-    getNextPageParam: (lastPage) => lastPage.data.next,
-  });
+  // const {
+  //   fetchNextPage,
+  //   // fetchPreviousPage,
+  //   // hasNextPage,
+  //   // hasPreviousPage,
+  //   // isFetchingNextPage,
+  //   // isFetchingPreviousPage,
+  // } = useInfiniteQuery("posts", fetchPosts, {
+  //   getNextPageParam: (lastPage) => lastPage.data.next,
+  // });
 
   const fetchPostsWrapper = async () => {
     const website = document.documentElement;
@@ -29,12 +29,12 @@ export default function CardList() {
     }
   };
 
-  useEffect(async () => {
-    window.addEventListener("scroll", fetchPostsWrapper);
-    return () => {
-      window.removeEventListener("scroll", fetchPostsWrapper);
-    };
-  }, []);
+  // useEffect(async () => {
+  //   window.addEventListener("scroll", fetchPostsWrapper);
+  //   return () => {
+  //     window.removeEventListener("scroll", fetchPostsWrapper);
+  //   };
+  // }, []);
 
   return (
     <>

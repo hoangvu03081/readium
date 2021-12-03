@@ -15,6 +15,9 @@ const Outline = styled.div`
   @media (max-width: 650px) {
     margin: 50px 0;
   }
+  @media (max-width: 365px) {
+    transform: scale(0.8);
+  }
 `;
 
 const Button = styled.button`

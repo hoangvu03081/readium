@@ -199,7 +199,7 @@ const CardOptionsClick = styled.div`
   }
 `;
 
-const Reff = styled.div`
+const OutsideClickOptions = styled.div`
   font-size: 30px;
   position: absolute;
   right: 5px;
@@ -227,8 +227,8 @@ export default function CardDesktop({
 }) {
   const [add, setAdd] = useState(0);
   const [more, setMore] = useState(0);
-  const refBtn = useRef(null);
-  useOutsideClickAlerter(refBtn, () => {
+  const outsideClickOptionsBtn = useRef(null);
+  useOutsideClickAlerter(outsideClickOptionsBtn, () => {
     setMore(0);
   });
   return (
@@ -257,8 +257,8 @@ export default function CardDesktop({
           className={add === 0 ? "hide" : "unhide"}
           onClick={() => setAdd(0)}
         />
-        <Reff
-          ref={refBtn}
+        <OutsideClickOptions
+          ref={outsideClickOptionsBtn}
           className={more === 1 ? "active" : ""}
           onClick={() => {
             if (more === 0) {
@@ -269,7 +269,7 @@ export default function CardDesktop({
           }}
         >
           <CardOptions />
-        </Reff>
+        </OutsideClickOptions>
         <p>{duration > 1 ? `${duration} mins read` : `${duration} min read`}</p>
         <img src={userAvatar} alt="" />
       </Right>
