@@ -167,15 +167,16 @@ router.post("/register", async (req, res) => {
     await newUser.hashPassword();
     await newUser.save();
     await sendWelcomeEmail({ to: email, url: activationLink });
+
+    // #swagger.responses[201] = { description: 'Account created' }
+    return res.status(201).send({
+      message: "Please activate your account with the link sent to your email!",
+      user: newUser.getPublicProfile(),
+    });
   } catch (err) {
     // #swagger.responses[400] = { description: 'Email has already been used or fields have errors' }
     return res.status(400).send({ message: "Your email is already used" });
   }
-  // #swagger.responses[201] = { description: 'Account created' }
-  return res.status(201).send({
-    message: "Please activate your account with the link sent to your email!",
-    user: newUser.getPublicProfile(),
-  });
 });
 
 router.get("/confirm", async (req, res) => {
@@ -218,22 +219,22 @@ router.get("/confirm", async (req, res) => {
   } else if (user.activated) {
     // #swagger.responses[400] = { description: 'Account has already activated' }
     return res.status(400).send({ message: "Account is already activated" });
-  } else {
-    const token = issueJWT(user._id);
-
-    if (!user.tokens) user.tokens = [];
-    user.tokens.push(token);
-
-    user.activationLink = undefined;
-    user.activated = true;
-    await user.save();
-
-    // #swagger.responses[200] = { description: 'Activate successfully' }
-    return res.send({
-      message: "You have activated your account successfully.",
-      token,
-    });
   }
+
+  const token = issueJWT(user._id);
+
+  if (!user.tokens) user.tokens = [];
+  user.tokens.push(token);
+
+  user.activationLink = undefined;
+  user.activated = true;
+  await user.save();
+
+  // #swagger.responses[200] = { description: 'Activate successfully' }
+  return res.send({
+    message: "You have activated your account successfully.",
+    token,
+  });
 });
 
 // redirect user to facebook
@@ -307,8 +308,8 @@ router.post("/forget", async (req, res, next) => {
 
     if (!user) {
       return res
-        .status(200)
-        .send({ message: "Please check your mail and reset your password!" });
+        .status(404)
+        .send({ message: "Your account is not registered! Please register." });
     }
 
     const due = new Date();
@@ -316,8 +317,11 @@ router.post("/forget", async (req, res, next) => {
 
     const [iv, hashedId] = encrypt({ due, id: user._id.toString() });
     const resetLink = `${clientUrl}/auth/reset?iv=${iv}&id=${hashedId}`;
+
     user.resetLink = resetLink;
+    user.resetTimeout = due;
     await user.save();
+
     await sendResetPasswordEmail({ to: user.email, url: resetLink });
 
     // #swagger.responses[200] = { description: 'Request change password successfully or User not found but Mlem ' }
@@ -384,8 +388,14 @@ router.post("/reset", async (req, res, next) => {
     const user = await User.findById(id);
 
     if (!user) {
-      // #swagger.responses[400] = { description: 'User not found but for security send 400' }
-      return res.status(400).send({ message: "Bad request" });
+      // #swagger.responses[404] = { description: 'User not found' }
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    if (user.resetTimeout.toString() !== dueDate.toString()) {
+      return res
+        .status(400)
+        .send({ message: "Please don't hack this endpoint" });
     }
 
     validator.resetErrors();
@@ -393,6 +403,8 @@ router.post("/reset", async (req, res, next) => {
     if (!isValid) {
       return res.status(400).send({ message: validator.errors.password[0] });
     }
+
+    user.resetTimeout = undefined;
 
     user.password = password;
     await user.hashPassword();

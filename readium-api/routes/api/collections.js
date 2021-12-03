@@ -3,9 +3,7 @@
  */
 const router = require("express").Router();
 
-const User = require("../../models/User");
 const Post = require("../../models/Post");
-const collectionSchema = require("../../models/Collection");
 const { authMiddleware } = require("../../utils/auth");
 
 router.post("/", authMiddleware, async (req, res) => {

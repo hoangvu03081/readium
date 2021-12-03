@@ -70,6 +70,7 @@ const userSchema = new Schema({
   },
   activationLink: String,
   resetLink: String,
+  resetTimeout: Date,
   profileId: {
     type: String,
     required: true,
@@ -97,6 +98,7 @@ userSchema.methods.getPublicProfile = function () {
   delete userObject.activationLink;
   delete userObject.resetLink;
   delete userObject.__v;
+  delete userObject._id;
   return userObject;
 };
 

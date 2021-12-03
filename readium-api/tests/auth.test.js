@@ -2,11 +2,15 @@ const request = require("supertest");
 
 const app = require("../app");
 const User = require("../models/User");
-const { users, dbConfig, getJWT } = require("./fixtures/db");
+const {
+  users,
+  dbConfigOneUserTest: dbConfig,
+  getJWT,
+} = require("./fixtures/db");
 
 beforeEach(dbConfig);
 
-test("should signup a new user", async () => {
+test("should register a new user", async () => {
   const response = await request(app)
     .post("/auth/register")
     .send({ email: "haiquytruong@gmail.com", password: "!johJWT@Example" })
@@ -15,12 +19,14 @@ test("should signup a new user", async () => {
   expect(response.body.message).toBe(
     "Please activate your account with the link sent to your email!"
   );
-  const user = await User.findById(response.body.user._id);
-  expect(user).not.toBeNull();
+  const user = await User.findOne({ email: "haiquytruong@gmail.com" });
+  expect(user).toBeTruthy();
   expect(user.email).toBe("haiquytruong@gmail.com");
   expect(user.profileId).toBe("haiquytruong");
   expect(user.displayName).toBe("haiquytruong");
   expect(user.password).not.toBe("!johJWT@Example");
+  expect(user.activated).toBe(false);
+  expect(user.activationLink).toEqual(expect.any(String));
 });
 
 test("should not signup a new user with invalid email", async () => {
@@ -119,12 +125,12 @@ test("should be authenticated after login", async () => {
     .expect(200);
   await request(app)
     .get("/users/protected")
-    .set("Authorization", getJWT())
+    .set("Authorization", response.body.token)
     .send()
     .expect(200);
 });
 
-test("should not have any tokens after logout", async () => {
+test("should not have any tokens after logout all", async () => {
   await request(app)
     .get("/auth/logout-all")
     .set("Authorization", getJWT())
@@ -132,4 +138,212 @@ test("should not have any tokens after logout", async () => {
     .expect(200);
   const user = await User.findById(users[0]._id);
   expect(user.tokens.length).toBe(0);
+});
+
+test("Should delete the token after logout", async () => {
+  let user = await User.findById(users[0]._id);
+  expect(user.tokens.length).toBe(1);
+
+  const response = await request(app)
+    .get("/auth/logout")
+    .set("Authorization", getJWT())
+    .send()
+    .expect(200);
+
+  user = await User.findById(users[0]._id);
+  expect(user.tokens.length).toBe(0);
+});
+
+test("Should activate account if iv and id are correct", async () => {
+  await request(app)
+    .post("/auth/register")
+    .send({ email: users[1].email, password: users[1].password })
+    .expect(201);
+
+  let user = await User.findOne({ email: users[1].email });
+  expect(user.activated).toBe(false);
+
+  const ivid = user.activationLink.split("?")[1];
+  const iv = ivid.split("&")[0].split("=")[1];
+  const id = ivid.split("&")[1].split("=")[1];
+
+  const response = await request(app)
+    .get("/auth/confirm")
+    .query({ iv, id })
+    .expect(200);
+
+  user = await User.findOne({ email: users[1].email });
+  expect(user.activated).toBe(true);
+  expect(user.activationLink).toBeUndefined();
+  expect(user.tokens.length).toBe(1);
+  expect(user.tokens[0]).toEqual(expect.any(String));
+  expect(response.body.token).toBe(user.tokens[0]);
+});
+
+test("Should not activate account if iv is incorrect", async () => {
+  await request(app)
+    .post("/auth/register")
+    .send({ email: users[1].email, password: users[1].password })
+    .expect(201);
+  let user = await User.findOne({ email: users[1].email });
+
+  const ivid = user.activationLink.split("?")[1];
+  const id = ivid.split("&")[1].split("=")[1];
+
+  response = await request(app).get("/auth/confirm").query({ id }).expect(400);
+
+  expect(response.body.message).toBe(
+    "Please provide enough query params. Missing iv or id"
+  );
+
+  response = await request(app)
+    .get("/auth/confirm")
+    .query({ iv: "Mlem wrong iv", id })
+    .expect(400);
+
+  expect(response.body.message).toBe(
+    "Please provide correct parameters to this endpoint"
+  );
+
+  user = await User.findOne({ email: users[1].email });
+  expect(user.activated).toBe(false);
+  expect(user.activationLink).toEqual(expect.any(String));
+});
+
+test("Should not activate account if id is incorrect", async () => {
+  await request(app)
+    .post("/auth/register")
+    .send({ email: users[1].email, password: users[1].password })
+    .expect(201);
+  let user = await User.findOne({ email: users[1].email });
+
+  const ivid = user.activationLink.split("?")[1];
+  const iv = ivid.split("&")[0].split("=")[1];
+
+  response = await request(app).get("/auth/confirm").query({ iv }).expect(400);
+
+  expect(response.body.message).toBe(
+    "Please provide enough query params. Missing iv or id"
+  );
+
+  response = await request(app)
+    .get("/auth/confirm")
+    .query({ iv, id: "Mlem wrong id" })
+    .expect(400);
+
+  expect(response.body.message).toBe(
+    "Please provide correct parameters to this endpoint"
+  );
+
+  user = await User.findOne({ email: users[1].email });
+  expect(user.activated).toBe(false);
+  expect(user.activationLink).toEqual(expect.any(String));
+});
+
+test("Should prompt if account is already activated", async () => {
+  await request(app)
+    .post("/auth/register")
+    .send({ email: users[1].email, password: users[1].password })
+    .expect(201);
+
+  let user = await User.findOne({ email: users[1].email });
+
+  const ivid = user.activationLink.split("?")[1];
+  const iv = ivid.split("&")[0].split("=")[1];
+  const id = ivid.split("&")[1].split("=")[1];
+
+  await request(app).get("/auth/confirm").query({ iv, id }).expect(200);
+
+  const response = await request(app)
+    .get("/auth/confirm")
+    .query({ iv, id })
+    .expect(400);
+  expect(response.body.message).toBe("Account is already activated");
+});
+
+test("Should inform user to register an account in forgot password if email not found", async () => {
+  const response = await request(app)
+    .post("/auth/forget")
+    .send({ email: "randomemail@gmail.com" })
+    .expect(404);
+  expect(response.body.message).toBe(
+    "Your account is not registered! Please register."
+  );
+});
+
+test("Should send back reset password link if correct email", async () => {
+  const response = await request(app)
+    .post("/auth/forget")
+    .send({ email: users[0].email })
+    .expect(200);
+  const user = await User.findOne({ email: users[0].email });
+  expect(user.resetLink).toEqual(expect.any(String));
+});
+
+test("Should reset password if user send correct iv, id, and password", async () => {
+  await request(app)
+    .post("/auth/forget")
+    .send({ email: users[0].email })
+    .expect(200);
+  let user = await User.findOne({ email: users[0].email });
+  expect(user.resetLink).toEqual(expect.any(String));
+  expect(user.resetTimeout).toEqual(expect.any(Date));
+
+  const ivid = user.resetLink.split("?")[1];
+  const iv = ivid.split("&")[0].split("=")[1];
+  const id = ivid.split("&")[1].split("=")[1];
+
+  const response = await request(app)
+    .post("/auth/reset")
+    .query({ iv, id })
+    .send({ password: "testing123" })
+    .expect(200);
+
+  user = await User.findOne({ email: users[0].email });
+  expect(user.resetLink).toBeFalsy();
+  expect(user.resetTimeout).toBeFalsy();
+});
+
+test("Should not reset password if user send incorrect iv, id, or password", async () => {
+  await request(app)
+    .post("/auth/forget")
+    .send({ email: users[0].email })
+    .expect(200);
+  const user = await User.findOne({ email: users[0].email });
+
+  const ivid = user.resetLink.split("?")[1];
+  const iv = ivid.split("&")[0].split("=")[1];
+  const id = ivid.split("&")[1].split("=")[1];
+
+  await request(app)
+    .post("/auth/reset")
+    .query({ id })
+    .send({ password: "testing123" })
+    .expect(400);
+
+  await request(app)
+    .post("/auth/reset")
+    .query({ iv })
+    .send({ password: "testing123" })
+    .expect(400);
+
+  await request(app).post("/auth/reset").query({ iv, id }).expect(400);
+
+  const response = await request(app)
+    .post("/auth/reset")
+    .query({ iv: "mlem iv", id })
+    .send({ password: "testing123" })
+    .expect(500);
+
+  await request(app)
+    .post("/auth/reset")
+    .query({ iv, id: "mlem id" })
+    .send({ password: "testing123" })
+    .expect(500);
+
+  await request(app)
+    .post("/auth/reset")
+    .query({ iv, id })
+    .send({ password: "mlem" })
+    .expect(400);
 });

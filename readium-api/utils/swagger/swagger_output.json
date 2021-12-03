@@ -727,10 +727,6 @@
                   "text": {
                     "type": "string",
                     "example": "Text Only Content"
-                  },
-                  "author": {
-                    "type": "string",
-                    "example": "Author ID"
                   }
                 }
               }
@@ -741,7 +737,10 @@
     },
     "/posts/popular": {
       "get": {
-        "tags": [],
+        "tags": [
+          "Post"
+        ],
+        "summary": "Get 1 popular post",
         "description": "",
         "parameters": [],
         "responses": {}
@@ -800,6 +799,26 @@
           }
         }
       },
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
       "delete": {
         "tags": [],
         "description": "",
@@ -821,6 +840,24 @@
         }
       }
     },
+    "/posts/{id}/cover-image": {
+      "get": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "Get post",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {}
+      }
+    },
     "/posts/{id}/comments/": {
       "get": {
         "tags": [
@@ -837,9 +874,6 @@
           }
         ],
         "responses": {
-          "400": {
-            "description": "Bad Request"
-          },
           "404": {
             "description": "Not Found"
           },
@@ -891,19 +925,6 @@
             }
           }
         }
-      },
-      "delete": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {}
       }
     },
     "/posts/{id}/comments\r/{commentId}": {
@@ -928,9 +949,6 @@
           }
         ],
         "responses": {
-          "201": {
-            "description": "Created"
-          },
           "400": {
             "description": "Bad Request"
           },
@@ -956,6 +974,39 @@
             }
           }
         }
+      }
+    },
+    "/posts/{id}/comments/{commentId}": {
+      "delete": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "Delete comment",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "commentId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     }
   },
