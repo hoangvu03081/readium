@@ -13,7 +13,7 @@ const Layout = styled.div`
   border: 2px solid ${({ theme }) => theme.colors.CardBlack};
   border-radius: 4px;
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   @media (min-width: 651px) {
     display: none;
   }

@@ -306,7 +306,7 @@ export default function TextEditor() {
           <TextareaAutosize
             placeholder="Maximum 100 characters"
             minRows={1}
-            maxRows={4}
+            maxRows={10}
             required
           />
         </InputTitle>
@@ -315,7 +315,7 @@ export default function TextEditor() {
           <TextareaAutosize
             placeholder="Optional"
             minRows={1}
-            maxRows={10}
+            maxRows={25}
             required
           />
         </InputDescription>
