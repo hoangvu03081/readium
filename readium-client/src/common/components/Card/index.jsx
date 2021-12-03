@@ -1,10 +1,40 @@
 import React from "react";
+import PropTypes from "prop-types";
 import CardDesktop from "./CardDesktop";
 import CardMobile from "./CardMobile";
 
-export default function Card() {
+export default function Card({
+  preview,
+  title,
+  content,
+  tags,
+  duration,
+  user,
+  userAvatar,
+  loveNumber,
+  commentNumber,
+}) {
   return (
     <>
+      {/* <CardDesktop
+        preview={preview}
+        title={title}
+        content={content}
+        tags={tags}
+        duration={duration}
+        userAvatar={userAvatar}
+        loveNumber={loveNumber}
+        commentNumber={commentNumber}
+      />
+      <CardMobile
+        title={title}
+        content={content}
+        tags={tags}
+        user={user}
+        userAvatar={userAvatar}
+        loveNumber={loveNumber}
+        commentNumber={commentNumber}
+      /> */}
       <CardDesktop
         preview="./src/assets/images/preview_2.png"
         title="Oniichan, Kimochi ~ ! Please touch me..."
@@ -27,3 +57,15 @@ export default function Card() {
     </>
   );
 }
+
+Card.propTypes = {
+  preview: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  content: PropTypes.string.isRequired,
+  tags: PropTypes.arrayOf(PropTypes.string).isRequired,
+  duration: PropTypes.number.isRequired,
+  user: PropTypes.string.isRequired,
+  userAvatar: PropTypes.string.isRequired,
+  loveNumber: PropTypes.number.isRequired,
+  commentNumber: PropTypes.number.isRequired,
+};
