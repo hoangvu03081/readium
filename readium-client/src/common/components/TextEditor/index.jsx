@@ -5,6 +5,7 @@ import TextareaAutosize from "react-textarea-autosize";
 import { useDropzone } from "react-dropzone";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
+import BackToTop from "react-back-to-top-button";
 import { ReactComponent as UploadIcon } from "../../../assets/icons/upload.svg";
 import { ReactComponent as AddImage } from "../../../assets/icons/add_image.svg";
 // import { ReactComponent as Code } from "../../../assets/icons/code.svg";
@@ -17,6 +18,25 @@ const Layout = styled.div`
   margin-top: 80px;
   padding-top: 80px;
   padding-bottom: 80px;
+  > .back-to-top {
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 0;
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+    right: 20px;
+    bottom: 15px;
+    transition: all 0.25s;
+    &:hover {
+      background-color: black;
+      color: white;
+      transition: all 0.25s;
+    }
+    @media (max-width: 800px) {
+      display: none;
+    }
+  }
 `;
 
 // STORY INFORMATION
@@ -90,6 +110,9 @@ const InputTitle = styled.div`
       font-size: 14px;
       padding-top: 9px;
     }
+    @media (max-width: 530px) {
+      width: 90%;
+    }
   }
 `;
 const InputDescription = styled.div`
@@ -136,6 +159,9 @@ const InputDescription = styled.div`
       font-size: 14px;
       padding-top: 3px;
     }
+    @media (max-width: 530px) {
+      width: 90%;
+    }
   }
 `;
 const UploadImage = styled.div`
@@ -174,6 +200,9 @@ const UploadImage = styled.div`
     box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
     transition: all 0.25s;
   }
+  @media (max-width: 530px) {
+    width: 90%;
+  }
 `;
 
 // STORY CONTENT
@@ -202,6 +231,18 @@ const TextEditorLayout = styled.div`
   }
   .ql-code {
     color: #ccc;
+  }
+  @media (max-width: 1000px) {
+    width: 88%;
+  }
+  @media (max-width: 600px) {
+    width: 80%;
+  }
+  @media (max-width: 530px) {
+    width: 72%;
+  }
+  @media (max-width: 350px) {
+    width: 66%;
   }
 `;
 const Buttons = styled.div`
@@ -353,6 +394,11 @@ export default function TextEditor() {
           <SubmitBtn>Submit</SubmitBtn>
         </div>
       </StoryContent>
+      <BackToTop showAt={450} speed={1500} easing="easeInOutSine">
+        <span>
+          <i className="ionicons ion-chevron-up" />
+        </span>
+      </BackToTop>
     </Layout>
   );
 }

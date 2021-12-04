@@ -24,6 +24,9 @@ const Title = styled.p`
   margin: 0;
   margin: 20px 30px;
   text-align: center;
+  &:hover {
+    cursor: pointer;
+  }
   @media (max-width: 360px) {
     font-size: 22px;
   }
@@ -38,6 +41,12 @@ const Preview = styled.img`
   margin-bottom: 20px;
   margin-left: auto;
   margin-right: auto;
+  transition: all 0.25s;
+  &:hover {
+    cursor: pointer;
+    opacity: 0.8;
+    transition: all 0.25s;
+  }
 `;
 
 const PostInfo = styled.div`
@@ -54,6 +63,9 @@ const UserAvatar = styled.img`
   object-fit: cover;
   border-radius: 50%;
   margin-bottom: 10px;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 const UserName = styled.p`
   margin: 0;
@@ -63,6 +75,9 @@ const UserName = styled.p`
   font-size: 18px;
   color: ${({ theme }) => theme.colors.PopularPostUser};
   margin-bottom: 1px;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 const Date = styled.p`
   margin: 0;
