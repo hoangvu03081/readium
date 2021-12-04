@@ -100,7 +100,7 @@ export default function AvatarDropdown({ handleToggleDropdown }) {
     <StyledAvatarDropdown>
       <StyledDropdownItem
         toggleDropdown={handleToggleDropdown}
-        to="/"
+        to="/profile"
         text="My profile"
       >
         <FaRegUserCircle />
