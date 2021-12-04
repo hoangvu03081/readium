@@ -14,7 +14,7 @@ const {
 const {
   downloadImageFromUrl,
   convertBufferToPng,
-} = require("../utils/getImageBufferFromUrl");
+} = require("../utils");
 
 router.post("/", async (req, res, next) => {
   // #swagger.tags = ['Auth']

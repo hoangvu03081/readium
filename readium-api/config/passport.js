@@ -7,7 +7,7 @@ const { serverUrl } = require("./url");
 const {
   downloadImageFromUrl,
   convertBufferToPng,
-} = require("../utils/getImageBufferFromUrl");
+} = require("../utils");
 const { decodeJWT, jwtOptions } = require("../utils/auth");
 
 const activateUser = (user) => {

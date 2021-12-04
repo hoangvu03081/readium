@@ -1,9 +1,9 @@
 const router = require("express").Router();
 
 const multer = require("multer");
-const { serverUrl } = require("../../config/url");
 
 const Post = require("../../models/Post");
+const { getImageUrl } = require("../../utils");
 const { authMiddleware } = require("../../utils/auth");
 
 const uploadCover = multer({
@@ -21,8 +21,6 @@ const uploadCover = multer({
     return cb(new Error("Your type of file is not acceptable"));
   },
 });
-
-const getImageUrl = (postId) => `${serverUrl}/posts/${postId}/cover-image`;
 
 router.post(
   "/",
@@ -180,7 +178,7 @@ router.get("/", async (req, res) => {
           .limit(5)
       )
     );
-    
+
     posts = posts.map((post) => {
       post.imageUrl = getImageUrl(post._id);
       return post;

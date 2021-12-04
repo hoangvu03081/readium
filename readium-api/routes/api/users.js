@@ -2,6 +2,7 @@ const router = require("express").Router();
 const bcrypt = require("bcrypt");
 const Post = require("../../models/Post");
 const User = require("../../models/User");
+const { getImageUrl } = require("../../utils");
 const { authMiddleware } = require("../../utils/auth");
 
 /**

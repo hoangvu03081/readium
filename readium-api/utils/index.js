@@ -28,7 +28,10 @@ const convertBufferToPng = (buffer) => {
   return sharp(buffer).png().toBuffer();
 };
 
+const getImageUrl = (postId) => `${serverUrl}/posts/${postId}/cover-image`;
+
 module.exports = {
   downloadImageFromUrl,
   convertBufferToPng,
+  getImageUrl,
 };
