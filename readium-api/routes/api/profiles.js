@@ -74,8 +74,8 @@ const uploadAva = multer({
     files: 1,
   },
   fileFilter(req, file, cb) {
-    const mimeRe = /^image\/(jpeg|png|webp|avif|tiff|gif|svg\+xml)$/;
-    const nameRe = /\.(jpeg|png|webp|avif|tiff|gif|svg)$/;
+    const mimeRe = /^image\/(jpg|jpeg|png|webp|avif|tiff|gif|svg\+xml)$/;
+    const nameRe = /\.(jpg|jpeg|png|webp|avif|tiff|gif|svg)$/;
     if (mimeRe.test(file.mimetype) && nameRe.test(file.originalname)) {
       return cb(null, true);
     }
@@ -128,6 +128,46 @@ router.post(
   }
 );
 
+router.get("/avatar", authMiddleware, async (req, res) => {
+  /*
+    #swagger.tags = ['User']
+    #swagger.summary = "Get my avatar"
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+  */
+
+  return res.set("Content-Type", "image/png").send(req.user.avatar);
+});
+
+router.get("/avatar/:id", async (req, res) => {
+  /*
+    #swagger.tags = ['User']
+    #swagger.summary = "Get specific user's avatar"
+    #swagger.parameters['id'] = {
+      description: 'user id',
+      in: 'path',
+      type: 'string',
+    }
+  */
+  if (!req.params.id) {
+    return res.status(400).send({ message: "Please provide user's id" });
+  }
+  res.set("Content-Type", "image/png");
+
+  try {
+    const { avatar } = await User.findById(req.params.id, { avatar: 1 });
+    // #swagger.responses[200] = { description: 'Send back user avatar' }
+    return res.send(avatar);
+  } catch (err) {
+    // #swagger.responses[500] = { description: 'Object Id is error or mongodb error' }
+    return res
+      .set("Content-Type", "application/json")
+      .status(500)
+      .send({ message: "Error when fetching avatar" });
+  }
+});
+
 router.get("/:profileId", async (req, res) => {
   // #swagger.tags = ['Profile']
   // #swagger.summary = 'Get others' profile'
@@ -136,34 +176,6 @@ router.get("/:profileId", async (req, res) => {
   if (user) return res.send(user.getPublicProfile());
 
   return res.status(404).send({ message: "User not found" });
-});
-
-//TODO need test
-router.get("/avatar/:id", async (req, res) => {
-  // #swagger.tags = ['User']
-  // #swagger.summary = 'Get specific user's avatar'
-  /*
-    #swagger.parameters['id'] = {
-      description: 'user id',
-      in: 'path',
-      type: 'string',
-    }
-  */
-  res.set("Content-Type", "image/png");
-
-  if (!req.params.id) {
-    // #send back user's avatar if id is undefined
-    return res.send(req.user.avatar);
-  }
-
-  try {
-    const { avatar } = await User.findById(req.params.id, { avatar: 1 });
-    // #swagger.responses[200] = { description: 'Send back user avatar' }
-    return res.send(avatar);
-  } catch (err) {
-    // #swagger.responses[500] = { description: 'Object Id is error or mongodb error' }
-    return res.status(500).send({ message: "Error when fetching avatar" });
-  }
 });
 
 module.exports = router;

@@ -1,18 +1,14 @@
-const { once } = require("events");
-
 const JwtStrategy = require("passport-jwt").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
 
 const User = require("../models/User");
 const { serverUrl } = require("./url");
-const imageUtil = require("../utils/getImageBufferFromUrl");
+const {
+  downloadImageFromUrl,
+  convertBufferToPng,
+} = require("../utils");
 const { decodeJWT, jwtOptions } = require("../utils/auth");
-
-const downloadImageFromUrl = async (url) => {
-  imageUtil.getImageBufferFromUrl(url);
-  return once(imageUtil.bufferEmitter, "downloaded"); // avatar
-};
 
 const activateUser = (user) => {
   user.activationLink = undefined;
@@ -36,14 +32,14 @@ module.exports = function (passport) {
       try {
         const user = await User.findOne({ _id: jwt_payload.vux });
         if (!user || !user.tokens) {
-          return done(null, false, { message: "User is not authorized" });
+          return done(null, false, { message: "No auth token" });
         }
         const isAuth = user.tokens.some((token) => {
           const decoded = decodeJWT(token.split(" ")[1]);
           return JSON.stringify(decoded) === JSON.stringify(jwt_payload);
         });
         if (!isAuth) {
-          return done(null, false, { message: "User is not authorized" });
+          return done(null, false, { message: "No auth token" });
         }
         return done(null, user);
       } catch (err) {
@@ -69,20 +65,20 @@ module.exports = function (passport) {
           "middle_name",
           "gender",
           "birthday",
-          "profileUrl",
-          "photos",
+          "picture.type(large)",
         ],
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
           const user = await User.findOne({ email: profile.emails[0].value });
-          const avatar = await downloadImageFromUrl(profile.photos[0].value);
+          let avatar = await downloadImageFromUrl(profile.photos[0].value);
+          avatar = await convertBufferToPng(avatar);
           if (user) {
             // haven't activated
             if (!user.activated) activateUser(user);
             // no avatar
             if (!user.avatar) {
-              user.avatar = avatar[0];
+              user.avatar = avatar;
             }
             if (!user.activated || !user.avatar) await user.save();
             return done(null, user);
@@ -120,13 +116,18 @@ module.exports = function (passport) {
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
+          profile.photos[0].value = profile.photos[0].value.replace(
+            "96",
+            "200"
+          );
           const user = await User.findOne({ email: profile.emails[0].value });
-          const avatar = await downloadImageFromUrl(profile.photos[0].value);
+          let avatar = await downloadImageFromUrl(profile.photos[0].value);
+          avatar = await convertBufferToPng(avatar[0]);
 
           if (user) {
             if (!user.activated) activateUser(user);
             if (!user.avatar) {
-              user.avatar = avatar[0];
+              user.avatar = avatar;
             }
             if (!user.activated || !user.avatar) await user.save();
             return done(null, user);

@@ -1,12 +1,11 @@
 const request = require("supertest");
 
 const app = require("../app");
-const User = require("../models/User");
-const { dbConfig, getJWT } = require("./fixtures/db");
+const Post = require("../models/Post");
+const { dbConfigPostTest, getJWT, posts } = require("./fixtures/db");
 
-beforeEach(dbConfig);
+beforeEach(dbConfigPostTest);
 
-// Should create a post
 test("Should create a post", async () => {
   request(app)
     .post("/posts")
@@ -20,19 +19,40 @@ test("Should create a post", async () => {
     .expect(201);
 });
 
-test("Should get all posts pages", async () => {
+test("Should get all posts pages in sorted date", async () => {
   let response = await request(app).get("/posts").send().expect(200);
   let next = 5;
+  let count = 0;
   while (response.body.next) {
-    expect(response.body.posts.length).toBe(5);
+    const { posts } = response.body;
+
+    expect(posts.length).toBe(5);
     expect(response.body.next).toBe(next);
+
+    let maxDate = posts[0].publishDate;
+    for (let i = 1; i < posts.length; i++) {
+      expect(new Date(maxDate).getTime()).toBeGreaterThan(
+        new Date(posts[i].publishDate).getTime()
+      );
+      maxDate = posts[i].publishDate;
+    }
+
     response = await request(app)
       .get("/posts")
       .query({ skip: next })
       .send()
       .expect(200);
     next += 5;
+    count++;
   }
   expect(response.body.posts.length).toBe(0);
   expect(response.body.next).toBeUndefined();
+  expect(count).toBe(3);
 });
+
+test("Should get a popular post", async () => {
+  const response = await request(app).get("/posts/popular").send().expect(200);
+  expect(response.body).not.toBeFalsy();
+});
+
+test(`Should get a post with id: ${posts[0]._id}`, async () => {});
