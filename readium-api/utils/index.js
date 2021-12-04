@@ -4,6 +4,8 @@ const sharp = require("sharp");
 const { once, EventEmitter } = require("events");
 const bufferEmitter = new EventEmitter();
 
+const { serverUrl } = require("../config/url");
+
 function getImageBufferFromUrl(url) {
   axios.get(url, { responseType: "stream" }).then((res) => {
     const bufs = [];
