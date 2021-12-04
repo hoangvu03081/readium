@@ -1,13 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Clickable, AvatarImage } from "./styles";
 import AvatarDropdown from "./AvatarDropdown";
+import useAvatar from "../../api/useAvatar";
 
 export default function Avatar() {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef();
   const handleToggleDropdown = () => setShowDropdown(!showDropdown);
+  const avatarQuery = useAvatar();
   useEffect(() => {
     const isOutsideClicked = (e) => {
+      if (!avatarQuery.data) return;
       if (
         showDropdown &&
         dropdownRef.current &&
@@ -21,12 +24,16 @@ export default function Avatar() {
     return () => {
       document.removeEventListener("mousedown", isOutsideClicked);
     };
-  }, [showDropdown]);
+  }, [showDropdown, avatarQuery]);
+
+  if (!avatarQuery.data) {
+    return <AvatarImage src="https://ui-avatars.com/api/" alt="Avatar" />;
+  }
 
   return (
     <div style={{ position: "relative" }} ref={dropdownRef}>
       <Clickable onClick={handleToggleDropdown}>
-        <AvatarImage src="https://i.pravatar.cc/150?img=47" alt="Avatar" />
+        <AvatarImage src={avatarQuery.data} alt="Avatar" />
       </Clickable>
       {showDropdown && (
         <AvatarDropdown handleToggleDropdown={handleToggleDropdown} />
