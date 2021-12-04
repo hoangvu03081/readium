@@ -1,9 +1,9 @@
 const router = require("express").Router();
 
 const multer = require("multer");
-const { serverUrl } = require("../../config/url");
 
 const Post = require("../../models/Post");
+const { getImageUrl } = require("../../utils");
 const { authMiddleware } = require("../../utils/auth");
 
 const uploadCover = multer({
@@ -21,8 +21,6 @@ const uploadCover = multer({
     return cb(new Error("Your type of file is not acceptable"));
   },
 });
-
-const getImageUrl = (postId) => `${serverUrl}/posts/${postId}/cover-image`;
 
 router.post(
   "/",
@@ -123,9 +121,9 @@ router.get("/popular", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-  // #swagger.tags = ['Post']
-  // #swagger.summary = 'Get posts'
   /*
+    #swagger.tags = ['Post']
+    #swagger.summary = 'Get posts'
     #swagger.parameters['skip'] = {
       in: 'query',
       type: 'integer',
@@ -143,38 +141,44 @@ router.get("/", async (req, res) => {
     return res.status(400).send({ message: "skip parameter must be a number" });
   }
 
-  if (date.toString() === "Invalid Date") {
-    // { isPublished: true }
-    let posts = JSON.parse(
-      JSON.stringify(
-        await Post.find({}, { coverImage: 0 })
-          .skip(skip)
-          // .sort({ publishDate: -1 })
-          .limit(5)
-      )
-    );
-    posts = posts.map((post) => {
-      post.imageUrl = getImageUrl(post._id);
-      return post;
-    });
-    return res.send(posts);
-  }
-
   try {
+    if (date.toString() === "Invalid Date") {
+      let posts = JSON.parse(
+        JSON.stringify(
+          await Post.find(
+            {
+              isPublished: true,
+            },
+            { coverImage: 0 }
+          )
+            .skip(skip)
+            .sort({ publishDate: -1 })
+            .limit(5)
+        )
+      );
+      posts = posts.map((post) => {
+        post.imageUrl = getImageUrl(post._id);
+        return post;
+      });
+
+      return res.send({ posts, next: skip + 5 });
+    }
+
     let posts = JSON.parse(
       JSON.stringify(
         await Post.find(
           {
-            // isPublished: true,
-            // publishDate: { $lte: date },
+            isPublished: true,
+            publishDate: { $lte: date },
           },
           { coverImage: 0 }
         )
+          .sort({ publishDate: -1 })
           .skip(skip)
-          // .sort({ publishDate: -1 })
           .limit(5)
       )
     );
+
     posts = posts.map((post) => {
       post.imageUrl = getImageUrl(post._id);
       return post;

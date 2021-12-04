@@ -11,6 +11,10 @@ const {
   sendWelcomeEmail,
   sendResetPasswordEmail,
 } = require("../utils/sendMail");
+const {
+  downloadImageFromUrl,
+  convertBufferToPng,
+} = require("../utils");
 
 router.post("/", async (req, res, next) => {
   // #swagger.tags = ['Auth']
@@ -152,7 +156,14 @@ router.post("/register", async (req, res) => {
   const count = await User.find({ displayName }).countDocuments();
   const profileId = displayName + (count ? count : "");
 
+  // avatar
+  let avatar = await downloadImageFromUrl(
+    `https://ui-avatars.com/api/?background=random&name=${displayName}&size=200`
+  );
+  avatar = await convertBufferToPng(avatar[0]);
+
   const newUser = new User({
+    avatar,
     email,
     password,
     profileId,

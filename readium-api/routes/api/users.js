@@ -2,6 +2,7 @@ const router = require("express").Router();
 const bcrypt = require("bcrypt");
 const Post = require("../../models/Post");
 const User = require("../../models/User");
+const { getImageUrl } = require("../../utils");
 const { authMiddleware } = require("../../utils/auth");
 
 /**
@@ -24,57 +25,96 @@ router.get("/protected", authMiddleware, (req, res) => {
  *! Dev routes
  */
 
+router.delete("/", authMiddleware, async (req, res) => {
+  try {
+    const userDeleted = await User.findByIdAndDelete(req.user._id);
+    return res.send({ message: "Sorry to see you go.", user: userDeleted });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Something went wrong when delete account" });
+  }
+});
+
 // didn't test
 router.get("/following/posts", authMiddleware, async (req, res) => {
-  // #swagger.tags = ['User']
-  // #swagger.summary = 'Get following posts from following authors'
   /*
-    #swagger.security = [{
-      "bearerAuth": []
-    }]
-    #swagger.parameters['page'] = {
-      description: 'A page = 10 posts',
+    #swagger.tags = ['User']
+    #swagger.summary = "Get following writers' posts"
+    #swagger.parameters['skip'] = {
       in: 'query',
       type: 'integer',
     }
-    #swagger.parameters['utc'] = {
-      description: 'utc date string',
+    #swagger.parameters['date'] = {
       in: 'query',
       type: 'string',
     }
-   */
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+  */
 
-  // Date() === new Date(new Date().toUTCString()).toString()
-  const { page = 1, utc = Date() } = req.query;
-  const date = new Date(utc);
+  let { date = new Date().toString(), skip = "0" } = req.query;
+  skip = +skip;
+  date = new Date(date);
 
-  const posts = [];
-  const authors = req.user.followings;
-
-  for (let author of authors) {
-    try {
-      const postsOfAuthor = await Post.find({
-        author,
-        publishDate: { $lte: date },
-      });
-      posts.push(...postsOfAuthor);
-      if (posts.length > page * 10) {
-        posts.splice(page * 10);
-        break;
-      }
-    } catch (err) {
-      // #swagger.responses[500] = { description: 'Error finding in mongodb' }
-      return res
-        .status(500)
-        .send({ message: "Some errors occur in get following posts" });
-    }
+  if (Number.isNaN(skip)) {
+    return res.status(400).send({ message: "skip parameter must be a number" });
   }
 
-  // #swagger.responses[200] = { description: 'Successfully get posts' }
-  return res.send(posts);
+  try {
+    if (date.toString() === "Invalid Date") {
+      let posts = JSON.parse(
+        JSON.stringify(
+          await Post.find(
+            {
+              isPublished: true,
+              author: { $in: req.user.followings },
+            },
+            { coverImage: 0 }
+          )
+            .skip(skip)
+            .sort({ publishDate: -1 })
+            .limit(5)
+        )
+      );
+      posts = posts.map((post) => {
+        post.imageUrl = getImageUrl(post._id);
+        return post;
+      });
+      return res.send({ posts });
+    }
+
+    let posts = JSON.parse(
+      JSON.stringify(
+        await Post.find(
+          {
+            isPublished: true,
+            publishDate: { $lte: date },
+            author: { $in: req.user.followings },
+          },
+          { coverImage: 0 }
+        )
+          .skip(skip)
+          .sort({ publishDate: -1 })
+          .limit(5)
+      )
+    );
+    posts = posts.map((post) => {
+      post.imageUrl = getImageUrl(post._id);
+      return post;
+    });
+
+    if (posts.length === 0) return res.send({ posts });
+    return res.send({ posts, next: skip + 5 });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Something went wrong when get following posts" });
+  }
 });
 
-router.get("/follow/:id", authMiddleware, async (req, res) => {
+router.post("/follow/:id", authMiddleware, async (req, res) => {
   // #swagger.tags = ['User']
   // #swagger.summary = 'User follow users'
   /*  
