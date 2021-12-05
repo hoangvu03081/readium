@@ -6,10 +6,10 @@ import { useDropzone } from "react-dropzone";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
 import BackToTop from "react-back-to-top-button";
-import { ReactComponent as UploadIcon } from "../../../assets/icons/upload.svg";
-import { ReactComponent as AddImage } from "../../../assets/icons/add_image.svg";
-// import { ReactComponent as Code } from "../../../assets/icons/code.svg";
-// import { ReactComponent as CodeBlock } from "../../../assets/icons/code_block.svg";
+import { ReactComponent as UploadIcon } from "../../assets/icons/upload.svg";
+import { ReactComponent as AddImage } from "../../assets/icons/add_image.svg";
+// import { ReactComponent as Code } from "../../assets/icons/code.svg";
+// import { ReactComponent as CodeBlock } from "../../assets/icons/code_block.svg";
 
 const icons = ReactQuill.Quill.import("ui/icons");
 icons.code = '<i class="ionicons ion-code"></i>';
