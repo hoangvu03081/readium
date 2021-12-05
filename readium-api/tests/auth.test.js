@@ -38,12 +38,9 @@ test("should not signup a new user with invalid email", async () => {
     .post("/auth/register")
     .send({ email: "", password: "johnDoe" })
     .expect(400);
-  expect(response.body.message).toEqual(
-    expect.stringMatching(/email must not be empty!|Your email is not valid/)
-  );
-  expect(response2.body.message).toEqual(
-    expect.stringMatching(/email must not be empty!|Your email is not valid/)
-  );
+  const re = /Email must not be empty.*|Your email is not valid.*/i;
+  expect(response.body.message).toEqual(expect.stringMatching(re));
+  expect(response2.body.message).toEqual(expect.stringMatching(re));
 });
 
 test("should not signup a new user with invalid password", async () => {
@@ -55,16 +52,10 @@ test("should not signup a new user with invalid password", async () => {
     .post("/auth/register")
     .send({ email: "haiquytruong@gmail.com", password: "" })
     .expect(400);
-  expect(response.body.message).toEqual(
-    expect.stringMatching(
-      /password must not be empty!|Your password must be greater than 6 characters/
-    )
-  );
-  expect(response2.body.message).toEqual(
-    expect.stringMatching(
-      /password must not be empty!|Your password must be greater than 6 characters/
-    )
-  );
+
+  const re = /Password must not be empty.*|Your password must be greater than 6 characters.*/i;
+  expect(response.body.message).toEqual(expect.stringMatching(re));
+  expect(response2.body.message).toEqual(expect.stringMatching(re));
 });
 
 test("should not signup a new user with the same email", async () => {
@@ -123,6 +114,7 @@ test("should be authenticated after login", async () => {
     .post("/auth")
     .send({ email: users[0].email, password: users[0].password })
     .expect(200);
+
   await request(app)
     .get("/users/protected")
     .set("Authorization", response.body.token)

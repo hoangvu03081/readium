@@ -6,7 +6,11 @@ const multer = require("multer");
 
 const User = require("../../models/User");
 const { authMiddleware } = require("../../utils/auth");
-const validator = require("../../utils/validator/Validator");
+const {
+  validateDisplayName,
+  validateEmail,
+  validateURL,
+} = require("../../utils/validator");
 
 router.get("/", authMiddleware, async (req, res) => {
   // #swagger.tags = ['Profile']
@@ -28,7 +32,6 @@ router.patch("/", authMiddleware, async (req, res) => {
       "bearerAuth": []
     }]
     #swagger.requestBody = {
-      required: true,
       content: {
         "application/json": {
           schema: {
@@ -39,20 +42,35 @@ router.patch("/", authMiddleware, async (req, res) => {
     }
   */
 
-  const { displayName, biography, job } = req.body;
+  const {
+    displayName,
+    biography,
+    job,
+    facebook,
+    twitter,
+    instagram,
+    mail,
+  } = req.body;
   const user = req.user;
 
-  user.displayName = displayName || user.displayName;
-  user.biography = biography || user.biography;
-  user.job = job || user.job;
+  user.displayName = displayName ?? user.displayName;
+  user.biography = biography ?? user.biography;
+  user.job = job ?? user.job;
+  user.facebook = facebook ?? user.facebook;
+  user.twitter = twitter ?? user.twitter;
+  user.instagram = instagram ?? user.instagram;
+  user.mail = mail ?? user.mail;
 
-  // validation for displayName
-  validator.resetErrors();
-  const isValid = validator.validateDisplayName(user.displayName);
+  let errMessage;
 
-  if (!isValid) {
-    // #swagger.responses[400] = { description: 'User input displayName with errors' }
-    return res.status(400).send({ message: validator.errors.displayName[0] });
+  if (displayName) errMessage = validateDisplayName(displayName);
+  if (mail) errMessage = validateEmail(mail);
+  if (facebook) errMessage = validateURL(facebook);
+  if (twitter) errMessage = validateURL(twitter);
+  if (instagram) errMessage = validateURL(instagram);
+
+  if (errMessage) {
+    return res.status(400).send({ message: errMessage });
   }
 
   try {

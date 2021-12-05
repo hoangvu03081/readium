@@ -17,6 +17,7 @@ const dbConfigOneUserTest = async () => {
   await User.deleteMany();
 
   user = new User(users[0]);
+  user.activated = true;
   await user.hashPassword();
   await user.save();
 

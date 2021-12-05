@@ -10,20 +10,16 @@ const postSchema = new Schema({
   // required
   title: {
     type: String,
-    required: true,
   },
   coverImage: {
     type: Buffer,
-    required: true,
   },
   content: {
     type: String, // depend on text editor
-    required: true,
   },
   text: {
     // for AI
     type: String,
-    required: true,
   },
   author: {
     type: ObjectId,

@@ -6,15 +6,16 @@ const passport = require("passport");
 const { decrypt, encrypt, issueJWT, authMiddleware } = require("../utils/auth");
 const User = require("../models/User");
 const { clientUrl } = require("../config/url");
-const validator = require("../utils/validator/Validator");
+const {
+  checkEmpty,
+  validateEmail,
+  validatePassword,
+} = require("../utils/validator");
 const {
   sendWelcomeEmail,
   sendResetPasswordEmail,
 } = require("../utils/sendMail");
-const {
-  downloadImageFromUrl,
-  convertBufferToPng,
-} = require("../utils");
+const { downloadImageFromUrl, convertBufferToPng } = require("../utils");
 
 router.post("/", async (req, res, next) => {
   // #swagger.tags = ['Auth']
@@ -34,18 +35,13 @@ router.post("/", async (req, res, next) => {
 
   const { email, password } = req.body;
 
-  validator.resetErrors();
-  let isValid = validator.validateEmail(email);
+  let errMessage = checkEmpty(email, "Email must not be empty");
+  errMessage = errMessage || validateEmail(email);
+  errMessage = errMessage || checkEmpty(password, "Password must not be empty");
+  errMessage = errMessage || validatePassword(password);
 
-  if (!isValid) {
-    const { email } = validator.errors;
-    return res.status(400).send({ message: email[0] });
-  }
-
-  isValid = validator.validatePassword(password);
-  if (!isValid) {
-    const { password } = validator.errors;
-    return res.status(400).send({ message: password[0] });
+  if (errMessage) {
+    return res.status(400).send({ message: errMessage });
   }
 
   try {
@@ -138,18 +134,14 @@ router.post("/register", async (req, res) => {
 
   const { email, password, displayName: dN } = req.body;
 
-  validator.resetErrors();
-  let isValid = validator.validateEmail(email);
-  if (!isValid) {
-    const { email: emailErr } = validator.errors;
-    // #swagger.responses[400] = { description: 'Fields have errors' }
-    return res.status(400).send({ message: emailErr[0] });
-  }
+  let errMessage = checkEmpty(email, "Email must not be empty");
+  errMessage = errMessage || validateEmail(email);
+  errMessage = errMessage || checkEmpty(password, "Password must not be empty");
+  errMessage = errMessage || validatePassword(password);
 
-  isValid = validator.validatePassword(password);
-  if (!isValid) {
-    const { password: passwordErr } = validator.errors;
-    return res.status(400).send({ message: passwordErr[0] });
+  if (errMessage) {
+    // #swagger.responses[400] = { description: 'Fields have errors' }
+    return res.status(400).send({ message: errMessage });
   }
 
   const displayName = dN || email.split("@")[0];
@@ -157,13 +149,13 @@ router.post("/register", async (req, res) => {
   const profileId = displayName + (count ? count : "");
 
   // avatar
-  let avatar = await downloadImageFromUrl(
-    `https://ui-avatars.com/api/?background=random&name=${displayName}&size=200`
-  );
-  avatar = await convertBufferToPng(avatar[0]);
+  // let avatar = await downloadImageFromUrl(
+  //   `https://ui-avatars.com/api/?background=random&name=${displayName}&size=200`
+  // );
+  // avatar = await convertBufferToPng(avatar[0]);
 
   const newUser = new User({
-    avatar,
+    // avatar,
     email,
     password,
     profileId,
@@ -409,10 +401,10 @@ router.post("/reset", async (req, res, next) => {
         .send({ message: "Please don't hack this endpoint" });
     }
 
-    validator.resetErrors();
-    const isValid = validator.validatePassword(password);
-    if (!isValid) {
-      return res.status(400).send({ message: validator.errors.password[0] });
+    let errMessage = checkEmpty(password, "Password must not be empty");
+    errMessage = errMessage || validatePassword(password);
+    if (errMessage) {
+      return res.status(400).send({ message: errMessage });
     }
 
     user.resetTimeout = undefined;

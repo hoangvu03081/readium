@@ -335,10 +335,18 @@
     },
     "/users/": {
       "delete": {
-        "tags": [],
+        "tags": [
+          "User"
+        ],
+        "summary": "Delete my account",
         "description": "",
         "parameters": [],
-        "responses": {}
+        "responses": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/users/following/posts": {
@@ -504,7 +512,6 @@
           }
         ],
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -541,28 +548,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/users/profiles/{profileId}": {
-      "get": {
-        "tags": [
-          "Profile"
-        ],
-        "summary": "Get others",
-        "description": "",
-        "parameters": [
-          {
-            "name": "profileId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "404": {
-            "description": "Not Found"
           }
         }
       }
@@ -608,6 +593,28 @@
           },
           "500": {
             "description": "Object Id is error or mongodb error"
+          }
+        }
+      }
+    },
+    "/users/profiles/{profileId}": {
+      "get": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Get others",
+        "description": "",
+        "parameters": [
+          {
+            "name": "profileId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
           }
         }
       }
@@ -1217,6 +1224,22 @@
           "job": {
             "type": "string",
             "example": "Neet"
+          },
+          "facebook": {
+            "type": "string",
+            "example": "https://www.example.com"
+          },
+          "twitter": {
+            "type": "string",
+            "example": "https://www.example.com"
+          },
+          "instagram": {
+            "type": "string",
+            "example": "https://www.example.com"
+          },
+          "mail": {
+            "type": "string",
+            "example": "the@example.com"
           }
         }
       },

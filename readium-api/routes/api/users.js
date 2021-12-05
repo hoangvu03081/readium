@@ -26,6 +26,13 @@ router.get("/protected", authMiddleware, (req, res) => {
  */
 
 router.delete("/", authMiddleware, async (req, res) => {
+  /*
+    #swagger.tags = ['User']
+    #swagger.summary = "Delete my account"
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+  */
   try {
     const userDeleted = await User.findByIdAndDelete(req.user._id);
     return res.send({ message: "Sorry to see you go.", user: userDeleted });

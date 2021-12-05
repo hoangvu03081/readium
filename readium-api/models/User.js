@@ -86,6 +86,7 @@ const userSchema = new Schema({
   facebook: String,
   twitter: String,
   instagram: String,
+  mail: String,
 });
 
 userSchema.methods.getPublicProfile = function () {
