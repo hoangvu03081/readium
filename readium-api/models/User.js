@@ -91,6 +91,7 @@ const userSchema = new Schema({
 userSchema.methods.getPublicProfile = function () {
   const user = this;
   const userObject = user.toObject();
+  delete userObject.avatar;
   delete userObject.password;
   delete userObject.tokens;
   delete userObject.notifications;

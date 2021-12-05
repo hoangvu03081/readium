@@ -10,8 +10,8 @@ const StyledSignInModal = styled.div`
   width: 400px;
   height: 500px;
   position: fixed;
-  top: 50%;
-  left: 50%;
+  top: 50vh;
+  left: 50vw;
   background-color: white;
   transform: translate(-50%, -50%);
   border-radius: 4px;

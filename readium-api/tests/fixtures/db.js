@@ -15,7 +15,7 @@ const getJWT = () => jwt;
 
 const dbConfigOneUserTest = async () => {
   await User.deleteMany();
-  
+
   user = new User(users[0]);
   await user.hashPassword();
   await user.save();
@@ -28,7 +28,7 @@ const dbConfigOneUserTest = async () => {
   jwt = response.body.token;
 };
 
-const dbConfig = async () => {
+const dbConfigPostTest = async () => {
   await User.deleteMany();
   await Post.deleteMany();
 
@@ -38,7 +38,9 @@ const dbConfig = async () => {
     const user = new User(users[i]);
     await user.hashPassword();
     await user.save();
+  }
 
+  for (let i = 0; i < posts.length; i++) {
     const post = new Post({ ...posts[i], coverImage });
     await post.save();
   }
@@ -55,6 +57,6 @@ module.exports = {
   users,
   posts,
   dbConfigOneUserTest,
-  dbConfig,
+  dbConfigPostTest,
   getJWT,
 };

@@ -299,7 +299,10 @@
         ],
         "responses": {
           "400": {
-            "description": "User not found but for security send 400"
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "User not found"
           }
         },
         "requestBody": {
@@ -330,33 +333,36 @@
         ]
       }
     },
+    "/users/": {
+      "delete": {
+        "tags": [],
+        "description": "",
+        "parameters": [],
+        "responses": {}
+      }
+    },
     "/users/following/posts": {
       "get": {
         "tags": [
           "User"
         ],
-        "summary": "Get following posts from following authors",
+        "summary": "Get following writers' posts",
         "description": "",
         "parameters": [
           {
-            "name": "page",
+            "name": "date",
             "in": "query",
-            "type": "integer",
-            "description": "A page = 10 posts"
+            "type": "string"
           },
           {
-            "name": "utc",
+            "name": "skip",
             "in": "query",
-            "type": "string",
-            "description": "utc date string"
+            "type": "integer"
           }
         ],
         "responses": {
-          "200": {
-            "description": "Successfully get posts"
-          },
-          "500": {
-            "description": "Error finding in mongodb"
+          "400": {
+            "description": "Bad Request"
           }
         },
         "security": [
@@ -367,7 +373,7 @@
       }
     },
     "/users/follow/{id}": {
-      "get": {
+      "post": {
         "tags": [
           "User"
         ],
@@ -561,12 +567,28 @@
         }
       }
     },
+    "/users/profiles/avatar": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Get my avatar",
+        "description": "",
+        "parameters": [],
+        "responses": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/users/profiles/avatar/{id}": {
       "get": {
         "tags": [
           "User"
         ],
-        "summary": "Get specific user",
+        "summary": "Get specific user's avatar",
         "description": "",
         "parameters": [
           {
@@ -580,6 +602,9 @@
         "responses": {
           "200": {
             "description": "Send back user avatar"
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "500": {
             "description": "Object Id is error or mongodb error"
@@ -799,28 +824,11 @@
           }
         }
       },
-      "post": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      },
       "delete": {
-        "tags": [],
+        "tags": [
+          "Post"
+        ],
+        "summary": "Delete a post",
         "description": "",
         "parameters": [
           {
@@ -831,9 +839,6 @@
           }
         ],
         "responses": {
-          "404": {
-            "description": "Not Found"
-          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -856,6 +861,31 @@
           }
         ],
         "responses": {}
+      }
+    },
+    "/posts/like/{id}": {
+      "post": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "Like post",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
       }
     },
     "/posts/{id}/comments/": {
