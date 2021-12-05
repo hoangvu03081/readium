@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import TagBtn from "../Buttons/TagBtn";
-import Interactions from "../Buttons/Interactions";
+import Interactions from "../../../common/components/Buttons/Interactions";
+import TagBtn from "../../../common/components/Buttons/TagBtn";
 
 const Card = styled.div`
   margin-bottom: 50px;

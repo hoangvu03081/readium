@@ -1,8 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import Interactions from "../Buttons/Interactions";
-import TagBtn from "../Buttons/TagBtn";
+import Interactions from "../../../common/components/Buttons/Interactions";
+import TagBtn from "../../../common/components/Buttons/TagBtn";
 
 const Layout = styled.div`
   border: 2px solid ${({ theme }) => theme.colors.PopularPostBlack};

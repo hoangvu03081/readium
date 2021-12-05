@@ -5,7 +5,7 @@ import TextareaAutosize from "react-textarea-autosize";
 import { useDropzone } from "react-dropzone";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
-import BackToTop from "react-back-to-top-button";
+import BackToTop from "../../common/components/Buttons/BackToTop";
 import { ReactComponent as UploadIcon } from "../../assets/icons/upload.svg";
 import { ReactComponent as AddImage } from "../../assets/icons/add_image.svg";
 // import { ReactComponent as Code } from "../../assets/icons/code.svg";
@@ -18,25 +18,6 @@ const Layout = styled.div`
   margin-top: 80px;
   padding-top: 80px;
   padding-bottom: 80px;
-  > .back-to-top {
-    background-color: white;
-    border: 2px solid black;
-    border-radius: 0;
-    width: 45px;
-    height: 45px;
-    font-size: 18px;
-    right: 20px;
-    bottom: 15px;
-    transition: all 0.25s;
-    &:hover {
-      background-color: black;
-      color: white;
-      transition: all 0.25s;
-    }
-    @media (max-width: 800px) {
-      display: none;
-    }
-  }
 `;
 
 // STORY INFORMATION
@@ -216,7 +197,7 @@ const StoryContent = styled.div`
     text-align: center;
   }
 `;
-const TextEditorLayout = styled.div`
+const TextEditor = styled.div`
   width: 68%;
   margin: auto;
   position: relative;
@@ -290,7 +271,7 @@ const SubmitBtn = styled.button`
   }
 `;
 
-export default function TextEditor() {
+export default function Content() {
   // UPLOAD IMAGE
   const [imgSrc, setImgSrc] = useState("");
   const onDrop = useCallback((acceptedFiles) => {
@@ -376,7 +357,7 @@ export default function TextEditor() {
 
       <StoryContent>
         <h1>Your story content</h1>
-        <TextEditorLayout>
+        <TextEditor>
           <ReactQuill
             ref={quill}
             theme="bubble"
@@ -389,16 +370,12 @@ export default function TextEditor() {
               <AddImage onClick={addImage} />
             </div>
           </Buttons>
-        </TextEditorLayout>
+        </TextEditor>
         <div className="d-flex justify-content-center">
           <SubmitBtn>Submit</SubmitBtn>
         </div>
       </StoryContent>
-      <BackToTop showAt={450} speed={1500} easing="easeInOutSine">
-        <span>
-          <i className="ionicons ion-chevron-up" />
-        </span>
-      </BackToTop>
+      <BackToTop />
     </Layout>
   );
 }

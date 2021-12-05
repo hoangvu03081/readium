@@ -1,10 +1,10 @@
 import React from "react";
-import TextEditor from "./TextEditor";
+import Content from "./Content";
 
 export default function WritePost() {
   return (
     <>
-      <TextEditor />
+      <Content />
     </>
   );
 }
