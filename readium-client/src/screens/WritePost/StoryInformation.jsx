@@ -2,6 +2,7 @@
 import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import TextareaAutosize from "react-textarea-autosize";
+import { WithContext as ReactTags } from "react-tag-input";
 import { useDropzone } from "react-dropzone";
 import { ReactComponent as UploadIcon } from "../../assets/icons/upload.svg";
 
@@ -80,7 +81,7 @@ const InputTitle = styled.div`
     }
   }
 `;
-const InputDescriptionTags = styled.div`
+const InputDescription = styled.div`
   textarea {
     border: none;
     border-bottom: 1px solid #c8c8c8;
@@ -129,6 +130,97 @@ const InputDescriptionTags = styled.div`
     }
   }
 `;
+const InputTags = styled.div`
+  & .ReactTags__selected {
+    width: 460px;
+    margin-top: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    @media (max-width: 530px) {
+      width: 90%;
+    }
+  }
+  span {
+    padding: 5px 10px;
+    border-radius: 41px;
+    font-family: "PT Sans";
+    font-weight: bold;
+    color: ${({ theme }) => theme.colors.TagBtnText};
+    background-color: ${({ theme }) => theme.colors.TagBtnBackground};
+    transition: all 0.25s;
+    > button {
+      padding: 0;
+      margin-left: 6px;
+      color: ${({ theme }) => theme.colors.TagBtnText};
+      background-color: ${({ theme }) => theme.colors.TagBtnBackground};
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    &:hover {
+      background-color: ${({ theme }) => theme.colors.TagBtnHover};
+      transition: all 0.25s;
+      > button {
+        background-color: ${({ theme }) => theme.colors.TagBtnHover};
+        transition: all 0.25s;
+      }
+    }
+  }
+  input {
+    border: none;
+    border-bottom: 1px solid #c8c8c8;
+    width: 460px;
+    font-family: "PT Sans";
+    font-weight: 500;
+    font-size: 18px;
+    resize: none;
+    &:focus {
+      outline: none;
+      border-bottom: 2px solid #000000;
+    }
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    ::-webkit-input-placeholder {
+      text-align: center;
+      font-family: "PT Sans";
+      font-weight: 500;
+      font-size: 14px;
+      padding-top: 3px;
+    }
+    :-moz-placeholder {
+      text-align: center;
+      font-family: "PT Sans";
+      font-weight: 500;
+      font-size: 14px;
+      padding-top: 3px;
+    }
+    ::-moz-placeholder {
+      text-align: center;
+      font-family: "PT Sans";
+      font-weight: 500;
+      font-size: 14px;
+      padding-top: 3px;
+    }
+    :-ms-input-placeholder {
+      text-align: center;
+      font-family: "PT Sans";
+      font-weight: 500;
+      font-size: 14px;
+      padding-top: 3px;
+    }
+    @media (max-width: 530px) {
+      width: 90%;
+    }
+  }
+`;
+const Note = styled.p`
+  margin: 0;
+  color: red;
+`;
 const UploadImage = styled.div`
   margin: auto;
   height: 250px;
@@ -172,7 +264,6 @@ const UploadImage = styled.div`
 
 export default function StoryInformation() {
   const [imgSrc, setImgSrc] = useState("");
-
   const onDrop = useCallback((acceptedFiles) => {
     // send to server
     acceptedFiles.forEach((file) => {
@@ -189,14 +280,34 @@ export default function StoryInformation() {
       reader.readAsArrayBuffer(file);
     });
   }, []);
-
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
+  const KeyCodes = {
+    comma: 188,
+    enter: 13,
+  };
+  const delimiters = [KeyCodes.comma, KeyCodes.enter];
+  const [tags, setTags] = useState([]);
+  const handleDelete = (i) => {
+    setTags(tags.filter((tag, index) => index !== i));
+  };
+  const handleAddition = (tag) => {
+    setTags([...tags, tag]);
+    // tags.length + 1
+  };
+  const handleDrag = (tag, currPos, newPos) => {
+    const newTags = tags.slice();
+    newTags.splice(currPos, 1);
+    newTags.splice(newPos, 0, tag);
+    setTags(newTags);
+  };
 
   return (
     <Layout>
       <h1>Your story information</h1>
 
-      <h2>Your title</h2>
+      <h2>Your title*</h2>
+      <Note>Maximum 100 characters</Note>
       <InputTitle>
         <TextareaAutosize
           placeholder="Maximum 100 characters"
@@ -207,16 +318,29 @@ export default function StoryInformation() {
       </InputTitle>
 
       <h3>Your description</h3>
-      <InputDescriptionTags>
-        <TextareaAutosize placeholder="Optional" minRows={1} maxRows={25} />
-      </InputDescriptionTags>
+      <InputDescription>
+        <TextareaAutosize
+          placeholder="Maximum 300 characters"
+          minRows={1}
+          maxRows={25}
+        />
+      </InputDescription>
 
       <h3>Your tags</h3>
-      <InputDescriptionTags>
-        <TextareaAutosize placeholder="Optional" minRows={1} maxRows={25} />
-      </InputDescriptionTags>
+      <InputTags>
+        <ReactTags
+          tags={tags}
+          delimiters={delimiters}
+          handleDelete={handleDelete}
+          handleAddition={handleAddition}
+          handleDrag={handleDrag}
+          inputFieldPosition="top"
+          placeholder="Enter to create a tag"
+          autocomplete
+        />
+      </InputTags>
 
-      <h4>Your cover image</h4>
+      <h4>Your cover image*</h4>
       <UploadImage backgroundImage={imgSrc} {...getRootProps()}>
         <input {...getInputProps()} />
         {isDragActive ? (

@@ -33,7 +33,7 @@ const Left = styled.div`
   justify-content: center;
   align-items: center;
   img {
-    width: auto;
+    width: 154px;
     height: 138px;
     object-fit: cover;
     border-radius: 8px;
