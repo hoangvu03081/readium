@@ -29,6 +29,9 @@ const UserAvatar = styled.img`
   height: 26px;
   width: 26px;
   margin-bottom: 4px;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 const UserName = styled.p`
   color: ${({ theme }) => theme.colors.CardBlack};
@@ -36,6 +39,9 @@ const UserName = styled.p`
   font-weight: 500;
   font-size: 14px;
   margin: 0 0 10px 0;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 const Title = styled.div`
   color: ${({ theme }) => theme.colors.CardBlack};
@@ -46,6 +52,9 @@ const Title = styled.div`
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const Bottom = styled.div`
@@ -89,6 +98,7 @@ const Corner = styled.div`
     transition: all 0.25s;
     &:hover,
     &.active {
+      cursor: pointer;
       transform: scale(1.15);
       transition: all 0.25s;
     }
