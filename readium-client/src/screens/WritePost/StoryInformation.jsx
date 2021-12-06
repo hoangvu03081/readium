@@ -134,6 +134,7 @@ const InputTags = styled.div`
   & .ReactTags__selected {
     width: 460px;
     margin-top: 15px;
+    margin-bottom: 10px;
     margin-left: auto;
     margin-right: auto;
     display: flex;
@@ -218,6 +219,9 @@ const InputTags = styled.div`
   }
 `;
 const Note = styled.p`
+  i {
+    margin-right: 5px;
+  }
   margin: 0;
   color: red;
 `;
@@ -263,6 +267,39 @@ const UploadImage = styled.div`
 `;
 
 export default function StoryInformation() {
+  // INPUT TAGS + VALIDATION
+  const KeyCodes = {
+    comma: 188,
+    enter: 13,
+  };
+  const delimiters = [KeyCodes.comma, KeyCodes.enter];
+  const [tags, setTags] = useState([]);
+  const [tagsValidation, setTagsValidation] = useState(true);
+  const handleTagsChange = (data) => {
+    if (data.length === 5) {
+      setTagsValidation(false);
+    } else {
+      setTagsValidation(true);
+    }
+  };
+  const handleAddition = (tag) => {
+    if (tagsValidation) {
+      setTags([...tags, tag]);
+    }
+  };
+  const handleDelete = (i) => {
+    const result = tags.filter((tag, index) => index !== i);
+    setTags(result);
+    handleTagsChange(result);
+  };
+  const handleDrag = (tag, currPos, newPos) => {
+    const newTags = tags.slice();
+    newTags.splice(currPos, 1);
+    newTags.splice(newPos, 0, tag);
+    setTags(newTags);
+  };
+
+  // INPUT COVER IMAGE
   const [imgSrc, setImgSrc] = useState("");
   const onDrop = useCallback((acceptedFiles) => {
     // send to server
@@ -282,24 +319,22 @@ export default function StoryInformation() {
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
-  const KeyCodes = {
-    comma: 188,
-    enter: 13,
+  // OTHER VALIDATIONS
+  const [titleValidation, setTitleValidation] = useState(true);
+  const [descriptionValidation, setDescriptionValidation] = useState(true);
+  const handleTitleChange = (event) => {
+    if (event.target.value.length === 100) {
+      setTitleValidation(false);
+    } else {
+      setTitleValidation(true);
+    }
   };
-  const delimiters = [KeyCodes.comma, KeyCodes.enter];
-  const [tags, setTags] = useState([]);
-  const handleDelete = (i) => {
-    setTags(tags.filter((tag, index) => index !== i));
-  };
-  const handleAddition = (tag) => {
-    setTags([...tags, tag]);
-    // tags.length + 1
-  };
-  const handleDrag = (tag, currPos, newPos) => {
-    const newTags = tags.slice();
-    newTags.splice(currPos, 1);
-    newTags.splice(newPos, 0, tag);
-    setTags(newTags);
+  const handleDescriptionChange = (event) => {
+    if (event.target.value.length === 300) {
+      setDescriptionValidation(false);
+    } else {
+      setDescriptionValidation(true);
+    }
   };
 
   return (
@@ -307,15 +342,20 @@ export default function StoryInformation() {
       <h1>Your story information</h1>
 
       <h2>Your title*</h2>
-      <Note>Maximum 100 characters</Note>
       <InputTitle>
         <TextareaAutosize
           placeholder="Maximum 100 characters"
           minRows={1}
           maxRows={10}
-          required
+          autoFocus
+          maxLength="100"
+          onChange={handleTitleChange}
         />
       </InputTitle>
+      <Note className={titleValidation ? "d-none" : "d-block"}>
+        <i className="ionicons ion-ios-information-outline" />
+        Maximum 100 characters
+      </Note>
 
       <h3>Your description</h3>
       <InputDescription>
@@ -323,8 +363,14 @@ export default function StoryInformation() {
           placeholder="Maximum 300 characters"
           minRows={1}
           maxRows={25}
+          maxLength="300"
+          onChange={handleDescriptionChange}
         />
       </InputDescription>
+      <Note className={descriptionValidation ? "d-none" : "d-block"}>
+        <i className="ionicons ion-ios-information-outline" />
+        Maximum 300 characters
+      </Note>
 
       <h3>Your tags</h3>
       <InputTags>
@@ -334,11 +380,19 @@ export default function StoryInformation() {
           handleDelete={handleDelete}
           handleAddition={handleAddition}
           handleDrag={handleDrag}
+          handleInputChange={() => {
+            handleTagsChange(tags);
+          }}
           inputFieldPosition="top"
           placeholder="Enter to create a tag"
+          autofocus={false}
           autocomplete
         />
       </InputTags>
+      <Note className={tagsValidation ? "d-none" : "d-block"}>
+        <i className="ionicons ion-ios-information-outline" />
+        Maximum 5 tags
+      </Note>
 
       <h4>Your cover image*</h4>
       <UploadImage backgroundImage={imgSrc} {...getRootProps()}>
