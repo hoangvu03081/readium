@@ -9,11 +9,11 @@ const TagBtn = styled.button`
   color: ${({ theme }) => theme.colors.TagBtnText};
   border: none;
   border-radius: 41px;
-  transition: all 0.3s;
+  transition: all 0.25s;
   &:hover {
     cursor: pointer;
     background-color: ${({ theme }) => theme.colors.TagBtnHover};
-    transition: all 0.3s;
+    transition: all 0.25s;
   }
 `;
 

@@ -17,6 +17,11 @@ const InteractionStyle = styled.div`
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
+  @media (max-width: 360px) {
+    span {
+      font-size: 15px;
+    }
+  }
 `;
 
 export default function Interactions({
@@ -25,7 +30,7 @@ export default function Interactions({
   commentNumber,
 }) {
   return (
-    <InteractionStyle>
+    <InteractionStyle className="interactions">
       <Watch>
         <WatchIcon />
         <span>{watchNumber}</span>

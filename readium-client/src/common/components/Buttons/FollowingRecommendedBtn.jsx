@@ -12,6 +12,12 @@ const Outline = styled.div`
   justify-content: space-around;
   position: relative;
   z-index: 1;
+  @media (max-width: 650px) {
+    margin: 50px 0;
+  }
+  @media (max-width: 365px) {
+    transform: scale(0.8);
+  }
 `;
 
 const Button = styled.button`

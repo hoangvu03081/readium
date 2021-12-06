@@ -1,14 +1,17 @@
 import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import TagBtn from "../Buttons/TagBtn";
-import Interactions from "../Buttons/Interactions";
+import Interactions from "../../../common/components/Buttons/Interactions";
+import TagBtn from "../../../common/components/Buttons/TagBtn";
 
 const Card = styled.div`
   margin-bottom: 50px;
   border: 2px solid ${({ theme }) => theme.colors.PopularPostBlack};
   border-radius: 6px;
   padding: 30px;
+  @media (max-width: 650px) {
+    display: none;
+  }
 `;
 
 const Top = styled.div`
@@ -128,7 +131,7 @@ const BottomRight = styled.div`
   }
 `;
 
-export default function Post({
+export default function PostDesktop({
   title,
   user,
   userAvatar,
@@ -173,7 +176,7 @@ export default function Post({
   );
 }
 
-Post.propTypes = {
+PostDesktop.propTypes = {
   title: PropTypes.string.isRequired,
   user: PropTypes.string.isRequired,
   userAvatar: PropTypes.string.isRequired,
