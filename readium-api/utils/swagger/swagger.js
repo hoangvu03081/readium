@@ -105,7 +105,15 @@ const doc = {
     Comment: {
       $content: "Comment Content",
     },
+    TextEditorContent: {
+      ops: [
+        { insert: "Gandalf", attributes: { bold: true } },
+        { insert: " the " },
+        { insert: "Grey", attributes: { color: "#ccc" } },
+      ],
+    },
   },
+
   securityDefinitions: {
     bearerAuth: {
       type: "http",

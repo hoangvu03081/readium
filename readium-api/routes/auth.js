@@ -1,5 +1,8 @@
 const router = require("express").Router();
 
+const { createAvatar } = require("@dicebear/avatars");
+const style = require("@dicebear/avatars-initials-sprites");
+const sharp = require("sharp");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
 
@@ -15,7 +18,6 @@ const {
   sendWelcomeEmail,
   sendResetPasswordEmail,
 } = require("../utils/sendMail");
-const { downloadImageFromUrl, convertBufferToPng } = require("../utils");
 
 router.post("/", async (req, res, next) => {
   // #swagger.tags = ['Auth']
@@ -149,10 +151,15 @@ router.post("/register", async (req, res) => {
   const profileId = displayName + (count ? count : "");
 
   // avatar
-  // let avatar = await downloadImageFromUrl(
-  //   `https://ui-avatars.com/api/?background=random&name=${displayName}&size=200`
-  // );
-  // avatar = await convertBufferToPng(avatar[0]);
+  const avatarSvg = createAvatar(style, {
+    seed: displayName,
+  });
+  const avatar = await sharp(Buffer.from(avatarSvg, "utf-8"), {
+    density: 50000,
+  })
+    .resize({ width: 200, fit: sharp.fit.contain })
+    .png()
+    .toBuffer();
 
   const newUser = new User({
     // avatar,

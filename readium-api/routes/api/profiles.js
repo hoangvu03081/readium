@@ -141,7 +141,6 @@ router.post(
     res.send({ message: "oke" });
   },
   (err, req, res, next) => {
-    console.log(err);
     return res.status(400).send({ message: err.message });
   }
 );

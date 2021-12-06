@@ -6,26 +6,35 @@ const {
   Schema: { ObjectId },
 } = mongoose;
 
+function publishRqFnc() {
+  return this.isPublished;
+}
+
 const postSchema = new Schema({
-  // required
-  title: {
-    type: String,
-  },
-  coverImage: {
-    type: Buffer,
-  },
-  content: {
-    type: String, // depend on text editor
-  },
-  text: {
-    // for AI
-    type: String,
-  },
   author: {
     type: ObjectId,
     required: true,
   },
-  // required
+  title: {
+    type: String,
+    required: true,
+  },
+  coverImage: {
+    type: Buffer,
+    required: publishRqFnc,
+  },
+  textEditorContent: {
+    default: '{ "ops": [] }',
+    type: String,
+  },
+  content: {
+    type: String,
+    required: publishRqFnc,
+  },
+  publishDate: {
+    type: Date,
+    required: publishRqFnc,
+  },
   views: {
     type: Number,
     default: 0,
@@ -50,14 +59,8 @@ const postSchema = new Schema({
       },
     },
   ],
-  tags: [String],
-  isPublished: {
-    type: Boolean,
-    default: false,
-  },
   textConnection: [
     {
-      // the relevant connection to the post toPost
       toPost: {
         type: ObjectId,
         ref: "Post",
@@ -65,8 +68,22 @@ const postSchema = new Schema({
       score: Number,
     },
   ],
-  publishDate: Date,
-  summary: String,
+  isPublished: {
+    type: Boolean,
+    default: false,
+  },
+  duration: {
+    type: Number,
+    default: 0,
+  },
+  tags: [String],
+  description: String,
 });
+
+postSchema.methods.toJSON = function () {
+  const postObject = this.toObject();
+  delete postObject.coverImage;
+  return postObject;
+};
 
 module.exports = model("Post", postSchema);

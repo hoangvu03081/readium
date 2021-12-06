@@ -74,6 +74,7 @@ const userSchema = new Schema({
   profileId: {
     type: String,
     required: true,
+    unique: true,
   },
   tokens: [String],
   liked: [

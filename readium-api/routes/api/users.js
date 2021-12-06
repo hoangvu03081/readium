@@ -121,6 +121,20 @@ router.get("/following/posts", authMiddleware, async (req, res) => {
   }
 });
 
+router.get("/follow/:id", authMiddleware, async (req, res) => {
+  /*
+    #swagger.tags = ["User"]
+    #swagger.summary = "Is follow user"
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+  */
+  const is_followed = req.user.followings.some(
+    (fUser) => fUser._id.toString() === req.params.id
+  );
+  return res.send({ is_followed });
+});
+
 router.post("/follow/:id", authMiddleware, async (req, res) => {
   // #swagger.tags = ['User']
   // #swagger.summary = 'User follow users'
