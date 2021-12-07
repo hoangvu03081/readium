@@ -1,11 +1,11 @@
 import React from "react";
-import Body from "../../common/components/Body";
-import PopularPost from "../../common/components/PopularPost";
-import HorizontalLine from "../../common/components/HorizontalLine";
+import Body from "./Body";
+import PopularPost from "./PopularPost";
+import HorizontalLine from "./HorizontalLine";
 import FollowingRecommendedBtn from "../../common/components/Buttons/FollowingRecommendedBtn";
-import CardList from "../../common/components/CardList";
-import TrendingTopics from "../../common/components/TrendingTopics";
-import RecommendedWriters from "../../common/components/RecommendedWriters";
+import CardList from "./CardList";
+import TrendingTopics from "./TrendingTopics";
+import RecommendedWriters from "./RecommendedWriters";
 
 export default function Home() {
   return (

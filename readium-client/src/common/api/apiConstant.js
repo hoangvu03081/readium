@@ -15,4 +15,8 @@ const PROFILE_API = {
   GET_MY_PROFILE: getURL("/users/profiles"),
 };
 
-export { USER_API, PROFILE_API };
+const POST_API = {
+  GET_POST: (pageParam) => getURL(`/posts/?skip=${pageParam}`),
+};
+
+export { USER_API, PROFILE_API, POST_API };

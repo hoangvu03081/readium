@@ -26,6 +26,13 @@ router.get("/protected", authMiddleware, (req, res) => {
  */
 
 router.delete("/", authMiddleware, async (req, res) => {
+  /*
+    #swagger.tags = ['User']
+    #swagger.summary = "Delete my account"
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+  */
   try {
     const userDeleted = await User.findByIdAndDelete(req.user._id);
     return res.send({ message: "Sorry to see you go.", user: userDeleted });
@@ -112,6 +119,20 @@ router.get("/following/posts", authMiddleware, async (req, res) => {
       .status(500)
       .send({ message: "Something went wrong when get following posts" });
   }
+});
+
+router.get("/follow/:id", authMiddleware, async (req, res) => {
+  /*
+    #swagger.tags = ["User"]
+    #swagger.summary = "Is follow user"
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+  */
+  const is_followed = req.user.followings.some(
+    (fUser) => fUser._id.toString() === req.params.id
+  );
+  return res.send({ is_followed });
 });
 
 router.post("/follow/:id", authMiddleware, async (req, res) => {

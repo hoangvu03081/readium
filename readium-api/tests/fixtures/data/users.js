@@ -10,6 +10,7 @@ const users = [
     job: "Singer",
     displayName: "john",
     profileId: "john",
+    activated: true,
   },
   {
     _id: new mongoose.Types.ObjectId(),

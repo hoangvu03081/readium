@@ -90,6 +90,10 @@ const doc = {
       displayName: "John Updated Doe",
       biography: "I'm being updated in Edit profile endpoint.",
       job: "Neet",
+      facebook: "https://www.example.com",
+      twitter: "https://www.example.com",
+      instagram: "https://www.example.com",
+      mail: "the@example.com",
     },
     Email: {
       $email: "john@example.com",
@@ -101,7 +105,15 @@ const doc = {
     Comment: {
       $content: "Comment Content",
     },
+    TextEditorContent: {
+      ops: [
+        { insert: "Gandalf", attributes: { bold: true } },
+        { insert: " the " },
+        { insert: "Grey", attributes: { color: "#ccc" } },
+      ],
+    },
   },
+
   securityDefinitions: {
     bearerAuth: {
       type: "http",

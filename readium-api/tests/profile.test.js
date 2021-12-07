@@ -58,16 +58,23 @@ test("Should edit my profile", async () => {
       displayName: "John Updated Doe",
       biography: "I'm being updated in Edit profile endpoint.",
       job: "Neet",
+      facebook: "https://www.example.com",
+      twitter: "https://www.example.com",
+      instagram: "https://www.example.com",
+      mail: "the@example.com",
     })
     .expect(200);
 
   let {
-    _id: r_id,
     email: rEmail,
     biography: rBiography,
     job: rJob,
     displayName: rDisplayName,
     profileId: rProfileId,
+    facebook: rFacebook,
+    twitter: rTwitter,
+    instagram: rInstagram,
+    mail: rMail,
   } = response.body;
 
   expect(rEmail).toBe(email);
@@ -75,6 +82,10 @@ test("Should edit my profile", async () => {
   expect(rJob).toBe("Neet");
   expect(rDisplayName).toBe("John Updated Doe");
   expect(rProfileId).toBe(profileId);
+  expect(rFacebook).toBe("https://www.example.com");
+  expect(rTwitter).toBe("https://www.example.com");
+  expect(rInstagram).toBe("https://www.example.com");
+  expect(rMail).toBe("the@example.com");
 
   ({
     _id: r_id,
@@ -83,6 +94,10 @@ test("Should edit my profile", async () => {
     job: rJob,
     displayName: rDisplayName,
     profileId: rProfileId,
+    facebook: rFacebook,
+    twitter: rTwitter,
+    instagram: rInstagram,
+    mail: rMail,
   } = await User.findOne({ email }));
 
   expect(r_id).toEqual(_id);
@@ -91,6 +106,10 @@ test("Should edit my profile", async () => {
   expect(rJob).toBe("Neet");
   expect(rDisplayName).toBe("John Updated Doe");
   expect(rProfileId).toBe(profileId);
+  expect(rFacebook).toBe("https://www.example.com");
+  expect(rTwitter).toBe("https://www.example.com");
+  expect(rInstagram).toBe("https://www.example.com");
+  expect(rMail).toBe("the@example.com");
 });
 
 test("Should not be able to edit if not authenticated", async () => {
@@ -100,6 +119,10 @@ test("Should not be able to edit if not authenticated", async () => {
       displayName: "John Updated Doe",
       biography: "I'm being updated in Edit profile endpoint.",
       job: "Neet",
+      facebook: "https://www.example.com",
+      twitter: "https://www.example.com",
+      instagram: "https://www.example.com",
+      mail: "the@example.com",
     })
     .expect(401);
 });

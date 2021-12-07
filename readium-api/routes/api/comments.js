@@ -29,7 +29,6 @@ router.get("/", async (req, res) => {
     }
     return res.send(post.comments);
   } catch (err) {
-    console.log(err);
     return res.status(500).send({
       message: `Something went wrong when finding the comments of post ${id}`,
     });
@@ -146,7 +145,6 @@ router.delete("/:commentId", authMiddleware, async (req, res) => {
     await post.save();
     return res.send(comment);
   } catch (err) {
-    console.log(err);
     res
       .status(500)
       .send({
