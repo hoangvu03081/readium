@@ -13,6 +13,14 @@ const posts = [
   },
   {
     _id: new mongoose.Types.ObjectId(),
+    title: "Post new random one",
+    content: "Post new random one content",
+    text: "Post new random one text",
+    author: users[0]._id,
+    isPublished: false,
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
     title: "Post Two",
     content: "Post Two content",
     text: "Post Two text",
@@ -37,6 +45,14 @@ const posts = [
     author: users[3]._id,
     isPublished: true,
     publishDate: new Date(2021, 0, 4),
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    title: "Post new random three",
+    content: "Post new random three content",
+    text: "Post new random three text",
+    author: users[2]._id,
+    isPublished: false,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -67,6 +83,14 @@ const posts = [
   },
   {
     _id: new mongoose.Types.ObjectId(),
+    title: "Post new random two",
+    content: "Post new random two content",
+    text: "Post new random two text",
+    author: users[1]._id,
+    isPublished: false,
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
     title: "Post 8",
     content: "Post 8 content",
     text: "Post 8 text",
@@ -91,6 +115,14 @@ const posts = [
     author: users[4]._id,
     isPublished: true,
     publishDate: new Date(2021, 6, 1),
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    title: "Post new random four",
+    content: "Post new random four content",
+    text: "Post new random four text",
+    author: users[3]._id,
+    isPublished: false,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -127,6 +159,14 @@ const posts = [
     author: users[3]._id,
     isPublished: true,
     publishDate: new Date(2021, 10, 1),
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    title: "Post new random five",
+    content: "Post new random five content",
+    text: "Post new random five text",
+    author: users[4]._id,
+    isPublished: false,
   },
   {
     _id: new mongoose.Types.ObjectId(),

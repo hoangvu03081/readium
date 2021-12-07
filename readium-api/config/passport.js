@@ -43,7 +43,6 @@ module.exports = function (passport) {
         }
         return done(null, user);
       } catch (err) {
-        console.log(err);
         return done(err);
       }
     })

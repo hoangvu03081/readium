@@ -74,6 +74,7 @@ const userSchema = new Schema({
   profileId: {
     type: String,
     required: true,
+    unique: true,
   },
   tokens: [String],
   liked: [
@@ -86,6 +87,7 @@ const userSchema = new Schema({
   facebook: String,
   twitter: String,
   instagram: String,
+  mail: String,
 });
 
 userSchema.methods.getPublicProfile = function () {

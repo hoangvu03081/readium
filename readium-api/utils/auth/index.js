@@ -5,6 +5,9 @@ const path = require("path");
 const jsonwebtoken = require("jsonwebtoken");
 const ExtractJwt = require("passport-jwt").ExtractJwt;
 
+const REQUIRE_ACTIVATE_ACCOUNT = "REQUIRE_ACTIVATE_ACCOUNT";
+const NO_AUTH_TOKEN = "No auth token";
+
 const pathToPrivKey = path.join(
   __dirname,
   "../..",
@@ -48,6 +51,13 @@ const authMiddleware = (req, res, next) => {
     if (err || !user) {
       return next(info);
     } else {
+      if (
+        req.path !== "/logout" &&
+        req.path !== "/logout-all" &&
+        !user.activated
+      ) {
+        return next({ message: REQUIRE_ACTIVATE_ACCOUNT });
+      }
       req.user = user;
       return next();
     }
@@ -108,4 +118,8 @@ module.exports = {
   jwtOptions,
   encrypt,
   decrypt,
+  messageCode: {
+    NO_AUTH_TOKEN,
+    REQUIRE_ACTIVATE_ACCOUNT,
+  },
 };
