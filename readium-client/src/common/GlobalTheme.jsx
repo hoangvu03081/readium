@@ -6,6 +6,10 @@ const theme = {
     text: "#F6F6F6",
     accent: "#E53170",
     grey: "#636776",
+    middleGrey: "#C0C0C0",
+    lightGrey: "#D4D4D4",
+    information: "#2D76FF",
+    danger: "#F3274B",
 
     HeaderBackground: "#ffffff",
 

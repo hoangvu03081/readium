@@ -5,6 +5,7 @@ import SignInModal from "../common/components/SignInModal";
 import MobileNavbar from "../common/components/Header/MobileNavbar";
 import Header from "../common/components/Header";
 import Home from "../screens/Home";
+import Profile from "../screens/Profile";
 import Page404 from "../screens/Page404";
 import WritePost from "../screens/WritePost";
 import ResetPassword from "../screens/ResetPassword";
@@ -34,7 +35,9 @@ function App() {
             <WritePost />
           </Route>
           <Route path="/settings">settings</Route>
-          <Route path="/profile">profile</Route>
+          <Route path="/profile/:profileId?">
+            <Profile />
+          </Route>
           <Route path="/post">post</Route>
           <Route path="/notifications">notifications</Route>
           <Route path="/collections">collections</Route>
