@@ -13,6 +13,7 @@ const USER_API = {
 
 const PROFILE_API = {
   GET_MY_PROFILE: getURL("/users/profiles"),
+  GET_PROFILE: (profileId) => getURL(`/users/profiles/${profileId}`),
 };
 
 const POST_API = {

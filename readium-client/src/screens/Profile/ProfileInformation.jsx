@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import PropTypes from "prop-types";
 import {
@@ -15,19 +16,23 @@ import {
   VerticalDivider,
   Biography,
   InformationIcon,
+  EditProfileButton,
 } from "./components/style";
 
-export default function ProfileInformation({ id }) {
+export default function ProfileInformation({ data, isMyProfile }) {
   return (
     <>
-      <Displayname>VuxOniiChan</Displayname>
+      {isMyProfile && <EditProfileButton>Edit profile</EditProfileButton>}
+      <Displayname>{data.displayName}</Displayname>
       <Job>Software Engineer</Job>
-      <div className="d-flex justify-content-center">
-        <FollowButton className="me-3">Follow</FollowButton>
-        <OptionButton>
-          <BsThreeDots />
-        </OptionButton>
-      </div>
+      {!isMyProfile && (
+        <div className="d-flex justify-content-center">
+          <FollowButton className="me-3">Follow</FollowButton>
+          <OptionButton>
+            <BsThreeDots />
+          </OptionButton>
+        </div>
+      )}
       <div className="row mt-4 position-relative justify-content-center">
         <div className="col-md-6 col-sm-12">
           <div className="d-flex justify-content-center justify-content-sm-center justify-content-md-end">
@@ -40,9 +45,15 @@ export default function ProfileInformation({ id }) {
             <InformationIcon target="_blank" href="/" className="ms-3">
               <BsInstagram size={32} />
             </InformationIcon>
-            <InformationIcon target="_blank" href="/" className="ms-3 me-2">
-              <AiOutlineMail size={32} />
-            </InformationIcon>
+            {data.email && (
+              <InformationIcon
+                target="_blank"
+                href={`mailto:${data.email}`}
+                className="ms-3 me-2"
+              >
+                <AiOutlineMail size={32} />
+              </InformationIcon>
+            )}
           </div>
         </div>
         <VerticalDivider className="d-sm-none d-none d-md-block" />
@@ -65,10 +76,10 @@ export default function ProfileInformation({ id }) {
   );
 }
 
-ProfileInformation.propTypes = {
-  id: PropTypes.string,
-};
+// ProfileInformation.propTypes = {
+//   id: PropTypes.string,
+// };
 
-ProfileInformation.defaultProps = {
-  id: null,
-};
+// ProfileInformation.defaultProps = {
+//   id: null,
+// };

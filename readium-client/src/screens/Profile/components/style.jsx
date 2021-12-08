@@ -25,11 +25,12 @@ export const Avatar = styled.img`
   text-align: center;
   border-radius: 50%;
   border: 2px solid white;
+  background-color: white;
 `;
 
 export const ContentLayout = styled.div`
   position: relative;
-  padding-bottom: 1000px;
+  padding-bottom: 100px;
 `;
 
 export const Displayname = styled.h1`
@@ -104,6 +105,10 @@ export const Biography = styled.p`
   text-align: center;
   font-family: "PT Sans", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   font-size: 18px;
+
+  @media only screen and (max-width: 1000px) {
+    width: 70vw;
+  }
 `;
 
 export const InformationIcon = styled.a`
@@ -126,5 +131,46 @@ export const UpperBorderButton = styled.button`
 
   &.focus {
     border-top: solid black 2px;
+  }
+`;
+
+export const EditProfileButton = styled.button`
+  position: absolute;
+  width: 127px;
+  height: 40px;
+  background-color: white;
+  border: solid black 1px;
+  border-radius: 30px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  top: calc(33vh + 20px);
+  right: 50px;
+  transition: all 0.2s;
+
+  @media only screen and (max-width: 600px) {
+    width: 80px;
+    height: 30px;
+    font-size: 12px;
+    right: 30px;
+  }
+
+  @media only screen and (max-width: 400px) {
+    width: 60px;
+    height: 30px;
+    font-size: 9px;
+    right: 30px;
+  }
+
+  @media only screen and (max-width: 300px) {
+    width: 50px;
+    height: 30px;
+    font-size: 9px;
+    right: 15px;
+  }
+
+  &:hover {
+    background-color: black;
+    color: white;
   }
 `;
