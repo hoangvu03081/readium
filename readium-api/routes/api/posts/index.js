@@ -1,10 +1,6 @@
 const router = require("express").Router();
 
-// const Delta = require("quill-delta");
-// const multer = require("multer");
-
 const Post = require("../../../models/Post");
-// const { getImageUrl } = require("../../../utils");
 const { authMiddleware } = require("../../../utils/auth");
 
 require('./getEndpoints')(router);

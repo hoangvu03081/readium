@@ -1,8 +1,12 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+
+const usersId = [];
+
+for (let i = 0; i < 5; i++) usersId.push(new mongoose.Types.ObjectId());
 
 const users = [
   {
-    _id: new mongoose.Types.ObjectId(),
+    _id: usersId[0],
     email: "john@example.com",
     password: "JW@Random1",
     biography:
@@ -11,9 +15,11 @@ const users = [
     displayName: "john",
     profileId: "john",
     activated: true,
+    followers: [usersId[1], usersId[2]],
+    followings: [usersId[3], usersId[4]],
   },
   {
-    _id: new mongoose.Types.ObjectId(),
+    _id: usersId[1],
     email: "doe@example.com",
     password: "Manificent@#",
     biography:
@@ -23,7 +29,7 @@ const users = [
     profileId: "doe",
   },
   {
-    _id: new mongoose.Types.ObjectId(),
+    _id: usersId[2],
     email: "freeuse14@gmail.com",
     password: "lil958naca",
     biography:
@@ -33,7 +39,7 @@ const users = [
     profileId: "freeuse14",
   },
   {
-    _id: new mongoose.Types.ObjectId(),
+    _id: usersId[3],
     email: "takaagmail@gmail.com",
     password: "macmac90",
     biography:
@@ -41,9 +47,10 @@ const users = [
     job: "Student",
     displayName: "takaagmail",
     profileId: "takaagmail",
+    activated: true,
   },
   {
-    _id: new mongoose.Types.ObjectId(),
+    _id: usersId[4],
     email: "gmaill236@gmail.com",
     password: "887acanca",
     biography:

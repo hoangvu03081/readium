@@ -6,7 +6,7 @@ const collectionSchema = require("./Collection");
 const {
   model,
   Schema,
-  Schema: { ObjectId },
+  SchemaTypes: { ObjectId },
 } = mongoose;
 
 const userSchema = new Schema({
@@ -77,13 +77,13 @@ const userSchema = new Schema({
     unique: true,
   },
   tokens: [String],
-  liked: [
-    {
-      type: ObjectId,
-      required: true,
-      ref: "Post",
-    },
-  ],
+  // liked: [
+  //   {
+  //     type: ObjectId,
+  //     required: true,
+  //     ref: "Post",
+  //   },
+  // ],
   facebook: String,
   twitter: String,
   instagram: String,
@@ -102,6 +102,9 @@ userSchema.methods.getPublicProfile = function () {
   delete userObject.resetLink;
   delete userObject.__v;
   delete userObject._id;
+  userObject.followers = userObject.followers.length;
+  userObject.followings = userObject.followings.length;
+  // delete userObject.liked;
   return userObject;
 };
 
