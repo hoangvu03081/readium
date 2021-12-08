@@ -4,6 +4,21 @@ const multer = require("multer");
 const Post = require("../../../models/Post");
 const { authMiddleware } = require("../../../utils/auth");
 
+const checkOwnPost = async (req, res, next) => {
+  const post = await Post.findById(req.params.id);
+  if (!post) {
+    return res.status(404).send({ message: "Post not found" });
+  }
+
+  if (post.author !== req.user._id) {
+    return res.status(400).send({
+      message: "You do not own this post to update its content",
+    });
+  }
+
+  return next();
+};
+
 module.exports = function (router) {
   const uploadCover = multer({
     limits: {
@@ -230,6 +245,7 @@ module.exports = function (router) {
   router.patch(
     "/:id/cover-image",
     authMiddleware,
+    checkOwnPost,
     uploadCover.single("coverImage"),
     async (req, res) => {
       /*
@@ -255,18 +271,9 @@ module.exports = function (router) {
       }
     */
       try {
-        const post = await Post.findById(req.params.id);
-        if (!post) {
-          return res.status(404).send({ message: "Post not found" });
-        }
+      const post = await Post.findById(req.params.id);
 
-        if (post.author !== req.user._id) {
-          return res.status(400).send({
-            message: "You do not own this post to update its cover image",
-          });
-        }
-
-        const { file } = req;
+      const { file } = req;
         if (file && file.buffer) {
           post.coverImage = file.buffer;
           await post.save();
@@ -286,7 +293,7 @@ module.exports = function (router) {
     }
   );
 
-  router.patch("/:id/title", authMiddleware, async (req, res) => {
+  router.patch("/:id/title", authMiddleware,checkOwnPost, async (req, res) => {
     /*
       #swagger.tags = ['Post']
       #swagger.summary = "Update post's title"
@@ -313,16 +320,6 @@ module.exports = function (router) {
     try {
       const post = await Post.findById(req.params.id);
 
-      if (!post) {
-        return res.status(404).send({ message: "Post not found" });
-      }
-
-      if (post.author !== req.user._id) {
-        return res.status(400).send({
-          message: "You do not own this post to update its title",
-        });
-      }
-
       const { title } = req.body;
       if (title) {
         post.title = title;
@@ -341,7 +338,7 @@ module.exports = function (router) {
     }
   });
 
-  router.patch("/:id/diff", authMiddleware, async (req, res) => {
+  router.patch("/:id/diff", authMiddleware,checkOwnPost, async (req, res) => {
     /*
       #swagger.tags = ['Post']
       #swagger.summary = "Update post's textEditorContent"
@@ -361,16 +358,6 @@ module.exports = function (router) {
     */
     try {
       const post = await Post.findById(req.params.id);
-
-      if (!post) {
-        return res.status(404).send({ message: "Post not found" });
-      }
-
-      if (post.author !== req.user._id) {
-        return res.status(400).send({
-          message: "You do not own this post to update its content",
-        });
-      }
 
       const { diff } = req.body;
       if (diff) {
@@ -395,7 +382,7 @@ module.exports = function (router) {
     }
   });
 
-  router.patch("/:id/tags", authMiddleware, async (req, res) => {
+  router.patch("/:id/tags", authMiddleware,checkOwnPost, async (req, res) => {
     /*
       #swagger.tags = ['Post']
       #swagger.summary = "Update post's tags"
@@ -422,16 +409,6 @@ module.exports = function (router) {
     try {
       const post = await Post.findById(req.params.id);
 
-      if (!post) {
-        return res.status(404).send({ message: "Post not found" });
-      }
-
-      if (post.author !== req.user._id) {
-        return res.status(400).send({
-          message: "You do not own this post to update its tags",
-        });
-      }
-
       const { tags } = req.body;
       if (tags) {
         post.tags = tags;
@@ -450,7 +427,7 @@ module.exports = function (router) {
     }
   });
 
-  router.patch("/:id/description", authMiddleware, async (req, res) => {
+  router.patch("/:id/description", authMiddleware,checkOwnPost, async (req, res) => {
     /*
       #swagger.tags = ['Post']
       #swagger.summary = "Update post's description"
@@ -477,16 +454,6 @@ module.exports = function (router) {
     try {
       const post = await Post.findById(req.params.id);
 
-      if (!post) {
-        return res.status(404).send({ message: "Post not found" });
-      }
-
-      if (post.author !== req.user._id) {
-        return res.status(400).send({
-          message: "You do not own this post to update its description",
-        });
-      }
-
       const { description } = req.body;
       if (description) {
         post.description = description;
@@ -505,7 +472,7 @@ module.exports = function (router) {
     }
   });
 
-  router.patch("/publish/:id", authMiddleware, async (req, res) => {
+  router.patch("/publish/:id", authMiddleware, checkOwnPost, async (req, res) => {
     /*
       #swagger.tags = ['Post']
       #swagger.summary = 'Endpoint to publish the post'
@@ -516,14 +483,7 @@ module.exports = function (router) {
 
     try {
       const post = await Post.findById(req.params.id);
-      if (!post) {
-        return res.status(404).send({ message: "Post not found" });
-      }
-      if (post.author !== req.user._id) {
-        return res
-          .status(400)
-          .send({ message: "You don't own this post to publish it" });
-      }
+      
       if (!post.coverImage) {
         return res.status(400).send({
           message:
@@ -537,7 +497,6 @@ module.exports = function (router) {
       }
       post.publishDate = new Date();
       post.isPublished = true;
-
       await post.save();
 
       return res.send(post);
@@ -548,7 +507,7 @@ module.exports = function (router) {
     }
   });
 
-  router.patch("/unpublish/:id", authMiddleware, async (req, res) => {
+  router.patch("/unpublish/:id", authMiddleware, checkOwnPost, async (req, res) => {
     /*
       #swagger.tags = ['Post']
       #swagger.summary = 'Endpoint to unpublish the post'
@@ -558,14 +517,6 @@ module.exports = function (router) {
     */
     try {
       const post = await Post.findById(req.params.id);
-      if (!post) {
-        return res.status(404).send({ message: "Post not found" });
-      }
-      if (post.author !== req.user._id) {
-        return res
-          .status(400)
-          .send({ message: "You don't own this post to unpublish it" });
-      }
       post.publishDate = undefined;
       post.isPublished = false;
       await post.save();

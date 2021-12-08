@@ -85,6 +85,8 @@ module.exports = function (router) {
 
       posts = posts.map((post) => {
         post.imageUrl = getImageUrl(post._id);
+        post.likes = post.likes.length;
+        post.comments = post.comments.length;
         return post;
       });
 
