@@ -157,25 +157,26 @@ router.get("/avatar", authMiddleware, async (req, res) => {
   return res.set("Content-Type", "image/png").send(req.user.avatar);
 });
 
-router.get("/avatar/:id", async (req, res) => {
+router.get("/avatar/:profileId", async (req, res) => {
   /*
     #swagger.tags = ['User']
     #swagger.summary = "Get specific user's avatar"
-    #swagger.parameters['id'] = {
-      description: 'user id',
-      in: 'path',
-      type: 'string',
-    }
   */
   if (!req.params.id) {
-    return res.status(400).send({ message: "Please provide user's id" });
+    return res.status(400).send({ message: "Please provide profile's id" });
   }
   res.set("Content-Type", "image/png");
 
   try {
-    const { avatar } = await User.findById(req.params.id, { avatar: 1 });
+    const user = await User.findOne(
+      { profileId: req.params.profileId },
+      { avatar: 1 }
+    );
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
     // #swagger.responses[200] = { description: 'Send back user avatar' }
-    return res.send(avatar);
+    return res.send(user.avatar);
   } catch (err) {
     // #swagger.responses[500] = { description: 'Object Id is error or mongodb error' }
     return res

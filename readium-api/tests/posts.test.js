@@ -2,9 +2,9 @@ const request = require("supertest");
 
 const app = require("../app");
 const Post = require("../models/Post");
-const { dbConfigPostTest, getJWT, posts } = require("./fixtures/db");
+const { dbConfigPostTest: dbConfig, getJWT, posts } = require("./fixtures/db");
 
-beforeEach(dbConfigPostTest);
+beforeEach(dbConfig);
 
 test("Should get all posts pages in sorted date", async () => {
   let response = await request(app).get("/posts").send().expect(200);
@@ -15,14 +15,18 @@ test("Should get all posts pages in sorted date", async () => {
 
     expect(posts.length).toBe(5);
     expect(response.body.next).toBe(next);
-    expect(posts[0].isPublished).toBe(true);
 
-    let maxDate = posts[0].publishDate;
-    for (let i = 1; i < posts.length; i++) {
+    let maxDate = new Date();
+    for (let i = 0; i < posts.length; i++) {
       expect(posts[i].isPublished).toBe(true);
       expect(new Date(maxDate).getTime()).toBeGreaterThan(
         new Date(posts[i].publishDate).getTime()
       );
+      expect(posts[i].coverImage).toBeFalsy();
+      const post = await Post.findById(posts[i]._id);
+      expect(posts[i].likes).toBe(post.likes.length);
+      expect(posts[i].comments).toBe(post.comments.length);
+      expect(posts[i].views).toBe(post.views);
       maxDate = posts[i].publishDate;
     }
 
@@ -59,9 +63,7 @@ test(`Should get a post with id: ${posts[0]._id}`, async () => {
   expect(viewAfter - viewBefore).toBe(1);
 });
 
-test("Should get post cover-image", async () => {
-  
-});
+test("Should get post cover-image", async () => {});
 
 test("Should not get post cover-image if that post is not published", async () => {});
 

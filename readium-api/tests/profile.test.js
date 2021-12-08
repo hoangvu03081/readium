@@ -2,11 +2,7 @@ const request = require("supertest");
 
 const app = require("../app");
 const User = require("../models/User");
-const {
-  users,
-  dbConfigOneUserTest: dbConfig,
-  getJWT,
-} = require("./fixtures/db");
+const { users, dbConfigPostTest: dbConfig, getJWT } = require("./fixtures/db");
 
 beforeEach(dbConfig);
 
@@ -139,4 +135,13 @@ test("Should upload avatar", async () => {
   user = await User.findById(users[0]._id);
   expect(user.avatar).not.toBeFalsy();
   expect(user.avatar).toEqual(expect.any(Buffer));
+});
+
+test("Should have number of followers and followings of user 1", async () => {
+  const response = await request(app)
+    .get(`/users/profiles/${users[0].profileId}`)
+    .expect(200);
+  const user = await User.findById(users[0]._id);
+  expect(response.body.followers).toBe(user.followers.length);
+  expect(response.body.followings).toBe(user.followings.length);
 });

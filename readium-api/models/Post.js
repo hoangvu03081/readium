@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const {
   model,
   Schema,
-  Schema: { ObjectId },
+  SchemaTypes: { ObjectId },
 } = mongoose;
 
 function publishRqFnc() {
@@ -18,6 +18,8 @@ const postSchema = new Schema({
   title: {
     type: String,
     required: true,
+    minlength: [1, "Min 1, get {VALUE}"],
+    maxlength: [100, "Max 100, get {VALUE}"],
   },
   coverImage: {
     type: Buffer,

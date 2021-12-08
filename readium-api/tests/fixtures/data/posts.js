@@ -10,6 +10,9 @@ const posts = [
     author: users[0]._id,
     isPublished: true,
     publishDate: new Date(2021, 0, 1),
+    likes: [users[1], users[3]],
+    comments: [],
+    views: 2,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -18,6 +21,9 @@ const posts = [
     text: "Post new random one text",
     author: users[0]._id,
     isPublished: false,
+    likes: [users[0]],
+    comments: [],
+    views: 2,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -27,6 +33,9 @@ const posts = [
     author: users[1]._id,
     isPublished: true,
     publishDate: new Date(2021, 1, 1),
+    likes: [users[0], users[1], users[2], users[3], users[4]],
+    comments: [],
+    views: 3,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -36,6 +45,9 @@ const posts = [
     author: users[2]._id,
     isPublished: true,
     publishDate: new Date(2021, 2, 1),
+    likes: [users[0], users[3], users[4]],
+    comments: [],
+    views: 1,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -45,6 +57,9 @@ const posts = [
     author: users[3]._id,
     isPublished: true,
     publishDate: new Date(2021, 0, 4),
+    likes: [users[1], users[2], users[3]],
+    comments: [],
+    views: 0,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -53,6 +68,9 @@ const posts = [
     text: "Post new random three text",
     author: users[2]._id,
     isPublished: false,
+    likes: [users[0], users[1]],
+    comments: [],
+    views: 2,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -62,6 +80,9 @@ const posts = [
     author: users[4]._id,
     isPublished: true,
     publishDate: new Date(2021, 2, 8),
+    likes: [users[0], users[2], users[4]],
+    comments: [],
+    views: 2,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -71,6 +92,9 @@ const posts = [
     author: users[0]._id,
     isPublished: true,
     publishDate: new Date(2021, 1, 22),
+    likes: [users[0], users[1], users[4]],
+    comments: [],
+    views: 2,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -80,6 +104,9 @@ const posts = [
     author: users[1]._id,
     isPublished: true,
     publishDate: new Date(2021, 3, 1),
+    likes: [users[1], users[2], users[3], users[4]],
+    comments: [],
+    views: 2,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -88,6 +115,9 @@ const posts = [
     text: "Post new random two text",
     author: users[1]._id,
     isPublished: false,
+    likes: [users[0], users[1], users[4]],
+    comments: [],
+    views: 2,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -97,6 +127,9 @@ const posts = [
     author: users[2]._id,
     isPublished: true,
     publishDate: new Date(2021, 4, 1),
+    likes: [users[0], users[1], users[2]],
+    comments: [],
+    views: 2,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -106,6 +139,9 @@ const posts = [
     author: users[3]._id,
     isPublished: true,
     publishDate: new Date(2021, 5, 1),
+    likes: [users[0], users[1], users[2], users[3], users[4]],
+    comments: [],
+    views: 2,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -115,6 +151,9 @@ const posts = [
     author: users[4]._id,
     isPublished: true,
     publishDate: new Date(2021, 6, 1),
+    likes: [users[0], users[1], users[3], users[4]],
+    comments: [],
+    views: 2,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -123,6 +162,9 @@ const posts = [
     text: "Post new random four text",
     author: users[3]._id,
     isPublished: false,
+    likes: [users[0], users[1], users[2], users[3], users[4]],
+    comments: [],
+    views: 2,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -132,6 +174,9 @@ const posts = [
     author: users[0]._id,
     isPublished: true,
     publishDate: new Date(2021, 7, 1),
+    likes: [users[0], users[3], users[4]],
+    comments: [],
+    views: 2,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -141,6 +186,9 @@ const posts = [
     author: users[1]._id,
     isPublished: true,
     publishDate: new Date(2021, 8, 1),
+    likes: [users[0], users[1], users[2], users[3], users[4]],
+    comments: [],
+    views: 1,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -150,6 +198,9 @@ const posts = [
     author: users[2]._id,
     isPublished: true,
     publishDate: new Date(2021, 9, 1),
+    likes: [users[0], users[1]],
+    comments: [],
+    views: 4,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -159,6 +210,9 @@ const posts = [
     author: users[3]._id,
     isPublished: true,
     publishDate: new Date(2021, 10, 1),
+    likes: [],
+    comments: [],
+    views: 1,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -167,6 +221,9 @@ const posts = [
     text: "Post new random five text",
     author: users[4]._id,
     isPublished: false,
+    likes: [users[0], users[1], users[2], users[3], users[4]],
+    comments: [],
+    views: 5,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -176,6 +233,9 @@ const posts = [
     author: users[4]._id,
     isPublished: true,
     publishDate: new Date(2021, 11, 1),
+    likes: [users[0], users[4]],
+    comments: [],
+    views: 2,
   },
 ];
 
