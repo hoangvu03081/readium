@@ -154,7 +154,7 @@ router.post("/follow/:userId", authMiddleware, async (req, res) => {
       .send({ message: "Please provide user's id to follow" });
   }
 
-  if (req.user._id === userId) {
+  if (req.user._id.toString() === userId) {
     return res
       .status(400)
       .send({ message: "User should not follow him or herself" });
