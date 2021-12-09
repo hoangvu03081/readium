@@ -101,11 +101,11 @@ test("should create a different profile id", async () => {
     .send({ email: "john@example2.com", password: "!johJWT@Example" })
     .expect(201);
 
-  expect(response.body.user.profileId).toBe("john1");
+  expect(response.body.user.profileId).toBe("john.1");
   const users = await User.find({ email: "john@example2.com" });
   expect(users.length).toBe(1);
   expect(users[0].displayName).toBe("john");
-  expect(users[0].profileId).toBe("john1");
+  expect(users[0].profileId).toBe("john.1");
 });
 
 test("Should login user with correct credentials", async () => {

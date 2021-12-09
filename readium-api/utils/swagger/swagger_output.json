@@ -380,19 +380,27 @@
         ]
       }
     },
-    "/users/follow/{id}": {
+    "/users/follow/{userId}": {
       "get": {
-        "tags": [],
+        "tags": [
+          "User"
+        ],
+        "summary": "Is follow user",
         "description": "",
         "parameters": [
           {
-            "name": "id",
+            "name": "userId",
             "in": "path",
             "required": true,
             "type": "string"
           }
         ],
-        "responses": {}
+        "responses": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       },
       "post": {
         "tags": [
@@ -402,11 +410,10 @@
         "description": "",
         "parameters": [
           {
-            "name": "id",
+            "name": "userId",
             "in": "path",
             "required": true,
-            "type": "string",
-            "description": "User Object ID string."
+            "type": "string"
           }
         ],
         "responses": {
@@ -414,7 +421,7 @@
             "description": "Success"
           },
           "400": {
-            "description": "User should not follow him or herself && Please provide user id to follow other users"
+            "description": "Please provide id to follow"
           },
           "500": {
             "description": "Error saving changes to mongodb"
@@ -568,7 +575,7 @@
     "/users/profiles/avatar": {
       "get": {
         "tags": [
-          "User"
+          "Profile"
         ],
         "summary": "Get my avatar",
         "description": "",
@@ -581,20 +588,39 @@
         ]
       }
     },
-    "/users/profiles/avatar/{id}": {
+    "/users/profiles/cover-image": {
       "get": {
         "tags": [
-          "User"
+          "Profile"
+        ],
+        "summary": "Get my avatar",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/profiles/avatar/{userId}": {
+      "get": {
+        "tags": [
+          "Profile"
         ],
         "summary": "Get specific user's avatar",
         "description": "",
         "parameters": [
           {
-            "name": "id",
+            "name": "userId",
             "in": "path",
             "required": true,
-            "type": "string",
-            "description": "user id"
+            "type": "string"
           }
         ],
         "responses": {
@@ -603,6 +629,37 @@
           },
           "400": {
             "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Object Id is error or mongodb error"
+          }
+        }
+      }
+    },
+    "/users/profiles/cover-image/{userId}": {
+      "get": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Get specific user's cover image",
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Object Id is error or mongodb error"
@@ -615,7 +672,7 @@
         "tags": [
           "Profile"
         ],
-        "summary": "Get others",
+        "summary": "Get others' profile",
         "description": "",
         "parameters": [
           {
@@ -861,6 +918,64 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/posts/drafts/{id}": {
+      "get": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "Fetch a draft",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/posts/drafts/{id}/avatar": {
+      "get": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "Fetch a draft avatar",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/posts/drafts": {
+      "get": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "Fetch all drafts",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -1270,6 +1385,9 @@
           }
         ],
         "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
           "404": {
             "description": "Not Found"
           }

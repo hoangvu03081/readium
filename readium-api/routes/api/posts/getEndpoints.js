@@ -1,5 +1,6 @@
 const Post = require("../../../models/Post");
 const { getImageUrl } = require("../../../utils");
+const { authMiddleware } = require("../../../utils/auth");
 
 module.exports = function (router) {
   router.get("/popular", async (req, res) => {
@@ -124,6 +125,64 @@ module.exports = function (router) {
     }
   });
 
+  router.get("/drafts/:id", authMiddleware, async (req, res) => {
+    // #swagger.tags = ['Post']
+    // #swagger.summary = 'Fetch a draft'
+    const _id = req.params.id;
+
+    try {
+      const post = await Post.findOne({
+        _id,
+        author: req.user._id,
+        isPublished: false,
+      });
+      if (!post) {
+        return res.status(404).send({ message: "Cannot find post with ID" });
+      }
+      res.send(post);
+    } catch {
+      res.status(500).send({ message: "Error in finding post with ID" });
+    }
+  });
+
+  router.get("/drafts/:id/avatar", authMiddleware, async (req, res) => {
+    // #swagger.tags = ['Post']
+    // #swagger.summary = 'Fetch a draft avatar'
+    const _id = req.params.id;
+
+    try {
+      const post = await Post.findOne({
+        _id,
+        author: req.user._id,
+        isPublished: false,
+      });
+      if (!post) {
+        return res
+          .status(404)
+          .send({ message: `Cannot find post with ID: ${_id}` });
+      }
+      res.set("Content-Type", "image/png").send(post.coverImage);
+    } catch {
+      res
+        .status(500)
+        .send({ message: `Error in fetching cover image of post ${_id}` });
+    }
+  });
+
+  router.get("/drafts", authMiddleware, async (req, res) => {
+    // #swagger.tags = ['Post']
+    // #swagger.summary = 'Fetch all drafts'
+    try {
+      const posts = await Post.find({
+        author: req.user._id,
+        isPublished: false,
+      });
+      res.send(posts);
+    } catch {
+      res.status(500).send({ message: "Error in finding post with ID" });
+    }
+  });
+
   router.get("/:id/cover-image", async (req, res) => {
     /*
       #swagger.tags = ['Post']
@@ -131,7 +190,7 @@ module.exports = function (router) {
     */
     try {
       const post = await Post.findById(req.params.id);
-      if (!post.isPublished) {
+      if (!post || !post.isPublished) {
         return res.status(404).send({ message: "Post not found" });
       }
       res.set("Content-Type", "image/png");

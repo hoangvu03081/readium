@@ -16,14 +16,12 @@ test("Should get my profile", async () => {
 
   let r_id;
   let {
-    email: rEmail,
     biography: rBiography,
     job: rJob,
     displayName: rDisplayName,
     profileId: rProfileId,
   } = response.body;
 
-  expect(email).toBe(rEmail);
   expect(biography).toBe(rBiography);
   expect(job).toBe(rJob);
   expect(displayName).toBe(rDisplayName);
@@ -31,7 +29,6 @@ test("Should get my profile", async () => {
 
   ({
     _id: r_id,
-    email: rEmail,
     biography: rBiography,
     job: rJob,
     displayName: rDisplayName,
@@ -39,7 +36,6 @@ test("Should get my profile", async () => {
   } = await User.findOne({ email }));
 
   expect(_id).toEqual(r_id);
-  expect(email).toBe(rEmail);
   expect(biography).toBe(rBiography);
   expect(job).toBe(rJob);
   expect(displayName).toBe(rDisplayName);
@@ -70,10 +66,9 @@ test("Should edit my profile", async () => {
     facebook: rFacebook,
     twitter: rTwitter,
     instagram: rInstagram,
-    mail: rMail,
   } = response.body;
 
-  expect(rEmail).toBe(email);
+  expect(rEmail).toBe("the@example.com");
   expect(rBiography).toBe("I'm being updated in Edit profile endpoint.");
   expect(rJob).toBe("Neet");
   expect(rDisplayName).toBe("John Updated Doe");
@@ -81,7 +76,6 @@ test("Should edit my profile", async () => {
   expect(rFacebook).toBe("https://www.example.com");
   expect(rTwitter).toBe("https://www.example.com");
   expect(rInstagram).toBe("https://www.example.com");
-  expect(rMail).toBe("the@example.com");
 
   ({
     _id: r_id,
@@ -93,7 +87,6 @@ test("Should edit my profile", async () => {
     facebook: rFacebook,
     twitter: rTwitter,
     instagram: rInstagram,
-    mail: rMail,
   } = await User.findOne({ email }));
 
   expect(r_id).toEqual(_id);
@@ -105,7 +98,6 @@ test("Should edit my profile", async () => {
   expect(rFacebook).toBe("https://www.example.com");
   expect(rTwitter).toBe("https://www.example.com");
   expect(rInstagram).toBe("https://www.example.com");
-  expect(rMail).toBe("the@example.com");
 });
 
 test("Should not be able to edit if not authenticated", async () => {
@@ -125,7 +117,6 @@ test("Should not be able to edit if not authenticated", async () => {
 
 test("Should upload avatar", async () => {
   let user = await User.findById(users[0]._id);
-  expect(user.avatar).toBeFalsy();
   await request(app)
     .post("/users/profiles")
     .attach("avatar", "tests/fixtures/homework.png")
@@ -136,12 +127,22 @@ test("Should upload avatar", async () => {
   expect(user.avatar).not.toBeFalsy();
   expect(user.avatar).toEqual(expect.any(Buffer));
 });
-
-test("Should have number of followers and followings of user 1", async () => {
+test("Should get avatar of user 1", async () => {
   const response = await request(app)
     .get(`/users/profiles/${users[0].profileId}`)
     .expect(200);
-  const user = await User.findById(users[0]._id);
-  expect(response.body.followers).toBe(user.followers.length);
-  expect(response.body.followings).toBe(user.followings.length);
+  const avatarUrl = response.body.avatar.slice(21);
+  const avatar = await request(app).get(avatarUrl).expect(200);
+  expect(avatar.body).toEqual(expect.any(Buffer));
+});
+
+test("Should not find cover image of user 1", async () => {
+  const response = await request(app)
+    .get(`/users/profiles/${users[0].profileId}`)
+    .expect(200);
+  expect(response.body.coverImage).toBeFalsy();
+
+  await request(app)
+    .get(`/users/profiles/cover-image/${users[0]._id}`)
+    .expect(404);
 });
