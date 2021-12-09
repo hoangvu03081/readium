@@ -4,11 +4,12 @@ const GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
 
 const User = require("../models/User");
 const { serverUrl } = require("./url");
+const { downloadImageFromUrl, convertBufferToPng } = require("../utils");
 const {
-  downloadImageFromUrl,
-  convertBufferToPng,
-} = require("../utils");
-const { decodeJWT, jwtOptions } = require("../utils/auth");
+  decodeJWT,
+  jwtOptions,
+  messageCode: { NO_AUTH_TOKEN },
+} = require("../utils/auth");
 
 const activateUser = (user) => {
   user.activationLink = undefined;
@@ -32,14 +33,14 @@ module.exports = function (passport) {
       try {
         const user = await User.findOne({ _id: jwt_payload.vux });
         if (!user || !user.tokens) {
-          return done(null, false, { message: "No auth token" });
+          return done(null, false, { message: NO_AUTH_TOKEN });
         }
         const isAuth = user.tokens.some((token) => {
           const decoded = decodeJWT(token.split(" ")[1]);
           return JSON.stringify(decoded) === JSON.stringify(jwt_payload);
         });
         if (!isAuth) {
-          return done(null, false, { message: "No auth token" });
+          return done(null, false, { message: NO_AUTH_TOKEN });
         }
         return done(null, user);
       } catch (err) {
@@ -84,9 +85,15 @@ module.exports = function (passport) {
           }
 
           const count = await User.find({
-            displayName: profile.displayName,
+            profileId: {
+              $regex: profile.displayName
+                .split(".")
+                .find((word) => Boolean(word)),
+              $options: "i",
+            },
           }).countDocuments();
-          const profileId = profile.displayName + (count ? count : "");
+
+          const profileId = profile.displayName + (count ? "." + count : "");
 
           const newUser = new User({
             avatar: avatar[0],
@@ -131,10 +138,16 @@ module.exports = function (passport) {
             if (!user.activated || !user.avatar) await user.save();
             return done(null, user);
           }
+
           const count = await User.find({
-            displayName: profile.displayName,
+            profileId: {
+              $regex: profile.displayName
+                .split(".")
+                .find((word) => Boolean(word)),
+              $options: "i",
+            },
           }).countDocuments();
-          const profileId = profile.displayName + (count ? count : "");
+          const profileId = profile.displayName + (count ? "." + count : "");
 
           const newUser = new User({
             avatar: avatar[0],

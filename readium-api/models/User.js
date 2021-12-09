@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
 const collectionSchema = require("./Collection");
+const { serverUrl } = require("../config/url");
 
 const {
   model,
@@ -10,6 +11,11 @@ const {
 } = mongoose;
 
 const userSchema = new Schema({
+  profileId: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   email: {
     type: String,
     required: true,
@@ -24,6 +30,7 @@ const userSchema = new Schema({
   biography: String,
   job: String,
   avatar: Buffer,
+  coverImage: Buffer,
   followers: [
     {
       type: ObjectId,
@@ -71,11 +78,6 @@ const userSchema = new Schema({
   activationLink: String,
   resetLink: String,
   resetTimeout: Date,
-  profileId: {
-    type: String,
-    required: true,
-    unique: true,
-  },
   tokens: [String],
   // liked: [
   //   {
@@ -93,7 +95,13 @@ const userSchema = new Schema({
 userSchema.methods.getPublicProfile = function () {
   const user = this;
   const userObject = user.toObject();
-  delete userObject.avatar;
+  userObject.email = userObject.mail;
+  userObject.avatar = `${serverUrl}/users/profiles/avatar/${userObject._id}`;
+  if (userObject.coverImage) {
+    userObject.coverImage = `${serverUrl}/users/profiles/cover-image/${userObject._id}`;
+  }
+
+  delete userObject.mail;
   delete userObject.password;
   delete userObject.tokens;
   delete userObject.notifications;
@@ -101,7 +109,7 @@ userSchema.methods.getPublicProfile = function () {
   delete userObject.activationLink;
   delete userObject.resetLink;
   delete userObject.__v;
-  delete userObject._id;
+  // delete userObject._id;
   userObject.followers = userObject.followers.length;
   userObject.followings = userObject.followings.length;
   // delete userObject.liked;

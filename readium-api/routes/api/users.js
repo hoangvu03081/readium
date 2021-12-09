@@ -121,7 +121,7 @@ router.get("/following/posts", authMiddleware, async (req, res) => {
   }
 });
 
-router.get("/follow/:id", authMiddleware, async (req, res) => {
+router.get("/follow/:userId", authMiddleware, async (req, res) => {
   /*
     #swagger.tags = ["User"]
     #swagger.summary = "Is follow user"
@@ -130,50 +130,43 @@ router.get("/follow/:id", authMiddleware, async (req, res) => {
     }]
   */
   const is_followed = req.user.followings.some(
-    (fUser) => fUser._id.toString() === req.params.id
+    (userId) => userId.toString() === req.params.userId
   );
   return res.send({ is_followed });
 });
 
-router.post("/follow/:id", authMiddleware, async (req, res) => {
+router.post("/follow/:userId", authMiddleware, async (req, res) => {
   // #swagger.tags = ['User']
   // #swagger.summary = 'User follow users'
-  /*  
-    #swagger.parameters['id'] = {
-      in: 'path',
-      type: 'string',
-      description: 'User Object ID string.'
-    }
+  /*
     #swagger.security = [{
       "bearerAuth": []
     }]
   */
 
-  const id = req.params.id;
+  const userId = req.params.userId;
   const followings = req.user.followings;
 
-  if (!id) {
-    // #swagger.responses[400] = { description: 'Please provide user id to follow' }
+  if (!userId) {
+    // #swagger.responses[400] = { description: 'Please provide id to follow' }
     return res
       .status(400)
-      .send({ message: "Please provide user id to follow" });
+      .send({ message: "Please provide user's id to follow" });
   }
 
-  if (req.user._id.toString() === id) {
-    // #swagger.responses[400] = { description: 'User should not follow him or herself' }
-    // #swagger.responses[400] = { description: 'User should not follow him or herself && Please provide user id to follow other users' }
+  if (req.user._id.toString() === userId) {
     return res
       .status(400)
       .send({ message: "User should not follow him or herself" });
   }
 
-  const authorIndex = followings.findIndex(
-    (author) => author.toString() === id
-  );
+  const authorIndex = followings.findIndex((authorId) => {
+    return authorId.toString() === userId;
+  });
 
   // if user didn't follow this author -> now following
   if (authorIndex === -1) {
-    followings.push(id);
+    followings.push(userId);
   }
   // if user followed this author -> now unfollowing
   else {
@@ -182,20 +175,20 @@ router.post("/follow/:id", authMiddleware, async (req, res) => {
 
   try {
     await req.user.save();
+
+    const message =
+      authorIndex === -1
+        ? `${req.user._id} follows ${req.params.id}.`
+        : `${req.user._id} unfollows ${req.params.id}.`;
+
+    // #swagger.responses[200] = { description: 'Success' }
+    return res.send({ message });
   } catch (err) {
     // #swagger.responses[500] = { description: 'Error saving changes to mongodb' }
     return res
       .status(500)
       .send({ message: "Some errors occur in follow user" });
   }
-
-  const message =
-    authorIndex === -1
-      ? `${req.user._id} follows ${req.params.id}.`
-      : `${req.user._id} unfollows ${req.params.id}.`;
-
-  // #swagger.responses[200] = { description: 'Success' }
-  return res.send({ message });
 });
 
 router.get("/recommended", authMiddleware, async (req, res) => {
@@ -211,15 +204,15 @@ router.get("/recommended", authMiddleware, async (req, res) => {
   try {
     users = await User.find().limit(10);
     users = await users.map((user) => user.getPublicProfile());
+
+    // #swagger.responses[200] = { description: 'Successfully recommend users' }
+    return res.send(users);
   } catch (err) {
     // #swagger.responses[500] = { description: 'Error while finding in mongoose.' }
     return res
       .status(500)
       .send({ message: "Error while get recommended users" });
   }
-
-  // #swagger.responses[200] = { description: 'Successfully recommend users' }
-  res.send(users);
 });
 
 router.post("/change-password", authMiddleware, async (req, res) => {

@@ -147,7 +147,7 @@ router.post(
 
 router.get("/avatar", authMiddleware, async (req, res) => {
   /*
-    #swagger.tags = ['User']
+    #swagger.tags = ['Profile']
     #swagger.summary = "Get my avatar"
     #swagger.security = [{
       "bearerAuth": []
@@ -157,38 +157,75 @@ router.get("/avatar", authMiddleware, async (req, res) => {
   return res.set("Content-Type", "image/png").send(req.user.avatar);
 });
 
-router.get("/avatar/:profileId", async (req, res) => {
+router.get("/cover-image", authMiddleware, async (req, res) => {
   /*
-    #swagger.tags = ['User']
+    #swagger.tags = ['Profile']
+    #swagger.summary = "Get my avatar"
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+  */
+  if (!req.user.coverImage) {
+    return res.status(404).send({ message: "Cover image not found" });
+  }
+  return res.set("Content-Type", "image/png").send(req.user.coverImage);
+});
+
+router.get("/avatar/:userId", async (req, res) => {
+  /*
+    #swagger.tags = ['Profile']
     #swagger.summary = "Get specific user's avatar"
   */
-  if (!req.params.profileId) {
-    return res.status(400).send({ message: "Please provide profile's id" });
+  if (!req.params.userId) {
+    return res.status(400).send({ message: "Please provide user's id" });
   }
-  res.set("Content-Type", "image/png");
 
   try {
-    const user = await User.findOne(
-      { profileId: req.params.profileId },
+    const user = await User.findById(
+      req.params.userId,
       { avatar: 1 }
     );
     if (!user) {
       return res.status(404).send({ message: "User not found" });
     }
     // #swagger.responses[200] = { description: 'Send back user avatar' }
-    return res.send(user.avatar);
+    return res.set("Content-Type", "image/png").send(user.avatar);
   } catch (err) {
     // #swagger.responses[500] = { description: 'Object Id is error or mongodb error' }
-    return res
-      .set("Content-Type", "application/json")
-      .status(500)
-      .send({ message: "Error when fetching avatar" });
+    return res.status(500).send({ message: "Error when fetching avatar" });
+  }
+});
+
+router.get("/cover-image/:userId", async (req, res) => {
+  /*
+    #swagger.tags = ['Profile']
+    #swagger.summary = "Get specific user's cover image"
+  */
+  if (!req.params.userId) {
+    return res.status(400).send({ message: "Please provide user's id" });
+  }
+
+  try {
+    const user = await User.findById(
+      req.params.userId,
+      { coverImage: 1 }
+    );
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
+    if (!user.coverImage) {
+      return res.status(404).send({ message: "Cover image not found" });
+    }
+    return res.set("Content-Type", "image/png").send(user.coverImage);
+  } catch (err) {
+    // #swagger.responses[500] = { description: 'Object Id is error or mongodb error' }
+    return res.status(500).send({ message: "Error when fetching cover image" });
   }
 });
 
 router.get("/:profileId", async (req, res) => {
   // #swagger.tags = ['Profile']
-  // #swagger.summary = 'Get others' profile'
+  // #swagger.summary = "Get others' profile"
 
   const user = await User.findOne({ profileId: req.params.profileId });
   if (user) return res.send(user.getPublicProfile());

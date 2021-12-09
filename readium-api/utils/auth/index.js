@@ -84,7 +84,7 @@ const jwtOptions = {
 
 const algorithm = "aes-256-ctr";
 const iv = crypto.randomBytes(16);
-const secretKey = PRIV_KEY.slice(4, 36);
+const secretKey = PRIV_KEY.slice(20, 52);
 
 const encrypt = (message) => {
   message = Buffer.from(JSON.stringify(message));
