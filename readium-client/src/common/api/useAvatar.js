@@ -23,3 +23,8 @@ export function useOtherAvatar(id) {
       .then((result) => window.URL.createObjectURL(result.data))
   );
 }
+
+export default function useAvatar(id) {
+  if (id) return useOtherAvatar(id);
+  return useMyAvatar();
+}

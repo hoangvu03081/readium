@@ -69,6 +69,18 @@ export const FollowButton = styled.button`
   }
 `;
 
+export const UnfollowButton = styled(FollowButton)`
+  border: solid ${({ theme }) => theme.colors.accent} 1px;
+  background-color: ${({ theme }) => theme.colors.accent};
+  color: white;
+
+  &:hover {
+    background-color: white;
+    border: solid ${({ theme }) => theme.colors.accent} 1px;
+    color: ${({ theme }) => theme.colors.accent};
+  }
+`;
+
 export const OptionButton = styled.button`
   width: 32px;
   height: 32px;

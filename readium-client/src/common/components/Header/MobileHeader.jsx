@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import { avatarClicked } from "../../../slices/navbar-slice";
 import { modalOpened } from "../../../slices/sign-in-slice";
 import { Logo, SearchButton, SignInButton, AvatarImage } from "./styles";
-import useAvatar from "../../api/useAvatar";
+import { useMyAvatar } from "../../api/useAvatar";
 
 const HeaderNav = styled.nav`
   position: fixed;
@@ -54,7 +54,7 @@ export default function MobileHeader({ isLogin }) {
   const dispatch = useDispatch();
   const handleOpenModal = () => dispatch(modalOpened());
   const handleAvatarClicked = () => dispatch(avatarClicked());
-  const avatarQuery = useAvatar();
+  const avatarQuery = useMyAvatar();
   return (
     <>
       <HeaderNav>

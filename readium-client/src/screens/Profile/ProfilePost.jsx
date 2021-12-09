@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { UpperBorderButton } from "./components/style";
 import SearchForm from "./SearchForm";
 
-export default function ProfilePost() {
+export default function ProfilePost({ id }) {
   const [isStory, setIsStory] = useState(true);
   return (
     <div className="mt-5">
@@ -13,12 +13,14 @@ export default function ProfilePost() {
         >
           Story
         </UpperBorderButton>
-        <UpperBorderButton
-          onClick={() => setIsStory(false)}
-          className={`ms-5 ${!isStory && "focus"}`}
-        >
-          Draft
-        </UpperBorderButton>
+        {!id && (
+          <UpperBorderButton
+            onClick={() => setIsStory(false)}
+            className={`ms-5 ${!isStory && "focus"}`}
+          >
+            Draft
+          </UpperBorderButton>
+        )}
       </div>
       <div className="row mt-5">
         <div className="col-md-8 col-s"></div>

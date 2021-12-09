@@ -9,6 +9,8 @@ export default function getURL(endpoint) {
 const USER_API = {
   GET_AVATAR: (id) => getURL(`/users/profiles/avatar/${id}`),
   GET_MY_AVATAR: getURL(`/users/profiles/avatar/`),
+  GET_IS_FOLLOW: (id) => getURL(`/users/follow/${id}`),
+  POST_FOLLOW: (id) => getURL(`/users/follow/${id}`),
 };
 
 const PROFILE_API = {

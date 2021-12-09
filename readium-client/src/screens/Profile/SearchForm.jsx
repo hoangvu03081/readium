@@ -49,14 +49,14 @@ const Label = styled.div`
   margin-bottom: 0;
 `;
 
-export default function SearchForm() {
+export default function SearchForm({ id }) {
   return (
     <StyledSearchForm>
       <div>
         <SearchIcon>
           <BiSearchAlt2 size={64} />
         </SearchIcon>
-        <Header>Search your post</Header>
+        <Header>Search post</Header>
       </div>
       <SearchInput width="100%" margin="32px" placeholder="Search" />
       <Label className="mt-3 mb-1">Sorting</Label>

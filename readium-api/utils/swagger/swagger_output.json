@@ -382,7 +382,10 @@
     },
     "/users/follow/{id}": {
       "get": {
-        "tags": [],
+        "tags": [
+          "User"
+        ],
+        "summary": "Is follow user",
         "description": "",
         "parameters": [
           {
@@ -392,7 +395,12 @@
             "type": "string"
           }
         ],
-        "responses": {}
+        "responses": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       },
       "post": {
         "tags": [
@@ -581,7 +589,7 @@
         ]
       }
     },
-    "/users/profiles/avatar/{id}": {
+    "/users/profiles/avatar/{profileId}": {
       "get": {
         "tags": [
           "User"
@@ -590,11 +598,10 @@
         "description": "",
         "parameters": [
           {
-            "name": "id",
+            "name": "profileId",
             "in": "path",
             "required": true,
-            "type": "string",
-            "description": "user id"
+            "type": "string"
           }
         ],
         "responses": {
@@ -603,6 +610,9 @@
           },
           "400": {
             "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Object Id is error or mongodb error"
@@ -1270,6 +1280,9 @@
           }
         ],
         "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
           "404": {
             "description": "Not Found"
           }

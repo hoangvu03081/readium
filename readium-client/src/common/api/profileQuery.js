@@ -20,9 +20,9 @@ export function useOtherProfile(profileId) {
   return useQuery(
     ["profile", profileId],
     () =>
-      axios.get(
-        PROFILE_API.GET_PROFILE(profileId).then((result) => result.data)
-      ),
+      axios
+        .get(PROFILE_API.GET_PROFILE(profileId))
+        .then((result) => result.data),
     { staleTime: 300000 }
   );
 }

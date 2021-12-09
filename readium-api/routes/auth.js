@@ -162,7 +162,7 @@ router.post("/register", async (req, res) => {
     .toBuffer();
 
   const newUser = new User({
-    // avatar,
+    avatar,
     email,
     password,
     profileId,

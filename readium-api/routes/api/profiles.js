@@ -162,7 +162,7 @@ router.get("/avatar/:profileId", async (req, res) => {
     #swagger.tags = ['User']
     #swagger.summary = "Get specific user's avatar"
   */
-  if (!req.params.id) {
+  if (!req.params.profileId) {
     return res.status(400).send({ message: "Please provide profile's id" });
   }
   res.set("Content-Type", "image/png");

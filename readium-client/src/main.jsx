@@ -9,6 +9,7 @@ import App from "./app/App";
 import theme from "./common/GlobalTheme";
 import "bootstrap/dist/css/bootstrap-grid.min.css";
 import { AuthProvider } from "./common/hooks/useAuth";
+import { ModalProvider } from "./common/hooks/useModal";
 
 const queryClient = new QueryClient();
 
@@ -19,7 +20,9 @@ ReactDOM.render(
         <Router>
           <AuthProvider>
             <QueryClientProvider client={queryClient}>
-              <App />
+              <ModalProvider>
+                <App />
+              </ModalProvider>
             </QueryClientProvider>
           </AuthProvider>
         </Router>
