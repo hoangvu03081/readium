@@ -1,6 +1,9 @@
 const fs = require("fs");
 const request = require("supertest");
 const mongoose = require("mongoose");
+const { createAvatar } = require("@dicebear/avatars");
+const style = require("@dicebear/avatars-initials-sprites");
+const sharp = require("sharp");
 
 const app = require("../../app");
 const User = require("../../models/User");
@@ -33,7 +36,18 @@ const dbConfigUserTest = async () => {
 const dbConfigOneUserTest = async () => {
   await User.deleteMany();
 
-  const user = new User(users[0]);
+  // avatar
+  const avatarSvg = createAvatar(style, {
+    seed: users[0].displayName,
+  });
+  const avatar = await sharp(Buffer.from(avatarSvg, "utf-8"), {
+    density: 50000,
+  })
+    .resize({ width: 200, fit: sharp.fit.contain })
+    .png()
+    .toBuffer();
+
+  const user = new User({ ...users[0], avatar });
   await user.hashPassword();
   await user.save();
 
@@ -52,7 +66,18 @@ const dbConfigPostTest = async () => {
   const coverImage = fs.readFileSync("tests/fixtures/homework.png");
 
   for (let i = 0; i < users.length; i++) {
-    const user = new User(users[i]);
+    // avatar
+    const avatarSvg = createAvatar(style, {
+      seed: users[i].displayName,
+    });
+    const avatar = await sharp(Buffer.from(avatarSvg, "utf-8"), {
+      density: 50000,
+    })
+      .resize({ width: 200, fit: sharp.fit.contain })
+      .png()
+      .toBuffer();
+
+    const user = new User({ ...users[i], avatar });
     await user.hashPassword();
     await user.save();
   }

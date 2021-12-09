@@ -146,9 +146,16 @@ router.post("/register", async (req, res) => {
     return res.status(400).send({ message: errMessage });
   }
 
-  const displayName = dN || email.split("@")[0];
-  const count = await User.find({ displayName }).countDocuments();
-  const profileId = displayName + (count ? count : "");
+  const displayName =
+    dN ||
+    email
+      .trim()
+      .split(/[.@]/)
+      .find((word) => Boolean(word));
+  const count = await User.find({
+    profileId: { $regex: displayName, $options: "i" },
+  }).countDocuments();
+  const profileId = displayName + (count ? "." + count : "");
 
   // avatar
   const avatarSvg = createAvatar(style, {
@@ -162,7 +169,7 @@ router.post("/register", async (req, res) => {
     .toBuffer();
 
   const newUser = new User({
-    // avatar,
+    avatar,
     email,
     password,
     profileId,
