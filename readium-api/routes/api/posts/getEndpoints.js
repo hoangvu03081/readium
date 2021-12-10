@@ -36,7 +36,8 @@ module.exports = function (router) {
         type: 'string',
       }
     */
-    let { date = new Date().toString(), skip = "0" } = req.query;
+      try {
+        let { date = new Date().toString(), skip = "0" } = req.query;
     skip = +skip;
     date = new Date(date);
 
@@ -50,7 +51,6 @@ module.exports = function (router) {
       return res.send({ message: "Invalid date parameter" });
     }
 
-    try {
       let posts = JSON.parse(
         JSON.stringify(
           await Post.find(

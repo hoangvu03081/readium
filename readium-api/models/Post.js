@@ -17,7 +17,7 @@ const postSchema = new Schema({
   },
   title: {
     type: String,
-    required: true,
+    required: publishRqFnc,
     minlength: [1, "Min 1, get {VALUE}"],
     maxlength: [100, "Max 100, get {VALUE}"],
   },
@@ -84,7 +84,10 @@ const postSchema = new Schema({
 
 postSchema.methods.toJSON = function () {
   const postObject = this.toObject();
+  postObject.id = postObject._id;
+
   delete postObject.coverImage;
+  delete postObject._id;
   return postObject;
 };
 
