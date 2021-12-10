@@ -20,9 +20,9 @@ const {
 } = require("../utils/sendMail");
 
 router.post("/", async (req, res, next) => {
-  // #swagger.tags = ['Auth']
-  // #swagger.summary = 'User Login'
   /*
+    #swagger.tags = ['Auth']
+    #swagger.summary = 'User Login'
     #swagger.requestBody = {
       required: true,
       content: {
@@ -49,13 +49,11 @@ router.post("/", async (req, res, next) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      // #swagger.responses[404] = { description: 'Wrong email' }
-      return res.status(404).json({ message: "Wrong email" });
+      return res.status(404).json({ message: "User not found" });
     }
 
     isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
-      // #swagger.responses[400] = { description: 'Wrong password' }
       return res.status(400).json({ message: "Wrong password" });
     }
 
@@ -65,20 +63,16 @@ router.post("/", async (req, res, next) => {
     user.tokens.push(token);
     await user.save();
 
-    // #swagger.responses[200] = { description: 'Login successfully' }
-    return res.send({
-      message: "Login successfully",
-      token,
-    });
+    return res.send({ token });
   } catch (err) {
     return next(err);
   }
 });
 
 router.get("/logout", authMiddleware, async (req, res, next) => {
-  // #swagger.tags = ['Auth']
-  // #swagger.summary = 'User Logout'
-  /**
+  /*
+    #swagger.tags = ['Auth']
+    #swagger.summary = 'User Logout'
     #swagger.security = [{
       "bearerAuth": []
     }]
@@ -92,15 +86,14 @@ router.get("/logout", authMiddleware, async (req, res, next) => {
 
   req.session.destroy((err) => {
     if (err) return next(err);
-    // #swagger.responses[200] = { description: 'Logout successfully' }
     res.send({ message: "Logout successfully" });
   });
 });
 
 router.get("/logout-all", authMiddleware, async (req, res, next) => {
-  // #swagger.tags = ['Auth']
-  // #swagger.summary = 'User Logout from all devices'
-  /**
+  /*
+    #swagger.tags = ['Auth']
+    #swagger.summary = 'User Logout from all devices'
     #swagger.security = [{
       "bearerAuth": []
     }]
@@ -113,15 +106,14 @@ router.get("/logout-all", authMiddleware, async (req, res, next) => {
 
   req.session.destroy((err) => {
     if (err) return next(err);
-    // #swagger.responses[200] = { description: 'Logout successfully' }
     res.send({ message: "Logout successfully" });
   });
 });
 
 router.post("/register", async (req, res) => {
-  // #swagger.tags = ['Auth']
-  // #swagger.summary = 'User Register by email'
   /*
+    #swagger.tags = ['Auth']
+    #swagger.summary = 'User Register by email'
     #swagger.requestBody = {
       required: true,
       content: {
@@ -134,7 +126,7 @@ router.post("/register", async (req, res) => {
     } 
   */
 
-  const { email, password, displayName: dN } = req.body;
+  const { email, password } = req.body;
 
   let errMessage = checkEmpty(email, "Email must not be empty");
   errMessage = errMessage || validateEmail(email);
@@ -146,18 +138,17 @@ router.post("/register", async (req, res) => {
     return res.status(400).send({ message: errMessage });
   }
 
-  const displayName =
-    dN ||
-    email
-      .trim()
-      .split(/[.@]/)
-      .find((word) => Boolean(word));
+  const displayName = email
+    .trim()
+    .split(/[.@]/)
+    .find((word) => Boolean(word));
+
   const count = await User.find({
     profileId: { $regex: displayName, $options: "i" },
   }).countDocuments();
+
   const profileId = displayName + (count ? "." + count : "");
 
-  // avatar
   const avatarSvg = createAvatar(style, {
     seed: displayName,
   });
@@ -197,9 +188,9 @@ router.post("/register", async (req, res) => {
 });
 
 router.get("/confirm", async (req, res) => {
-  // #swagger.tags = ['Auth']
-  // #swagger.summary = 'User CONFIRM their account'
   /*
+    #swagger.tags = ['Auth']
+    #swagger.summary = 'User CONFIRM their account'
     #swagger.parameters['iv'] = {
       in: 'query',
       required: true,
@@ -219,39 +210,36 @@ router.get("/confirm", async (req, res) => {
       message: "Please provide enough query params. Missing iv or id",
     });
   }
-  let decryptedId;
   try {
-    decryptedId = decrypt([iv, hashedId]);
+    const decryptedId = decrypt([iv, hashedId]);
+    const user = await User.findById(decryptedId);
+
+    if (!user) {
+      // #swagger.responses[404] = { description: 'User not found' }
+      return res.status(404).send({ message: "User not found" });
+    } else if (user.activated) {
+      // #swagger.responses[400] = { description: 'Account has already activated' }
+      return res.status(400).send({ message: "Account is already activated" });
+    }
+
+    const token = issueJWT(user._id);
+
+    if (!user.tokens) user.tokens = [];
+    user.tokens.push(token);
+    user.activationLink = undefined;
+    user.activated = true;
+
+    await user.save();
+    // #swagger.responses[200] = { description: 'Activate successfully' }
+    return res.send({
+      message: "You have activated your account successfully.",
+      token,
+    });
   } catch (err) {
     return res
       .status(400)
       .send({ message: "Please provide correct parameters to this endpoint" });
   }
-
-  const user = await User.findById(decryptedId);
-
-  if (!user) {
-    // #swagger.responses[404] = { description: 'User not found' }
-    return res.status(404).send({ message: "User not found" });
-  } else if (user.activated) {
-    // #swagger.responses[400] = { description: 'Account has already activated' }
-    return res.status(400).send({ message: "Account is already activated" });
-  }
-
-  const token = issueJWT(user._id);
-
-  if (!user.tokens) user.tokens = [];
-  user.tokens.push(token);
-
-  user.activationLink = undefined;
-  user.activated = true;
-  await user.save();
-
-  // #swagger.responses[200] = { description: 'Activate successfully' }
-  return res.send({
-    message: "You have activated your account successfully.",
-    token,
-  });
 });
 
 // redirect user to facebook
@@ -340,17 +328,17 @@ router.post("/forget", async (req, res, next) => {
     await user.save();
 
     await sendResetPasswordEmail({ to: user.email, url: resetLink });
-
-    // #swagger.responses[200] = { description: 'Request change password successfully or User not found but Mlem ' }
+    // #swagger.responses[200] = { description: 'Request change password successfully ' }
     return res.send({
       message: "Please check your mail and reset your password!",
     });
   } catch (err) {
-    return next(err);
+    return res.status(500).send({
+      message: "Something went wrong in the forget password request process",
+    });
   }
 });
 
-// request forget password
 router.post("/reset", async (req, res, next) => {
   // #swagger.tags = ['Auth']
   // #swagger.summary = 'Users reset password'
@@ -409,7 +397,7 @@ router.post("/reset", async (req, res, next) => {
       return res.status(404).send({ message: "User not found" });
     }
 
-    if (user.resetTimeout.toString() !== dueDate.toString()) {
+    if (user.resetTimeout.getTime() !== dueDate.getTime()) {
       return res
         .status(400)
         .send({ message: "Please don't hack this endpoint" });
@@ -422,16 +410,68 @@ router.post("/reset", async (req, res, next) => {
     }
 
     user.resetTimeout = undefined;
-
+    user.resetLink = undefined;
     user.password = password;
     await user.hashPassword();
-    user.resetLink = undefined;
-    await user.save();
 
+    await user.save();
     return res.send({ message: "Reset password successfully" });
   } catch (err) {
     return next(err);
   }
+});
+
+router.post("/change-password", authMiddleware, async (req, res) => {
+  /*
+    #swagger.tags = ['User']
+    #swagger.summary = 'User change password'
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+    #swagger.requestBody = {
+      required: true,
+      content: {
+        "application/json": {
+          schema: {
+            $ref: "#/definitions/ChangePassword"
+          }  
+        }
+      }
+    }
+  */
+  const { oldPassword, password } = req.body;
+  const { user } = req;
+
+  if (!oldPassword || !password) {
+    return res
+      .status(400)
+      .send({ message: "Please provide both old password and new password" });
+  }
+
+  const isSamePassword = await bcrypt.compare(oldPassword, user.password);
+
+  if (!isSamePassword) {
+    // #swagger.responses[400] = { description: 'Typed in wrong password' }
+    return res.status(400).send({ message: "Wrong password." });
+  }
+
+  let errMessage = checkEmpty(password, "Password must not be empty");
+    errMessage = errMessage || validatePassword(password);
+
+  user.password = password;
+  await user.hashPassword();
+
+  try {
+    await user.save();
+  } catch (err) {
+    // #swagger.responses[500] = { description: 'Saving user to mongodb has some errors' }
+    return res
+      .status(500)
+      .send({ message: "Some errors occured when changing the password" });
+  }
+
+  // #swagger.responses[200] = { description: 'Saving changed password successfully' }
+  return res.send({ message: "Change the password successfully" });
 });
 
 module.exports = router;
