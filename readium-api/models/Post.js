@@ -12,6 +12,7 @@ function publishRqFnc() {
 
 const postSchema = new Schema({
   author: {
+    ref: "User",
     type: ObjectId,
     required: true,
   },
@@ -85,6 +86,8 @@ const postSchema = new Schema({
 postSchema.methods.toJSON = function () {
   const postObject = this.toObject();
   postObject.id = postObject._id;
+  postObject.likes = postObject.likes.length;
+  postObject.comments = postObject.comments.length;
 
   delete postObject.coverImage;
   delete postObject._id;

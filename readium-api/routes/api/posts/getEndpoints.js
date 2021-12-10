@@ -1,5 +1,5 @@
 const Post = require("../../../models/Post");
-const { getImageUrl } = require("../../../utils");
+const { getImageUrl, getAvatarUrl } = require("../../../utils");
 const { authMiddleware } = require("../../../utils/auth");
 
 module.exports = function (router) {
@@ -14,7 +14,7 @@ module.exports = function (router) {
           await Post.findOne({ isPublished: true }, { coverImage: 0 })
         )
       );
-      post.imageUrl = getImageUrl(post._id);
+      post.imageUrl = getImageUrl(post.id);
       res.send(post);
     } catch {
       res
@@ -36,20 +36,20 @@ module.exports = function (router) {
         type: 'string',
       }
     */
-      try {
-        let { date = new Date().toString(), skip = "0" } = req.query;
-    skip = +skip;
-    date = new Date(date);
+    try {
+      let { date = new Date().toString(), skip = "0" } = req.query;
+      skip = +skip;
+      date = new Date(date);
 
-    if (Number.isNaN(skip)) {
-      return res
-        .status(400)
-        .send({ message: "skip parameter must be a number" });
-    }
+      if (Number.isNaN(skip)) {
+        return res
+          .status(400)
+          .send({ message: "skip parameter must be a number" });
+      }
 
-    if (date.toString() === "Invalid Date") {
-      return res.send({ message: "Invalid date parameter" });
-    }
+      if (date.toString() === "Invalid Date") {
+        return res.send({ message: "Invalid date parameter" });
+      }
 
       let posts = JSON.parse(
         JSON.stringify(
@@ -60,6 +60,7 @@ module.exports = function (router) {
             },
             { coverImage: 0 }
           )
+            .populate("author", { displayName: 1 })
             .sort({ publishDate: -1 })
             .skip(skip)
             .limit(5)
@@ -67,9 +68,8 @@ module.exports = function (router) {
       );
 
       posts = posts.map((post) => {
-        post.imageUrl = getImageUrl(post._id);
-        post.likes = post.likes.length;
-        post.comments = post.comments.length;
+        post.imageUrl = getImageUrl(post.id);
+        post.userAvatar = getAvatarUrl(); /// TODO: code
         return post;
       });
 
@@ -127,9 +127,7 @@ module.exports = function (router) {
       );
 
       posts = posts.map((post) => {
-        post.imageUrl = getImageUrl(post._id);
-        post.likes = post.likes.length;
-        post.comments = post.comments.length;
+        post.imageUrl = getImageUrl(post.id);
         return post;
       });
 

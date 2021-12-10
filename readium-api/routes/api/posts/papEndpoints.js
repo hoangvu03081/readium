@@ -36,7 +36,7 @@ const uploadCover = multer({
 });
 
 module.exports = function (router) {
-  router.post("/post", uploadCover.single("coverImage"), async (req, res) => {
+  router.post("/post", authMiddleware, uploadCover.single("coverImage"), async (req, res) => {
     /*
     #swagger.tags = ['Dev']
     #swagger.summary = 'Create a post (DEV)'

@@ -31,9 +31,11 @@ const convertBufferToPng = (buffer) => {
 };
 
 const getImageUrl = (postId) => `${serverUrl}/posts/${postId}/cover-image`;
+const getAvatarUrl = () => `${serverUrl}/users/profiles/avatar`;
 
 module.exports = {
   downloadImageFromUrl,
   convertBufferToPng,
   getImageUrl,
+  getAvatarUrl,
 };
