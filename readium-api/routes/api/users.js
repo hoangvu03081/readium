@@ -83,9 +83,7 @@ router.get("/following/posts", authMiddleware, async (req, res) => {
       )
     );
     posts = posts.map((post) => {
-      post.imageUrl = getImageUrl(post._id);
-      post.likes = post.likes.length;
-      post.comments = post.comments.length;
+      post.imageUrl = getImageUrl(post.id);
       return post;
     });
 
