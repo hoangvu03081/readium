@@ -93,7 +93,7 @@ const doc = {
       facebook: "https://www.example.com",
       twitter: "https://www.example.com",
       instagram: "https://www.example.com",
-      mail: "the@example.com",
+      contactEmail: "the@example.com",
     },
     Email: {
       $email: "john@example.com",

@@ -79,23 +79,23 @@ const userSchema = new Schema({
   resetLink: String,
   resetTimeout: Date,
   tokens: [String],
-  // liked: [
-  //   {
-  //     type: ObjectId,
-  //     required: true,
-  //     ref: "Post",
-  //   },
-  // ],
+  liked: [
+    {
+      type: ObjectId,
+      required: true,
+      ref: "Post",
+    },
+  ],
   facebook: String,
   twitter: String,
   instagram: String,
-  mail: String,
+  contactEmail: String,
 });
 
 userSchema.methods.getPublicProfile = function () {
   const user = this;
   const userObject = user.toObject();
-  userObject.email = userObject.mail;
+  userObject.id = userObject._id;
   userObject.avatar = `${serverUrl}/users/profiles/avatar/${userObject._id}`;
   if (userObject.coverImage) {
     userObject.coverImage = `${serverUrl}/users/profiles/cover-image/${userObject._id}`;
@@ -109,10 +109,11 @@ userSchema.methods.getPublicProfile = function () {
   delete userObject.activationLink;
   delete userObject.resetLink;
   delete userObject.__v;
-  // delete userObject._id;
+  delete userObject._id;
+  delete userObject.email;
   userObject.followers = userObject.followers.length;
   userObject.followings = userObject.followings.length;
-  // delete userObject.liked;
+  delete userObject.liked;
   return userObject;
 };
 
