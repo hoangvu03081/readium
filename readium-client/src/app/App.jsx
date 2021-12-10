@@ -10,6 +10,7 @@ import Page404 from "../screens/Page404";
 import WritePost from "../screens/WritePost";
 import ResetPassword from "../screens/ResetPassword";
 import "./App.css";
+import Settings from "../screens/Settings";
 
 function App() {
   return (
@@ -34,7 +35,9 @@ function App() {
           <Route path="/write">
             <WritePost />
           </Route>
-          <Route path="/settings">settings</Route>
+          <Route path="/settings">
+            <Settings />
+          </Route>
           <Route path="/profile/:profileId?">
             <Profile />
           </Route>

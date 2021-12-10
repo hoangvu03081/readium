@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { UpperBorderButton } from "./components/style";
 import SearchForm from "./SearchForm";
 
-export default function ProfilePost({ id }) {
+export default function ProfilePost({ id, isMyProfile }) {
   const [isStory, setIsStory] = useState(true);
   return (
     <div className="mt-5">
@@ -13,7 +13,7 @@ export default function ProfilePost({ id }) {
         >
           Story
         </UpperBorderButton>
-        {!id && (
+        {isMyProfile && (
           <UpperBorderButton
             onClick={() => setIsStory(false)}
             className={`ms-5 ${!isStory && "focus"}`}

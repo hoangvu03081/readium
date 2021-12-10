@@ -7,7 +7,7 @@ export const CoverImage = styled.div`
   background-position: center center;
   background-size: cover;
   background-image: url(${(props) => props.src});
-  background-color: rgba(0, 0, 0, 0.02);
+  background-color: ${({ theme }) => theme.colors.lightGrey};
   height: 33vh;
   max-height: 640px;
   min-height: 176px;
@@ -25,7 +25,7 @@ export const Avatar = styled.img`
   text-align: center;
   border-radius: 50%;
   border: 2px solid white;
-  background-color: white;
+  background-color: ${({ theme }) => theme.colors.lightGrey};
 `;
 
 export const ContentLayout = styled.div`
@@ -73,6 +73,7 @@ export const UnfollowButton = styled(FollowButton)`
   border: solid ${({ theme }) => theme.colors.accent} 1px;
   background-color: ${({ theme }) => theme.colors.accent};
   color: white;
+  width: 85px;
 
   &:hover {
     background-color: white;

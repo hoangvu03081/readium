@@ -19,38 +19,66 @@ import {
   InformationIcon,
   EditProfileButton,
 } from "./components/style";
+import { useIsFollow, useFollow } from "../../common/api/userQuery";
+import StyledLink from "../../common/components/StyledLink";
+
+function checkInformation(data) {
+  return data.facebook || data.twitter || data.instagram || data.email;
+}
 
 export default function ProfileInformation({ data, isMyProfile }) {
+  const { data: followData } = useIsFollow(data._id);
+  const followUser = useFollow(data._id);
   return (
     <>
-      {isMyProfile && <EditProfileButton>Edit profile</EditProfileButton>}
+      {isMyProfile && (
+        <StyledLink to="/settings">
+          <EditProfileButton>Edit profile</EditProfileButton>
+        </StyledLink>
+      )}
       <Displayname>{data.displayName}</Displayname>
       <Job>{data.job && `${data.job}`}</Job>
       {!isMyProfile && (
         <div className="d-flex justify-content-center">
-          <UnfollowButton className="me-3">Follow</UnfollowButton>
+          {followData && !followData.is_followed ? (
+            <FollowButton className="me-3" onClick={followUser.mutate}>
+              Follow
+            </FollowButton>
+          ) : (
+            <UnfollowButton className="me-3" onClick={followUser.mutate}>
+              Followed
+            </UnfollowButton>
+          )}
           <OptionButton>
             <BsThreeDots />
           </OptionButton>
         </div>
       )}
       <div className="row mt-4 position-relative justify-content-center">
-        {(data.facebook || data.twitter || data.instagram || data.email) && (
+        {checkInformation(data) && (
           <>
             <div className="col-md-6 col-sm-12">
               <div className="d-flex justify-content-center justify-content-sm-center justify-content-md-end">
                 {data.facebook && (
-                  <InformationIcon target="_blank" href="/">
+                  <InformationIcon target="_blank" href={data.facebook}>
                     <BsFacebook size={32} />
                   </InformationIcon>
                 )}
                 {data.twitter && (
-                  <InformationIcon target="_blank" href="/" className="ms-3">
+                  <InformationIcon
+                    target="_blank"
+                    href={data.twitter}
+                    className="ms-3"
+                  >
                     <BsTwitter size={32} />
                   </InformationIcon>
                 )}
                 {data.instagram && (
-                  <InformationIcon target="_blank" href="/" className="ms-3">
+                  <InformationIcon
+                    target="_blank"
+                    href={data.instagram}
+                    className="ms-3"
+                  >
                     <BsInstagram size={32} />
                   </InformationIcon>
                 )}
@@ -68,7 +96,13 @@ export default function ProfileInformation({ data, isMyProfile }) {
             <VerticalDivider className="d-sm-none d-none d-md-block" />
           </>
         )}
-        <div className="col-md-6 col-sm-12 align-content-md-center">
+        <div
+          className={`${
+            checkInformation(data)
+              ? "col-md-6"
+              : "d-flex col-md-12 justify-content-center"
+          } col-sm-12 align-content-md-center`}
+        >
           <div className="d-flex justify-content-center justify-content-sm-center  justify-content-md-start mt-sm-3 mt-3 mt-md-0 pt-1">
             <span className="ms-2 me-3">
               {data.followings

@@ -4,6 +4,7 @@ import { ThemeProvider } from "styled-components";
 import { Provider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 import store from "./app/store";
 import App from "./app/App";
 import theme from "./common/GlobalTheme";
@@ -20,6 +21,7 @@ ReactDOM.render(
         <Router>
           <AuthProvider>
             <QueryClientProvider client={queryClient}>
+              <ReactQueryDevtools initialIsOpen={false} />
               <ModalProvider>
                 <App />
               </ModalProvider>

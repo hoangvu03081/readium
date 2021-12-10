@@ -5,10 +5,10 @@ import MobileHeader from "./MobileHeader";
 import { useAuth } from "../../hooks/useAuth";
 
 export default function Header() {
-  const { isAuth } = useAuth();
+  const { auth } = useAuth();
   return isMobile ? (
-    <MobileHeader isLogin={isAuth} />
+    <MobileHeader isLogin={auth} />
   ) : (
-    <DesktopHeader isLogin={isAuth} />
+    <DesktopHeader isLogin={auth} />
   );
 }

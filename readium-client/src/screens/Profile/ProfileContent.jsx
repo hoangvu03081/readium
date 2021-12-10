@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { ContentLayout, CoverImage, Avatar } from "./components/style";
 import ProfileInformation from "./ProfileInformation";
 import ProfilePost from "./ProfilePost";
-import { useProfile } from "../../common/api/profileQuery";
+import { useCoverImage, useProfile } from "../../common/api/profileQuery";
 import useAvatar from "../../common/api/useAvatar";
 import Loading from "../../common/components/Loading";
 
@@ -14,17 +14,18 @@ export default function ProfileContent({ id }) {
     isError: profileIsError,
     error: profileError,
   } = useProfile(id);
-  const { data: avatar, isError: avatarIsError } = useAvatar(id);
+
   if (profileIsError) return <h1>{profileError}</h1>;
   if (profile) {
+    //console.log(profile);
     return (
       <ContentLayout>
         <CoverImage src="https://pbs.twimg.com/media/EOPI4BDUUAA0S-u?format=jpg&name=medium">
-          <Avatar src={avatar ? `${avatar}` : ""} />
+          <Avatar src={profile.avatar ? `${profile.avatar}` : null} />
         </CoverImage>
         <div className="container">
           <ProfileInformation data={profile} isMyProfile={!id} />
-          <ProfilePost id={id} />
+          <ProfilePost id={profile._id} isMyProfile={!id} />
         </div>
       </ContentLayout>
     );
