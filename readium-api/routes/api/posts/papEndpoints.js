@@ -9,8 +9,7 @@ const checkOwnPost = async (req, res, next) => {
   if (!post) {
     return res.status(404).send({ message: "Post not found" });
   }
-
-  if (post.author !== req.user._id) {
+  if (post.author.toString() !== req.user._id.toString()) {
     return res.status(400).send({
       message: "You do not own this post to update its content",
     });
@@ -283,7 +282,7 @@ module.exports = function (router) {
         content: {
           "application/json": {
             schema: {
-              diff: { $ref: "#/definitions/TextEditorContent" }
+              $ref: "#/definitions/TextEditorContent"
             }
           }
         }
@@ -305,9 +304,17 @@ module.exports = function (router) {
         JSON.parse(post.textEditorContent)
       );
       post.textEditorContent = JSON.stringify(composedDelta);
+      post.content = composedDelta
+        .filter((op) => typeof op.insert === "string")
+        .map((op) => op.insert)
+        .join("");
+      const duration = Math.ceil(post.content.trim().split(/\s+/).length / 250);
+      post.duration = duration;
+      
       await post.save();
       return res.send(post);
     } catch (err) {
+      console.log(err);
       return res
         .status(500)
         .send({ message: "Something went wrong when updating post's content" });

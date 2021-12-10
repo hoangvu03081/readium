@@ -15,16 +15,16 @@ export default function CardList() {
           ...item.data.posts.map((post) => {
             return (
               <Card
-                key={post._id}
+                key={post.id}
                 preview={post.imageUrl}
                 title={post.title}
                 content={post.content}
                 tags={post.tags}
-                duration={3}
-                user={post.author}
-                userAvatar="./src/assets/images/yasuo.png"
-                loveNumber={post.likes.length}
-                commentNumber={post.comments.length}
+                duration={post.duration}
+                user={post.author.displayName}
+                userAvatar={post.userAvatar}
+                loveNumber={post.likes}
+                commentNumber={post.comments}
               />
             );
           })

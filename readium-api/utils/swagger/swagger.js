@@ -106,11 +106,13 @@ const doc = {
       $content: "Comment Content",
     },
     TextEditorContent: {
-      ops: [
-        { insert: "Gandalf", attributes: { bold: true } },
-        { insert: " the " },
-        { insert: "Grey", attributes: { color: "#ccc" } },
-      ],
+      diff: {
+        ops: [
+          { insert: "Gandalf", attributes: { bold: true } },
+          { insert: " the " },
+          { insert: "Grey", attributes: { color: "#ccc" } },
+        ],
+      },
     },
   },
 

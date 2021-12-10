@@ -103,6 +103,7 @@ const Corner = styled.div`
       transition: all 0.25s;
     }
   }
+  &.hideOptions
 `;
 const OutsideClickMoreOptions = styled.div`
   font-size: 24px;
@@ -136,6 +137,7 @@ export default function CardMobile({
   userAvatar,
   loveNumber,
   commentNumber,
+  hideOptions,
 }) {
   const [addCollection, setAddCollection] = useState(0);
   const handleAddCollection = (state) => {
@@ -159,7 +161,7 @@ export default function CardMobile({
         <UserAvatar src={userAvatar} />
         <UserName>by {user}</UserName>
         <Title>{title}</Title>
-        <Corner>
+        <Corner className={hideOptions ? "hideOptions" : ""}>
           <AddCollection
             className={addCollection === 0 ? "d-block" : "d-none"}
             onClick={() => {
@@ -215,4 +217,5 @@ CardMobile.propTypes = {
   userAvatar: PropTypes.string.isRequired,
   loveNumber: PropTypes.number.isRequired,
   commentNumber: PropTypes.number.isRequired,
+  hideOptions: PropTypes.bool.isRequired,
 };

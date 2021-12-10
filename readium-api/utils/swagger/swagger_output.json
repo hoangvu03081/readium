@@ -217,7 +217,7 @@
         }
       }
     },
-    "/auth\r/facebook": {
+    "/auth/facebook": {
       "get": {
         "tags": [
           "Auth"
@@ -228,7 +228,7 @@
         "responses": {}
       }
     },
-    "/auth\r/google": {
+    "/auth/google": {
       "get": {
         "tags": [
           "Auth"
@@ -250,6 +250,9 @@
         "responses": {
           "200": {
             "description": "Request change password successfully "
+          },
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -369,7 +372,11 @@
         "summary": "Delete my account",
         "description": "",
         "parameters": [],
-        "responses": {},
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
         "security": [
           {
             "bearerAuth": []
@@ -396,7 +403,14 @@
             "type": "integer"
           }
         ],
-        "responses": {},
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
         "security": [
           {
             "bearerAuth": []
@@ -810,7 +824,7 @@
         }
       }
     },
-    "/users/profiles\r/avatar": {
+    "/users/profiles/avatar": {
       "post": {
         "tags": [
           "Profile"
@@ -842,9 +856,7 @@
             }
           }
         }
-      }
-    },
-    "/users/profiles/avatar": {
+      },
       "get": {
         "tags": [
           "Profile"
@@ -878,9 +890,7 @@
             "bearerAuth": []
           }
         ]
-      }
-    },
-    "/users/profiles\r/cover-image": {
+      },
       "post": {
         "tags": [],
         "description": "",
@@ -997,7 +1007,14 @@
         "summary": "Create new collection",
         "description": "",
         "parameters": [],
-        "responses": {},
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
         "security": [
           {
             "bearerAuth": []
@@ -1020,7 +1037,7 @@
         }
       }
     },
-    "/users/collections\r/posts": {
+    "/users/collections/posts": {
       "post": {
         "tags": [
           "Collection"
@@ -1131,6 +1148,12 @@
           }
         ],
         "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -1158,6 +1181,67 @@
             "description": "Internal Server Error"
           }
         }
+      },
+      "patch": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "Update a post",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "coverImage": {
+                    "type": "file"
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "Post Title"
+                  },
+                  "diff": {
+                    "$ref": "#/components/schemas/TextEditorContent"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "tag 1",
+                      "tag 2"
+                    ]
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Post description"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/posts/popular": {
@@ -1168,7 +1252,11 @@
         "summary": "Get 1 popular post",
         "description": "",
         "parameters": [],
-        "responses": {}
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
       }
     },
     "/posts/": {
@@ -1190,7 +1278,14 @@
             "type": "integer"
           }
         ],
-        "responses": {}
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
       },
       "post": {
         "tags": [
@@ -1202,6 +1297,9 @@
         "responses": {
           "201": {
             "description": "Created"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         },
         "security": [
@@ -1230,7 +1328,14 @@
             "type": "integer"
           }
         ],
-        "responses": {}
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
       }
     },
     "/posts/drafts/{id}": {
@@ -1273,7 +1378,14 @@
             "type": "string"
           }
         ],
-        "responses": {}
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
       }
     },
     "/posts/drafts": {
@@ -1309,6 +1421,55 @@
         "responses": {
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "Update post's cover image",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "coverImage": {
+                    "type": "file"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -1366,110 +1527,6 @@
         }
       }
     },
-    "/posts\r/{id}": {
-      "patch": {
-        "tags": [
-          "Post"
-        ],
-        "summary": "Update a post",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {},
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "coverImage": {
-                    "type": "file"
-                  },
-                  "title": {
-                    "type": "string",
-                    "example": "Post Title"
-                  },
-                  "diff": {
-                    "$ref": "#/components/schemas/TextEditorContent"
-                  },
-                  "tags": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": [
-                      "tag 1",
-                      "tag 2"
-                    ]
-                  },
-                  "description": {
-                    "type": "string",
-                    "example": "Post description"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/posts\r/{id}/cover-image": {
-      "patch": {
-        "tags": [
-          "Post"
-        ],
-        "summary": "Update post's cover image",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "coverImage": {
-                    "type": "file"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/posts/{id}/diff": {
       "patch": {
         "tags": [
@@ -1491,6 +1548,9 @@
           },
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         },
         "security": [
@@ -1503,9 +1563,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "diff": {
-                  "$ref": "#/components/schemas/TextEditorContent"
-                }
+                "$ref": "#/components/schemas/TextEditorContent"
               }
             }
           }
@@ -1533,6 +1591,9 @@
           },
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         },
         "security": [
@@ -1579,6 +1640,9 @@
           },
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         },
         "security": [
@@ -1610,7 +1674,7 @@
         }
       }
     },
-    "/posts\r/{id}/description": {
+    "/posts/{id}/description": {
       "put": {
         "tags": [
           "Post"
@@ -1659,7 +1723,7 @@
         }
       }
     },
-    "/posts\r/publish/{id}": {
+    "/posts/publish/{id}": {
       "put": {
         "tags": [
           "Post"
@@ -1692,7 +1756,7 @@
         ]
       }
     },
-    "/posts\r/unpublish/{id}": {
+    "/posts/unpublish/{id}": {
       "put": {
         "tags": [
           "Post"
@@ -1713,6 +1777,9 @@
           },
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         },
         "security": [
@@ -1791,7 +1858,7 @@
         }
       }
     },
-    "/posts/{id}/comments\r/{commentId}": {
+    "/posts/{id}/comments/{commentId}": {
       "patch": {
         "tags": [
           "Comment"
@@ -1838,9 +1905,7 @@
             }
           }
         }
-      }
-    },
-    "/posts/{id}/comments/{commentId}": {
+      },
       "delete": {
         "tags": [
           "Comment"
@@ -1864,6 +1929,9 @@
         "responses": {
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         },
         "security": [
@@ -2114,21 +2182,26 @@
       "TextEditorContent": {
         "type": "object",
         "properties": {
-          "ops": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "insert": {
-                  "type": "string",
-                  "example": "Grey"
-                },
-                "attributes": {
+          "diff": {
+            "type": "object",
+            "properties": {
+              "ops": {
+                "type": "array",
+                "items": {
                   "type": "object",
                   "properties": {
-                    "color": {
+                    "insert": {
                       "type": "string",
-                      "example": "#ccc"
+                      "example": "Grey"
+                    },
+                    "attributes": {
+                      "type": "object",
+                      "properties": {
+                        "color": {
+                          "type": "string",
+                          "example": "#ccc"
+                        }
+                      }
                     }
                   }
                 }

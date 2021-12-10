@@ -204,13 +204,15 @@ const OutsideClickOptions = styled.div`
   position: absolute;
   right: 5px;
   top: 0;
-  transition: all 0.3s;
-  &:hover {
+  svg {
+    transition: all 0.3s;
+  }
+  svg:hover {
     cursor: pointer;
     transform: scale(1.2);
     transition: all 0.3s;
   }
-  &.active {
+  > .active {
     transform: scale(1.2);
   }
 `;
@@ -224,6 +226,7 @@ export default function CardDesktop({
   userAvatar,
   loveNumber,
   commentNumber,
+  hideOptions,
 }) {
   const [add, setAdd] = useState(0);
   const [more, setMore] = useState(0);
@@ -259,16 +262,18 @@ export default function CardDesktop({
         />
         <OutsideClickOptions
           ref={outsideClickOptionsBtn}
-          className={more === 1 ? "active" : ""}
-          onClick={() => {
-            if (more === 0) {
-              setMore(1);
-            } else {
-              setMore(0);
-            }
-          }}
+          className={hideOptions ? "d-none" : "d-block"}
         >
-          <CardOptions />
+          <CardOptions
+            className={more === 1 ? "active" : ""}
+            onClick={() => {
+              if (more === 0) {
+                setMore(1);
+              } else {
+                setMore(0);
+              }
+            }}
+          />
         </OutsideClickOptions>
         <p>{duration > 1 ? `${duration} mins read` : `${duration} min read`}</p>
         <img src={userAvatar} alt="" />
@@ -294,4 +299,5 @@ CardDesktop.propTypes = {
   userAvatar: PropTypes.string.isRequired,
   loveNumber: PropTypes.number.isRequired,
   commentNumber: PropTypes.number.isRequired,
+  hideOptions: PropTypes.bool.isRequired,
 };
