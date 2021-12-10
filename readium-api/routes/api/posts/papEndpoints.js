@@ -36,8 +36,12 @@ const uploadCover = multer({
 });
 
 module.exports = function (router) {
-  router.post("/post", authMiddleware, uploadCover.single("coverImage"), async (req, res) => {
-    /*
+  router.post(
+    "/post",
+    authMiddleware,
+    uploadCover.single("coverImage"),
+    async (req, res) => {
+      /*
     #swagger.tags = ['Dev']
     #swagger.summary = 'Create a post (DEV)'
     #swagger.requestBody = {
@@ -71,46 +75,51 @@ module.exports = function (router) {
       "bearerAuth": []
     }]
   */
-    try {
-      const { title, content, textEditorContent } = req.body;
-      const {
-        file: { buffer: coverImage },
-      } = req;
+      try {
+        const { title, content, textEditorContent } = req.body;
+        const {
+          file: { buffer: coverImage },
+        } = req;
 
-      if (!title)
-        return res.status(400).send({ message: "Please provide post's title" });
+        if (!title)
+          return res
+            .status(400)
+            .send({ message: "Please provide post's title" });
 
-      if (!textEditorContent)
-        return res
-          .status(400)
-          .send({ message: "Please provide post's content" });
+        if (!textEditorContent)
+          return res
+            .status(400)
+            .send({ message: "Please provide post's content" });
 
-      if (!content)
-        return res
-          .status(400)
-          .send({ message: "Please provide post's content in TEXT ONLY form" });
+        if (!content)
+          return res
+            .status(400)
+            .send({
+              message: "Please provide post's content in TEXT ONLY form",
+            });
 
-      if (!coverImage)
-        return res
-          .status(400)
-          .send({ message: "Please add a cover image for post" });
+        if (!coverImage)
+          return res
+            .status(400)
+            .send({ message: "Please add a cover image for post" });
 
-      const post = new Post({
-        title,
-        coverImage,
-        content,
-        textEditorContent,
-        author: req.user._id,
-        isPublished: true,
-        publishDate: new Date(),
-      });
+        const post = new Post({
+          title,
+          coverImage,
+          content,
+          textEditorContent,
+          author: req.user._id,
+          isPublished: true,
+          publishDate: new Date(),
+        });
 
-      await post.save();
-      return res.status(201).send(post);
-    } catch (err) {
-      res.status(500).send({ message: "Some errors occur in create posts" });
+        await post.save();
+        return res.status(201).send(post);
+      } catch (err) {
+        res.status(500).send({ message: "Some errors occur in create posts" });
+      }
     }
-  });
+  );
 
   router.post("/", authMiddleware, async (req, res) => {
     /*
@@ -305,6 +314,13 @@ module.exports = function (router) {
         JSON.parse(post.textEditorContent)
       );
       post.textEditorContent = JSON.stringify(composedDelta);
+      post.content = composedDelta
+        .filter((op) => typeof op.insert === "string")
+        .map((op) => op.insert)
+        .join("");
+      const duration = Math.ceil(post.content.trim().split(/\s+/).length / 250);
+      post.duration = duration;
+      
       await post.save();
       return res.send(post);
     } catch (err) {
@@ -451,43 +467,38 @@ module.exports = function (router) {
     }
   );
 
-  router.put(
-    "/publish/:id",
-    authMiddleware,
-    checkOwnPost,
-    async (req, res) => {
-      /*
+  router.put("/publish/:id", authMiddleware, checkOwnPost, async (req, res) => {
+    /*
       #swagger.tags = ['Post']
       #swagger.summary = 'Endpoint to publish the post'
       #swagger.security = [{
         "bearerAuth": []
       }]
     */
-      try {
-        const post = await Post.findById(req.params.id);
+    try {
+      const post = await Post.findById(req.params.id);
 
-        if (!post.coverImage) {
-          return res.status(400).send({
-            message:
-              "Please provide a cover image for the post before publishing",
-          });
-        }
-        if (!post.textEditorContent) {
-          return res.status(400).send({
-            message: "Please write the post's content before publishing",
-          });
-        }
-        post.publishDate = new Date();
-        post.isPublished = true;
-        await post.save();
-        return res.send(post);
-      } catch (err) {
-        return res.status(500).send({
-          message: "Something went wrong when publishing the post",
+      if (!post.coverImage) {
+        return res.status(400).send({
+          message:
+            "Please provide a cover image for the post before publishing",
         });
       }
+      if (!post.textEditorContent) {
+        return res.status(400).send({
+          message: "Please write the post's content before publishing",
+        });
+      }
+      post.publishDate = new Date();
+      post.isPublished = true;
+      await post.save();
+      return res.send(post);
+    } catch (err) {
+      return res.status(500).send({
+        message: "Something went wrong when publishing the post",
+      });
     }
-  );
+  });
 
   router.put(
     "/unpublish/:id",

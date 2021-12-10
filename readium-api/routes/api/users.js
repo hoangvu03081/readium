@@ -120,7 +120,13 @@ router.post("/follow/:userId", authMiddleware, async (req, res) => {
   */
   try {
     const { userId } = req.params;
-    const { followings } = req.user;
+    const { _id, followings } = req.user;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
 
     if (!userId) {
       // #swagger.responses[400] = { description: "Please provide user's id to follow" }
@@ -142,10 +148,17 @@ router.post("/follow/:userId", authMiddleware, async (req, res) => {
     // if user didn't follow this author -> now following
     if (authorIndex === -1) {
       followings.push(userId);
+      user.followers.push(_id);
     }
     // if user followed this author -> now unfollowing
     else {
       followings.splice(authorIndex, 1);
+      user.followers.splice(
+        user.followers.findIndex(
+          (userId) => userId.toString() === _id.toString()
+        ),
+        1
+      );
     }
 
     await req.user.save();
@@ -186,6 +199,5 @@ router.get("/recommended", authMiddleware, async (req, res) => {
       .send({ message: "Error while get recommended users" });
   }
 });
-
 
 module.exports = router;

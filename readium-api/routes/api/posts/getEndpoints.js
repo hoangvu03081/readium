@@ -69,7 +69,7 @@ module.exports = function (router) {
 
       posts = posts.map((post) => {
         post.imageUrl = getImageUrl(post.id);
-        post.userAvatar = getAvatarUrl(); /// TODO: code
+        post.userAvatar = getAvatarUrl(post.author._id); /// TODO: code
         return post;
       });
 
