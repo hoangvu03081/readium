@@ -1,11 +1,11 @@
 import React, { useRef, useCallback } from "react";
 import styled from "styled-components";
+import axios from "axios";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
 import Delta from "quill-delta";
 import debounce from "lodash.debounce";
 import { ReactComponent as AddImage } from "../../assets/icons/add_image.svg";
-import axios from "axios";
 
 const icons = ReactQuill.Quill.import("ui/icons");
 icons.code = '<i class="ionicons ion-code"></i>';
@@ -80,7 +80,7 @@ const Buttons = styled.div`
 
 export default function StoryContent({ id }) {
   const quill = useRef(null);
-  let currentDelta = new Delta();
+  const currentDelta = new Delta();
 
   const editorModules = {
     toolbar: [
@@ -105,28 +105,15 @@ export default function StoryContent({ id }) {
 
   const sendDraftContent = async (editor) => {
     const newDelta = currentDelta.diff(editor.getContents());
-    console.log(`http://localhost:5000/posts/${id}/diff`);
-    axios.patch(
-      `http://localhost:5000/posts/${id}/diff`,
-      {
-        diff: JSON.stringify(newDelta),
-      },
-      {
-        headers: {
-          Authorization:
-            "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MzkxMjcyMDM0MzksInZ1eCI6IjYxYjMxODgwMjM2MGExN2FhNjM5MDg0MCIsImV4cCI6MTYzOTQ0Mjc3OTQzOX0.T5YrmjtRb-ZBUUBzzRKT5j48uRkD4uLm6x0mCZZjxKs687ORYSjde6ygeArZfY0cnmJZxj9-600WrTjr3y75oMmzVsHb_CkRXRPcScFZ5jfe2175IQyA9fJJdFYlCVVuUKUA0FUvTcA7zJzS-p1lgw4LE9_e-dJ0bMcP7x6hVWHbSGylieO_k7WtuZlT2BmNAZdKvtjHAKtQaIdkFGpddG0BiNEuRKVzX-oyeFew0cmDf_yodbN-IiRjQH4ycbEkLBchY06Lyzbmeytwg_3ZskRS4PxlKfBJkALe8PEM-XAxPahXvAwF4hMbnSmXt2LcR5e4gExiVQyLg7pWGMZH_3KUe6O6AOI_-xFPLiIRXyNntoXeqwTwSJIemxMkbqb8diYA0xpozoMgdQAmahiCImFSzaC_uvxlyfGtJSWHaGPyPVaWRCKgOQqXpGzWzg1lIs7h1BihccjedDhwrixZY-UYu0CIJhG7c7Jy_FLqXPgVcY-2JEEjJ61eTeCio0s7UOKbzgIvzOpZYTIuUsn-yX_Xj2PwrO4fhj_Id5zseJa9l57E__8aVB1trJTfNZU7OxBzdXBVfttkHpzOkmGVuivPZdlZ47XTjfgXWixsI3sZDkI0qwYHdjJLr_nTWsg9Sjw-HwPpuVbGtiT5IOSGhW0PwBSkC7kotnk1FUsoaAg",
-        },
-      }
-    );
-
+    axios.patch(`http://localhost:5000/posts/${id}/diff`, {
+      diff: JSON.stringify(newDelta),
+    });
     // currentDelta = editor.getContents();
-    // console.log(currentDelta);
-    // console.log(newDelta);
   };
 
   const debounceSendDraftContent = useCallback(
     debounce((editor) => sendDraftContent(editor), 2000),
-    []
+    [id]
   );
 
   const handleChange = (content, delta, source, editor) => {

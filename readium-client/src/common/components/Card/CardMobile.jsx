@@ -103,7 +103,15 @@ const Corner = styled.div`
       transition: all 0.25s;
     }
   }
-  &.hideOptions
+  &.hideOptions {
+    > div {
+      display: none;
+    }
+    > svg {
+      right: 0;
+      left: unset;
+    }
+  }
 `;
 const OutsideClickMoreOptions = styled.div`
   font-size: 24px;

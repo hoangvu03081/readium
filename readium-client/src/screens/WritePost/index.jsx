@@ -56,6 +56,7 @@ export default function WritePost() {
         }
       );
       setId(res.data.id);
+      console.log(res.data.id);
     }
     initPost();
   }, []);

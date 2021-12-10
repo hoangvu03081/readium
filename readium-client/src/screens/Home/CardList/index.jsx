@@ -25,6 +25,7 @@ export default function CardList() {
                 userAvatar={post.userAvatar}
                 loveNumber={post.likes}
                 commentNumber={post.comments}
+                hideOptions={false}
               />
             );
           })
