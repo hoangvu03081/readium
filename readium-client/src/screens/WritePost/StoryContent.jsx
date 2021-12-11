@@ -1,6 +1,7 @@
 import React, { useRef, useCallback } from "react";
 import styled from "styled-components";
 import axios from "axios";
+import PropTypes from "prop-types";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
 import Delta from "quill-delta";
@@ -140,3 +141,7 @@ export default function StoryContent({ id }) {
     </Layout>
   );
 }
+
+StoryContent.propTypes = {
+  id: PropTypes.string.isRequired,
+};

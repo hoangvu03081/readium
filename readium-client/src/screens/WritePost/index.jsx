@@ -1,12 +1,10 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import styled from "styled-components";
 import StoryInformation from "./StoryInformation";
 import StoryContent from "./StoryContent";
 import BackToTop from "../../common/components/Buttons/BackToTop";
-import axios from "axios";
-import { useEffect } from "react";
-import { useState } from "react";
 
 const Layout = styled.div`
   margin-top: 80px;
