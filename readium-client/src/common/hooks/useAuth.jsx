@@ -60,8 +60,11 @@ function useProvideAuth() {
       const token = localStorage.getItem("Authorization");
       if (token) axios.defaults.headers.common.Authorization = token;
 
-      await axios.get(`${LOCAL_URL}/users/protected`);
-      setAuth(true);
+      const { data: authResult } = await axios.get(
+        `${LOCAL_URL}/users/protected`
+      );
+
+      setAuth(authResult);
     } catch (e) {
       setAuth(false);
     } finally {

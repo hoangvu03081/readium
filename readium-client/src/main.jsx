@@ -10,7 +10,7 @@ import App from "./app/App";
 import theme from "./common/GlobalTheme";
 import "bootstrap/dist/css/bootstrap-grid.min.css";
 import { AuthProvider } from "./common/hooks/useAuth";
-import { ModalProvider } from "./common/hooks/useModal";
+import ScrollToTop from "./common/components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -22,9 +22,8 @@ ReactDOM.render(
           <AuthProvider>
             <QueryClientProvider client={queryClient}>
               <ReactQueryDevtools initialIsOpen={false} />
-              <ModalProvider>
-                <App />
-              </ModalProvider>
+              <ScrollToTop />
+              <App />
             </QueryClientProvider>
           </AuthProvider>
         </Router>

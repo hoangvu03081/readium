@@ -105,10 +105,14 @@ function NavItem({ text, to, icon, signOut }) {
 }
 
 function NavContent() {
-  const { signOut } = useAuth();
+  const { auth, signOut } = useAuth();
   return (
     <>
-      <NavItem text="My profile" to="/profile" icon={<FaRegUserCircle />} />
+      <NavItem
+        text="My profile"
+        to={`/profile/${auth.profileId}`}
+        icon={<FaRegUserCircle />}
+      />
       <NavItem text="Write story" to="/write" icon={<FiEdit />} />
       <NavItem text="Settings" to="/settings" icon={<RiSettings3Line />} />
       <NavItem text="Help" to="/help" icon={<BiHelpCircle />} />

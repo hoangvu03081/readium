@@ -93,7 +93,7 @@ export default function MobileHeader({ isLogin }) {
         <UnstyledLink to="/">
           <RiHomeLine size={28} />
         </UnstyledLink>
-        <UnstyledLink to="collections">
+        <UnstyledLink to="/collections">
           <FiBookmark size={28} />
         </UnstyledLink>
         <UnstyledLink to="/write">

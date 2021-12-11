@@ -14,14 +14,20 @@ const USER_API = {
 };
 
 const PROFILE_API = {
-  GET_MY_PROFILE: getURL("/users/profiles"),
   GET_PROFILE: (profileId) => getURL(`/users/profiles/${profileId}`),
   GET_COVER_IMAGE: (userId) => getURL(`/users/profiles/cover-image/${userId}`),
   GET_MY_COVER_IMAGE: getURL("/users/profiles/cover-image)"),
+  POST_UPLOAD_AVATAR: getURL("/users/profiles/avatar"),
+  POST_UPLOAD_COVER_IMAGE: getURL("/users/profiles/cover-image"),
+};
+
+const SETTING_API = {
+  GET_MY_PROFILE: getURL("/users/profiles"),
+  PATCH_MY_PROFILE: getURL("/users/profiles"),
 };
 
 const POST_API = {
   GET_POST: (pageParam) => getURL(`/posts/?skip=${pageParam}`),
 };
 
-export { USER_API, PROFILE_API, POST_API };
+export { USER_API, PROFILE_API, POST_API, SETTING_API };

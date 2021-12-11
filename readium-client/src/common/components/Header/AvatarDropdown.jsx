@@ -95,12 +95,12 @@ function StyledDropdownItem({ children, to, text, toggleDropdown }) {
 // };
 
 export default function AvatarDropdown({ handleToggleDropdown }) {
-  const { signOut } = useAuth();
+  const { auth, signOut } = useAuth();
   return (
     <StyledAvatarDropdown>
       <StyledDropdownItem
         toggleDropdown={handleToggleDropdown}
-        to="/profile"
+        to={`/profile/${auth.profileId}`}
         text="My profile"
       >
         <FaRegUserCircle />

@@ -27,8 +27,8 @@ function checkInformation(data) {
 }
 
 export default function ProfileInformation({ data, isMyProfile }) {
-  const { data: followData } = useIsFollow(data._id);
-  const followUser = useFollow(data._id);
+  const { data: followData } = useIsFollow(data.id);
+  const followUser = useFollow(data.id);
   return (
     <>
       {isMyProfile && (
@@ -82,10 +82,10 @@ export default function ProfileInformation({ data, isMyProfile }) {
                     <BsInstagram size={32} />
                   </InformationIcon>
                 )}
-                {data.email && (
+                {data.contactEmail && (
                   <InformationIcon
                     target="_blank"
-                    href={`mailto:${data.email}`}
+                    href={`mailto:${data.contactEmail}`}
                     className="ms-3 me-2"
                   >
                     <AiOutlineMail size={32} />

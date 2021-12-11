@@ -15,7 +15,7 @@ export default function CardList() {
           ...item.data.posts.map((post) => {
             return (
               <Card
-                key={post._id}
+                key={post.id}
                 preview={post.imageUrl}
                 title={post.title}
                 content={post.content}

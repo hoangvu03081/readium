@@ -15,13 +15,14 @@ export const CoverImage = styled.div`
 
 export const Avatar = styled.img`
   position: absolute;
-  bottom: -68px;
   width: 136px;
   height: 136px;
   margin-left: auto;
   margin-right: auto;
   left: 0;
   right: 0;
+  top: calc(33vh - 68px);
+  z-index: 3;
   text-align: center;
   border-radius: 50%;
   border: 2px solid white;

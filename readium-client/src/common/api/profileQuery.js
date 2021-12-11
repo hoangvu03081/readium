@@ -1,45 +1,20 @@
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
 import { PROFILE_API, USER_API } from "./apiConstant";
-
-export function useMyProfile() {
-  const { data: profile } = useQuery(
-    ["profile", localStorage.getItem("Authorization")],
-    () => axios.get(PROFILE_API.GET_MY_PROFILE).then((result) => result.data),
-    {
-      staleTime: 300000,
-    }
-  );
-  return useQuery(
-    ["avatar", localStorage.getItem("Authorization")],
-    () =>
-      axios
-        .get(USER_API.GET_MY_AVATAR, { responseType: "blob" })
-        .then((result) => window.URL.createObjectURL(result.data)),
-    { enabled: !!profile, select: (data) => ({ ...profile, avatar: data }) }
-  );
-}
 
 export function useEditProfile() {}
 
 export function useChangeAvatar() {}
 
-export function useCoverImage(userId) {
-  const id = userId ?? localStorage.getItem("Authorization");
-  return useQuery(["coverImage", id], () =>
-    axios
-      .get(
-        userId
-          ? PROFILE_API.GET_COVER_IMAGE(userId)
-          : PROFILE_API.GET_MY_COVER_IMAGE,
-        { responseType: "blob" }
-      )
-      .then((result) => window.URL.createObjectURL(result.data))
-  );
+function fetchImage(url) {
+  return axios
+    .get(url, { responseType: "blob" })
+    .then((result) => window.URL.createObjectURL(result.data))
+    .catch(() => null);
 }
 
-export function useOtherProfile(profileId) {
-  const { data: profile } = useQuery(
+export function useFetchProfile(profileId) {
+  const profile = useQuery(
     ["profile", profileId],
     () =>
       axios
@@ -47,18 +22,69 @@ export function useOtherProfile(profileId) {
         .then((result) => result.data),
     { staleTime: 300000 }
   );
-  const userId = profile?._id;
-  return useQuery(
-    ["avatar", userId],
-    () =>
-      axios
-        .get(USER_API.GET_AVATAR(userId), { responseType: "blob" })
-        .then((result) => window.URL.createObjectURL(result.data)),
-    { enabled: !!userId, select: (data) => ({ ...profile, avatar: data }) }
+  const userId = profile.data?.id;
+  return [
+    profile,
+    useQuery(
+      ["avatar", userId],
+      () => fetchImage(USER_API.GET_AVATAR(userId)),
+      { enabled: !!userId }
+    ),
+    useQuery(
+      ["coverImage", userId],
+      () => fetchImage(PROFILE_API.GET_COVER_IMAGE(userId)),
+      {
+        enabled: !!userId,
+        useErrorBoundary: (error) => error.response?.status >= 500,
+        retryDelay: 5000,
+        staleTime: Infinity,
+      }
+    ),
+  ];
+}
+
+export function useUploadAvatar(userId) {
+  const queryClient = useQueryClient();
+  return useMutation(
+    (file) => {
+      const formData = new FormData();
+      formData.append("avatar", file);
+      return axios.post(PROFILE_API.POST_UPLOAD_AVATAR, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+    },
+    {
+      onSuccess: () => {
+        //TODO: Fix my avatar
+        queryClient.invalidateQueries(["avatar", userId], { exact: true });
+        queryClient.invalidateQueries(["avatar"], { exact: true });
+      },
+    }
+  );
+}
+
+export function useUploadCoverImage(userId) {
+  const queryClient = useQueryClient();
+  return useMutation(
+    (file) => {
+      const formData = new FormData();
+      formData.append("coverImage", file);
+      return axios.post(PROFILE_API.POST_UPLOAD_COVER_IMAGE, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["coverImage", userId], { exact: true });
+      },
+    }
   );
 }
 
 export function useProfile(profileId) {
-  if (profileId) return useOtherProfile(profileId);
-  return useMyProfile();
+  return useFetchProfile(profileId);
 }

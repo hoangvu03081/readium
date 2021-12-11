@@ -3,29 +3,44 @@ import PropTypes from "prop-types";
 import { ContentLayout, CoverImage, Avatar } from "./components/style";
 import ProfileInformation from "./ProfileInformation";
 import ProfilePost from "./ProfilePost";
-import { useCoverImage, useProfile } from "../../common/api/profileQuery";
-import useAvatar from "../../common/api/useAvatar";
+import { useProfile } from "../../common/api/profileQuery";
 import Loading from "../../common/components/Loading";
+import MyAvatar from "./components/MyAvatar";
+import MyCoverImage from "./components/MyCoverImage";
 
-const SomeModal = () => <h1>hello</h1>;
-export default function ProfileContent({ id }) {
-  const {
-    data: profile,
-    isError: profileIsError,
-    error: profileError,
-  } = useProfile(id);
+export default function ProfileContent({ id, isMyProfile }) {
+  const [
+    { data: profile, isError: profileIsError, error: profileError },
+    { data: avatar, isFetched: avatarIsFetched },
+    {
+      data: coverImage,
+      isError: coverImageIsError,
+      isFetched: coverImageIsFetched,
+    },
+  ] = useProfile(id);
 
   if (profileIsError) return <h1>{profileError}</h1>;
-  if (profile) {
-    //console.log(profile);
+  if (
+    profile &&
+    (coverImageIsFetched || coverImageIsError) &&
+    avatarIsFetched
+  ) {
     return (
       <ContentLayout>
-        <CoverImage src="https://pbs.twimg.com/media/EOPI4BDUUAA0S-u?format=jpg&name=medium">
-          <Avatar src={profile.avatar ? `${profile.avatar}` : null} />
-        </CoverImage>
+        {!isMyProfile ? (
+          <>
+            <CoverImage src={coverImage} />
+            <Avatar src={avatar ? `${avatar}` : null} alt="Avatar" />
+          </>
+        ) : (
+          <>
+            <MyCoverImage src={coverImage} userId={profile.id} />
+            <MyAvatar src={avatar ? `${avatar}` : null} userId={profile.id} />
+          </>
+        )}
         <div className="container">
-          <ProfileInformation data={profile} isMyProfile={!id} />
-          <ProfilePost id={profile._id} isMyProfile={!id} />
+          <ProfileInformation data={profile} isMyProfile={isMyProfile} />
+          <ProfilePost id={profile.id} isMyProfile={isMyProfile} />
         </div>
       </ContentLayout>
     );
@@ -36,8 +51,10 @@ export default function ProfileContent({ id }) {
 
 ProfileContent.propTypes = {
   id: PropTypes.string,
+  isMyProfile: PropTypes.bool,
 };
 
 ProfileContent.defaultProps = {
   id: null,
+  isMyProfile: false,
 };
