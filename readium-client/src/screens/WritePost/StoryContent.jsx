@@ -1,5 +1,7 @@
 import React, { useRef, useCallback } from "react";
 import styled from "styled-components";
+import axios from "axios";
+import PropTypes from "prop-types";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
 import Delta from "quill-delta";
@@ -77,9 +79,9 @@ const Buttons = styled.div`
   }
 `;
 
-export default function StoryContent() {
+export default function StoryContent({ id }) {
   const quill = useRef(null);
-  let currentDelta = new Delta();
+  const currentDelta = new Delta();
 
   const editorModules = {
     toolbar: [
@@ -102,16 +104,17 @@ export default function StoryContent() {
     document.getElementsByClassName("ql-image")[0].click();
   };
 
-  const sendDraftContent = (editor) => {
+  const sendDraftContent = async (editor) => {
     const newDelta = currentDelta.diff(editor.getContents());
-    currentDelta = editor.getContents();
-    console.log(currentDelta);
-    console.log(newDelta);
+    axios.patch(`http://localhost:5000/drafts/${id}/diff`, {
+      diff: JSON.stringify(newDelta),
+    });
+    // currentDelta = editor.getContents();
   };
 
   const debounceSendDraftContent = useCallback(
     debounce((editor) => sendDraftContent(editor), 2000),
-    []
+    [id]
   );
 
   const handleChange = (content, delta, source, editor) => {
@@ -138,3 +141,7 @@ export default function StoryContent() {
     </Layout>
   );
 }
+
+StoryContent.propTypes = {
+  id: PropTypes.string.isRequired,
+};

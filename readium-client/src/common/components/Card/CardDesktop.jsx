@@ -108,21 +108,6 @@ const Right = styled.div`
       transition: all 0.3s;
     }
   }
-  > svg:nth-child(3) {
-    font-size: 30px;
-    position: absolute;
-    right: 5px;
-    top: 0;
-    transition: all 0.3s;
-    &:hover {
-      cursor: pointer;
-      transform: scale(1.2);
-      transition: all 0.3s;
-    }
-    &.active {
-      transform: scale(1.2);
-    }
-  }
   p {
     margin: 0;
     font-family: "Lato";
@@ -166,6 +151,14 @@ const Right = styled.div`
       cursor: pointer;
     }
   }
+  &.hideOptions {
+    > svg {
+      right: 5px;
+    }
+    > div {
+      display: none;
+    }
+  }
 `;
 
 const Corner = styled.div`
@@ -204,13 +197,15 @@ const OutsideClickOptions = styled.div`
   position: absolute;
   right: 5px;
   top: 0;
-  transition: all 0.3s;
-  &:hover {
+  svg {
+    transition: all 0.3s;
+  }
+  svg:hover {
     cursor: pointer;
     transform: scale(1.2);
     transition: all 0.3s;
   }
-  &.active {
+  > .active {
     transform: scale(1.2);
   }
 `;
@@ -224,6 +219,7 @@ export default function CardDesktop({
   userAvatar,
   loveNumber,
   commentNumber,
+  hideOptions,
 }) {
   const [add, setAdd] = useState(0);
   const [more, setMore] = useState(0);
@@ -248,7 +244,7 @@ export default function CardDesktop({
         </div>
       </Middle>
 
-      <Right className="col-2">
+      <Right className={hideOptions ? "hideOptions col-2" : "col-2"}>
         <AddCollection
           className={add === 0 ? "unhide" : "hide"}
           onClick={() => setAdd(1)}
@@ -257,18 +253,17 @@ export default function CardDesktop({
           className={add === 0 ? "hide" : "unhide"}
           onClick={() => setAdd(0)}
         />
-        <OutsideClickOptions
-          ref={outsideClickOptionsBtn}
-          className={more === 1 ? "active" : ""}
-          onClick={() => {
-            if (more === 0) {
-              setMore(1);
-            } else {
-              setMore(0);
-            }
-          }}
-        >
-          <CardOptions />
+        <OutsideClickOptions ref={outsideClickOptionsBtn}>
+          <CardOptions
+            className={more === 1 ? "active" : ""}
+            onClick={() => {
+              if (more === 0) {
+                setMore(1);
+              } else {
+                setMore(0);
+              }
+            }}
+          />
         </OutsideClickOptions>
         <p>{duration > 1 ? `${duration} mins read` : `${duration} min read`}</p>
         <img src={userAvatar} alt="" />
@@ -294,4 +289,5 @@ CardDesktop.propTypes = {
   userAvatar: PropTypes.string.isRequired,
   loveNumber: PropTypes.number.isRequired,
   commentNumber: PropTypes.number.isRequired,
+  hideOptions: PropTypes.bool.isRequired,
 };

@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import styled from "styled-components";
 import StoryInformation from "./StoryInformation";
 import StoryContent from "./StoryContent";
@@ -38,10 +39,22 @@ const SubmitBtn = styled.button`
 `;
 
 export default function WritePost() {
+  const [id, setId] = useState("");
+
+  useEffect(() => {
+    async function initPost() {
+      if (!id) {
+        const res = await axios.post("http://localhost:5000/drafts");
+        setId(res.data.id);
+        console.log(res.data);
+      }
+    }
+    initPost();
+  }, [id]);
   return (
     <Layout className="container">
       <StoryInformation />
-      <StoryContent />
+      <StoryContent id={id} />
       <SubmitBtnContainer>
         <SubmitBtn>Submit</SubmitBtn>
       </SubmitBtnContainer>
