@@ -104,17 +104,17 @@ export default function StoryContent({ id }) {
     document.getElementsByClassName("ql-image")[0].click();
   };
 
-  const sendDraftContent = async (editor) => {
+  const sendDraftContent = (editor) => {
     const newDelta = currentDelta.diff(editor.getContents());
     currentDelta = editor.getContents();
-    console.log(newDelta);
+    // console.log(newDelta);
     axios.patch(`http://localhost:5000/drafts/${id}/diff`, {
       diff: JSON.stringify(newDelta),
     });
   };
 
   const debounceSendDraftContent = useCallback(
-    debounce((editor) => sendDraftContent(editor), 2000),
+    debounce((editor) => sendDraftContent(editor), 3000),
     [id]
   );
 

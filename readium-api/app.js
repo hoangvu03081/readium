@@ -78,6 +78,7 @@ app.use((err, req, res, next) => {
   } else if (err.message === NO_AUTH_TOKEN) {
     return res.status(401).send({ message: "Unauthenticated" });
   }
+  console.log(err);
   return res.status(500).send({ message: "Some errors" });
 });
 

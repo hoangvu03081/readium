@@ -1,6 +1,10 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useCallback, useState } from "react";
 import styled from "styled-components";
+import PropTypes from "prop-types";
+import axios from "axios";
+import debounce from "lodash.debounce";
 import TextareaAutosize from "react-textarea-autosize";
 import { WithContext as ReactTags } from "react-tag-input";
 import { useDropzone } from "react-dropzone";
@@ -242,6 +246,7 @@ const UploadImage = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin-bottom: 5px;
   transition: all 0.25s;
   div {
     display: ${(props) => (props.backgroundImage === "" ? "block" : "none")};
@@ -268,8 +273,50 @@ const UploadImage = styled.div`
   }
 `;
 
-export default function StoryInformation() {
-  // INPUT TAGS + VALIDATION
+const StoryInformation = React.forwardRef(({ id }, ref) => {
+  // TITLE
+  const [titleValidation, setTitleValidation] = useState(true);
+  const sendTitleDraft = (titleDraft) => {
+    axios.put(`http://localhost:5000/drafts/${id}/title`, {
+      title: titleDraft.target.value,
+    });
+  };
+  const debounceSendTitleDraft = useCallback(
+    debounce((titleDraft) => sendTitleDraft(titleDraft), 3000),
+    [id]
+  );
+  const handleTitleChange = (titleDraft) => {
+    if (titleDraft.target.value.length === 100) {
+      setTitleValidation(false);
+    } else {
+      setTitleValidation(true);
+    }
+    debounceSendTitleDraft(titleDraft);
+  };
+
+  const [descriptionValidation, setDescriptionValidation] = useState(true);
+  const sendDescriptionDraft = (descriptionDraft) => {
+    axios.put(`http://localhost:5000/drafts/${id}/description`, {
+      description: descriptionDraft.target.value,
+    });
+  };
+  const debounceSendDescriptionDraft = useCallback(
+    debounce(
+      (descriptionDraft) => sendDescriptionDraft(descriptionDraft),
+      3000
+    ),
+    [id]
+  );
+  const handleDescriptionChange = (descriptionDraft) => {
+    if (descriptionDraft.target.value.length === 300) {
+      setDescriptionValidation(false);
+    } else {
+      setDescriptionValidation(true);
+    }
+    debounceSendDescriptionDraft(descriptionDraft);
+  };
+
+  // TAGS
   const KeyCodes = {
     comma: 188,
     enter: 13,
@@ -277,6 +324,16 @@ export default function StoryInformation() {
   const delimiters = [KeyCodes.comma, KeyCodes.enter];
   const [tags, setTags] = useState([]);
   const [tagsValidation, setTagsValidation] = useState(true);
+  const sendTagsDraft = (tagsDraft) => {
+    const data = tagsDraft.map((item) => item.text);
+    axios.put(`http://localhost:5000/drafts/${id}/tags`, {
+      tags: data,
+    });
+  };
+  const debounceSendTagsDraft = useCallback(
+    debounce((tagsDraft) => sendTagsDraft(tagsDraft), 3000),
+    [id]
+  );
   const handleTagsChange = (data) => {
     if (data.length === 5) {
       setTagsValidation(false);
@@ -286,58 +343,57 @@ export default function StoryInformation() {
   };
   const handleAddition = (tag) => {
     if (tagsValidation) {
-      setTags([...tags, tag]);
+      const newTags = [...tags, tag];
+      setTags(newTags);
+      debounceSendTagsDraft(newTags);
     }
   };
   const handleDelete = (i) => {
     const result = tags.filter((tag, index) => index !== i);
     setTags(result);
     handleTagsChange(result);
+    debounceSendTagsDraft(result);
   };
   const handleDrag = (tag, currPos, newPos) => {
     const newTags = tags.slice();
     newTags.splice(currPos, 1);
     newTags.splice(newPos, 0, tag);
     setTags(newTags);
+    debounceSendTagsDraft(newTags);
   };
 
-  // INPUT COVER IMAGE
-  const [imgSrc, setImgSrc] = useState("");
-  const onDrop = useCallback((acceptedFiles) => {
-    // send to server
-    acceptedFiles.forEach((file) => {
-      const reader = new FileReader();
-
-      reader.onabort = () => console.log("file reading was aborted");
-      reader.onerror = () => console.log("file reading has failed");
-      reader.onload = () => {
-        const binaryStr = reader.result;
-        const arr = new Uint8Array(binaryStr);
-        const blob = new Blob([arr.buffer], { type: "image/png" });
-        setImgSrc(window.URL.createObjectURL(blob));
-      };
-      reader.readAsArrayBuffer(file);
-    });
-  }, []);
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
-
-  // OTHER VALIDATIONS
-  const [titleValidation, setTitleValidation] = useState(true);
-  const [descriptionValidation, setDescriptionValidation] = useState(true);
-  const handleTitleChange = (event) => {
-    if (event.target.value.length === 100) {
-      setTitleValidation(false);
-    } else {
-      setTitleValidation(true);
-    }
+  // COVER IMAGE
+  const [coverImageSrc, setCoverImageSrc] = useState("");
+  const sendCoverImageDraft = (coverImageDraft) => {
+    axios.put(
+      `http://localhost:5000/drafts/${id}/cover-image`,
+      coverImageDraft
+    );
   };
-  const handleDescriptionChange = (event) => {
-    if (event.target.value.length === 300) {
-      setDescriptionValidation(false);
-    } else {
-      setDescriptionValidation(true);
-    }
-  };
+  const onDrop = useCallback(
+    (acceptedFiles) => {
+      acceptedFiles.forEach((file) => {
+        const reader = new FileReader();
+        reader.onabort = () => console.log("File reading was aborted.");
+        reader.onerror = () => console.log("File reading has failed.");
+        reader.onload = () => {
+          const binaryStr = reader.result;
+          const arr = new Uint8Array(binaryStr);
+          const blob = new Blob([arr.buffer], { type: "image/png" });
+          setCoverImageSrc(window.URL.createObjectURL(blob));
+        };
+        reader.readAsArrayBuffer(file);
+      });
+      const coverImageDraft = new FormData();
+      coverImageDraft.append("coverImage", acceptedFiles[0]);
+      sendCoverImageDraft(coverImageDraft);
+    },
+    [id]
+  );
+  const { getRootProps, getInputProps, isDragActive, inputRef } = useDropzone({
+    onDrop,
+  });
+  ref.current[2] = inputRef;
 
   return (
     <Layout>
@@ -352,9 +408,17 @@ export default function StoryInformation() {
           autoFocus
           maxLength="100"
           onChange={handleTitleChange}
+          ref={(element) => {
+            ref.current[0] = element;
+          }}
         />
       </InputTitle>
-      <Note className={titleValidation ? "d-none" : "d-block"}>
+      <Note
+        className={titleValidation ? "d-none" : "d-block"}
+        ref={(element) => {
+          ref.current[1] = element;
+        }}
+      >
         <i className="ionicons ion-ios-information-outline" />
         Maximum 100 characters
       </Note>
@@ -382,9 +446,6 @@ export default function StoryInformation() {
           handleDelete={handleDelete}
           handleAddition={handleAddition}
           handleDrag={handleDrag}
-          handleInputChange={() => {
-            handleTagsChange(tags);
-          }}
           inputFieldPosition="top"
           placeholder="Enter to create a tag"
           autofocus={false}
@@ -397,7 +458,7 @@ export default function StoryInformation() {
       </Note>
 
       <h3>Your cover image*</h3>
-      <UploadImage backgroundImage={imgSrc} {...getRootProps()}>
+      <UploadImage backgroundImage={coverImageSrc} {...getRootProps()}>
         <input {...getInputProps()} />
         {isDragActive ? (
           <p>Drop a file here ...</p>
@@ -408,6 +469,19 @@ export default function StoryInformation() {
           </div>
         )}
       </UploadImage>
+      <Note
+        ref={(element) => {
+          ref.current[3] = element;
+        }}
+      >
+        <i className="ionicons ion-ios-information-outline" />
+      </Note>
     </Layout>
   );
-}
+});
+
+export default StoryInformation;
+
+StoryInformation.propTypes = {
+  id: PropTypes.string.isRequired,
+};

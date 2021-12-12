@@ -21,7 +21,6 @@ const postSchema = new Schema({
   title: {
     type: String,
     required: publishRqFnc,
-    minlength: [1, "Min 1, get {VALUE}"],
     maxlength: [100, "Max 100, get {VALUE}"],
   },
   coverImage: {

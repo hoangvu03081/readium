@@ -3,14 +3,98 @@ const Delta = require("quill-delta");
 const configMulter = require("../../config/multer-config");
 
 const Post = require("../../models/Post");
-const {
-  checkValidSkipAndDate
-} = require("../../utils");
-const { authMiddleware,
-  checkOwnPost, } = require("../../utils/auth");
+const { checkValidSkipAndDate } = require("../../utils");
+const { authMiddleware, checkOwnPost } = require("../../utils/auth");
 
 const uploadCover = configMulter({
   limits: { fields: 6, fileSize: 5e6, files: 1 },
+});
+
+router.get("/", authMiddleware, checkValidSkipAndDate, async (req, res) => {
+  /*
+    #swagger.tags = ['Draft']
+    #swagger.summary = 'Fetch all my drafts'
+    #swagger.parameters['skip'] = {
+      in: 'query',
+      type: 'integer',
+    }
+    #swagger.parameters['date'] = {
+      in: 'query',
+      type: 'string',
+    }
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+  */
+  try {
+    const { date, skip } = req;
+
+    let posts = await Post.find({
+      isPublished: false,
+      author: req.user._id,
+      publishDate: { $lte: date },
+    })
+      .sort({ publishDate: -1 })
+      .skip(skip)
+      .limit(5);
+
+    posts = posts.map((post) => post.getPostPreview());
+    posts = Promise.all(posts);
+
+    if (posts.length === 0) return res.send({ posts });
+    return res.send({ posts, next: skip + 5 });
+  } catch {
+    return res.status(500).send({ message: "Error in finding post with ID" });
+  }
+});
+
+router.get("/:id/avatar", authMiddleware, async (req, res) => {
+  /*
+    #swagger.tags = ['Draft']
+    #swagger.summary = 'Fetch a draft cover image'
+  */
+
+  try {
+    const _id = req.params.id;
+    const post = await Post.findOne({
+      _id,
+      author: req.user._id,
+      isPublished: false,
+    });
+
+    if (!post) {
+      return res
+        .status(404)
+        .send({ message: `Cannot find post with ID: ${_id}` });
+    }
+
+    return res.set("Content-Type", "image/png").send(post.coverImage);
+  } catch {
+    return res
+      .status(500)
+      .send({ message: `Error in fetching cover image of post ${_id}` });
+  }
+});
+
+router.get("/:id", authMiddleware, async (req, res) => {
+  /*
+    #swagger.tags = ['Draft']
+    #swagger.summary = 'Fetch a draft'
+  */
+  try {
+    const post = await Post.findOne({
+      _id: req.params.id,
+      author: req.user._id,
+      isPublished: false,
+    });
+
+    if (!post) {
+      return res.status(404).send({ message: "Cannot find post with ID" });
+    }
+    return res.send(post);
+  } catch {
+    return res.status(500).send({ message: "Error in finding post with ID" });
+  }
 });
 
 router.post("/", authMiddleware, async (req, res) => {
@@ -24,7 +108,7 @@ router.post("/", authMiddleware, async (req, res) => {
   try {
     let post = new Post();
     post.author = req.user._id;
-    
+
     await post.save();
     post = await post.getPostDetail();
     return res.status(201).send(post);
@@ -114,9 +198,9 @@ router.patch("/:id/diff", authMiddleware, checkOwnPost, async (req, res) => {
 
     const diffContent = JSON.parse(diff);
     const diffDelta = new Delta(diffContent);
-    const textEditorDelta = new Delta(JSON.parse(post.textEditorContent))
+    const textEditorDelta = new Delta(JSON.parse(post.textEditorContent));
     const composedDelta = textEditorDelta.compose(diffDelta);
-console.log(composedDelta);
+    console.log(composedDelta);
 
     post.textEditorContent = JSON.stringify(composedDelta);
     post.content = composedDelta
@@ -265,10 +349,11 @@ router.put(
           message: "Please provide an image to update your post's cover image",
         });
 
-      post.coverImage = file.buffer;
+      post.coverImage = req.file.buffer;
       await post.save();
       return res.send(post);
     } catch (err) {
+      console.log(err);
       return res
         .status(500)
         .send({ message: "Something went wrong when updating cover image" });
@@ -308,16 +393,13 @@ router.put("/:id/title", authMiddleware, checkOwnPost, async (req, res) => {
     }
 
     const { title } = req.body;
-    if (!title) {
-      return res.status(400).send({
-        message: "Please provide a title to update your post's title",
-      });
-    }
+    if (title) post.title = title;
+    else post.title = "";
 
-    post.title = title;
     await post.save();
     return res.send(post);
   } catch (err) {
+    console.log(err);
     return res
       .status(500)
       .send({ message: "Something went wrong when updating post's title" });
@@ -359,13 +441,9 @@ router.put("/:id/tags", authMiddleware, checkOwnPost, async (req, res) => {
     }
 
     const { tags } = req.body;
-    if (!tags) {
-      return res.status(400).send({
-        message: "Please provide tags",
-      });
-    }
 
-    post.tags = tags;
+    if (tags) post.tags = tags;
+    else post.tags = undefined;
     await post.save();
     return res.send(post);
   } catch (err) {
@@ -412,13 +490,8 @@ router.put(
 
       const { description } = req.body;
 
-      if (!description) {
-        return res.status(400).send({
-          message: "Please provide post's description",
-        });
-      }
-
-      post.description = description;
+      if (description) post.description = description;
+      else post.description = undefined;
       await post.save();
       return res.send(post);
     } catch (err) {
@@ -466,94 +539,6 @@ router.put("/publish/:id", authMiddleware, checkOwnPost, async (req, res) => {
     return res.status(500).send({
       message: "Something went wrong when publishing the post",
     });
-  }
-});
-
-//TODO: test
-router.get("/", authMiddleware, checkValidSkipAndDate, async (req, res) => {
-  /*
-    #swagger.tags = ['Draft']
-    #swagger.summary = 'Fetch all my drafts'
-    #swagger.parameters['skip'] = {
-      in: 'query',
-      type: 'integer',
-    }
-    #swagger.parameters['date'] = {
-      in: 'query',
-      type: 'string',
-    }
-    #swagger.security = [{
-      "bearerAuth": []
-    }]
-  */
-  try {
-    const { date, skip } = req;
-
-    let posts = await Post.find({
-      isPublished: false,
-      author: req.user._id,
-      publishDate: { $lte: date },
-    })
-      .sort({ publishDate: -1 })
-      .skip(skip)
-      .limit(5);
-
-    posts = posts.map((post) => post.getPostPreview());
-    posts = Promise.all(posts);
-
-    if (posts.length === 0) return res.send({ posts });
-    return res.send({ posts, next: skip + 5 });
-  } catch {
-    return res.status(500).send({ message: "Error in finding post with ID" });
-  }
-});
-
-router.get("/:id", authMiddleware, async (req, res) => {
-  /*
-    #swagger.tags = ['Draft']
-    #swagger.summary = 'Fetch a draft'
-  */
-  try {
-    const post = await Post.findOne({
-      _id: req.params.id,
-      author: req.user._id,
-      isPublished: false,
-    });
-
-    if (!post) {
-      return res.status(404).send({ message: "Cannot find post with ID" });
-    }
-    return res.send(post);
-  } catch {
-    return res.status(500).send({ message: "Error in finding post with ID" });
-  }
-});
-
-router.get("/:id/avatar", authMiddleware, async (req, res) => {
-  /*
-    #swagger.tags = ['Draft']
-    #swagger.summary = 'Fetch a draft avatar'
-  */
-
-  try {
-    const _id = req.params.id;
-    const post = await Post.findOne({
-      _id,
-      author: req.user._id,
-      isPublished: false,
-    });
-
-    if (!post) {
-      return res
-        .status(404)
-        .send({ message: `Cannot find post with ID: ${_id}` });
-    }
-
-    return res.set("Content-Type", "image/png").send(post.coverImage);
-  } catch {
-    return res
-      .status(500)
-      .send({ message: `Error in fetching cover image of post ${_id}` });
   }
 });
 
