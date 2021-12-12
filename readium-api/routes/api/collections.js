@@ -30,6 +30,10 @@ const checkPostAndCollectionExist = async (req, res, next) => {
         .status(404)
         .send({ message: "User doesn't have this collection." });
     }
+
+    req.post = post;
+    req.collection = collection;
+    return next();
   } catch (err) {
     return res.status(500).send({
       message: "Some error occur when check post and collection exist",
@@ -71,6 +75,7 @@ router.post("/", authMiddleware, async (req, res) => {
     const existed = req.user.collections.some(
       (collection) => collection.name === name
     );
+
     if (existed) {
       return res
         .status(400)
@@ -111,10 +116,8 @@ router.post(
     }]
   */
     try {
-      const { postId, collectionName } = req.body;
-      const collection = req.user.collections.find(
-        (col) => col.name === collectionName
-      );
+      const { postId } = req.body;
+      const { collection } = req;
 
       if (collection.posts.some((post) => post._id.toString() === postId)) {
         return res
@@ -156,10 +159,8 @@ router.delete(
     }]
   */
     try {
-      const { postId, collectionName } = req.body;
-      const collection = req.user.collections.find(
-        (col) => col.name === collectionName
-      );
+      const { postId } = req.body;
+      const { collection } = req;
 
       const postIndex = collection.posts.findIndex(
         (post) => post._id.toString() === postId
@@ -170,7 +171,6 @@ router.delete(
           .send({ message: "Post is not in the collection to be removed!" });
       }
 
-      // found post & found collections -> valid id & valid collection name -> add to collection
       collection.posts.splice(postIndex, 1);
       await req.user.save();
       return res.send(collection);

@@ -1,7 +1,9 @@
-import React, { useRef } from "react";
+import React, { useRef, useCallback } from "react";
 import styled from "styled-components";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
+import Delta from "quill-delta";
+import debounce from "lodash.debounce";
 import { ReactComponent as AddImage } from "../../assets/icons/add_image.svg";
 
 const icons = ReactQuill.Quill.import("ui/icons");
@@ -15,6 +17,9 @@ const Layout = styled.div`
     font-weight: 500;
     font-size: 48px;
     text-align: center;
+    @media (max-width: 520px) {
+      font-size: 40px;
+    }
   }
 `;
 const TextEditor = styled.div`
@@ -71,28 +76,10 @@ const Buttons = styled.div`
     }
   }
 `;
-const SubmitBtn = styled.button`
-  border: 2px solid #000000;
-  border-radius: 50px;
-  color: #000000;
-  background-color: #ffffff;
-  width: 111px;
-  font-family: "Raleway";
-  font-weight: bold;
-  font-size: 18px;
-  padding: 5px 0;
-  margin-top: 40px;
-  transition: all 0.35s;
-  &:hover {
-    cursor: pointer;
-    color: #ffffff;
-    background-color: #000000;
-    transition: all 0.35s;
-  }
-`;
 
 export default function StoryContent() {
   const quill = useRef(null);
+  let currentDelta = new Delta();
 
   const editorModules = {
     toolbar: [
@@ -111,14 +98,24 @@ export default function StoryContent() {
     },
   };
 
-  const handleChange = (event, delta) => {
-    console.log(quill.current.getEditor().getContents());
-    console.log(event);
-    console.log(delta);
-  };
-
   const addImage = () => {
     document.getElementsByClassName("ql-image")[0].click();
+  };
+
+  const sendDraftContent = (editor) => {
+    const newDelta = currentDelta.diff(editor.getContents());
+    currentDelta = editor.getContents();
+    console.log(currentDelta);
+    console.log(newDelta);
+  };
+
+  const debounceSendDraftContent = useCallback(
+    debounce((editor) => sendDraftContent(editor), 2000),
+    []
+  );
+
+  const handleChange = (content, delta, source, editor) => {
+    debounceSendDraftContent(editor);
   };
 
   return (
@@ -138,9 +135,6 @@ export default function StoryContent() {
           </div>
         </Buttons>
       </TextEditor>
-      <div className="d-flex justify-content-center">
-        <SubmitBtn>Submit</SubmitBtn>
-      </div>
     </Layout>
   );
 }

@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const { getAvatarUrl, getImageUrl } = require("../utils");
+const { default: commentSchema } = require("./Comment");
 
 const {
   model,
@@ -12,6 +14,7 @@ function publishRqFnc() {
 
 const postSchema = new Schema({
   author: {
+    ref: "User",
     type: ObjectId,
     required: true,
   },
@@ -37,6 +40,14 @@ const postSchema = new Schema({
     type: Date,
     required: publishRqFnc,
   },
+  publishedPost: {
+    ref: "Post",
+    type: ObjectId,
+  },
+  isPublished: {
+    type: Boolean,
+    default: false,
+  },
   views: {
     type: Number,
     default: 0,
@@ -48,19 +59,7 @@ const postSchema = new Schema({
       ref: "User",
     },
   ],
-  comments: [
-    {
-      content: {
-        type: String,
-        required: true,
-      },
-      user: {
-        type: ObjectId,
-        required: true,
-        ref: "User",
-      },
-    },
-  ],
+  comments: { type: [commentSchema], default: () => [] },
   textConnection: [
     {
       toPost: {
@@ -70,10 +69,6 @@ const postSchema = new Schema({
       score: Number,
     },
   ],
-  isPublished: {
-    type: Boolean,
-    default: false,
-  },
   duration: {
     type: Number,
     default: 0,
@@ -82,12 +77,41 @@ const postSchema = new Schema({
   description: String,
 });
 
-postSchema.methods.toJSON = function () {
+postSchema.methods.getPostPreview = async function () {
+  await this.populate("author", { displayName: 1 });
   const postObject = this.toObject();
+
   postObject.id = postObject._id;
+  postObject.likes = postObject.likes.length;
+  postObject.comments = postObject.comments.length;
+
+  postObject.coverImageUrl = getImageUrl(postObject.id);
+  postObject.author.avatar = getAvatarUrl(postObject.author._id);
 
   delete postObject.coverImage;
+  delete postObject.author._id;
+  delete postObject.__v;
   delete postObject._id;
+  delete postObject.textEditorContent;
+  delete postObject.textConnection;
+
+  return postObject;
+};
+
+postSchema.methods.getPostDetail = async function () {
+  await this.populate("author", { displayName: 1 });
+  const postObject = this.toObject();
+
+  postObject.id = postObject._id;
+  postObject.coverImageUrl = getImageUrl(postObject.id);
+  postObject.author.avatar = getAvatarUrl(postObject.author._id);
+
+  delete postObject.coverImage;
+  delete postObject.author._id;
+  delete postObject.__v;
+  delete postObject._id;
+  delete postObject.textConnection;
+
   return postObject;
 };
 

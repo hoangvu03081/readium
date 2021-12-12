@@ -16,12 +16,16 @@ const doc = {
   // produces: ["application/json", "image/png"],
   tags: [
     {
-      name: "Comment",
-      description: "Comments' related endpoints",
+      name: "Draft",
+      description: "Posts' related endpoints",
     },
     {
       name: "Post",
       description: "Posts' related endpoints",
+    },
+    {
+      name: "Comment",
+      description: "Comments' related endpoints",
     },
     {
       name: "Auth",
