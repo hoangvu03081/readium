@@ -66,6 +66,10 @@ app.use(require("./routes"));
 if (process.env.NODE_ENV === "development")
   app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
+app.use((req, res) => {
+  return res.status(404).send({ message: "Endpoint not found" });
+});
+
 app.use((err, req, res, next) => {
   if (err.message === REQUIRE_ACTIVATE_ACCOUNT) {
     return res.status(401).send({

@@ -4,7 +4,6 @@ const Post = require("../../models/Post");
 const User = require("../../models/User");
 const { getImageUrl } = require("../../utils");
 const { authMiddleware } = require("../../utils/auth");
-const { checkEmpty, validatePassword } = require("../../utils/validator");
 
 router.get("/protected", authMiddleware, (req, res) => {
   /*
@@ -18,24 +17,7 @@ router.get("/protected", authMiddleware, (req, res) => {
   return res.send({ profileId: req.user.profileId });
 });
 
-router.delete("/", authMiddleware, async (req, res) => {
-  /*
-    #swagger.tags = ['User']
-    #swagger.summary = "Delete my account"
-    #swagger.security = [{
-      "bearerAuth": []
-    }]
-  */
-  try {
-    const deletedUser = await User.findByIdAndDelete(req.user._id);
-    return res.send({ message: "Sorry to see you go.", user: deletedUser });
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ message: "Something went wrong when delete account" });
-  }
-});
-
+//TODO: review
 router.get("/following/posts", authMiddleware, async (req, res) => {
   /*
     #swagger.tags = ['User']
@@ -110,6 +92,28 @@ router.get("/follow/:userId", authMiddleware, async (req, res) => {
   return res.send({ is_followed });
 });
 
+router.get("/recommended", authMiddleware, async (req, res) => {
+  /*
+    #swagger.tags = ['User']
+    #swagger.summary = 'Get recommended writers'
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+   */
+  try {
+    let users = await User.find().limit(10);
+    users = users.map((user) => user.getPublicProfile());
+
+    // #swagger.responses[200] = { description: 'Successfully recommend users' }
+    return res.send(users);
+  } catch (err) {
+    // #swagger.responses[500] = { description: 'Error while finding in mongoose.' }
+    return res
+      .status(500)
+      .send({ message: "Error while get recommended users" });
+  }
+});
+
 router.post("/follow/:userId", authMiddleware, async (req, res) => {
   /*
     #swagger.tags = ['User']
@@ -123,16 +127,8 @@ router.post("/follow/:userId", authMiddleware, async (req, res) => {
     const { _id, followings } = req.user;
 
     const user = await User.findById(userId);
-
     if (!user) {
       return res.status(404).send({ message: "User not found" });
-    }
-
-    if (!userId) {
-      // #swagger.responses[400] = { description: "Please provide user's id to follow" }
-      return res.status(400).send({
-        message: "Please provide user's id to use this follow endpoint",
-      });
     }
 
     if (req.user._id.toString() === userId) {
@@ -161,14 +157,11 @@ router.post("/follow/:userId", authMiddleware, async (req, res) => {
       );
     }
 
+    await user.save();
     await req.user.save();
-    const message =
-      authorIndex === -1
-        ? `${req.user._id} follows ${userId}.`
-        : `${req.user._id} unfollows ${userId}.`;
 
     // #swagger.responses[200] = { description: 'Success' }
-    return res.send({ message });
+    return res.send(user.getPublicProfile());
   } catch (err) {
     // #swagger.responses[500] = { description: 'Error saving changes to mongodb' }
     return res
@@ -177,27 +170,31 @@ router.post("/follow/:userId", authMiddleware, async (req, res) => {
   }
 });
 
-router.get("/recommended", authMiddleware, async (req, res) => {
+router.delete("/", authMiddleware, async (req, res) => {
   /*
     #swagger.tags = ['User']
-    #swagger.summary = 'Get recommended writers'
+    #swagger.summary = "Delete my account"
     #swagger.security = [{
       "bearerAuth": []
     }]
-   */
-  let users = [];
+  */
   try {
-    users = await User.find().limit(10);
-    users = users.map((user) => user.getPublicProfile());
+    const id = req.user._id.toString();
+    const deletedUser = await User.findById(id).populate("liked");
 
-    // #swagger.responses[200] = { description: 'Successfully recommend users' }
-    return res.send(users);
+    deletedUser.liked.forEach((post) => {
+      const uId = post.likes.findIndex((u) => u.toString() === id);
+      if (uId !== -1) post.likes.splice(uId, 1);
+    });
+
+    await User.deleteOne({ _id: id });
+    return res.send({ message: "Sorry to see you go.", user: deletedUser });
   } catch (err) {
-    // #swagger.responses[500] = { description: 'Error while finding in mongoose.' }
     return res
       .status(500)
-      .send({ message: "Error while get recommended users" });
+      .send({ message: "Something went wrong when delete account" });
   }
 });
+
 
 module.exports = router;
