@@ -13,6 +13,93 @@ const uploadCover = configMulter({
   limits: { fields: 6, fileSize: 5e6, files: 1 },
 });
 
+router.get("/", authMiddleware, checkValidSkipAndDate, async (req, res) => {
+  /*
+    #swagger.tags = ['Draft']
+    #swagger.summary = 'Fetch all my drafts'
+    #swagger.parameters['skip'] = {
+      in: 'query',
+      type: 'integer',
+    }
+    #swagger.parameters['date'] = {
+      in: 'query',
+      type: 'string',
+    }
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+  */
+  try {
+    const { date, skip } = req;
+
+    let posts = await Post.find({
+      isPublished: false,
+      author: req.user._id,
+      publishDate: { $lte: date },
+    })
+      .sort({ publishDate: -1 })
+      .skip(skip)
+      .limit(5);
+
+    posts = posts.map((post) => post.getPostPreview());
+    posts = Promise.all(posts);
+
+    if (posts.length === 0) return res.send({ posts });
+    return res.send({ posts, next: skip + 5 });
+  } catch {
+    return res.status(500).send({ message: "Error in finding post with ID" });
+  }
+});
+
+router.get("/:id/avatar", authMiddleware, async (req, res) => {
+  /*
+    #swagger.tags = ['Draft']
+    #swagger.summary = 'Fetch a draft cover image'
+  */
+
+  try {
+    const _id = req.params.id;
+    const post = await Post.findOne({
+      _id,
+      author: req.user._id,
+      isPublished: false,
+    });
+
+    if (!post) {
+      return res
+        .status(404)
+        .send({ message: `Cannot find post with ID: ${_id}` });
+    }
+
+    return res.set("Content-Type", "image/png").send(post.coverImage);
+  } catch {
+    return res
+      .status(500)
+      .send({ message: `Error in fetching cover image of post ${_id}` });
+  }
+});
+
+router.get("/:id", authMiddleware, async (req, res) => {
+  /*
+    #swagger.tags = ['Draft']
+    #swagger.summary = 'Fetch a draft'
+  */
+  try {
+    const post = await Post.findOne({
+      _id: req.params.id,
+      author: req.user._id,
+      isPublished: false,
+    });
+
+    if (!post) {
+      return res.status(404).send({ message: "Cannot find post with ID" });
+    }
+    return res.send(post);
+  } catch {
+    return res.status(500).send({ message: "Error in finding post with ID" });
+  }
+});
+
 router.post("/", authMiddleware, async (req, res) => {
   /*
     #swagger.tags = ['Draft']
@@ -463,92 +550,6 @@ router.put("/publish/:id", authMiddleware, checkOwnPost, async (req, res) => {
   }
 });
 
-//TODO: test
-router.get("/", authMiddleware, checkValidSkipAndDate, async (req, res) => {
-  /*
-    #swagger.tags = ['Draft']
-    #swagger.summary = 'Fetch all my drafts'
-    #swagger.parameters['skip'] = {
-      in: 'query',
-      type: 'integer',
-    }
-    #swagger.parameters['date'] = {
-      in: 'query',
-      type: 'string',
-    }
-    #swagger.security = [{
-      "bearerAuth": []
-    }]
-  */
-  try {
-    const { date, skip } = req;
 
-    let posts = await Post.find({
-      isPublished: false,
-      author: req.user._id,
-      publishDate: { $lte: date },
-    })
-      .sort({ publishDate: -1 })
-      .skip(skip)
-      .limit(5);
-
-    posts = posts.map((post) => post.getPostPreview());
-    posts = Promise.all(posts);
-
-    if (posts.length === 0) return res.send({ posts });
-    return res.send({ posts, next: skip + 5 });
-  } catch {
-    return res.status(500).send({ message: "Error in finding post with ID" });
-  }
-});
-
-router.get("/:id", authMiddleware, async (req, res) => {
-  /*
-    #swagger.tags = ['Draft']
-    #swagger.summary = 'Fetch a draft'
-  */
-  try {
-    const post = await Post.findOne({
-      _id: req.params.id,
-      author: req.user._id,
-      isPublished: false,
-    });
-
-    if (!post) {
-      return res.status(404).send({ message: "Cannot find post with ID" });
-    }
-    return res.send(post);
-  } catch {
-    return res.status(500).send({ message: "Error in finding post with ID" });
-  }
-});
-
-router.get("/:id/avatar", authMiddleware, async (req, res) => {
-  /*
-    #swagger.tags = ['Draft']
-    #swagger.summary = 'Fetch a draft avatar'
-  */
-
-  try {
-    const _id = req.params.id;
-    const post = await Post.findOne({
-      _id,
-      author: req.user._id,
-      isPublished: false,
-    });
-
-    if (!post) {
-      return res
-        .status(404)
-        .send({ message: `Cannot find post with ID: ${_id}` });
-    }
-
-    return res.set("Content-Type", "image/png").send(post.coverImage);
-  } catch {
-    return res
-      .status(500)
-      .send({ message: `Error in fetching cover image of post ${_id}` });
-  }
-});
 
 module.exports = router;
