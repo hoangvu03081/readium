@@ -22,9 +22,11 @@ router.post("/", authMiddleware, async (req, res) => {
     }]
   */
   try {
-    const post = new Post();
+    let post = new Post();
     post.author = req.user._id;
+    
     await post.save();
+    post = await post.getPostDetail();
     return res.status(201).send(post);
   } catch (err) {
     return res
@@ -89,7 +91,7 @@ router.patch("/:id/diff", authMiddleware, checkOwnPost, async (req, res) => {
       content: {
         "application/json": {
           schema: {
-            diff: { $ref: "#/definitions/TextEditorContent" }
+            $ref: "#/definitions/TextEditorContent"
           }
         }
       }

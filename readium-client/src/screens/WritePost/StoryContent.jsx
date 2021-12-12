@@ -106,7 +106,7 @@ export default function StoryContent({ id }) {
 
   const sendDraftContent = async (editor) => {
     const newDelta = currentDelta.diff(editor.getContents());
-    axios.patch(`http://localhost:5000/posts/${id}/diff`, {
+    axios.patch(`http://localhost:5000/drafts/${id}/diff`, {
       diff: JSON.stringify(newDelta),
     });
     // currentDelta = editor.getContents();

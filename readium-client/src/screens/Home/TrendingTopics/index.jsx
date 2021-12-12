@@ -4,12 +4,12 @@ import TrendingBtn from "../../../common/components/Buttons/TrendingBtn";
 
 const Background = styled.div`
   padding: 30px 18px 12px 30px;
-  background: rgba( 144, 144, 144, 0.1 );
-box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
-backdrop-filter: blur( 0px );
--webkit-backdrop-filter: blur( 0px );
-border-radius: 10px;
-border: 1px solid rgba( 255, 255, 255, 0.18 );
+  background: rgba(144, 144, 144, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
   p {
     font-family: "Raleway";
     font-weight: bold;
