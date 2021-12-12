@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
+import { useAuth } from "../../common/hooks/useAuth";
 import StoryInformation from "./StoryInformation";
 import StoryContent from "./StoryContent";
 import BackToTop from "../../common/components/Buttons/BackToTop";
@@ -40,17 +41,18 @@ const SubmitBtn = styled.button`
 
 export default function WritePost() {
   const [id, setId] = useState("");
+  const { isAuth } = useAuth();
 
   useEffect(() => {
     async function initPost() {
-      if (!id) {
+      if (!id && isAuth) {
         const res = await axios.post("http://localhost:5000/drafts");
         setId(res.data.id);
-        console.log(res.data);
+        // console.log(res.data.id);
       }
     }
     initPost();
-  }, [id]);
+  }, [id, isAuth]);
   return (
     <Layout className="container">
       <StoryInformation />

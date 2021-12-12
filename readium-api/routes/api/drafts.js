@@ -4,10 +4,10 @@ const configMulter = require("../../config/multer-config");
 
 const Post = require("../../models/Post");
 const {
-  checkValidSkipAndDate,
-  checkOwnPost,
+  checkValidSkipAndDate
 } = require("../../utils");
-const { authMiddleware } = require("../../utils/auth");
+const { authMiddleware,
+  checkOwnPost, } = require("../../utils/auth");
 
 const uploadCover = configMulter({
   limits: { fields: 6, fileSize: 5e6, files: 1 },
@@ -29,6 +29,7 @@ router.post("/", authMiddleware, async (req, res) => {
     post = await post.getPostDetail();
     return res.status(201).send(post);
   } catch (err) {
+    console.log(err);
     return res
       .status(500)
       .send({ message: "Something went wrong when initializing a post" });
@@ -113,7 +114,10 @@ router.patch("/:id/diff", authMiddleware, checkOwnPost, async (req, res) => {
 
     const diffContent = JSON.parse(diff);
     const diffDelta = new Delta(diffContent);
-    const composedDelta = diffDelta.compose(JSON.parse(post.textEditorContent));
+    const textEditorDelta = new Delta(JSON.parse(post.textEditorContent))
+    const composedDelta = textEditorDelta.compose(diffDelta);
+console.log(composedDelta);
+
     post.textEditorContent = JSON.stringify(composedDelta);
     post.content = composedDelta
       .filter((op) => typeof op.insert === "string")

@@ -111,8 +111,26 @@ const decrypt = ([iv, content]) => {
   return JSON.parse(decrpyted.toString());
 };
 
+const Post = require("../../models/Post");
+const checkOwnPost = async (req, res, next) => {
+  const post = await Post.findById(req.params.id);
+  if (!post) {
+    return res.status(404).send({ message: "Post not found" });
+  }
+
+  if (post.author.toString() !== req.user._id.toString()) {
+    return res.status(400).send({
+      message: "You do not own this post to update its content",
+    });
+  }
+
+  req.post = post;
+  return next();
+};
+
 module.exports = {
   authMiddleware,
+  checkOwnPost,
   issueJWT,
   decodeJWT,
   jwtOptions,
