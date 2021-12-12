@@ -1,7 +1,7 @@
 const axios = require("axios").default;
 const sharp = require("sharp");
 
-const Post = require("../models/Post");
+
 
 const { once, EventEmitter } = require("events");
 const bufferEmitter = new EventEmitter();
@@ -50,22 +50,6 @@ const checkValidSkipAndDate = async (req, res, next) => {
   return next();
 };
 
-const checkOwnPost = async (req, res, next) => {
-  const post = await Post.findById(req.params.id);
-  if (!post) {
-    return res.status(404).send({ message: "Post not found" });
-  }
-
-  if (post.author.toString() !== req.user._id.toString()) {
-    return res.status(400).send({
-      message: "You do not own this post to update its content",
-    });
-  }
-
-  req.post = post;
-  return next();
-};
-
 const getImageUrl = (postId) => `${serverUrl}/posts/${postId}/cover-image`;
 const getAvatarUrl = (userId) => `${serverUrl}/users/profiles/avatar/${userId}`;
 
@@ -73,7 +57,6 @@ module.exports = {
   downloadImageFromUrl,
   convertBufferToPng,
   checkValidSkipAndDate,
-  checkOwnPost,
   getImageUrl,
   getAvatarUrl,
 };

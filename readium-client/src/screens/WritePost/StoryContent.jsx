@@ -81,7 +81,7 @@ const Buttons = styled.div`
 
 export default function StoryContent({ id }) {
   const quill = useRef(null);
-  const currentDelta = new Delta();
+  let currentDelta = new Delta();
 
   const editorModules = {
     toolbar: [
@@ -106,10 +106,11 @@ export default function StoryContent({ id }) {
 
   const sendDraftContent = async (editor) => {
     const newDelta = currentDelta.diff(editor.getContents());
+    currentDelta = editor.getContents();
+    console.log(newDelta);
     axios.patch(`http://localhost:5000/drafts/${id}/diff`, {
       diff: JSON.stringify(newDelta),
     });
-    // currentDelta = editor.getContents();
   };
 
   const debounceSendDraftContent = useCallback(

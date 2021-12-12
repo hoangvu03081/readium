@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const { getAvatarUrl, getImageUrl } = require("../utils");
-const { default: commentSchema } = require("./Comment");
+const commentSchema = require("./Comment");
 
 const {
   model,
@@ -103,8 +103,8 @@ postSchema.methods.getPostDetail = async function () {
   const postObject = this.toObject();
 
   postObject.id = postObject._id;
-  postObject.coverImageUrl = getImageUrl(postObject.id);
-  postObject.author.avatar = getAvatarUrl(postObject.author._id);
+  // postObject.coverImageUrl = getImageUrl(postObject.id);
+  // postObject.author.avatar = getAvatarUrl(postObject.author._id);
 
   delete postObject.coverImage;
   delete postObject.author._id;
