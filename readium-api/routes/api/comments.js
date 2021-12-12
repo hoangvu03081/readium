@@ -11,16 +11,17 @@ const checkCommentContent = (req, res, next) => {
         "Please provide comment content before request to POST/PATCH comments' endpoints!",
     });
   }
+
   return next();
 };
 
 router.get("/", async (req, res) => {
-  // #swagger.tags = ['Comment']
-  // #swagger.summary = 'Get comment of a post'
-
-  const { id } = req.params;
-
+  /* 
+    #swagger.tags = ['Comment']
+    #swagger.summary = 'Get comment of a post'
+  */
   try {
+    const { id } = req.params;
     const post = await Post.findById(id, { comments: 1 });
     if (!post) {
       return res.status(404).send({
@@ -36,9 +37,9 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/", authMiddleware, checkCommentContent, async (req, res) => {
-  // #swagger.tags = ['Comment']
-  // #swagger.summary = 'Comment on the post'
   /*
+    #swagger.tags = ['Comment']
+    #swagger.summary = 'Comment on the post'
     #swagger.requestBody = {
       required: true,
       content: {
@@ -53,17 +54,17 @@ router.post("/", authMiddleware, checkCommentContent, async (req, res) => {
       "bearerAuth": []
     }]
   */
-
-  const { id } = req.params;
-  const { content } = req.body;
-
   try {
+    const { id } = req.params;
+    const { content } = req.body;
+
     const post = await Post.findById(id, { comments: 1 });
     if (!post) {
       return res.status(404).send({
         message: `Post ${id} not found. Please be sure that this id is correct!`,
       });
     }
+
     const commentObj = { user: req.user._id, content };
     post.comments.push(commentObj);
     await post.save();
@@ -81,37 +82,40 @@ router.patch(
   checkCommentContent,
   async (req, res) => {
     /*
-    #swagger.tags = ['Comment']
-    #swagger.summary = 'Edit a comment'
-    #swagger.requestBody = {
-      required: true,
-      content: {
-        "application/json": {
-          schema: {
-            $ref: "#/definitions/Comment"
+      #swagger.tags = ['Comment']
+      #swagger.summary = 'Edit a comment'
+      #swagger.requestBody = {
+        required: true,
+        content: {
+          "application/json": {
+            schema: {
+              $ref: "#/definitions/Comment"
+            }
           }
         }
       }
-    }
-    #swagger.security = [{
-      "bearerAuth": []
-    }]
-  */
-    const { id, commentId } = req.params;
-    const { content } = req.body;
+      #swagger.security = [{
+        "bearerAuth": []
+      }]
+    */
     try {
+      const { id, commentId } = req.params;
+      const { content } = req.body;
+
       const post = await Post.findById(id, { comments: 1 });
       if (!post) {
         return res.status(404).send({
           message: `Post ${id} not found. Please be sure that this id is correct!`,
         });
       }
+
       const comment = post.comments.id(commentId);
-      if (comment.user !== req.user._id) {
+      if (comment.user.toString() !== req.user._id.toString()) {
         return res.status(400).send({
           message: `User ${req.user.displayName} can not edit comment of other users. Make sure that ${req.user.displayName} owned this comment to edit`,
         });
       }
+
       comment.content = content;
       await post.save();
       return res.send(comment);
@@ -131,25 +135,25 @@ router.delete("/:commentId", authMiddleware, async (req, res) => {
       "bearerAuth": []
     }]
   */
-  const { id, commentId } = req.params;
-
   try {
+    const { id, commentId } = req.params;
+
     const post = await Post.findById(id);
     const index = post.comments.findIndex(
       (c) => c._id.toString() === commentId
     );
+
     if (index === -1) {
       return res.status(404).send({ message: "Comment not found" });
     }
+    
     const comment = post.comments.splice(index, 1);
     await post.save();
     return res.send(comment);
   } catch (err) {
-    res
-      .status(500)
-      .send({
-        message: `Something went wrong when deleting comment ${commentId}`,
-      });
+    res.status(500).send({
+      message: `Something went wrong when deleting comment ${commentId}`,
+    });
   }
 });
 

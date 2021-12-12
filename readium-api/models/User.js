@@ -67,12 +67,7 @@ const userSchema = new Schema({
     default: false,
   },
   collections: {
-    default: [
-      {
-        name: "Default Collection",
-        posts: [],
-      },
-    ],
+    default: () => [],
     type: [collectionSchema],
   },
   activationLink: String,
