@@ -9,6 +9,8 @@ const collectionSchema = new Schema({
   name: {
     type: String,
     required: true,
+    unique: true,
+    default: "Default Collection",
   },
   posts: {
     default: [],
