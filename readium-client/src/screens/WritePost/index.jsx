@@ -57,7 +57,7 @@ export default function WritePost() {
         storyInformationRef.current[3]
       );
     if (checkEmpty) {
-      history.push("/preview");
+      history.push("/preview", id);
     }
   };
 

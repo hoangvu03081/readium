@@ -26,6 +26,7 @@ const DRAFT_API = {
   PUT_TAGS: (id) => getURL(`/drafts/${id}/tags`),
   PUT_COVER_IMAGE: (id) => getURL(`/drafts/${id}/cover-image`),
   PATCH_CONTENT: (id) => getURL(`/drafts/${id}/diff`),
+  GET_A_DRAFT: (id) => getURL(`/drafts/${id}`),
 };
 
 export { USER_API, PROFILE_API, POST_API, DRAFT_API, WEBSOCKET };

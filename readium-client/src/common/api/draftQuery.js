@@ -1,4 +1,4 @@
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import axios from "axios";
 import Delta from "quill-delta";
 import { DRAFT_API } from "./apiConstant";
@@ -42,5 +42,11 @@ export function useContentDraft(id) {
     axios.patch(DRAFT_API.PATCH_CONTENT(id), {
       diff: JSON.stringify(newDelta),
     });
+  });
+}
+
+export function useDraft(id) {
+  return useQuery("draft", () => axios.get(DRAFT_API.GET_A_DRAFT(id)), {
+    staleTime: Infinity,
   });
 }
