@@ -1,6 +1,7 @@
 const isDev = process.env.NODE_ENV === "development";
 const LOCAL_URL = "http://localhost:5000";
 const HOST_URL = "";
+const WEBSOCKET = "ws://localhost:5000";
 
 export default function getURL(endpoint) {
   return isDev ? LOCAL_URL + endpoint : HOST_URL + endpoint;
@@ -27,4 +28,4 @@ const DRAFT_API = {
   PATCH_CONTENT: (id) => getURL(`/drafts/${id}/diff`),
 };
 
-export { USER_API, PROFILE_API, POST_API, DRAFT_API };
+export { USER_API, PROFILE_API, POST_API, DRAFT_API, WEBSOCKET };
