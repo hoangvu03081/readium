@@ -5,6 +5,7 @@ const { authMiddleware } = require("../../utils/auth");
 // get notifications
 router.get("/", authMiddleware, async (req, res) => {
   try {
+    
   } catch (err) {
     return res
       .status(500)

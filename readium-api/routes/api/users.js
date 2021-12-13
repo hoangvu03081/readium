@@ -170,6 +170,7 @@ router.post("/follow/:userId", authMiddleware, async (req, res) => {
   }
 });
 
+// TODO: need test
 router.delete("/", authMiddleware, async (req, res) => {
   /*
     #swagger.tags = ['User']
@@ -182,12 +183,16 @@ router.delete("/", authMiddleware, async (req, res) => {
     const id = req.user._id.toString();
     const deletedUser = await User.findById(id).populate("liked");
 
-    deletedUser.liked.forEach((post) => {
+    const promises = deletedUser.liked.map((post) => {
       const uId = post.likes.findIndex((u) => u.toString() === id);
-      if (uId !== -1) post.likes.splice(uId, 1);
+      if (uId !== -1) {
+        post.likes.splice(uId, 1);
+        return post.save();
+      }
     });
-
+    await Promise.all(promises);
     await User.deleteOne({ _id: id });
+    
     return res.send({ message: "Sorry to see you go.", user: deletedUser });
   } catch (err) {
     return res
@@ -195,6 +200,5 @@ router.delete("/", authMiddleware, async (req, res) => {
       .send({ message: "Something went wrong when delete account" });
   }
 });
-
 
 module.exports = router;

@@ -182,7 +182,6 @@ router.post("/register", async (req, res) => {
       user: newUser.getPublicProfile(),
     });
   } catch (err) {
-    console.log(err);
     // #swagger.responses[400] = { description: 'Email has already been used or fields have errors' }
     return res.status(400).send({ message: "Your email is already used" });
   }
@@ -342,9 +341,9 @@ router.post("/forget", async (req, res, next) => {
 });
 
 router.post("/reset", async (req, res, next) => {
-  // #swagger.tags = ['Auth']
-  // #swagger.summary = 'Users reset password'
   /*
+    #swagger.tags = ['Auth']
+    #swagger.summary = 'Users reset password'
     #swagger.parameters['iv'] = {
       in: 'query',
       required: true,
@@ -441,39 +440,38 @@ router.post("/change-password", authMiddleware, async (req, res) => {
       }
     }
   */
-  const { oldPassword, password } = req.body;
-  const { user } = req;
-
-  if (!oldPassword || !password) {
-    return res
-      .status(400)
-      .send({ message: "Please provide both old password and new password" });
-  }
-
-  const isSamePassword = await bcrypt.compare(oldPassword, user.password);
-
-  if (!isSamePassword) {
-    // #swagger.responses[400] = { description: 'Typed in wrong password' }
-    return res.status(400).send({ message: "Wrong password." });
-  }
-
-  let errMessage = checkEmpty(password, "Password must not be empty");
-  errMessage = errMessage || validatePassword(password);
-
-  user.password = password;
-  await user.hashPassword();
-
   try {
+    const { oldPassword, password } = req.body;
+    const { user } = req;
+
+    if (!oldPassword || !password) {
+      return res
+        .status(400)
+        .send({ message: "Please provide both old password and new password" });
+    }
+
+    const isSamePassword = await bcrypt.compare(oldPassword, user.password);
+
+    if (!isSamePassword) {
+      // #swagger.responses[400] = { description: 'Typed in wrong password' }
+      return res.status(400).send({ message: "Wrong password." });
+    }
+
+    let errMessage = checkEmpty(password, "Password must not be empty");
+    errMessage = errMessage || validatePassword(password);
+
+    user.password = password;
+    await user.hashPassword();
+
     await user.save();
+    // #swagger.responses[200] = { description: 'Saving changed password successfully' }
+    return res.send({ message: "Change the password successfully" });
   } catch (err) {
     // #swagger.responses[500] = { description: 'Saving user to mongodb has some errors' }
     return res
       .status(500)
       .send({ message: "Some errors occured when changing the password" });
   }
-
-  // #swagger.responses[200] = { description: 'Saving changed password successfully' }
-  return res.send({ message: "Change the password successfully" });
 });
 
 module.exports = router;
