@@ -7,6 +7,7 @@ import Header from "../common/components/Header";
 import Home from "../screens/Home";
 import Page404 from "../screens/Page404";
 import WritePost from "../screens/WritePost";
+import PreviewPost from "../screens/PreviewPost";
 import ResetPassword from "../screens/ResetPassword";
 import "./App.css";
 
@@ -32,6 +33,9 @@ function App() {
           </Route>
           <Route path="/write">
             <WritePost />
+          </Route>
+          <Route path="/preview">
+            <PreviewPost />
           </Route>
           <Route path="/settings">settings</Route>
           <Route path="/profile">profile</Route>
