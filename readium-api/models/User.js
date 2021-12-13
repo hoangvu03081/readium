@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
-const collectionSchema = require("./Collection");
 const { serverUrl } = require("../config/url");
+const collectionSchema = require("./Collection");
+const notificationSchema = require("./Notification");
 
 const {
   model,
@@ -43,25 +44,12 @@ const userSchema = new Schema({
       ref: "User",
     },
   ],
-  notifications: [
-    // limit to 50 notifications, no longer than 3 months
-    {
-      user: {
-        type: ObjectId,
-        ref: "User",
-        required: true,
-      },
-      content: {
-        type: String,
-        required: true,
-      },
-      url: {
-        // link to some page
-        type: String,
-        required: true,
-      },
-    },
-  ],
+  notifications: {
+    type: [
+      // limit to 50 notifications, no longer than 3 months
+      notificationSchema,
+    ],
+  },
   activated: {
     type: Boolean,
     default: false,

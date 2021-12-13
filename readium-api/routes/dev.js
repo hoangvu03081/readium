@@ -52,8 +52,8 @@ const uploadCover = multer({
     files: 1,
   },
   fileFilter(req, file, cb) {
-    const mimeRe = /^image\/(jpg|jpeg|png|webp|avif|tiff|gif|svg\+xml)$/;
-    const nameRe = /\.(jpg|jpeg|png|webp|avif|tiff|gif|svg)$/;
+    const mimeRe = /^image\/(jpg|jpeg|png|webp|avif|tiff|gif|svg\+xml)$/i;
+    const nameRe = /\.(jpg|jpeg|png|webp|avif|tiff|gif|svg)$/i;
     if (mimeRe.test(file.mimetype) && nameRe.test(file.originalname)) {
       return cb(null, true);
     }
@@ -106,29 +106,32 @@ router.post(
  */
     try {
       const { title, content, textEditorContent, description } = req.body;
+
       const {
         file: { buffer: coverImage },
       } = req;
 
-      if (!title)
+      if (!title) {
         return res.status(400).send({ message: "Please provide post's title" });
+      }
 
-      if (!textEditorContent)
+      if (!textEditorContent) {
         return res
           .status(400)
           .send({ message: "Please provide post's content" });
-
-      if (!content)
+      }
+      if (!content) {
         return res.status(400).send({
           message: "Please provide post's content in TEXT ONLY form",
         });
-
-      if (!coverImage)
+      }
+      if (!coverImage) {
         return res
           .status(400)
           .send({ message: "Please add a cover image for post" });
+      }
 
-      const post = new Post({
+      let post = new Post({
         title,
         coverImage,
         content,
@@ -139,6 +142,7 @@ router.post(
       });
 
       await post.save();
+      post = await post.getPostDetail();
       return res.status(201).send(post);
     } catch (err) {
       res.status(500).send({ message: "Some errors occur in create posts" });
