@@ -3,11 +3,8 @@ const Delta = require("quill-delta");
 const configMulter = require("../../config/multer-config");
 
 const Post = require("../../models/Post");
-const {
-  checkValidSkipAndDate
-} = require("../../utils");
-const { authMiddleware,
-  checkOwnPost, } = require("../../utils/auth");
+const { checkValidSkipAndDate } = require("../../utils");
+const { authMiddleware, checkOwnPost } = require("../../utils/auth");
 
 const uploadCover = configMulter({
   limits: { fields: 6, fileSize: 5e6, files: 1 },
@@ -111,7 +108,7 @@ router.post("/", authMiddleware, async (req, res) => {
   try {
     let post = new Post();
     post.author = req.user._id;
-    
+
     await post.save();
     post = await post.getPostDetail();
     return res.status(201).send(post);
@@ -201,9 +198,9 @@ router.patch("/:id/diff", authMiddleware, checkOwnPost, async (req, res) => {
 
     const diffContent = JSON.parse(diff);
     const diffDelta = new Delta(diffContent);
-    const textEditorDelta = new Delta(JSON.parse(post.textEditorContent))
+    const textEditorDelta = new Delta(JSON.parse(post.textEditorContent));
     const composedDelta = textEditorDelta.compose(diffDelta);
-console.log(composedDelta);
+    console.log(composedDelta);
 
     post.textEditorContent = JSON.stringify(composedDelta);
     post.content = composedDelta
@@ -352,10 +349,11 @@ router.put(
           message: "Please provide an image to update your post's cover image",
         });
 
-      post.coverImage = file.buffer;
+      post.coverImage = req.file.buffer;
       await post.save();
       return res.send(post);
     } catch (err) {
+      console.log(err);
       return res
         .status(500)
         .send({ message: "Something went wrong when updating cover image" });
@@ -395,16 +393,13 @@ router.put("/:id/title", authMiddleware, checkOwnPost, async (req, res) => {
     }
 
     const { title } = req.body;
-    if (!title) {
-      return res.status(400).send({
-        message: "Please provide a title to update your post's title",
-      });
-    }
+    if (title) post.title = title;
+    else post.title = "";
 
-    post.title = title;
     await post.save();
     return res.send(post);
   } catch (err) {
+    console.log(err);
     return res
       .status(500)
       .send({ message: "Something went wrong when updating post's title" });
@@ -446,13 +441,9 @@ router.put("/:id/tags", authMiddleware, checkOwnPost, async (req, res) => {
     }
 
     const { tags } = req.body;
-    if (!tags) {
-      return res.status(400).send({
-        message: "Please provide tags",
-      });
-    }
 
-    post.tags = tags;
+    if (tags) post.tags = tags;
+    else post.tags = undefined;
     await post.save();
     return res.send(post);
   } catch (err) {
@@ -499,13 +490,8 @@ router.put(
 
       const { description } = req.body;
 
-      if (!description) {
-        return res.status(400).send({
-          message: "Please provide post's description",
-        });
-      }
-
-      post.description = description;
+      if (description) post.description = description;
+      else post.description = undefined;
       await post.save();
       return res.send(post);
     } catch (err) {
@@ -555,7 +541,6 @@ router.put("/publish/:id", authMiddleware, checkOwnPost, async (req, res) => {
     });
   }
 });
-
 
 
 module.exports = router;

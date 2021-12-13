@@ -182,6 +182,7 @@ router.post("/register", async (req, res) => {
       user: newUser.getPublicProfile(),
     });
   } catch (err) {
+    console.log(err);
     // #swagger.responses[400] = { description: 'Email has already been used or fields have errors' }
     return res.status(400).send({ message: "Your email is already used" });
   }
@@ -325,6 +326,7 @@ router.post("/forget", async (req, res, next) => {
 
     user.resetLink = resetLink;
     user.resetTimeout = due;
+
     await user.save();
 
     await sendResetPasswordEmail({ to: user.email, url: resetLink });
@@ -456,7 +458,7 @@ router.post("/change-password", authMiddleware, async (req, res) => {
   }
 
   let errMessage = checkEmpty(password, "Password must not be empty");
-    errMessage = errMessage || validatePassword(password);
+  errMessage = errMessage || validatePassword(password);
 
   user.password = password;
   await user.hashPassword();

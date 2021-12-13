@@ -21,7 +21,6 @@ const postSchema = new Schema({
   title: {
     type: String,
     required: publishRqFnc,
-    minlength: [1, "Min 1, get {VALUE}"],
     maxlength: [100, "Max 100, get {VALUE}"],
   },
   coverImage: {
@@ -85,7 +84,9 @@ postSchema.methods.getPostPreview = async function () {
   postObject.likes = postObject.likes.length;
   postObject.comments = postObject.comments.length;
 
-  postObject.coverImageUrl = getImageUrl(postObject.id);
+  if (postObject.coverImage) {
+    postObject.coverImageUrl = getImageUrl(postObject.id);
+  }
   postObject.author.avatar = getAvatarUrl(postObject.author._id);
 
   delete postObject.coverImage;
@@ -103,8 +104,10 @@ postSchema.methods.getPostDetail = async function () {
   const postObject = this.toObject();
 
   postObject.id = postObject._id;
-  // postObject.coverImageUrl = getImageUrl(postObject.id);
-  // postObject.author.avatar = getAvatarUrl(postObject.author._id);
+  if (postObject.coverImage) {
+    postObject.coverImageUrl = getImageUrl(postObject.id);
+  }
+  postObject.author.avatar = getAvatarUrl(postObject.author._id);
 
   delete postObject.coverImage;
   delete postObject.author._id;

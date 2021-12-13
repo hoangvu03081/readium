@@ -1,5 +1,6 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import { useAuth } from "../../common/hooks/useAuth";
@@ -12,13 +13,11 @@ const Layout = styled.div`
   padding-top: 80px;
   padding-bottom: 80px;
 `;
-
 const SubmitBtnContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
 `;
-
 const SubmitBtn = styled.button`
   border: 2px solid #000000;
   border-radius: 50px;
@@ -42,7 +41,6 @@ const SubmitBtn = styled.button`
 export default function WritePost() {
   const [id, setId] = useState("");
   const { isAuth } = useAuth();
-
   useEffect(() => {
     async function initPost() {
       if (!id && isAuth) {
@@ -53,12 +51,49 @@ export default function WritePost() {
     }
     initPost();
   }, [id, isAuth]);
+
+  const storyInformationRef = useRef([null, null, null, null]);
+  const checkEmptyTitle = (titleRef, noteTitleRef) => {
+    if (titleRef.value === "") {
+      titleRef.focus();
+      noteTitleRef.innerHTML =
+        '<i class="ionicons ion-ios-information-outline"></i>Please fill out this field';
+      noteTitleRef.classList.remove("d-none");
+      noteTitleRef.classList.add("d-block");
+      return false;
+    }
+    return true;
+  };
+  const checkEmptyCoverImage = (coverImagRef, noteCoverImageRef) => {
+    if (coverImagRef.current.files.length === 0) {
+      noteCoverImageRef.innerHTML =
+        '<i class="ionicons ion-ios-information-outline"></i>Please insert a picture';
+      noteCoverImageRef.classList.add("d-block");
+      return false;
+    }
+    return true;
+  };
+  const handleSubmit = () => {
+    if (
+      checkEmptyTitle(
+        storyInformationRef.current[0],
+        storyInformationRef.current[1]
+      ) &&
+      checkEmptyCoverImage(
+        storyInformationRef.current[2],
+        storyInformationRef.current[3]
+      )
+    ) {
+      console.log("PREVIEW");
+    }
+  };
+
   return (
     <Layout className="container">
-      <StoryInformation />
+      <StoryInformation id={id} ref={storyInformationRef} />
       <StoryContent id={id} />
       <SubmitBtnContainer>
-        <SubmitBtn>Submit</SubmitBtn>
+        <SubmitBtn onClick={handleSubmit}>Submit</SubmitBtn>
       </SubmitBtnContainer>
       <BackToTop />
     </Layout>
