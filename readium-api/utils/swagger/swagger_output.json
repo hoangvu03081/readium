@@ -1153,26 +1153,20 @@
         "description": "",
         "parameters": [
           {
-            "name": "skip",
-            "in": "query",
-            "type": "integer"
-          },
-          {
-            "name": "date",
-            "in": "query",
+            "name": "id",
+            "in": "path",
+            "required": true,
             "type": "string"
           }
         ],
         "responses": {
+          "404": {
+            "description": "Not Found"
+          },
           "500": {
             "description": "Internal Server Error"
           }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
+        }
       }
     },
     "/posts/{id}": {

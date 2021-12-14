@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React, { useRef, useCallback } from "react";
 import PropTypes from "prop-types";
 import debounce from "lodash.debounce";
@@ -10,7 +11,9 @@ import "react-quill/dist/quill.bubble.css";
 const icons = ReactQuill.Quill.import("ui/icons");
 icons.code = '<i class="ionicons ion-code"></i>';
 
-export default function StoryContent({ id }) {
+const StoryContent = React.forwardRef(({ id }, ref) => {
+  let contentSaved = true;
+  ref.current[0] = contentSaved;
   const quill = useRef(null);
 
   const editorModules = {
@@ -33,11 +36,17 @@ export default function StoryContent({ id }) {
   const resContentDraft = useContentDraft(id);
 
   const debounceSendContentDraft = useCallback(
-    debounce((editor) => resContentDraft.mutate(editor), 3000),
+    debounce((editor) => {
+      contentSaved = true;
+      ref.current[0] = contentSaved;
+      resContentDraft.mutate(editor);
+    }, 2000),
     [id]
   );
 
   const handleChange = (content, delta, source, editor) => {
+    contentSaved = false;
+    ref.current[0] = contentSaved;
     debounceSendContentDraft(editor);
   };
 
@@ -64,7 +73,9 @@ export default function StoryContent({ id }) {
       </TextEditor>
     </Layout>
   );
-}
+});
+
+export default StoryContent;
 
 StoryContent.propTypes = {
   id: PropTypes.string.isRequired,

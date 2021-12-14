@@ -5,9 +5,9 @@ const TrendingButton = styled.button`
   font-weight: bold;
   font-size: 15px;
   padding: 5px 10px;
-  background-color: ${({ theme }) => theme.colors.TrendingBtnBackground};
-  color: ${({ theme }) => theme.colors.TrendingBtnText};
-  border: none;
+  background-color: #e8edff;
+  color: black;
+  border: 1px solid black;
   border-radius: 31px;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   position: relative;

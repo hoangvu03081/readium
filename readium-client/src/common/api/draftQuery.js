@@ -1,7 +1,14 @@
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import axios from "axios";
 import Delta from "quill-delta";
 import { DRAFT_API } from "./apiConstant";
+
+export function useDraftID(isAuth) {
+  return useQuery("draftId", () => axios.post(DRAFT_API.GET_DRAFT_ID), {
+    staleTime: Infinity,
+    enabled: isAuth,
+  });
+}
 
 export function useTitleDraft(id) {
   return useMutation((titleDraft) => {
@@ -43,4 +50,15 @@ export function useContentDraft(id) {
       diff: JSON.stringify(newDelta),
     });
   });
+}
+
+export function useDraft(id, isAuth) {
+  return useQuery("draft", () => axios.get(DRAFT_API.GET_A_DRAFT(id)), {
+    staleTime: Infinity,
+    enabled: isAuth,
+  });
+}
+
+export function usePublish(id) {
+  return useMutation(() => axios.put(DRAFT_API.PUT_PUBLISH(id)));
 }

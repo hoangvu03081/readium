@@ -21,11 +21,14 @@ const POST_API = {
 };
 
 const DRAFT_API = {
+  GET_DRAFT_ID: getURL("/drafts"),
   PUT_TITLE: (id) => getURL(`/drafts/${id}/title`),
   PUT_DESCRIPTION: (id) => getURL(`/drafts/${id}/description`),
   PUT_TAGS: (id) => getURL(`/drafts/${id}/tags`),
   PUT_COVER_IMAGE: (id) => getURL(`/drafts/${id}/cover-image`),
   PATCH_CONTENT: (id) => getURL(`/drafts/${id}/diff`),
+  GET_A_DRAFT: (id) => getURL(`/drafts/${id}`),
+  PUT_PUBLISH: (id) => getURL(`/drafts/publish/${id}`),
 };
 
 export { USER_API, PROFILE_API, POST_API, DRAFT_API, WEBSOCKET };

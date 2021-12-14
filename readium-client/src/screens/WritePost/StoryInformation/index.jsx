@@ -24,13 +24,21 @@ import {
 
 const StoryInformation = React.forwardRef(({ id }, ref) => {
   // TITLE
+  let titleSaved = true;
+  ref.current[5] = titleSaved;
   const [titleValidation, setTitleValidation] = useState(true);
   const resTitleDraft = useTitleDraft(id);
   const debounceSendTitleDraft = useCallback(
-    debounce((titleDraft) => resTitleDraft.mutate(titleDraft), 3000),
+    debounce((titleDraft) => {
+      titleSaved = true;
+      ref.current[5] = titleSaved;
+      resTitleDraft.mutate(titleDraft);
+    }, 2000),
     [id]
   );
   const handleTitleChange = (titleDraft) => {
+    titleSaved = false;
+    ref.current[5] = titleSaved;
     if (titleDraft.target.value.length === 0) {
       setTitleValidation(false);
       ref.current[1].innerHTML =
@@ -48,17 +56,22 @@ const StoryInformation = React.forwardRef(({ id }, ref) => {
   };
 
   // DESCRIPTION
+  let descriptionSaved = true;
+  ref.current[6] = descriptionSaved;
   const [descriptionValidation, setDescriptionValidation] = useState(true);
   const resDescriptionDraft = useDescriptionDraft(id);
   const debounceSendDescriptionDraft = useCallback(
-    debounce(
-      (descriptionDraft) => resDescriptionDraft.mutate(descriptionDraft),
-      3000
-    ),
+    debounce((descriptionDraft) => {
+      descriptionSaved = true;
+      ref.current[6] = descriptionSaved;
+      resDescriptionDraft.mutate(descriptionDraft);
+    }, 2000),
     [id]
   );
   const handleDescriptionChange = (descriptionDraft) => {
-    if (descriptionDraft.target.value.length === 300) {
+    descriptionSaved = false;
+    ref.current[6] = descriptionSaved;
+    if (descriptionDraft.target.value.length === 250) {
       setDescriptionValidation(false);
     } else {
       setDescriptionValidation(true);
@@ -67,6 +80,8 @@ const StoryInformation = React.forwardRef(({ id }, ref) => {
   };
 
   // TAGS
+  let tagsSaved = true;
+  ref.current[7] = tagsSaved;
   const KeyCodes = {
     comma: 188,
     enter: 13,
@@ -76,7 +91,11 @@ const StoryInformation = React.forwardRef(({ id }, ref) => {
   const [tagsValidation, setTagsValidation] = useState(true);
   const resTagsDraft = useTagsDraft(id);
   const debounceSendTagsDraft = useCallback(
-    debounce((tagsDraft) => resTagsDraft.mutate(tagsDraft), 3000),
+    debounce((tagsDraft) => {
+      tagsSaved = true;
+      ref.current[7] = tagsSaved;
+      resTagsDraft.mutate(tagsDraft);
+    }, 2000),
     [id]
   );
   const handleTagsChange = (data) => {
@@ -88,18 +107,24 @@ const StoryInformation = React.forwardRef(({ id }, ref) => {
   };
   const handleAddition = (tag) => {
     if (tagsValidation) {
+      tagsSaved = false;
+      ref.current[7] = tagsSaved;
       const newTags = [...tags, tag];
       setTags(newTags);
       debounceSendTagsDraft(newTags);
     }
   };
   const handleDelete = (i) => {
+    tagsSaved = false;
+    ref.current[7] = tagsSaved;
     const result = tags.filter((tag, index) => index !== i);
     setTags(result);
     handleTagsChange(result);
     debounceSendTagsDraft(result);
   };
   const handleDrag = (tag, currPos, newPos) => {
+    tagsSaved = false;
+    ref.current[7] = tagsSaved;
     const newTags = tags.slice();
     newTags.splice(currPos, 1);
     newTags.splice(newPos, 0, tag);
@@ -133,7 +158,7 @@ const StoryInformation = React.forwardRef(({ id }, ref) => {
   const { getRootProps, getInputProps, isDragActive, inputRef } = useDropzone({
     onDrop,
   });
-  ref.current[2] = inputRef;
+  ref.current[3] = inputRef;
 
   return (
     <Layout>
@@ -163,10 +188,10 @@ const StoryInformation = React.forwardRef(({ id }, ref) => {
       <h3>Your description</h3>
       <InputDescription>
         <TextareaAutosize
-          placeholder="Maximum 300 characters"
+          placeholder="Maximum 250 characters"
           minRows={1}
           maxRows={25}
-          maxLength="300"
+          maxLength="250"
           onChange={handleDescriptionChange}
         />
       </InputDescription>
@@ -175,7 +200,13 @@ const StoryInformation = React.forwardRef(({ id }, ref) => {
         Maximum 300 characters
       </Note>
 
-      <h3>Your tags</h3>
+      <h3
+        ref={(element) => {
+          ref.current[2] = element;
+        }}
+      >
+        Your tags
+      </h3>
       <InputTags>
         <ReactTags
           tags={tags}
@@ -209,7 +240,7 @@ const StoryInformation = React.forwardRef(({ id }, ref) => {
       <Note
         className="d-none"
         ref={(element) => {
-          ref.current[3] = element;
+          ref.current[4] = element;
         }}
       />
     </Layout>
