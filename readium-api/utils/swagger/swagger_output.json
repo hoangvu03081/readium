@@ -42,9 +42,35 @@
     {
       "name": "Dev",
       "description": "Testing routes"
+    },
+    {
+      "name": "Notification",
+      "description": "Notifications' routes"
     }
   ],
   "paths": {
+    "/notifications/{userId}": {
+      "post": {
+        "tags": [
+          "Notification"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/dev/users": {
       "get": {
         "tags": [
@@ -70,7 +96,7 @@
         "tags": [
           "Dev"
         ],
-        "summary": "Get all users' collections",
+        "summary": "Get all collections",
         "description": "",
         "parameters": [],
         "responses": {}
@@ -98,7 +124,7 @@
         "responses": {}
       }
     },
-    "/dev/post": {
+    "/dev\r/post": {
       "post": {
         "tags": [
           "Dev"
@@ -109,9 +135,6 @@
         "responses": {
           "201": {
             "description": "Created"
-          },
-          "400": {
-            "description": "Bad Request"
           },
           "500": {
             "description": "Internal Server Error"
@@ -278,7 +301,7 @@
         }
       }
     },
-    "/auth/facebook": {
+    "/auth\r/facebook": {
       "get": {
         "tags": [
           "Auth"
@@ -289,7 +312,7 @@
         "responses": {}
       }
     },
-    "/auth/google": {
+    "/auth\r/google": {
       "get": {
         "tags": [
           "Auth"
@@ -311,9 +334,6 @@
         "responses": {
           "200": {
             "description": "Request change password successfully "
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -444,14 +464,7 @@
             "type": "integer"
           }
         ],
-        "responses": {
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
+        "responses": {},
         "security": [
           {
             "bearerAuth": []
@@ -499,9 +512,6 @@
           "200": {
             "description": "Success"
           },
-          "400": {
-            "description": "Bad Request"
-          },
           "404": {
             "description": "Not Found"
           },
@@ -547,11 +557,7 @@
         "summary": "Delete my account",
         "description": "",
         "parameters": [],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
+        "responses": {},
         "security": [
           {
             "bearerAuth": []
@@ -622,41 +628,6 @@
             "bearerAuth": []
           }
         ]
-      },
-      "post": {
-        "tags": [
-          "Profile"
-        ],
-        "summary": "Upload avatar",
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "avatar": {
-                    "type": "file"
-                  }
-                }
-              }
-            }
-          }
-        }
       }
     },
     "/users/profiles/cover-image": {
@@ -677,41 +648,6 @@
             "bearerAuth": []
           }
         ]
-      },
-      "post": {
-        "tags": [
-          "Profile"
-        ],
-        "summary": "Post a cover image",
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "coverImage": {
-                    "type": "file"
-                  }
-                }
-              }
-            }
-          }
-        }
       }
     },
     "/users/profiles/{profileId}": {
@@ -788,6 +724,74 @@
           },
           "500": {
             "description": "Object Id is error or mongodb error"
+          }
+        }
+      }
+    },
+    "/users/profiles\r/avatar": {
+      "post": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Upload avatar",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "avatar": {
+                    "type": "file"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/profiles\r/cover-image": {
+      "post": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Post a cover image",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "coverImage": {
+                    "type": "file"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -1010,14 +1014,7 @@
         "summary": "Create new collection",
         "description": "",
         "parameters": [],
-        "responses": {
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
+        "responses": {},
         "security": [
           {
             "bearerAuth": []
@@ -1040,7 +1037,7 @@
         }
       }
     },
-    "/users/collections/posts": {
+    "/users/collections\r/posts": {
       "post": {
         "tags": [
           "Collection"
@@ -1110,33 +1107,49 @@
         }
       }
     },
-    "/drafts/": {
-      "post": {
+    "/posts/popular": {
+      "get": {
         "tags": [
-          "Draft"
+          "Post"
         ],
-        "summary": "Initialize a draft",
+        "summary": "Get 1 popular post",
         "description": "",
         "parameters": [],
-        "responses": {
-          "201": {
-            "description": "Created"
+        "responses": {}
+      }
+    },
+    "/posts/": {
+      "get": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "Get posts",
+        "description": "",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "type": "integer"
           },
+          {
+            "name": "date",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
           "500": {
             "description": "Internal Server Error"
           }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
+        }
+      }
+    },
+    "/posts/me": {
       "get": {
         "tags": [
-          "Draft"
+          "Post"
         ],
-        "summary": "Fetch all my drafts",
+        "summary": "Get my published posts",
         "description": "",
         "parameters": [
           {
@@ -1162,101 +1175,84 @@
         ]
       }
     },
-    "/drafts/{id}": {
+    "/posts/{id}": {
+      "get": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "View a post",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "Delete a post",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/posts/{id}/cover-image": {
+      "get": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "Get post's cover image",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/posts/like/{id}": {
       "post": {
         "tags": [
-          "Draft"
+          "Post"
         ],
-        "summary": "Create a draft based on published post",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "patch": {
-        "tags": [
-          "Draft"
-        ],
-        "summary": "Update a draft",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "coverImage": {
-                    "type": "file"
-                  },
-                  "title": {
-                    "type": "string",
-                    "example": "Post Title"
-                  },
-                  "diff": {
-                    "$ref": "#/components/schemas/TextEditorContent"
-                  },
-                  "tags": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": [
-                      "tag 1",
-                      "tag 2"
-                    ]
-                  },
-                  "description": {
-                    "type": "string",
-                    "example": "Post description"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "Draft"
-        ],
-        "summary": "Fetch a draft",
+        "summary": "Like post",
         "description": "",
         "parameters": [
           {
@@ -1273,260 +1269,6 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
-      }
-    },
-    "/drafts/{id}/diff": {
-      "patch": {
-        "tags": [
-          "Draft"
-        ],
-        "summary": "Update draft's textEditorContent",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TextEditorContent"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/drafts/{id}/cover-image": {
-      "put": {
-        "tags": [
-          "Draft"
-        ],
-        "summary": "Update draft's cover image",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "coverImage": {
-                    "type": "file"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/drafts/{id}/title": {
-      "put": {
-        "tags": [
-          "Draft"
-        ],
-        "summary": "Update draft's title",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "title": {
-                    "type": "string",
-                    "default": "Post title"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/drafts/{id}/tags": {
-      "put": {
-        "tags": [
-          "Draft"
-        ],
-        "summary": "Update draft's tags",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "tags": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": [
-                      "tag 1",
-                      "tag 2"
-                    ]
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/drafts/{id}/description": {
-      "put": {
-        "tags": [
-          "Draft"
-        ],
-        "summary": "Update draft's description",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "description": {
-                    "type": "string",
-                    "default": "Post's description"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/drafts/publish/{id}": {
-      "put": {
-        "tags": [
-          "Draft"
-        ],
-        "summary": "Endpoint to publish the draft",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
         },
         "security": [
           {
@@ -1535,12 +1277,12 @@
         ]
       }
     },
-    "/drafts/{id}/avatar": {
-      "get": {
+    "/posts/unpublish/{id}": {
+      "put": {
         "tags": [
-          "Draft"
+          "Post"
         ],
-        "summary": "Fetch a draft avatar",
+        "summary": "Endpoint to unpublish the post",
         "description": "",
         "parameters": [
           {
@@ -1550,14 +1292,12 @@
             "type": "string"
           }
         ],
-        "responses": {
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
+        "responses": {},
+        "security": [
+          {
+            "bearerAuth": []
           }
-        }
+        ]
       }
     },
     "/posts/{id}/comments/": {
@@ -1629,7 +1369,7 @@
         }
       }
     },
-    "/posts/{id}/comments/{commentId}": {
+    "/posts/{id}/comments\r/{commentId}": {
       "patch": {
         "tags": [
           "Comment"
@@ -1676,7 +1416,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/posts/{id}/comments/{commentId}": {
       "delete": {
         "tags": [
           "Comment"
@@ -1700,6 +1442,438 @@
         "responses": {
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/drafts/": {
+      "get": {
+        "tags": [
+          "Draft"
+        ],
+        "summary": "Fetch all my drafts",
+        "description": "",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Draft"
+        ],
+        "summary": "Initialize a draft",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/drafts/{id}/cover-image": {
+      "get": {
+        "tags": [
+          "Draft"
+        ],
+        "summary": "Fetch a draft cover image",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/drafts/{id}": {
+      "get": {
+        "tags": [
+          "Draft"
+        ],
+        "summary": "Fetch a draft",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Draft"
+        ],
+        "summary": "Create a draft based on published post",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/drafts/{id}/diff": {
+      "patch": {
+        "tags": [
+          "Draft"
+        ],
+        "summary": "Update draft's textEditorContent",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TextEditorContent"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drafts\r/{id}": {
+      "patch": {
+        "tags": [
+          "Draft"
+        ],
+        "summary": "Update a draft",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "coverImage": {
+                    "type": "file"
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "Post Title"
+                  },
+                  "diff": {
+                    "$ref": "#/components/schemas/TextEditorContent"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "tag 1",
+                      "tag 2"
+                    ]
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Post description"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drafts\r/{id}/cover-image": {
+      "put": {
+        "tags": [
+          "Draft"
+        ],
+        "summary": "Update draft's cover image",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "coverImage": {
+                    "type": "file"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drafts/{id}/title": {
+      "put": {
+        "tags": [
+          "Draft"
+        ],
+        "summary": "Update draft's title",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "default": "Post title"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drafts/{id}/tags": {
+      "put": {
+        "tags": [
+          "Draft"
+        ],
+        "summary": "Update draft's tags",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "tag 1",
+                      "tag 2"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drafts\r/{id}/description": {
+      "put": {
+        "tags": [
+          "Draft"
+        ],
+        "summary": "Update draft's description",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "default": "Post's description"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drafts/publish/{id}": {
+      "put": {
+        "tags": [
+          "Draft"
+        ],
+        "summary": "Endpoint to publish the draft",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
           },
           "500": {
             "description": "Internal Server Error"

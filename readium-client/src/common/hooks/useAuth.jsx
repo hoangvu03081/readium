@@ -26,7 +26,7 @@ const authContext = createContext();
 export function useAuth() {
   return useContext(authContext);
 }
-
+import useWs from "../../common/api/websocket";
 function useProvideAuth() {
   const [isAuth, setAuth] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -36,6 +36,7 @@ function useProvideAuth() {
   const [data, setData] = useState(null);
   const [tokenReceived, setTokenReceived] = useState(false);
   const dispatch = useDispatch();
+  const { authenticateWs, sendNotification } = useWs();
 
   const handleData = (d) => {
     setData(d);
@@ -58,7 +59,10 @@ function useProvideAuth() {
       axios.defaults.withCredentials = true;
 
       const token = localStorage.getItem("Authorization");
-      if (token) axios.defaults.headers.common.Authorization = token;
+      if (token) {
+        axios.defaults.headers.common.Authorization = token;
+        authenticateWs(token);
+      }
 
       await axios.get(`${LOCAL_URL}/users/protected`);
       setAuth(true);

@@ -1,21 +1,23 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { WEBSOCKET } from "./apiConstant";
 
 const ws = new WebSocket(WEBSOCKET);
 
 function useWs() {
-  // useEffect();
+  const [notifications, setNotifications] = useState([]);
+
   const authenticateWs = (token) => {
     const action = {
       payload: { token },
       type: "setAuth",
     };
-    ws.send(JSON.stringify(action));
+    if (ws.readyState === 1) ws.send(JSON.stringify(action));
+    else setTimeout(() => authenticateWs(token), 1000);
   };
 
-  const sendNotification = (to, message) => {
+  const sendNotification = (to, content) => {
     const action = {
-      payload: { to, message },
+      payload: { to, content },
       type: "setNotification",
     };
     ws.send(JSON.stringify(action));
@@ -25,11 +27,18 @@ function useWs() {
     const action = JSON.parse(evt.data);
     switch (action.type) {
       case "notification": {
-        console.log(action.payload);
+        setNotifications(action.payload);
+        console.log(action);
         break;
       }
     }
   };
+
+  ws.onopen = function (evt) {
+    console.log("connected");
+  };
+
+  return { notifications, authenticateWs, sendNotification };
 }
 
-export default { useWS };
+export default useWs;

@@ -6,8 +6,11 @@ import FollowingRecommendedBtn from "../../common/components/Buttons/FollowingRe
 import CardList from "./CardList";
 import TrendingTopics from "./TrendingTopics";
 import RecommendedWriters from "./RecommendedWriters";
+import useWs from "../../common/api/websocket";
 
 export default function Home() {
+  // const { notifications } = useWs();
+  // console.log(notifications);
   return (
     <div>
       <Body

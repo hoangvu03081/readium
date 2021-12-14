@@ -134,7 +134,7 @@ export default function AvatarDropdown({ handleToggleDropdown }) {
         <RiDraftLine />
       </StyledDropdownItem>
       <div onClick={signOut} role="button" tabIndex={0} onKeyPress={signOut}>
-        <StyledDropdownItem text="Logout">
+        <StyledDropdownItem text="Logout" toggleDropdown={() => {}}>
           <AiOutlineLogout />
         </StyledDropdownItem>
       </div>

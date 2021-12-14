@@ -293,9 +293,9 @@ router.get("/google/login-failed", (req, res) => {
 });
 
 router.post("/forget", async (req, res, next) => {
-  // #swagger.tags = ['Auth']
-  // #swagger.summary = 'Users forget password'
   /*
+    #swagger.tags = ['Auth']
+    #swagger.summary = 'Users forget password'
     #swagger.requestBody = {
       required: true,
       content: {

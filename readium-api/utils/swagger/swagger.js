@@ -1,7 +1,7 @@
 const swaggerAutogen = require("swagger-autogen")({ openapi: "3.0.0" });
 
 const outputFile = "./utils/swagger/swagger_output.json";
-const endpointsFiles = ["./routes/index.js"];
+const endpointsFiles = ["./index.js", "./routes/index.js"];
 
 const doc = {
   info: {
@@ -46,6 +46,10 @@ const doc = {
     {
       name: "Dev",
       description: "Testing routes",
+    },
+    {
+      name: "Notification",
+      description: "Notifications' routes",
     },
   ],
   definitions: {
@@ -117,6 +121,9 @@ const doc = {
           { insert: "Grey", attributes: { color: "#ccc" } },
         ],
       },
+    },
+    Notification: {
+      content: "Some notification content",
     },
   },
 

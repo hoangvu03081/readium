@@ -1,11 +1,8 @@
 const router = require("express").Router();
 
 const Post = require("../../models/Post");
-const {
-  checkValidSkipAndDate
-} = require("../../utils");
-const { authMiddleware,
-  checkOwnPost, } = require("../../utils/auth");
+const { checkValidSkipAndDate } = require("../../utils");
+const { authMiddleware, checkOwnPost } = require("../../utils/auth");
 
 router.get("/popular", async (req, res) => {
   /*
@@ -166,6 +163,11 @@ router.post("/like/:id", authMiddleware, async (req, res) => {
     await req.user.save();
     await post.save();
     post = await post.getPostPreview();
+
+    req.session.notifications = {
+      content: `Mlem to ${post.author.toString()}`,
+      post,
+    };
     return res.send(post);
   } catch {
     res.status(500).send({ message: "Error in like post" });

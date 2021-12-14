@@ -84,6 +84,9 @@ router.get("/:id", authMiddleware, async (req, res) => {
   /*
     #swagger.tags = ['Draft']
     #swagger.summary = 'Fetch a draft'
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
   */
   try {
     const post = await Post.findOne({
@@ -526,12 +529,6 @@ router.put("/publish/:id", authMiddleware, checkOwnPost, async (req, res) => {
     if (!post.coverImage) {
       return res.status(400).send({
         message: "Please provide a cover image for the post before publishing",
-      });
-    }
-
-    if (!post.textEditorContent || !post.content) {
-      return res.status(400).send({
-        message: "Please write the post's content before publishing",
       });
     }
 

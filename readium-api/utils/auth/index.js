@@ -129,6 +129,7 @@ const checkOwnPost = async (req, res, next) => {
 };
 
 module.exports = {
+  PUB_KEY,
   authMiddleware,
   checkOwnPost,
   issueJWT,
