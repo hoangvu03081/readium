@@ -40,7 +40,7 @@ const StoryContent = React.forwardRef(({ id }, ref) => {
       contentSaved = true;
       ref.current[0] = contentSaved;
       resContentDraft.mutate(editor);
-    }, 2500),
+    }, 2000),
     [id]
   );
 

@@ -33,7 +33,7 @@ const StoryInformation = React.forwardRef(({ id }, ref) => {
       titleSaved = true;
       ref.current[5] = titleSaved;
       resTitleDraft.mutate(titleDraft);
-    }, 2500),
+    }, 2000),
     [id]
   );
   const handleTitleChange = (titleDraft) => {
@@ -65,13 +65,13 @@ const StoryInformation = React.forwardRef(({ id }, ref) => {
       descriptionSaved = true;
       ref.current[6] = descriptionSaved;
       resDescriptionDraft.mutate(descriptionDraft);
-    }, 2500),
+    }, 2000),
     [id]
   );
   const handleDescriptionChange = (descriptionDraft) => {
     descriptionSaved = false;
     ref.current[6] = descriptionSaved;
-    if (descriptionDraft.target.value.length === 300) {
+    if (descriptionDraft.target.value.length === 250) {
       setDescriptionValidation(false);
     } else {
       setDescriptionValidation(true);
@@ -95,7 +95,7 @@ const StoryInformation = React.forwardRef(({ id }, ref) => {
       tagsSaved = true;
       ref.current[7] = tagsSaved;
       resTagsDraft.mutate(tagsDraft);
-    }, 2500),
+    }, 2000),
     [id]
   );
   const handleTagsChange = (data) => {
@@ -188,10 +188,10 @@ const StoryInformation = React.forwardRef(({ id }, ref) => {
       <h3>Your description</h3>
       <InputDescription>
         <TextareaAutosize
-          placeholder="Maximum 300 characters"
+          placeholder="Maximum 250 characters"
           minRows={1}
           maxRows={25}
-          maxLength="300"
+          maxLength="250"
           onChange={handleDescriptionChange}
         />
       </InputDescription>

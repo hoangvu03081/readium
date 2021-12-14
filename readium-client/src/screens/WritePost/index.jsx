@@ -29,7 +29,7 @@ export default function WritePost() {
     initPost();
   }, [id, isAuth]);
 
-  // HANDLE SUBMIT
+  // HANDLE SUBMIT --------------------------------------------------------------
   const storyInformationRef = useRef([
     null, // titile input
     null, // note title
@@ -43,6 +43,7 @@ export default function WritePost() {
   const storyContentRef = useRef([null]);
   const [isLoading, setIsLoading] = useState(false);
   const history = useHistory();
+
   const checkEmptyTitle = (titleRef, noteTitleRef) => {
     if (titleRef.value === "") {
       titleRef.focus();
@@ -54,6 +55,7 @@ export default function WritePost() {
     }
     return true;
   };
+
   const checkEmptyCoverImage = (yourTags, coverImageRef, noteCoverImageRef) => {
     if (coverImageRef.current.files.length === 0) {
       noteCoverImageRef.innerHTML =
@@ -96,6 +98,7 @@ export default function WritePost() {
       }
     }
   };
+  // -------------------------------------------------------------------
 
   return (
     <Layout className="container">
