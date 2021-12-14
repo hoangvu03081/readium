@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import TrendingBtn from "../../../common/components/Buttons/TrendingBtn";
+import TrendingBtn from "./TrendingBtn";
 
 const Background = styled.div`
   padding: 30px 18px 12px 30px;
@@ -15,7 +15,7 @@ const Background = styled.div`
     font-weight: bold;
     font-size: 22px;
     text-align: center;
-    color: ${({ theme }) => theme.colors.TrendingTopicsText};
+    color: black;
     margin: 0 0 25px 0;
   }
 `;
