@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { useDraft, usePublish } from "../../common/api/draftQuery";
 import { useAuth } from "../../common/hooks/useAuth";
+import { LoadingOverlay } from "../WritePost/styles";
 
 const Layout = styled.div`
   margin-top: 80px;
@@ -20,18 +21,32 @@ const ContinueEditingBtn = styled.button``;
 const PublishBtn = styled.button``;
 
 export default function PreviewPost() {
+  // GET DRAFT
+  const { isAuth } = useAuth();
   const history = useHistory();
   const id = history.location.state;
+  const { isFetched, data } = useDraft(id, isAuth);
 
-  const { isAuth } = useAuth();
-  const draft = useDraft(id, isAuth);
-  console.log(draft.data);
-
+  //  PUBLISH
   const publish = usePublish(id);
-
   const handlePublish = () => {
     publish.mutate();
   };
+
+  if (!isFetched) {
+    return (
+      <>
+        <LoadingOverlay>
+          <div className="lds-ripple">
+            <div />
+            <div />
+          </div>
+        </LoadingOverlay>
+      </>
+    );
+  }
+
+  console.log(data.data);
 
   return (
     <Layout>

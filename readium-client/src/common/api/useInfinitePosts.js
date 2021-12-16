@@ -11,6 +11,7 @@ export default function useInfinitePosts() {
 
   const { fetchNextPage } = useInfiniteQuery("posts", fetchPosts, {
     getNextPageParam: (lastPage) => lastPage.data.next,
+    refetchOnWindowFocus: false,
   });
 
   const fetchPostsWrapper = () => {

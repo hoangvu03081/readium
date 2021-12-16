@@ -3,11 +3,8 @@ import axios from "axios";
 import Delta from "quill-delta";
 import { DRAFT_API } from "./apiConstant";
 
-export function useDraftID(isAuth) {
-  return useQuery("draftId", () => axios.post(DRAFT_API.GET_DRAFT_ID), {
-    staleTime: Infinity,
-    enabled: isAuth,
-  });
+export function useDraftID() {
+  return useMutation(() => axios.post(DRAFT_API.GET_DRAFT_ID));
 }
 
 export function useTitleDraft(id) {

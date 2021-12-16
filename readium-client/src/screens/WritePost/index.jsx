@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../../common/hooks/useAuth";
 import StoryInformation from "./StoryInformation";
@@ -13,17 +12,22 @@ import {
   SubmitBtn,
   LoadingOverlay,
 } from "./styles";
+import { useDraftID } from "../../common/api/draftQuery";
 
 export default function WritePost() {
   // GET DRAFT ID
   const [id, setId] = useState("");
   const { isAuth } = useAuth();
+  const draftId = useDraftID();
   useEffect(() => {
     async function initPost() {
       if (!id && isAuth) {
-        const res = await axios.post("http://localhost:5000/drafts");
-        setId(res.data.id);
-        // console.log(res.data.id);
+        draftId.mutate(null, {
+          onSuccess: (result) => {
+            setId(result.data.id);
+            // console.log(result.data.id);
+          },
+        });
       }
     }
     initPost();
