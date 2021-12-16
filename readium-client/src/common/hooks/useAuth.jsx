@@ -36,7 +36,7 @@ function useProvideAuth() {
   const [data, setData] = useState(null);
   const [tokenReceived, setTokenReceived] = useState(false);
   const dispatch = useDispatch();
-  const { authenticateWs, sendNotification } = useWs();
+  const { authenticateWs } = useWs();
 
   const handleData = (d) => {
     setData(d);
