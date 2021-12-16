@@ -27,7 +27,7 @@ function useWs() {
 
   ws.onopen = function (evt) {};
 
-  return { notifications, authenticateWs, sendNotification };
+  return { notifications, authenticateWs };
 }
 
 export default useWs;
