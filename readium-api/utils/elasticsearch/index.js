@@ -7,8 +7,8 @@ const client = new Client({
 });
 
 client.cluster.health({}, (error, result) => {
-  // if (error) {
-  //   console.error(error);
-  // }
-  // console.log(result.body);
+  if (error) {
+    console.error(error);
+  }
+  console.log(result.body);
 });

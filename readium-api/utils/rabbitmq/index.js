@@ -9,10 +9,10 @@ async function init() {
     await channel.assertExchange("tasks", "fanout", { durable: true });
     await channel.assertQueue(QUEUE, { durable: true });
     openChannel = channel;
-    // console.log("RABBITMQ CONNECTED");
+    console.log("RABBITMQ CONNECTED");
     pushTask(1);
   } catch (e) {
-    // console.error("FAILED TO CONNECT RABBITMQ");
+    console.error("FAILED TO CONNECT RABBITMQ");
     return setTimeout(init, 1000);
   }
 }
