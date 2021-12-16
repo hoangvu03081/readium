@@ -4,14 +4,14 @@ const sizeOf = require("image-size");
 const sharp = require("sharp");
 
 const User = require("../../models/User");
-const { authMiddleware } = require("../../utils/auth");
 const {
+  authMiddleware,
   validateDisplayName,
   validateEmail,
   validateFacebookLink,
   validateTwitterLink,
   validateInstaLink,
-} = require("../../utils/validator");
+} = require("../../utils");
 const configMulter = require("../../config/multer-config");
 
 const uploadAva = configMulter({

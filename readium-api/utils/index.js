@@ -1,7 +1,35 @@
+const {
+  checkEmpty,
+  validateEmail,
+  validatePassword,
+  validateDisplayName,
+  validateURL,
+  validateRePattern,
+  validateFacebookLink,
+  validateTwitterLink,
+  validateInstaLink,
+} = require("./validator");
+
+const { sendWelcomeEmail, sendResetPasswordEmail } = require("./sendMail");
+
+const { pushTask } = require("./rabbitmq");
+
+const { getUrl } = require("./mongo");
+
+const {
+  PUB_KEY,
+  authMiddleware,
+  issueJWT,
+  decodeJWT,
+  jwtOptions,
+  encrypt,
+  decrypt,
+  NO_AUTH_TOKEN,
+  REQUIRE_ACTIVATE_ACCOUNT,
+} = require("./auth");
+
 const axios = require("axios").default;
 const sharp = require("sharp");
-
-
 
 const { once, EventEmitter } = require("events");
 const bufferEmitter = new EventEmitter();
@@ -32,31 +60,37 @@ const convertBufferToPng = (buffer) => {
   return sharp(buffer).png().toBuffer();
 };
 
-const checkValidSkipAndDate = async (req, res, next) => {
-  let { date = new Date().toString(), skip = "0" } = req.query;
-  skip = +skip;
-  date = new Date(date);
-
-  if (Number.isNaN(skip)) {
-    return res.status(400).send({ message: "skip parameter must be a number" });
-  }
-
-  if (date.toString() === "Invalid Date") {
-    return res.status(400).send({ message: "Invalid date parameter" });
-  }
-
-  req.date = date;
-  req.skip = skip;
-  return next();
-};
-
 const getImageUrl = (postId) => `${serverUrl}/posts/${postId}/cover-image`;
 const getAvatarUrl = (userId) => `${serverUrl}/users/profiles/avatar/${userId}`;
+const getCoverImageUrl = (userId) =>
+  `${serverUrl}/users/profiles/cover-image/${userId}`;
 
 module.exports = {
+  checkEmpty,
+  validateEmail,
+  validatePassword,
+  validateDisplayName,
+  validateURL,
+  validateRePattern,
+  validateFacebookLink,
+  validateTwitterLink,
+  validateInstaLink,
+  sendWelcomeEmail,
+  sendResetPasswordEmail,
+  pushTask,
+  PUB_KEY,
+  authMiddleware,
+  issueJWT,
+  decodeJWT,
+  jwtOptions,
+  encrypt,
+  decrypt,
+  NO_AUTH_TOKEN,
+  REQUIRE_ACTIVATE_ACCOUNT,
   downloadImageFromUrl,
   convertBufferToPng,
-  checkValidSkipAndDate,
   getImageUrl,
   getAvatarUrl,
+  getCoverImageUrl,
+  getUrl,
 };

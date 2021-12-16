@@ -6,7 +6,7 @@ const Post = require("../models/Post");
 const Collection = require("../models/Collection");
 const Comment = require("../models/Comment");
 const Notification = require("../models/Notification");
-const { authMiddleware } = require("../utils/auth");
+const { authMiddleware } = require("../utils");
 
 router.get("/users", async (req, res) => {
   /* 
@@ -134,9 +134,36 @@ router.post(
       await post.save();
       return res.status(201).send(post);
     } catch (err) {
-      res.status(500).send({ message: "Some errors occur in create posts" });
+      return res
+        .status(500)
+        .send({ message: "Some errors occur in create posts" });
     }
   }
 );
+
+const posts = require("../tests/fixtures/data/posts");
+const { pushTask } = require("../utils");
+router.post("/ai", async (req, res) => {
+  /*
+    #swagger.tags = ['Dev']
+    #swagger.summary = 'Create posts for AI service test'
+  */
+  try {
+    let post = new Post({
+      _id: posts[0]._id,
+      title: posts[0].title,
+      content: posts[0].content,
+      textEditorContent: posts[0].textEditorContent,
+      coverImage: posts[0].coverImage,
+      author: posts[0].author,
+      isPublished: posts[0].isPublished,
+      publishDate: posts[0].publishDate,
+    });
+    await post.save();
+    pushTask(posts[0]._id);
+  } catch (err) {
+    return res.status(500).send({ message: "Mock AI failed" });
+  }
+});
 
 module.exports = router;

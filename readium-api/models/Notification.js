@@ -15,4 +15,12 @@ const notificationSchema = new Schema({
   // expires: 3 * 30 * 24 * 60 * 60,
 });
 
+notificationSchema.methods.toJSON = function () {
+  const notification = this.toObject();
+  notification.id = notification._id;
+  delete notification._id;
+  delete notification.__v;
+  return notification;
+};
+
 module.exports = model("Notification", notificationSchema);

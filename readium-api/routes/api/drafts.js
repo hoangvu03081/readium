@@ -3,8 +3,11 @@ const Delta = require("quill-delta");
 const configMulter = require("../../config/multer-config");
 
 const Post = require("../../models/Post");
-const { checkValidSkipAndDate } = require("../../utils");
-const { authMiddleware, checkOwnPost } = require("../../utils/auth");
+const { authMiddleware } = require("../../utils");
+const {
+  checkValidSkipAndDate,
+  checkOwnPost,
+} = require("../../middleware/posts-middleware");
 
 const uploadCover = configMulter({
   limits: { fields: 6, fileSize: 5e6, files: 1 },
@@ -509,7 +512,7 @@ router.put(
   }
 );
 
-router.put("/publish/:id", authMiddleware, checkOwnPost, async (req, res) => {
+router.put("/:id/publish", authMiddleware, checkOwnPost, async (req, res) => {
   /*
     #swagger.tags = ['Draft']
     #swagger.summary = 'Endpoint to publish the draft'

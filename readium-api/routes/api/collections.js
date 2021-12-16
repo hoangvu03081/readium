@@ -4,7 +4,7 @@
 const router = require("express").Router();
 
 const Post = require("../../models/Post");
-const { authMiddleware } = require("../../utils/auth");
+const { authMiddleware } = require("../../utils");
 
 const checkPostAndCollectionExist = async (req, res, next) => {
   try {

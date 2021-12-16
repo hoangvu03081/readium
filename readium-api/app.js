@@ -1,6 +1,4 @@
 const {
-  elasticsearch,
-  rabbitmq,
   swaggerDoc,
   swaggerUi,
   sessionsParser,
@@ -12,10 +10,6 @@ const app = express();
 
 const cors = require("cors");
 const passport = require("passport");
-
-const {
-  messageCode: { NO_AUTH_TOKEN, REQUIRE_ACTIVATE_ACCOUNT },
-} = require("./utils/auth");
 
 require("./config/db");
 require("./config/passport")(passport);
@@ -31,6 +25,5 @@ app.use(require("./routes"));
 if (process.env.NODE_ENV === "development") {
   app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 }
-
 
 module.exports = app;

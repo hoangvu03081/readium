@@ -22,3 +22,5 @@ init();
 function pushTask(postId) {
   openChannel.sendToQueue(QUEUE, Buffer.from(JSON.stringify({ id: postId })));
 }
+
+module.exports = { pushTask };

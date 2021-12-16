@@ -1,14 +1,14 @@
-let swaggerUi, swaggerDoc, elasticsearch, rabbitmq;
-
+let swaggerUi, swaggerDoc;
 if (process.env.NODE_ENV === "test") {
   require("dotenv").config({ path: __dirname + "/env/.env.test" });
 } else if (process.env.NODE_ENV === "development") {
   require("dotenv").config({ path: __dirname + "/env/.env" });
   swaggerUi = require("swagger-ui-express");
   swaggerDoc = require("../utils/swagger/swagger_output.json");
-  elasticsearch = require("../utils/elasticsearch");
-  rabbitmq = require("../utils/rabbitmq");
 }
+require("../utils/elasticsearch");
+require("../utils/rabbitmq");
+
 
 const { sessionsParser } = require("./sessions");
 
@@ -33,8 +33,6 @@ const corsOptions = {
 };
 
 module.exports = {
-  elasticsearch,
-  rabbitmq,
   swaggerDoc,
   swaggerUi,
   corsOptions,

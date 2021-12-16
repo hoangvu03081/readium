@@ -12,4 +12,12 @@ const commentSchema = new Schema({
   post: { type: ObjectId, ref: "Post", required: true },
 });
 
+commentSchema.methods.toJSON = function () {
+  const comment = this.toObject();
+  comment.id = comment._id;
+  delete comment._id;
+  delete comment.__v;
+  return comment;
+};
+
 module.exports = model("Comment", commentSchema);

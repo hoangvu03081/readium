@@ -1,8 +1,11 @@
 const router = require("express").Router();
 
 const Post = require("../../models/Post");
-const { checkValidSkipAndDate } = require("../../utils");
-const { authMiddleware, checkOwnPost } = require("../../utils/auth");
+const { authMiddleware } = require("../../utils");
+const {
+  checkValidSkipAndDate,
+  checkOwnPost,
+} = require("../../middleware/posts-middleware");
 
 router.get("/popular", async (req, res) => {
   /*
@@ -17,40 +20,6 @@ router.get("/popular", async (req, res) => {
     return res
       .status(500)
       .send({ message: "Some errors occur in finding popular posts" });
-  }
-});
-
-router.get("/", checkValidSkipAndDate, async (req, res) => {
-  /*
-    #swagger.tags = ['Post']
-    #swagger.summary = 'Get posts'
-    #swagger.parameters['skip'] = {
-      in: 'query',
-      type: 'integer',
-    }
-    #swagger.parameters['date'] = {
-      in: 'query',
-      type: 'string',
-    }
-  */
-  try {
-    const { date, skip } = req;
-
-    let posts = await Post.find({
-      isPublished: true,
-      publishDate: { $lte: date },
-    })
-      .sort({ publishDate: -1 })
-      .skip(skip)
-      .limit(5);
-
-    posts = posts.map((post) => post.getPostPreview());
-    posts = await Promise.all(posts);
-
-    if (posts.length === 0) return res.send({ posts });
-    return res.send({ posts, next: skip + 5 });
-  } catch (err) {
-    return res.status(500).send({ message: "Some errors occur in get posts" });
   }
 });
 
@@ -92,6 +61,24 @@ router.get("/me", authMiddleware, checkValidSkipAndDate, async (req, res) => {
   }
 });
 
+router.get("/:id/cover-image", async (req, res) => {
+  /*
+    #swagger.tags = ['Post']
+    #swagger.summary = "Get post's cover image"
+  */
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post || !post.isPublished) {
+      return res.status(404).send({ message: "Post not found" });
+    }
+    return res.set("Content-Type", "image/png").send(post.coverImage);
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Get an error while fetching cover image" });
+  }
+});
+
 router.get("/:id", async (req, res) => {
   /*
     #swagger.tags = ['Post']
@@ -111,70 +98,41 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.get("/:id/cover-image", async (req, res) => {
+router.get("/", checkValidSkipAndDate, async (req, res) => {
   /*
     #swagger.tags = ['Post']
-    #swagger.summary = "Get post's cover image"
+    #swagger.summary = 'Get posts'
+    #swagger.parameters['skip'] = {
+      in: 'query',
+      type: 'integer',
+    }
+    #swagger.parameters['date'] = {
+      in: 'query',
+      type: 'string',
+    }
   */
   try {
-    const post = await Post.findById(req.params.id);
-    if (!post || !post.isPublished) {
-      return res.status(404).send({ message: "Post not found" });
-    }
-    res.set("Content-Type", "image/png").send(post.coverImage);
+    const { date, skip } = req;
+
+    let posts = await Post.find({
+      isPublished: true,
+      publishDate: { $lte: date },
+    })
+      .sort({ publishDate: -1 })
+      .skip(skip)
+      .limit(5);
+
+    posts = posts.map((post) => post.getPostPreview());
+    posts = await Promise.all(posts);
+
+    if (posts.length === 0) return res.send({ posts });
+    return res.send({ posts, next: skip + 5 });
   } catch (err) {
-    return res
-      .status(500)
-      .send({ message: "Get an error while fetching cover image" });
+    return res.status(500).send({ message: "Some errors occur in get posts" });
   }
 });
 
-router.post("/like/:id", authMiddleware, async (req, res) => {
-  /*
-    #swagger.tags = ['Post']
-    #swagger.summary = 'Like post'
-    #swagger.security = [{
-      "bearerAuth": []
-    }]
-  */
-  try {
-    let post = await Post.findById(req.params.id);
-    if (!post) {
-      return res.status(404).send({ message: "Cannot find post with ID" });
-    }
-
-    const isLikedIndex = req.user.liked.findIndex(
-      (pId) => pId.toString() === post._id.toString()
-    );
-
-    if (isLikedIndex === -1) {
-      req.user.liked.push(post._id);
-      post.likes.push(req.user._id);
-    } else {
-      req.user.liked.splice(isLikedIndex, 1);
-      post.likes.splice(
-        post.likes.findIndex(
-          (uId) => uId.toString() === req.user._id.toString()
-        ),
-        1
-      );
-    }
-
-    await req.user.save();
-    await post.save();
-    post = await post.getPostPreview();
-
-    req.session.notifications = {
-      content: `Mlem to ${post.author.toString()}`,
-      post,
-    };
-    return res.send(post);
-  } catch {
-    res.status(500).send({ message: "Error in like post" });
-  }
-});
-
-router.put("/unpublish/:id", authMiddleware, checkOwnPost, async (req, res) => {
+router.put("/:id/unpublish", authMiddleware, checkOwnPost, async (req, res) => {
   /*
     #swagger.tags = ['Post']
     #swagger.summary = 'Endpoint to unpublish the post'

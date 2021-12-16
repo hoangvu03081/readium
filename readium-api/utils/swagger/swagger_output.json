@@ -71,6 +71,82 @@
         ]
       }
     },
+    "/posts/{postId}/like": {
+      "post": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "Like post",
+        "description": "",
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "\r/posts/{postId}/comments": {
+      "post": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "Comment on the post",
+        "description": "",
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Comment"
+              }
+            }
+          }
+        }
+      }
+    },
     "/dev/users": {
       "get": {
         "tags": [
@@ -135,9 +211,6 @@
         "responses": {
           "201": {
             "description": "Created"
-          },
-          "500": {
-            "description": "Internal Server Error"
           }
         },
         "security": [
@@ -174,6 +247,21 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/dev/ai": {
+      "post": {
+        "tags": [
+          "Dev"
+        ],
+        "summary": "Create posts for AI service test",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -1118,38 +1206,46 @@
         "responses": {}
       }
     },
-    "/posts/": {
-      "get": {
-        "tags": [
-          "Post"
-        ],
-        "summary": "Get posts",
-        "description": "",
-        "parameters": [
-          {
-            "name": "skip",
-            "in": "query",
-            "type": "integer"
-          },
-          {
-            "name": "date",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
     "/posts/me": {
       "get": {
         "tags": [
           "Post"
         ],
         "summary": "Get my published posts",
+        "description": "",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/posts/{id}/cover-image": {
+      "get": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "Get post's cover image",
         "description": "",
         "parameters": [
           {
@@ -1162,9 +1258,6 @@
         "responses": {
           "404": {
             "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
           }
         }
       }
@@ -1208,134 +1301,6 @@
           }
         ],
         "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/posts/{id}/cover-image": {
-      "get": {
-        "tags": [
-          "Post"
-        ],
-        "summary": "Get post's cover image",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      }
-    },
-    "/posts/like/{id}": {
-      "post": {
-        "tags": [
-          "Post"
-        ],
-        "summary": "Like post",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/posts/unpublish/{id}": {
-      "put": {
-        "tags": [
-          "Post"
-        ],
-        "summary": "Endpoint to unpublish the post",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {},
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/posts/{id}/comments/": {
-      "get": {
-        "tags": [
-          "Comment"
-        ],
-        "summary": "Get comment of a post",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Comment"
-        ],
-        "summary": "Comment on the post",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
           "400": {
             "description": "Bad Request"
           },
@@ -1350,20 +1315,94 @@
           {
             "bearerAuth": []
           }
+        ]
+      }
+    },
+    "/posts/": {
+      "get": {
+        "tags": [
+          "Post"
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Comment"
-              }
-            }
+        "summary": "Get posts",
+        "description": "",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
     },
-    "/posts/{id}/comments\r/{commentId}": {
+    "/posts/{id}/unpublish": {
+      "put": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "Endpoint to unpublish the post",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/posts/{postId}/comments/": {
+      "get": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "Get comment of a post",
+        "description": "",
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/posts/{postId}/comments\r/{commentId}": {
       "patch": {
         "tags": [
           "Comment"
@@ -1372,7 +1411,7 @@
         "description": "",
         "parameters": [
           {
-            "name": "id",
+            "name": "postId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1412,7 +1451,7 @@
         }
       }
     },
-    "/posts/{id}/comments/{commentId}": {
+    "/posts/{postId}/comments/{commentId}": {
       "delete": {
         "tags": [
           "Comment"
@@ -1421,7 +1460,7 @@
         "description": "",
         "parameters": [
           {
-            "name": "id",
+            "name": "postId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1457,17 +1496,20 @@
         "description": "",
         "parameters": [
           {
-            "name": "skip",
-            "in": "query",
-            "type": "integer"
-          },
-          {
             "name": "date",
             "in": "query",
             "type": "string"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "type": "integer"
           }
         ],
         "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -1562,7 +1604,14 @@
             "type": "string"
           }
         ],
-        "responses": {},
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
         "security": [
           {
             "bearerAuth": []
@@ -1588,6 +1637,9 @@
         "responses": {
           "400": {
             "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
           }
         },
         "security": [
@@ -1625,6 +1677,9 @@
         "responses": {
           "400": {
             "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
           }
         },
         "security": [
@@ -1688,6 +1743,9 @@
         "responses": {
           "400": {
             "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
           }
         },
         "security": [
@@ -1730,6 +1788,9 @@
         "responses": {
           "400": {
             "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
           }
         },
         "security": [
@@ -1773,6 +1834,9 @@
         "responses": {
           "400": {
             "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
           }
         },
         "security": [
@@ -1823,6 +1887,9 @@
           "400": {
             "description": "Bad Request"
           },
+          "404": {
+            "description": "Not Found"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -1850,7 +1917,7 @@
         }
       }
     },
-    "/drafts/publish/{id}": {
+    "/drafts/{id}/publish": {
       "put": {
         "tags": [
           "Draft"
@@ -1868,6 +1935,9 @@
         "responses": {
           "400": {
             "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"

@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
-const { getAvatarUrl, getImageUrl } = require("../utils");
-const commentSchema = require("./Comment");
+const { getAvatarUrl, getImageUrl, getCoverImageUrl } = require("../utils");
 
 const {
   model,
@@ -92,6 +91,28 @@ postSchema.methods.getPostDetail = async function () {
 
 postSchema.methods.toJSON = function () {
   const post = this.toObject();
+  if (post.author._id) {
+    const userObject = post.author;
+    userObject.id = userObject._id;
+    userObject.avatar = getAvatarUrl(userObject.id);
+    if (userObject.coverImage) {
+      userObject.coverImage = getCoverImageUrl(userObject.id);
+    }
+    userObject.followers = userObject.followers.length;
+    userObject.followings = userObject.followings.length;
+
+    delete userObject.email;
+    delete userObject.activated;
+    delete userObject.password;
+    delete userObject.tokens;
+    delete userObject.notifications;
+    delete userObject.activationLink;
+    delete userObject.resetLink;
+    delete userObject.resetTimeout;
+    delete userObject.__v;
+    delete userObject._id;
+    delete userObject.liked;
+  }
   delete post.coverImage;
   delete post.__v;
   return post;

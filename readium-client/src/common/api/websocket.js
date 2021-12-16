@@ -15,28 +15,17 @@ function useWs() {
     else setTimeout(() => authenticateWs(token), 1000);
   };
 
-  const sendNotification = (to, content) => {
-    const action = {
-      payload: { to, content },
-      type: "setNotification",
-    };
-    ws.send(JSON.stringify(action));
-  };
-
   ws.onmessage = function (evt) {
     const action = JSON.parse(evt.data);
     switch (action.type) {
       case "notification": {
         setNotifications(action.payload);
-        console.log(action);
         break;
       }
     }
   };
 
-  ws.onopen = function (evt) {
-    console.log("connected");
-  };
+  ws.onopen = function (evt) {};
 
   return { notifications, authenticateWs, sendNotification };
 }

@@ -6,18 +6,19 @@ const sharp = require("sharp");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
 
-const { decrypt, encrypt, issueJWT, authMiddleware } = require("../utils/auth");
-const User = require("../models/User");
-const { clientUrl } = require("../config/url");
 const {
+  decrypt,
+  encrypt,
+  issueJWT,
+  authMiddleware,
   checkEmpty,
   validateEmail,
   validatePassword,
-} = require("../utils/validator");
-const {
   sendWelcomeEmail,
   sendResetPasswordEmail,
-} = require("../utils/sendMail");
+} = require("../utils");
+const User = require("../models/User");
+const { clientUrl } = require("../config/url");
 
 router.post("/", async (req, res, next) => {
   /*
@@ -424,7 +425,7 @@ router.post("/reset", async (req, res, next) => {
 
 router.post("/change-password", authMiddleware, async (req, res) => {
   /*
-    #swagger.tags = ['User']
+    #swagger.tags = ['Auth']
     #swagger.summary = 'User change password'
     #swagger.security = [{
       "bearerAuth": []

@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
 const { serverUrl } = require("../config/url");
+const { getAvatarUrl, getCoverImageUrl } = require("../utils");
 
 const {
   model,
@@ -39,11 +40,11 @@ userSchema.methods.getPublicProfile = function () {
   const userObject = user.toObject();
 
   userObject.id = userObject._id;
-  userObject.avatar = `${serverUrl}/users/profiles/avatar/${userObject._id}`;
+  userObject.avatar = getAvatarUrl(userObject.id);
   userObject.followers = userObject.followers.length;
   userObject.followings = userObject.followings.length;
   if (userObject.coverImage) {
-    userObject.coverImage = `${serverUrl}/users/profiles/cover-image/${userObject._id}`;
+    userObject.coverImage = getCoverImageUrl(userObject.id);
   }
 
   delete userObject.email;

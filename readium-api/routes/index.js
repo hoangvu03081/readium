@@ -1,7 +1,6 @@
 const router = require("express").Router();
 
 const devRoute = require("./dev");
-
 const authRoute = require("./auth");
 const usersRoute = require("./api/users");
 const profilesRoute = require("./api/profiles");
@@ -16,7 +15,7 @@ router.use("/users", usersRoute);
 router.use("/users/profiles", profilesRoute);
 router.use("/users/collections", collectionsRoute);
 router.use("/posts", postsRoute);
-router.use("/posts/:id/comments", commentsRoute);
+router.use("/posts/:postId/comments", commentsRoute);
 router.use("/drafts", draftsRoute);
 
 module.exports = router;

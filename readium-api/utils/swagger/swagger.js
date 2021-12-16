@@ -122,9 +122,6 @@ const doc = {
         ],
       },
     },
-    Notification: {
-      content: "Some notification content",
-    },
   },
 
   securityDefinitions: {

@@ -4,12 +4,7 @@ const GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
 
 const User = require("../models/User");
 const { serverUrl } = require("./url");
-const { downloadImageFromUrl, convertBufferToPng } = require("../utils");
-const {
-  decodeJWT,
-  jwtOptions,
-  messageCode: { NO_AUTH_TOKEN },
-} = require("../utils/auth");
+const { downloadImageFromUrl, convertBufferToPng,decodeJWT, jwtOptions, NO_AUTH_TOKEN } = require("../utils");
 
 const activateUser = (user) => {
   user.activationLink = undefined;

@@ -1,9 +1,7 @@
 const router = require("express").Router();
-const bcrypt = require("bcrypt");
 const Post = require("../../models/Post");
 const User = require("../../models/User");
-const { getImageUrl } = require("../../utils");
-const { authMiddleware } = require("../../utils/auth");
+const { getImageUrl, authMiddleware } = require("../../utils");
 
 router.get("/protected", authMiddleware, (req, res) => {
   /*
@@ -192,7 +190,7 @@ router.delete("/", authMiddleware, async (req, res) => {
     });
     await Promise.all(promises);
     await User.deleteOne({ _id: id });
-    
+
     return res.send({ message: "Sorry to see you go.", user: deletedUser });
   } catch (err) {
     return res
