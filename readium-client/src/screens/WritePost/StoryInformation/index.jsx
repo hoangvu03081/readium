@@ -146,6 +146,8 @@ const StoryInformation = React.forwardRef(({ id }, ref) => {
           const arr = new Uint8Array(binaryStr);
           const blob = new Blob([arr.buffer], { type: "image/png" });
           setCoverImageSrc(window.URL.createObjectURL(blob));
+          ref.current[4].classList.remove("d-block");
+          ref.current[4].classList.add("d-none");
         };
         reader.readAsArrayBuffer(file);
       });

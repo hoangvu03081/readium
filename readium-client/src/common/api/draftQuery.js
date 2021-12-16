@@ -51,8 +51,10 @@ export function useContentDraft(id) {
 
 export function useDraft(id, isAuth) {
   return useQuery("draft", () => axios.get(DRAFT_API.GET_A_DRAFT(id)), {
-    staleTime: Infinity,
+    staleTime: 0,
+    refetchOnMount: true,
     enabled: isAuth,
+    refetchOnWindowFocus: false,
   });
 }
 

@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import React, { useRef, useCallback } from "react";
+import React, { useCallback } from "react";
 import PropTypes from "prop-types";
 import debounce from "lodash.debounce";
 import ReactQuill from "react-quill";
@@ -14,7 +14,6 @@ icons.code = '<i class="ionicons ion-code"></i>';
 const StoryContent = React.forwardRef(({ id }, ref) => {
   let contentSaved = true;
   ref.current[0] = contentSaved;
-  const quill = useRef(null);
 
   const editorModules = {
     toolbar: [
@@ -44,7 +43,7 @@ const StoryContent = React.forwardRef(({ id }, ref) => {
     [id]
   );
 
-  const handleChange = (content, delta, source, editor) => {
+  const handleContentChange = (content, delta, source, editor) => {
     contentSaved = false;
     ref.current[0] = contentSaved;
     debounceSendContentDraft(editor);
@@ -59,10 +58,9 @@ const StoryContent = React.forwardRef(({ id }, ref) => {
       <h1>Your story content</h1>
       <TextEditor>
         <ReactQuill
-          ref={quill}
           theme="bubble"
           modules={editorModules}
-          onChange={handleChange}
+          onChange={handleContentChange}
           placeholder="Tell your story..."
         />
         <Buttons className="ql-buttons">

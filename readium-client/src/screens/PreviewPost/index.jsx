@@ -2,9 +2,11 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { useDraft, usePublish } from "../../common/api/draftQuery";
+import PostContent from "../../common/components/PostContent";
 import { useAuth } from "../../common/hooks/useAuth";
-import { LoadingOverlay } from "../WritePost/styles";
+import LoadingOverlay from "../../common/components/LoadingOverlay";
 
+// STYLES ----------------------------------------------------------
 const Layout = styled.div`
   margin-top: 80px;
 `;
@@ -19,6 +21,7 @@ const SubHeader = styled.div`
 const ContinueEditingBtn = styled.button``;
 
 const PublishBtn = styled.button``;
+// -----------------------------------------------------------------
 
 export default function PreviewPost() {
   // GET DRAFT
@@ -34,27 +37,19 @@ export default function PreviewPost() {
   };
 
   if (!isFetched) {
-    return (
-      <>
-        <LoadingOverlay>
-          <div className="lds-ripple">
-            <div />
-            <div />
-          </div>
-        </LoadingOverlay>
-      </>
-    );
+    return <LoadingOverlay isLoading />;
   }
 
-  console.log(data.data);
+  const quillContent = data.data.textEditorContent;
+  // console.log(data.data);
 
   return (
-    <Layout>
+    <Layout className="container">
       <SubHeader>
         <ContinueEditingBtn>Continue Editing</ContinueEditingBtn>
         <PublishBtn onClick={handlePublish}>Publish</PublishBtn>
       </SubHeader>
-      <div>a</div>
+      <PostContent quillContent={quillContent} />
     </Layout>
   );
 }
