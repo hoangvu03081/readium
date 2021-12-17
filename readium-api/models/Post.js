@@ -75,7 +75,7 @@ postSchema.methods.getPostDetail = async function () {
   await this.populate("author", { displayName: 1 });
   const postObject = this.toObject();
 
-  postObject.id = postObject._id;
+  postObject.id = postObject._id.toString();
   if (postObject.coverImage) {
     postObject.coverImageUrl = getImageUrl(postObject.id);
   }
@@ -91,9 +91,9 @@ postSchema.methods.getPostDetail = async function () {
 
 postSchema.methods.toJSON = function () {
   const post = this.toObject();
-  if (post.author._id) {
+  if (post.author._id && post.author.profileId) {
     const userObject = post.author;
-    userObject.id = userObject._id;
+    userObject.id = userObject._id.toString();
     userObject.avatar = getAvatarUrl(userObject.id);
     if (userObject.coverImage) {
       userObject.coverImage = getCoverImageUrl(userObject.id);

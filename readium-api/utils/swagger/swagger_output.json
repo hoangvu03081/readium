@@ -49,28 +49,6 @@
     }
   ],
   "paths": {
-    "/notifications/{userId}": {
-      "post": {
-        "tags": [
-          "Notification"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {},
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
     "/posts/{postId}/like": {
       "post": {
         "tags": [
@@ -243,6 +221,10 @@
                   "description": {
                     "type": "string",
                     "example": "Description"
+                  },
+                  "isPublished": {
+                    "type": "string",
+                    "example": "false"
                   }
                 }
               }
@@ -484,7 +466,7 @@
     "/auth/change-password": {
       "post": {
         "tags": [
-          "User"
+          "Auth"
         ],
         "summary": "User change password",
         "description": "",
@@ -1382,7 +1364,7 @@
         "tags": [
           "Comment"
         ],
-        "summary": "Get comment of a post",
+        "summary": "Get comments of a post",
         "description": "",
         "parameters": [
           {

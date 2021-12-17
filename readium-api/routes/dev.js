@@ -104,6 +104,10 @@ router.post(
                   type: 'string',
                   example: "Description",
                 },
+                isPublished: {
+                  type: "string",
+                  example: "false",
+                },
               }
             }
           }
@@ -114,7 +118,14 @@ router.post(
       }]
     */
     try {
-      const { title, content, textEditorContent, description } = req.body;
+      let {
+        title,
+        content,
+        textEditorContent,
+        description,
+        isPublished,
+      } = req.body;
+      isPublished = isPublished === "true";
 
       const {
         file: { buffer: coverImage },
@@ -127,7 +138,7 @@ router.post(
         description,
         coverImage,
         author: req.user._id,
-        isPublished: true,
+        isPublished,
         publishDate: new Date(),
       });
 

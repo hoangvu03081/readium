@@ -1,4 +1,5 @@
 const Post = require("../models/Post");
+
 const checkOwnPost = async (req, res, next) => {
   const post = await Post.findById(req.params.id);
   if (!post) {
