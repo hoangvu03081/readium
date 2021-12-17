@@ -395,7 +395,7 @@ router.put("/:id/title", authMiddleware, checkOwnPost, async (req, res) => {
       }
     */
   try {
-    const { post } = req;
+    let { post } = req;
 
     if (post.isPublished) {
       return res.status(400).send({ message: "Can not edit published post" });
@@ -406,7 +406,8 @@ router.put("/:id/title", authMiddleware, checkOwnPost, async (req, res) => {
     else post.title = "";
 
     await post.save();
-    return res.send(await post.getPostDetail());
+    post = await post.getPostDetail();
+    return res.send();
   } catch (err) {
     return res
       .status(500)
@@ -505,6 +506,7 @@ router.put(
 
       return res.send(post);
     } catch (err) {
+      console.log(err);
       return res.status(500).send({
         message: "Something went wrong when updating post's description",
       });
