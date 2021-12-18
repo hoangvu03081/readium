@@ -14,7 +14,7 @@ const passport = require("passport");
 require("./config/db");
 require("./config/passport")(passport);
 
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
 app.use(sessionsParser);
 app.use(cors(corsOptions));
 app.use(passport.initialize());
