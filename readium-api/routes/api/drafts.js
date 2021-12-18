@@ -55,6 +55,9 @@ router.get("/:id/cover-image", authMiddleware, async (req, res) => {
   /*
     #swagger.tags = ['Draft']
     #swagger.summary = 'Fetch a draft cover image'
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
   */
 
   try {
@@ -71,7 +74,7 @@ router.get("/:id/cover-image", authMiddleware, async (req, res) => {
         .send({ message: `Cannot find post with ID: ${_id}` });
     }
 
-    if (!post.coverImageUrl) {
+    if (!post.coverImage) {
       return res.status(404).send({ message: "Post's cover image not found" });
     }
 

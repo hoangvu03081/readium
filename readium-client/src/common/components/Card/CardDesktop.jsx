@@ -1,14 +1,11 @@
-import React, { useRef, useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import TagBtn from "../Buttons/TagBtn";
 import LoveComment from "../Buttons/LoveComment";
-import { ReactComponent as AddCollection } from "../../../assets/icons/add_collection.svg";
-import { ReactComponent as AddedCollection } from "../../../assets/icons/added_collection.svg";
-import { ReactComponent as CardOptions } from "../../../assets/icons/card_options.svg";
-import More from "./More";
-import useOutsideClickAlerter from "../../hooks/useOutsideClickAlerter";
+import Corner from "./Corner";
 
+// STYLES ----------------------------------------------------
 const Card = styled.div`
   border: 2px solid ${({ theme }) => theme.colors.CardBlack};
   border-radius: 5px;
@@ -161,7 +158,7 @@ const Right = styled.div`
   }
 `;
 
-const Corner = styled.div`
+const LoveCommentLayout = styled.div`
   width: auto;
   padding: 0;
   position: absolute;
@@ -172,43 +169,7 @@ const Corner = styled.div`
     top: -30px;
   }
 `;
-
-const CardOptionsClick = styled.div`
-  position: absolute;
-  top: 66px;
-  right: -27px;
-  width: 135px;
-  padding: 0;
-  &.hide {
-    opacity: 0;
-    pointer-events: none;
-    z-index: 1;
-    transition: all 0.3s;
-  }
-  &.unhide {
-    opacity: 1;
-    z-index: 9;
-    transition: all 0.3s;
-  }
-`;
-
-const OutsideClickOptions = styled.div`
-  font-size: 30px;
-  position: absolute;
-  right: 5px;
-  top: 0;
-  svg {
-    transition: all 0.3s;
-  }
-  svg:hover {
-    cursor: pointer;
-    transform: scale(1.2);
-    transition: all 0.3s;
-  }
-  > .active {
-    transform: scale(1.2);
-  }
-`;
+// -----------------------------------------------------------
 
 export default function CardDesktop({
   preview,
@@ -219,14 +180,8 @@ export default function CardDesktop({
   userAvatar,
   loveNumber,
   commentNumber,
-  hideOptions,
+  type,
 }) {
-  const [add, setAdd] = useState(0);
-  const [more, setMore] = useState(0);
-  const outsideClickOptionsBtn = useRef(null);
-  useOutsideClickAlerter(outsideClickOptionsBtn, () => {
-    setMore(0);
-  });
   return (
     <Card className="row">
       <Left className="col-3">
@@ -244,38 +199,16 @@ export default function CardDesktop({
         </div>
       </Middle>
 
-      <Right className={hideOptions ? "hideOptions col-2" : "col-2"}>
-        <AddCollection
-          className={add === 0 ? "unhide" : "hide"}
-          onClick={() => setAdd(1)}
-        />
-        <AddedCollection
-          className={add === 0 ? "hide" : "unhide"}
-          onClick={() => setAdd(0)}
-        />
-        <OutsideClickOptions ref={outsideClickOptionsBtn}>
-          <CardOptions
-            className={more === 1 ? "active" : ""}
-            onClick={() => {
-              if (more === 0) {
-                setMore(1);
-              } else {
-                setMore(0);
-              }
-            }}
-          />
-        </OutsideClickOptions>
+      <Right className="col-2">
         <p>{duration > 1 ? `${duration} mins read` : `${duration} min read`}</p>
         <img src={userAvatar} alt="" />
       </Right>
 
-      <Corner>
-        <LoveComment loveNumber={loveNumber} commentNumber={commentNumber} />
-      </Corner>
+      <Corner type={type} />
 
-      <CardOptionsClick className={more === 0 ? "hide" : "unhide"}>
-        <More />
-      </CardOptionsClick>
+      <LoveCommentLayout>
+        <LoveComment loveNumber={loveNumber} commentNumber={commentNumber} />
+      </LoveCommentLayout>
     </Card>
   );
 }
@@ -289,5 +222,5 @@ CardDesktop.propTypes = {
   userAvatar: PropTypes.string.isRequired,
   loveNumber: PropTypes.number.isRequired,
   commentNumber: PropTypes.number.isRequired,
-  hideOptions: PropTypes.bool.isRequired,
+  type: PropTypes.string.isRequired,
 };

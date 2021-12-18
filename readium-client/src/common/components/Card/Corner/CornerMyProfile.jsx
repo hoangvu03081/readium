@@ -8,7 +8,7 @@ const Layout = styled.div`
   border: 2px solid ${({ theme }) => theme.colors.MoreBlack};
   width: 135px;
   padding: 0;
-  h1 {
+  p {
     margin: 0;
     padding: 8px 0;
     font-family: "Raleway";
@@ -26,12 +26,11 @@ const Layout = styled.div`
   }
 `;
 
-export default function More() {
+export default function CornerMyProfile() {
   return (
     <Layout>
-      <h1>Dismiss story</h1>
-      <h1>Report story</h1>
-      <h1>Block author</h1>
+      <p>Edit post</p>
+      <p>Delete post</p>
     </Layout>
   );
 }

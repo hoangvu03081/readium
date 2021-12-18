@@ -1,14 +1,11 @@
-import React, { useRef, useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import LoveComment from "../Buttons/LoveComment";
 import TagBtn from "../Buttons/TagBtn";
-import { ReactComponent as AddCollection } from "../../../assets/icons/add_collection.svg";
-import { ReactComponent as AddedCollection } from "../../../assets/icons/added_collection.svg";
-import { ReactComponent as CardOptions } from "../../../assets/icons/card_options.svg";
-import More from "./More";
-import useOutsideClickAlerter from "../../hooks/useOutsideClickAlerter";
+import Corner from "./Corner";
 
+// STYLES --------------------------------------------------
 const Layout = styled.div`
   border: 2px solid ${({ theme }) => theme.colors.CardBlack};
   border-radius: 4px;
@@ -67,75 +64,19 @@ const Content = styled.p`
   font-size: 18px;
   margin: 0 0 18px 0;
 `;
-const FlexContainer = styled.div`
+const BottomFlexContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 10px;
 `;
-const Left = styled.div`
+const BottomLeft = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
 `;
-const Right = styled.div``;
-
-const Corner = styled.div`
-  position: absolute;
-  right: 13px;
-  top: 13px;
-  display: flex;
-  justify-content: space-between;
-  width: 60px;
-  > svg:first-child,
-  > svg:nth-child(2) {
-    font-size: 26px;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-  svg {
-    transition: all 0.25s;
-    &:hover,
-    &.active {
-      cursor: pointer;
-      transform: scale(1.15);
-      transition: all 0.25s;
-    }
-  }
-  &.hideOptions {
-    > div {
-      display: none;
-    }
-    > svg {
-      right: 0;
-      left: unset;
-    }
-  }
-`;
-const OutsideClickMoreOptions = styled.div`
-  font-size: 24px;
-  position: absolute;
-  top: 0;
-  right: 0;
-`;
-const MoreOptions = styled.div`
-  position: absolute;
-  top: 18px;
-  right: -50px;
-  transform: scale(0.85);
-  &.hide {
-    opacity: 0;
-    pointer-events: none;
-    z-index: 1;
-    transition: all 0.3s;
-  }
-  &.unhide {
-    opacity: 1;
-    z-index: 9;
-    transition: all 0.3s;
-  }
-`;
+const BottomRight = styled.div``;
+// ----------------------------------------------------------
 
 export default function CardMobile({
   title,
@@ -145,74 +86,36 @@ export default function CardMobile({
   userAvatar,
   loveNumber,
   commentNumber,
-  hideOptions,
+  type,
 }) {
-  const [addCollection, setAddCollection] = useState(0);
-  const handleAddCollection = (state) => {
-    if (state === 0) setAddCollection(1);
-    else setAddCollection(0);
-  };
-
-  const [moreOptions, setMoreOptions] = useState(0);
-  const handleMoreOptions = (state) => {
-    if (state === 0) setMoreOptions(1);
-    else setMoreOptions(0);
-  };
-  const outsideClickMoreOptions = useRef(null);
-  useOutsideClickAlerter(outsideClickMoreOptions, () => {
-    setMoreOptions(0);
-  });
-
   return (
     <Layout>
       <Top>
         <UserAvatar src={userAvatar} />
         <UserName>by {user}</UserName>
         <Title>{title}</Title>
-        <Corner className={hideOptions ? "hideOptions" : ""}>
-          <AddCollection
-            className={addCollection === 0 ? "d-block" : "d-none"}
-            onClick={() => {
-              handleAddCollection(addCollection);
-            }}
-          />
-          <AddedCollection
-            className={addCollection === 0 ? "d-none" : "d-block"}
-            onClick={() => {
-              handleAddCollection(addCollection);
-            }}
-          />
-          <OutsideClickMoreOptions ref={outsideClickMoreOptions}>
-            <CardOptions
-              className={moreOptions === 0 ? "" : "active"}
-              onClick={() => {
-                handleMoreOptions(moreOptions);
-              }}
-            />
-          </OutsideClickMoreOptions>
-          <MoreOptions className={moreOptions === 0 ? "hide" : "unhide"}>
-            <More />
-          </MoreOptions>
-        </Corner>
       </Top>
+
       <Bottom>
         <Content>{content}</Content>
-        <FlexContainer className="">
-          <Left className="">
+        <BottomFlexContainer>
+          <BottomLeft>
             {tags.map((item, index) => {
               // eslint-disable-next-line react/no-array-index-key
               if (index < 2) return <TagBtn key={index}>{item}</TagBtn>;
               return "";
             })}
-          </Left>
-          <Right className="">
+          </BottomLeft>
+          <BottomRight>
             <LoveComment
               loveNumber={loveNumber}
               commentNumber={commentNumber}
             />
-          </Right>
-        </FlexContainer>
+          </BottomRight>
+        </BottomFlexContainer>
       </Bottom>
+
+      <Corner type={type} />
     </Layout>
   );
 }
@@ -225,5 +128,5 @@ CardMobile.propTypes = {
   userAvatar: PropTypes.string.isRequired,
   loveNumber: PropTypes.number.isRequired,
   commentNumber: PropTypes.number.isRequired,
-  hideOptions: PropTypes.bool.isRequired,
+  type: PropTypes.string.isRequired,
 };

@@ -6,6 +6,7 @@ import debounce from "lodash.debounce";
 import TextareaAutosize from "react-textarea-autosize";
 import { WithContext as ReactTags } from "react-tag-input";
 import { useDropzone } from "react-dropzone";
+import Resizer from "react-image-file-resizer";
 import {
   useTitleDraft,
   useDescriptionDraft,
@@ -137,23 +138,27 @@ const StoryInformation = React.forwardRef(({ id }, ref) => {
   const resCoverImageDraft = useCoverImageDraft(id);
   const onDrop = useCallback(
     (acceptedFiles) => {
-      acceptedFiles.forEach((file) => {
-        const reader = new FileReader();
-        reader.onabort = () => console.log("File reading was aborted.");
-        reader.onerror = () => console.log("File reading has failed.");
-        reader.onload = () => {
-          const binaryStr = reader.result;
-          const arr = new Uint8Array(binaryStr);
-          const blob = new Blob([arr.buffer], { type: "image/png" });
-          setCoverImageSrc(window.URL.createObjectURL(blob));
-          ref.current[4].classList.remove("d-block");
-          ref.current[4].classList.add("d-none");
-        };
-        reader.readAsArrayBuffer(file);
-      });
-      const coverImageDraft = new FormData();
-      coverImageDraft.append("coverImage", acceptedFiles[0]);
-      resCoverImageDraft.mutate(coverImageDraft);
+      ref.current[4].classList.remove("d-block");
+      ref.current[4].classList.add("d-none");
+      Resizer.imageFileResizer(
+        acceptedFiles[0],
+        2048,
+        2048,
+        "PNG",
+        100,
+        0,
+        (file) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            setCoverImageSrc(reader.result);
+          };
+          reader.readAsDataURL(file);
+          const coverImageDraft = new FormData();
+          coverImageDraft.append("coverImage", file);
+          resCoverImageDraft.mutate(coverImageDraft);
+        },
+        "file"
+      );
     },
     [id]
   );

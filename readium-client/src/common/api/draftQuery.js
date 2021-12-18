@@ -44,7 +44,7 @@ export function useContentDraft(id) {
     const newDelta = currentDelta.diff(editor.getContents());
     currentDelta = editor.getContents();
     axios.patch(DRAFT_API.PATCH_CONTENT(id), {
-      diff: JSON.stringify(newDelta),
+      diff: newDelta,
     });
   });
 }
