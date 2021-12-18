@@ -222,6 +222,7 @@ router.patch("/:id/diff", authMiddleware, checkOwnPost, async (req, res) => {
     await post.save();
     return res.send(await post.getPostDetail());
   } catch (err) {
+    console.log(err);
     return res
       .status(500)
       .send({ message: "Something went wrong when updating post's content" });
@@ -407,7 +408,7 @@ router.put("/:id/title", authMiddleware, checkOwnPost, async (req, res) => {
 
     await post.save();
     post = await post.getPostDetail();
-    return res.send();
+    return res.send(post);
   } catch (err) {
     return res
       .status(500)
@@ -545,6 +546,40 @@ router.put("/:id/publish", authMiddleware, checkOwnPost, async (req, res) => {
     return res.status(500).send({
       message: "Something went wrong when publishing the post",
     });
+  }
+});
+
+router.put("/:id/republish", authMiddleware, checkOwnPost, async (req, res) => {
+  /*
+      #swagger.tags = ['Draft']
+      #swagger.summary = 'Endpoint to republish draft'
+      #swagger.security = [{
+        "bearerAuth": []
+      }]
+    */
+  try {
+    if (req.post.isPublished || !req.post.publishedPost) {
+      return res.send({ message: "This post is already edited / published" });
+    }
+    const post = await Post.find({ _id: req.post.publishedPost });
+    if (!req.post.title) {
+      return res.send({ message: "Please provide title" });
+    }
+    if (!req.post.coverImage) {
+      return res.send({ message: "Please provide cover image" });
+    }
+    post.title = req.post.title;
+    post.coverImage = req.post.coverImage;
+    post.content = req.post.content;
+    post.tags = req.post.tags;
+    post.description = req.post.description;
+    await post.save();
+
+    return res.send();
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Something went wrong in republish post" });
   }
 });
 

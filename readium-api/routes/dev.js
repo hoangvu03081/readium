@@ -134,7 +134,7 @@ router.post(
       let post = new Post({
         title,
         content,
-        textEditorContent,
+        // textEditorContent,
         description,
         coverImage,
         author: req.user._id,
@@ -164,7 +164,7 @@ router.post("/ai", async (req, res) => {
       _id: posts[0]._id,
       title: posts[0].title,
       content: posts[0].content,
-      textEditorContent: posts[0].textEditorContent,
+      // textEditorContent: posts[0].textEditorContent,
       coverImage: posts[0].coverImage,
       author: posts[0].author,
       isPublished: posts[0].isPublished,
