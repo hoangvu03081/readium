@@ -112,16 +112,17 @@ const StoryInformation = React.forwardRef(({ id }, ref) => {
       ref.current[7] = tagsSaved;
       const newTags = [...tags, tag];
       setTags(newTags);
+      handleTagsChange(newTags);
       debounceSendTagsDraft(newTags);
     }
   };
   const handleDelete = (i) => {
     tagsSaved = false;
     ref.current[7] = tagsSaved;
-    const result = tags.filter((tag, index) => index !== i);
-    setTags(result);
-    handleTagsChange(result);
-    debounceSendTagsDraft(result);
+    const newTags = tags.filter((tag, index) => index !== i);
+    setTags(newTags);
+    handleTagsChange(newTags);
+    debounceSendTagsDraft(newTags);
   };
   const handleDrag = (tag, currPos, newPos) => {
     tagsSaved = false;
