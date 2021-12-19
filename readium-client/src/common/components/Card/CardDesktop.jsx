@@ -2,8 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import TagBtn from "../Buttons/TagBtn";
-import LoveComment from "../Buttons/LoveComment";
 import Corner from "./Corner";
+import LoveComment from "../Buttons/LoveComment";
 
 // STYLES ----------------------------------------------------
 const Card = styled.div`
@@ -158,7 +158,15 @@ const Right = styled.div`
   }
 `;
 
-const LoveCommentLayout = styled.div`
+const CornerContainer = styled.div`
+  width: auto;
+  padding: 0;
+  position: absolute;
+  top: 33px;
+  right: 20px;
+`;
+
+const LoveCommentContainer = styled.div`
   width: auto;
   padding: 0;
   position: absolute;
@@ -204,11 +212,13 @@ export default function CardDesktop({
         <img src={userAvatar} alt="" />
       </Right>
 
-      <Corner type={type} />
+      <CornerContainer>
+        <Corner type={type} />
+      </CornerContainer>
 
-      <LoveCommentLayout>
+      <LoveCommentContainer>
         <LoveComment loveNumber={loveNumber} commentNumber={commentNumber} />
-      </LoveCommentLayout>
+      </LoveCommentContainer>
     </Card>
   );
 }

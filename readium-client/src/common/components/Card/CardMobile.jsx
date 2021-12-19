@@ -1,9 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import Corner from "./Corner";
 import LoveComment from "../Buttons/LoveComment";
 import TagBtn from "../Buttons/TagBtn";
-import Corner from "./Corner";
 
 // STYLES --------------------------------------------------
 const Layout = styled.div`
@@ -11,6 +11,7 @@ const Layout = styled.div`
   border-radius: 4px;
   width: 100%;
   margin-bottom: 30px;
+  position: relative;
   @media (min-width: 651px) {
     display: none;
   }
@@ -76,6 +77,13 @@ const BottomLeft = styled.div`
   gap: 10px;
 `;
 const BottomRight = styled.div``;
+
+const CornerContainer = styled.div`
+  width: auto;
+  position: absolute;
+  top: 13px;
+  right: 13px;
+`;
 // ----------------------------------------------------------
 
 export default function CardMobile({
@@ -115,7 +123,9 @@ export default function CardMobile({
         </BottomFlexContainer>
       </Bottom>
 
-      <Corner type={type} />
+      <CornerContainer>
+        <Corner type={type} />
+      </CornerContainer>
     </Layout>
   );
 }
