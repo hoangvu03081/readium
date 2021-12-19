@@ -7,7 +7,7 @@ import { CoverImage } from "./style";
 const ClickableCoverImage = styled.label`
   cursor: pointer;
 
-  #upload-photo {
+  #upload-cover-image {
     opacity: 0;
     position: absolute;
     z-index: -1;
@@ -39,12 +39,12 @@ export default function MyCoverImage({ src, userId }) {
     uploadCoverImage.mutate(fileRef.current.files[0]);
   };
   return (
-    <ClickableCoverImage htmlFor="upload-photo">
+    <ClickableCoverImage htmlFor="upload-cover-image">
       <CoverImage src={src} />
       <input
         type="file"
         ref={fileRef}
-        id="upload-photo"
+        id="upload-cover-image"
         accept=".jpg,.jpeg,.png,.webp,.avif,.tiff,.gif,.svg"
         onChange={handleAddImage}
       />

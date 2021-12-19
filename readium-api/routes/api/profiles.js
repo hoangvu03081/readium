@@ -59,20 +59,6 @@ router.get("/", authMiddleware, async (req, res) => {
   return res.send(req.user.getPublicProfile());
 });
 
-router.get("/:profileId", async (req, res) => {
-  /*
-    #swagger.tags = ['Profile']
-    #swagger.summary = "Get others' profile"
-  */
-  try {
-    const user = await User.findOne({ profileId: req.params.profileId });
-    if (!user) return res.status(404).send({ message: "User not found" });
-    return res.send(user.getPublicProfile());
-  } catch (err) {
-    return res.status(500).send({ message: "Error in getting profile" });
-  }
-});
-
 router.get("/avatar", authMiddleware, async (req, res) => {
   /*
     #swagger.tags = ['Profile']
@@ -81,7 +67,7 @@ router.get("/avatar", authMiddleware, async (req, res) => {
       "bearerAuth": []
     }]
   */
-
+  console.log(123333333333);
   return res.set("Content-Type", "image/png").send(req.user.avatar);
 });
 
@@ -97,6 +83,20 @@ router.get("/cover-image", authMiddleware, async (req, res) => {
     return res.status(404).send({ message: "Cover image not found" });
   }
   return res.set("Content-Type", "image/png").send(req.user.coverImage);
+});
+
+router.get("/:profileId", async (req, res) => {
+  /*
+    #swagger.tags = ['Profile']
+    #swagger.summary = "Get others' profile"
+  */
+  try {
+    const user = await User.findOne({ profileId: req.params.profileId });
+    if (!user) return res.status(404).send({ message: "User not found" });
+    return res.send(user.getPublicProfile());
+  } catch (err) {
+    return res.status(500).send({ message: "Error in getting profile" });
+  }
 });
 
 router.get("/avatar/:userId", async (req, res) => {

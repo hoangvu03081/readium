@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
+import { toast } from "react-toastify";
 import { PROFILE_API, USER_API } from "./apiConstant";
 
 export function useEditProfile() {}
@@ -49,17 +50,25 @@ export function useUploadAvatar(userId) {
     (file) => {
       const formData = new FormData();
       formData.append("avatar", file);
-      return axios.post(PROFILE_API.POST_UPLOAD_AVATAR, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      return toast.promise(
+        axios.post(PROFILE_API.POST_UPLOAD_AVATAR, formData, {
+          responseType: "blob",
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }),
+        {
+          pending: "Uploading your avatar",
+          success: "Your avatar has been updated!",
+          error: "Sorry, something went wrong",
+        }
+      );
     },
     {
-      onSuccess: () => {
-        //TODO: Fix my avatar
-        queryClient.invalidateQueries(["avatar", userId], { exact: true });
-        queryClient.invalidateQueries(["avatar"], { exact: true });
+      onSuccess: ({ data }) => {
+        const url = window.URL.createObjectURL(data);
+        queryClient.setQueryData(["avatar", userId], url);
+        queryClient.setQueryData(["avatar"], url);
       },
     }
   );
@@ -71,15 +80,24 @@ export function useUploadCoverImage(userId) {
     (file) => {
       const formData = new FormData();
       formData.append("coverImage", file);
-      return axios.post(PROFILE_API.POST_UPLOAD_COVER_IMAGE, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      return toast.promise(
+        axios.post(PROFILE_API.POST_UPLOAD_COVER_IMAGE, formData, {
+          responseType: "blob",
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }),
+        {
+          pending: "Uploading your cover image",
+          success: "Your cover image has been updated!",
+          error: "Sorry, something went wrong",
+        }
+      );
     },
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["coverImage", userId], { exact: true });
+      onSuccess: ({ data }) => {
+        const url = window.URL.createObjectURL(data);
+        queryClient.setQueryData(["coverImage", userId], url);
       },
     }
   );

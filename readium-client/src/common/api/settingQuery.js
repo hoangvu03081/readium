@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient, useMutation } from "react-query";
 import axios from "axios";
+import { toast } from "react-toastify";
 import { SETTING_API } from "./apiConstant";
 
 export function useFetchProfile(profileId) {
@@ -19,6 +20,9 @@ export function useUpdateProfile(profileId) {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["profile", profileId]);
+        toast.success("Update successfully!", {
+          position: toast.POSITION.BOTTOM_RIGHT,
+        });
       },
     }
   );

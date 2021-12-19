@@ -1,5 +1,6 @@
 import React from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
+import { ToastContainer, Zoom } from "react-toastify";
 import ConfirmEmail from "../screens/ConfirmEmail";
 import SignInModal from "../common/components/SignInModal";
 import MobileNavbar from "../common/components/Header/MobileNavbar";
@@ -28,6 +29,18 @@ function App() {
         <SignInModal />
         <MobileNavbar />
         <Header />
+        <ToastContainer
+          position="top-right"
+          autoClose={2000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          transition={Zoom}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
         <Switch>
           <Route exact path="/">
             <Home />

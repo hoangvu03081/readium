@@ -68,3 +68,7 @@ export const OutlinedButton = styled.button`
     color: white;
   }
 `;
+
+export const ErrorText = styled.span`
+  color: red;
+`;
