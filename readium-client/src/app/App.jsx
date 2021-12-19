@@ -9,6 +9,7 @@ import Home from "../screens/Home";
 import Profile from "../screens/Profile";
 import Page404 from "../screens/Page404";
 import WritePost from "../screens/WritePost";
+import PreviewPost from "../screens/PreviewPost";
 import ResetPassword from "../screens/ResetPassword";
 import "./App.css";
 import Settings from "../screens/Settings";
@@ -53,6 +54,9 @@ function App() {
           </Route>
           <Route path="/profile/:profileId?">
             <Profile />
+          </Route>
+          <Route path="/preview">
+            <PreviewPost />
           </Route>
           <Route path="/post">post</Route>
           <Route path="/notifications">notifications</Route>

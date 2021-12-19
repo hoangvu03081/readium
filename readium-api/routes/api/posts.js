@@ -2,10 +2,10 @@ const router = require("express").Router();
 
 const Post = require("../../models/Post");
 const {
-  checkValidSkipAndDate,
-  checkOwnPost,
+  checkValidSkipAndDate
 } = require("../../utils");
-const { authMiddleware } = require("../../utils/auth");
+const { authMiddleware,
+  checkOwnPost, } = require("../../utils/auth");
 
 router.get("/popular", async (req, res) => {
   /*

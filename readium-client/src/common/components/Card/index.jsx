@@ -13,6 +13,7 @@ export default function Card({
   userAvatar,
   loveNumber,
   commentNumber,
+  hideOptions,
 }) {
   return (
     <>
@@ -25,6 +26,7 @@ export default function Card({
         userAvatar={userAvatar}
         loveNumber={loveNumber}
         commentNumber={commentNumber}
+        hideOptions={hideOptions}
       />
       <CardMobile
         title={title}
@@ -34,6 +36,7 @@ export default function Card({
         userAvatar={userAvatar}
         loveNumber={loveNumber}
         commentNumber={commentNumber}
+        hideOptions={hideOptions}
       />
       {/* <CardDesktop
         preview="./src/assets/images/preview_2.png"
@@ -68,4 +71,5 @@ Card.propTypes = {
   userAvatar: PropTypes.string.isRequired,
   loveNumber: PropTypes.number.isRequired,
   commentNumber: PropTypes.number.isRequired,
+  hideOptions: PropTypes.bool.isRequired,
 };

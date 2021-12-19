@@ -16,15 +16,16 @@ export default function CardList() {
             return (
               <Card
                 key={post.id}
-                preview={post.imageUrl}
+                preview={post.coverImageUrl}
                 title={post.title}
                 content={post.content}
                 tags={post.tags}
-                duration={3}
-                user={post.author}
-                userAvatar="./src/assets/images/yasuo.png"
-                loveNumber={post.likes.length}
-                commentNumber={post.comments.length}
+                duration={post.duration}
+                user={post.author.displayName}
+                userAvatar={post.author.avatar}
+                loveNumber={post.likes}
+                commentNumber={post.comments}
+                hideOptions={false}
               />
             );
           })

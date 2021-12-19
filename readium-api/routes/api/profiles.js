@@ -67,7 +67,6 @@ router.get("/avatar", authMiddleware, async (req, res) => {
       "bearerAuth": []
     }]
   */
-  console.log(123333333333);
   return res.set("Content-Type", "image/png").send(req.user.avatar);
 });
 

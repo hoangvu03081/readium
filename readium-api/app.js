@@ -1,4 +1,11 @@
-const { elasticsearch, rabbitmq, swaggerDoc, swaggerUi } = require("./config");
+const {
+  elasticsearch,
+  rabbitmq,
+  swaggerDoc,
+  swaggerUi,
+  sessionsOptions,
+  corsOptions,
+} = require("./config");
 
 const express = require("express");
 const app = express();
@@ -7,9 +14,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const sessions = require("express-session");
-const MongoStore = require("connect-mongo");
 
-const { getUrl } = require("./utils/db");
 const {
   messageCode: { NO_AUTH_TOKEN, REQUIRE_ACTIVATE_ACCOUNT },
 } = require("./utils/auth");
@@ -21,41 +26,8 @@ app.use(cookieParser());
 app.use(express.json());
 // app.use(express.urlencoded({ extended: false }));
 
-app.use(
-  sessions({
-    secret: process.env.SESSION_SECRET,
-    saveUninitialized: true,
-    cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
-    },
-    resave: false,
-    store: MongoStore.create({
-      mongoUrl: getUrl("session"),
-    }),
-  })
-);
+app.use(sessions(sessionsOptions));
 
-// allow React application to make HTTP requests to Express application
-var allowedOrigins = [
-  "http://localhost:3000",
-  "http://localhost:5000",
-  "http://localhost" /** other domains if any */,
-];
-const corsOptions = {
-  credentials: true,
-  origin: function (origin, callback) {
-    // allow requests with no origin
-    // (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      var msg =
-        "The CORS policy for this site does not " +
-        "allow access from the specified Origin.";
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  },
-};
 app.use(cors(corsOptions));
 
 app.use(passport.initialize());
@@ -78,6 +50,7 @@ app.use((err, req, res, next) => {
   } else if (err.message === NO_AUTH_TOKEN) {
     return res.status(401).send({ message: "Unauthenticated" });
   }
+  console.log(err);
   return res.status(500).send({ message: "Some errors" });
 });
 
