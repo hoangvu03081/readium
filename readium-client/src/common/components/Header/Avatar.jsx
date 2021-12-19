@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Clickable, AvatarImage } from "./styles";
 import AvatarDropdown from "./AvatarDropdown";
-import useAvatar from "../../api/useAvatar";
+import { useMyAvatar } from "../../api/useAvatar";
 
 export default function Avatar() {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef();
   const handleToggleDropdown = () => setShowDropdown(!showDropdown);
-  const avatarQuery = useAvatar();
+  const avatarQuery = useMyAvatar();
   useEffect(() => {
     const isOutsideClicked = (e) => {
       if (!avatarQuery.data) return;
