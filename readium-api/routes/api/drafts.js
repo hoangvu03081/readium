@@ -1,16 +1,21 @@
+const Stream = require("stream");
 const router = require("express").Router();
 const Delta = require("quill-delta");
+const { ObjectId } = require("mongodb");
+const { getBucket } = require("../../config/db");
+
 const configMulter = require("../../config/multer-config");
 
 const Post = require("../../models/Post");
-const { authMiddleware } = require("../../utils");
+const { authMiddleware, streamToString } = require("../../utils");
 const {
   checkValidSkipAndDate,
   checkOwnPost,
 } = require("../../middleware/posts-middleware");
+const { Readable } = require("stream");
 
 const uploadCover = configMulter({
-  limits: { fields: 6, fileSize: 5e6, files: 1 },
+  limits: { fields: 6, fileSize: 12e6, files: 1 },
 });
 
 router.get("/", authMiddleware, checkValidSkipAndDate, async (req, res) => {
@@ -71,7 +76,7 @@ router.get("/:id/cover-image", authMiddleware, async (req, res) => {
         .send({ message: `Cannot find post with ID: ${_id}` });
     }
 
-    if (!post.coverImageUrl) {
+    if (!post.coverImage) {
       return res.status(404).send({ message: "Post's cover image not found" });
     }
 
@@ -108,6 +113,16 @@ router.get("/:id", authMiddleware, async (req, res) => {
   }
 });
 
+const createInitialDraftEditorContent = () => {
+  const buf = Buffer.from('{ "ops": [] }', "utf8");
+  const readable = new Readable();
+  readable._read = () => {};
+  readable.push(buf);
+  readable.push(null);
+  return readable;
+};
+
+// TODO: test grid fs
 router.post("/", authMiddleware, async (req, res) => {
   /*
     #swagger.tags = ['Draft']
@@ -119,6 +134,15 @@ router.post("/", authMiddleware, async (req, res) => {
   try {
     let post = new Post();
     post.author = req.user._id;
+
+    const textEditorContentId = new ObjectId();
+    post.textEditorContent = textEditorContentId;
+    // create a file in grid fs and keep a ref to it
+    const bucket = getBucket();
+    const readable = createInitialDraftEditorContent();
+    readable.pipe(
+      bucket.openUploadStream("textEditorContent", { id: textEditorContentId })
+    );
 
     await post.save();
     return res.status(201).send({ id: post._id });
@@ -193,25 +217,72 @@ router.patch("/:id/diff", authMiddleware, checkOwnPost, async (req, res) => {
   */
   try {
     const { post } = req;
-
     if (post.isPublished) {
       return res.status(400).send({ message: "Can not edit published post" });
     }
 
     const { diff } = req.body;
 
+    ///
+    // const cursor = bucket.find({ _id: post.textEditorContent });
+    // cursor.forEach((doc) => {
+    //   console.log(doc);
+    // });
+    // return res.send();
+
+    ///
+    const bucket = getBucket();
     if (!diff) {
-      post.textEditorContent = '{ "ops": [] }';
+      console.log("here", diff);
+      // post.textEditorContent = '{ "ops": [] }';
+      bucket.delete(post.textEditorContent);
+      // post.textEditorContent = ObjectId;
+
+      const textEditorContentId = new ObjectId();
+      post.textEditorContent = textEditorContentId;
+      // create a file in grid fs and keep a ref to it
+      const readable = createInitialDraftEditorContent();
+      readable.pipe(
+        bucket.openUploadStream("textEditorContent", {
+          id: textEditorContentId,
+        })
+      );
+
       post.content = "";
       post.duration = 0;
       await post.save();
       return res.send(await post.getPostDetail());
     }
-    const diffDelta = new Delta(diff);
-    const textEditorDelta = new Delta(JSON.parse(post.textEditorContent));
-    const composedDelta = textEditorDelta.compose(diffDelta);
 
-    post.textEditorContent = JSON.stringify(composedDelta);
+    const stream = bucket.openDownloadStream(post.textEditorContent);
+    const textEditorContent = await streamToString(stream);
+
+    const diffDelta = new Delta(diff);
+    const textEditorDelta = new Delta(JSON.parse(textEditorContent));
+    const composedDelta = textEditorDelta.compose(diffDelta);
+    const mb = Buffer.byteLength(JSON.stringify(composedDelta), "utf8") * 10e-7;
+    if (mb > 50) {
+      return res.send({
+        message: "Your post content has reached the maximum size 50mb.",
+      });
+    }
+
+    bucket.delete(post.textEditorContent);
+    const textEditorContentId = new ObjectId();
+
+    const buf = Buffer.from(JSON.stringify(composedDelta), "utf8");
+    const readable = new Readable();
+    readable._read = () => {};
+    readable.push(buf);
+    readable.push(null);
+
+    readable.pipe(
+      bucket.openUploadStream("textEditorContent", {
+        id: textEditorContentId,
+      })
+    );
+
+    post.textEditorContent = textEditorContentId;
     post.content = composedDelta
       .filter((op) => typeof op.insert === "string")
       .map((op) => op.insert)

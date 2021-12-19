@@ -57,7 +57,7 @@ router.delete("/", async (req, res) => {
 const uploadCover = multer({
   limits: {
     fields: 6,
-    fileSize: 5e6, // max 5mb
+    fileSize: 12e6,
     files: 1,
   },
   fileFilter(req, file, cb) {

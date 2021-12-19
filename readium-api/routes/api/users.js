@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const Post = require("../../models/Post");
 const User = require("../../models/User");
-const { getImageUrl, authMiddleware } = require("../../utils");
+const { getPostCoverImageUrl, authMiddleware } = require("../../utils");
 
 router.get("/protected", authMiddleware, (req, res) => {
   /*
@@ -63,7 +63,7 @@ router.get("/following/posts", authMiddleware, async (req, res) => {
       )
     );
     posts = posts.map((post) => {
-      post.imageUrl = getImageUrl(post.id);
+      post.imageUrl = getPostCoverImageUrl(post.id);
       return post;
     });
 

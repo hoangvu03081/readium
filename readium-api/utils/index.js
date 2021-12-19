@@ -51,6 +51,15 @@ function getImageBufferFromUrl(url) {
   });
 }
 
+function streamToString(stream) {
+  const chunks = [];
+  return new Promise((resolve, reject) => {
+    stream.on("data", (chunk) => chunks.push(Buffer.from(chunk)));
+    stream.on("error", (err) => reject(err));
+    stream.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
+  });
+}
+
 const downloadImageFromUrl = (url) => {
   getImageBufferFromUrl(url);
   return once(bufferEmitter, "downloaded");
@@ -60,9 +69,11 @@ const convertBufferToPng = (buffer) => {
   return sharp(buffer).png().toBuffer();
 };
 
-const getImageUrl = (postId) => `${serverUrl}/posts/${postId}/cover-image`;
+const getPostCoverImageUrl = (postId) =>
+  `${serverUrl}/posts/${postId}/cover-image`;
 const getAvatarUrl = (userId) => `${serverUrl}/users/profiles/avatar/${userId}`;
-const getCoverImageUrl = (userId) =>
+// TODO: FIX TO GET POST & GET PROFILE COVER IMAGE
+const getUserCoverImageUrl = (userId) =>
   `${serverUrl}/users/profiles/cover-image/${userId}`;
 
 module.exports = {
@@ -87,10 +98,11 @@ module.exports = {
   decrypt,
   NO_AUTH_TOKEN,
   REQUIRE_ACTIVATE_ACCOUNT,
+  streamToString,
   downloadImageFromUrl,
   convertBufferToPng,
-  getImageUrl,
+  getPostCoverImageUrl,
   getAvatarUrl,
-  getCoverImageUrl,
+  getUserCoverImageUrl,
   getUrl,
 };

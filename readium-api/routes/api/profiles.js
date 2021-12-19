@@ -15,7 +15,7 @@ const {
 const configMulter = require("../../config/multer-config");
 
 const uploadAva = configMulter({
-  limits: { fields: 0, fileSize: 5e6, files: 1 },
+  limits: { fields: 0, fileSize: 12e6, files: 1 },
 });
 
 const checkFileSent = (req, res, next) => {

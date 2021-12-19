@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
 const { serverUrl } = require("../config/url");
-const { getAvatarUrl, getCoverImageUrl } = require("../utils");
+const { getAvatarUrl, getUserCoverImageUrl } = require("../utils");
 
 const {
   model,
@@ -44,7 +44,7 @@ userSchema.methods.getPublicProfile = function () {
   userObject.followers = userObject.followers.length;
   userObject.followings = userObject.followings.length;
   if (userObject.coverImage) {
-    userObject.coverImage = getCoverImageUrl(userObject.id);
+    userObject.coverImage = getUserCoverImageUrl(userObject.id);
   }
 
   delete userObject.email;
