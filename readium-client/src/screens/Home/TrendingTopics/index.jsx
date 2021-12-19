@@ -1,22 +1,23 @@
 import React from "react";
 import styled from "styled-components";
 import TrendingBtn from "./TrendingBtn";
+import CustomBackground from "./CustomBackground";
 
 const Background = styled.div`
   padding: 30px 18px 12px 30px;
-  background: rgba(144, 144, 144, 0.1);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   backdrop-filter: blur(0px);
-  -webkit-backdrop-filter: blur(0px);
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
   p {
     font-family: "Raleway";
     font-weight: bold;
     font-size: 22px;
     text-align: center;
-    color: black;
     margin: 0 0 25px 0;
+    background: -webkit-linear-gradient(white, #38495a);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 `;
 
@@ -44,6 +45,7 @@ export default function TrendingTopics() {
         <TrendingBtn>#Technique</TrendingBtn>
         <TrendingBtn>#Henry</TrendingBtn>
       </Content>
+      <CustomBackground />
     </Background>
   );
 }
