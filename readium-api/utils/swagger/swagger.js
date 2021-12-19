@@ -48,8 +48,8 @@ const doc = {
       description: "Testing routes",
     },
     {
-      name: "Notification",
-      description: "Notifications' routes",
+      name: "Search",
+      description: "Elastic Search  ",
     },
   ],
   definitions: {

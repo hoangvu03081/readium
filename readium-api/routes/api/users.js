@@ -2,6 +2,7 @@ const router = require("express").Router();
 const Post = require("../../models/Post");
 const User = require("../../models/User");
 const { getPostCoverImageUrl, authMiddleware } = require("../../utils");
+const { deleteUser } = require("../../utils/elasticsearch");
 
 router.get("/protected", authMiddleware, (req, res) => {
   /*
@@ -190,6 +191,8 @@ router.delete("/", authMiddleware, async (req, res) => {
     });
     await Promise.all(promises);
     await User.deleteOne({ _id: id });
+
+    deleteUser(id);
 
     return res.send({ message: "Sorry to see you go.", user: deletedUser });
   } catch (err) {

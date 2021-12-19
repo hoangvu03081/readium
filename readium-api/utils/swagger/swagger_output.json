@@ -44,11 +44,40 @@
       "description": "Testing routes"
     },
     {
-      "name": "Notification",
-      "description": "Notifications' routes"
+      "name": "Search",
+      "description": "Elastic Search  "
     }
   ],
   "paths": {
+    "/search": {
+      "post": {
+        "tags": [
+          "Search"
+        ],
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "keyword": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/posts/{postId}/like": {
       "post": {
         "tags": [
@@ -1923,6 +1952,36 @@
           },
           "500": {
             "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/drafts/{id}/republish": {
+      "put": {
+        "tags": [
+          "Draft"
+        ],
+        "summary": "Endpoint to republish draft",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
           }
         },
         "security": [

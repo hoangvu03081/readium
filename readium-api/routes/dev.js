@@ -1,3 +1,4 @@
+const { ObjectId } = require("mongoose").SchemaTypes;
 const router = require("express").Router();
 const multer = require("multer");
 
@@ -118,23 +119,19 @@ router.post(
       }]
     */
     try {
-      let {
-        title,
-        content,
-        textEditorContent,
-        description,
-        isPublished,
-      } = req.body;
+      let { title, content, description, isPublished } = req.body;
       isPublished = isPublished === "true";
 
       const {
         file: { buffer: coverImage },
       } = req;
 
+      const textEditorContent = new ObjectId();
+
       let post = new Post({
         title,
         content,
-        // textEditorContent,
+        textEditorContent,
         description,
         coverImage,
         author: req.user._id,

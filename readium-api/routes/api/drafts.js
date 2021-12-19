@@ -13,6 +13,7 @@ const {
   checkOwnPost,
 } = require("../../middleware/posts-middleware");
 const { Readable } = require("stream");
+const { putPost } = require("../../utils/elasticsearch");
 
 const uploadCover = configMulter({
   limits: { fields: 6, fileSize: 12e6, files: 1 },
@@ -47,7 +48,7 @@ router.get("/", authMiddleware, checkValidSkipAndDate, async (req, res) => {
       .limit(5);
 
     posts = posts.map((post) => post.getPostPreview());
-    posts = Promise.all(posts);
+    posts = await Promise.all(posts);
 
     if (posts.length === 0) return res.send({ posts });
     return res.send({ posts, next: skip + 5 });
@@ -383,6 +384,7 @@ router.patch(
       await post.save();
       return res.send(post);
     } catch (err) {
+      console.log(err);
       return res
         .status(500)
         .send({ message: "Something went wrong when updating a post" });
@@ -444,28 +446,28 @@ router.put(
 
 router.put("/:id/title", authMiddleware, checkOwnPost, async (req, res) => {
   /*
-      #swagger.tags = ['Draft']
-      #swagger.summary = "Update draft's title"
-      #swagger.security = [{
-        "bearerAuth": []
-      }]
-      #swagger.requestBody = {
-        required: true,
-        content: {
-          "application/json": {
-            schema: {
-              type: 'object',
-              properties: {
-                title: {
-                  type: 'string',
-                  default: 'Post title'
-                }
+    #swagger.tags = ['Draft']
+    #swagger.summary = "Update draft's title"
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+    #swagger.requestBody = {
+      required: true,
+      content: {
+        "application/json": {
+          schema: {
+            type: 'object',
+            properties: {
+              title: {
+                type: 'string',
+                default: 'Post title'
               }
             }
           }
         }
       }
-    */
+    }
+  */
   try {
     let { post } = req;
 
@@ -609,11 +611,14 @@ router.put("/:id/publish", authMiddleware, checkOwnPost, async (req, res) => {
       });
     }
 
+    putPost(req.params.id, { tags: post.tags, title: post.title });
+
     post.publishDate = new Date();
     post.isPublished = true;
     await post.save();
     return res.send(post);
   } catch (err) {
+    console.log(err);
     return res.status(500).send({
       message: "Something went wrong when publishing the post",
     });
@@ -644,8 +649,10 @@ router.put("/:id/republish", authMiddleware, checkOwnPost, async (req, res) => {
     post.content = req.post.content;
     post.tags = req.post.tags;
     post.description = req.post.description;
-    await post.save();
 
+    putPost(req.params.id, { tags: post.tags, title: post.title });
+
+    await post.save();
     return res.send();
   } catch (err) {
     return res

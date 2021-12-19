@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { WEBSOCKET } from "./apiConstant";
 
 const ws = new WebSocket(WEBSOCKET);
@@ -15,17 +15,16 @@ function useWs() {
     else setTimeout(() => authenticateWs(token), 1000);
   };
 
-  ws.onmessage = function (evt) {
+  ws.onmessage = (evt) => {
     const action = JSON.parse(evt.data);
     switch (action.type) {
       case "notification": {
         setNotifications(action.payload);
         break;
       }
+      default:
     }
   };
-
-  ws.onopen = function (evt) {};
 
   return { notifications, authenticateWs };
 }

@@ -19,6 +19,7 @@ const {
 } = require("../utils");
 const User = require("../models/User");
 const { clientUrl } = require("../config/url");
+const { putUser } = require("../utils/elasticsearch");
 
 router.post("/", async (req, res, next) => {
   /*
@@ -126,53 +127,56 @@ router.post("/register", async (req, res) => {
       }
     } 
   */
-
-  const { email, password } = req.body;
-
-  let errMessage = checkEmpty(email, "Email must not be empty");
-  errMessage = errMessage || validateEmail(email);
-  errMessage = errMessage || checkEmpty(password, "Password must not be empty");
-  errMessage = errMessage || validatePassword(password);
-
-  if (errMessage) {
-    // #swagger.responses[400] = { description: 'Fields have errors' }
-    return res.status(400).send({ message: errMessage });
-  }
-
-  const displayName = email
-    .trim()
-    .split(/[.@]/)
-    .find((word) => Boolean(word));
-
-  const count = await User.find({
-    profileId: { $regex: displayName, $options: "i" },
-  }).countDocuments();
-
-  const profileId = displayName + (count ? "." + count : "");
-
-  const avatarSvg = createAvatar(style, {
-    seed: displayName,
-  });
-  const avatar = await sharp(Buffer.from(avatarSvg, "utf-8"), {
-    density: 50000,
-  })
-    .resize({ width: 200, fit: sharp.fit.contain })
-    .png()
-    .toBuffer();
-
-  const newUser = new User({
-    avatar,
-    email,
-    password,
-    profileId,
-    displayName,
-  });
-
-  const [iv, encryptedId] = encrypt(newUser._id.toString());
-
-  const activationLink = `${clientUrl}/auth/confirm?iv=${iv}&id=${encryptedId}`;
-  newUser.activationLink = activationLink;
   try {
+    const { email, password } = req.body;
+
+    let errMessage = checkEmpty(email, "Email must not be empty");
+    errMessage = errMessage || validateEmail(email);
+    errMessage =
+      errMessage || checkEmpty(password, "Password must not be empty");
+    errMessage = errMessage || validatePassword(password);
+
+    if (errMessage) {
+      // #swagger.responses[400] = { description: 'Fields have errors' }
+      return res.status(400).send({ message: errMessage });
+    }
+
+    const displayName = email
+      .trim()
+      .split(/[.@]/)
+      .find((word) => Boolean(word));
+
+    const count = await User.find({
+      profileId: { $regex: displayName, $options: "i" },
+    }).countDocuments();
+
+    const profileId = displayName + (count ? "." + count : "");
+
+    const avatarSvg = createAvatar(style, {
+      seed: displayName,
+    });
+    const avatar = await sharp(Buffer.from(avatarSvg, "utf-8"), {
+      density: 50000,
+    })
+      .resize({ width: 200, fit: sharp.fit.contain })
+      .png()
+      .toBuffer();
+
+    const newUser = new User({
+      avatar,
+      email,
+      password,
+      profileId,
+      displayName,
+    });
+
+    const newUserId = newUser._id.toString();
+    putUser(newUserId, { displayName });
+
+    const [iv, encryptedId] = encrypt(newUserId);
+
+    const activationLink = `${clientUrl}/auth/confirm?iv=${iv}&id=${encryptedId}`;
+    newUser.activationLink = activationLink;
     await newUser.hashPassword();
     await newUser.save();
     await sendWelcomeEmail({ to: email, url: activationLink });

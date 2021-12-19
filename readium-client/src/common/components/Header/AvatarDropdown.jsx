@@ -86,21 +86,21 @@ function StyledDropdownItem({ children, to, text, toggleDropdown }) {
   );
 }
 
-StyledDropdownItem.propTypes = {
-  children: PropTypes.element.isRequired,
-  // eslint-disable-next-line react/require-default-props
-  to: PropTypes.string,
-  text: PropTypes.string.isRequired,
-  toggleDropdown: PropTypes.func.isRequired,
-};
+// StyledDropdownItem.propTypes = {
+//   children: PropTypes.element.isRequired,
+//   // eslint-disable-next-line react/require-default-props
+//   to: PropTypes.string,
+//   text: PropTypes.string.isRequired,
+//   toggleDropdown: PropTypes.func.isRequired,
+// };
 
 export default function AvatarDropdown({ handleToggleDropdown }) {
-  const { signOut } = useAuth();
+  const { auth, signOut } = useAuth();
   return (
     <StyledAvatarDropdown>
       <StyledDropdownItem
         toggleDropdown={handleToggleDropdown}
-        to="/profile"
+        to={`/profile/${auth.profileId}`}
         text="My profile"
       >
         <FaRegUserCircle />
