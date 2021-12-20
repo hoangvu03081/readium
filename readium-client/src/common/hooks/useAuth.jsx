@@ -28,7 +28,7 @@ export function useAuth() {
 }
 import useWs from "../../common/api/websocket";
 function useProvideAuth() {
-  const [isAuth, setAuth] = useState(false);
+  const [auth, setAuth] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [hasData, setHasData] = useState(false);
@@ -64,8 +64,11 @@ function useProvideAuth() {
         authenticateWs(token);
       }
 
-      await axios.get(`${LOCAL_URL}/users/protected`);
-      setAuth(true);
+      const { data: authResult } = await axios.get(
+        `${LOCAL_URL}/users/protected`
+      );
+
+      setAuth(authResult);
     } catch (e) {
       setAuth(false);
     } finally {
@@ -191,7 +194,7 @@ function useProvideAuth() {
   };
 
   return {
-    isAuth,
+    auth,
     isLoading,
     isError,
     hasData,

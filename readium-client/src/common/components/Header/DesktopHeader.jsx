@@ -54,7 +54,3 @@ export default function DesktopHeader({ isLogin }) {
     </Nav>
   );
 }
-
-DesktopHeader.propTypes = {
-  isLogin: PropTypes.bool.isRequired,
-};
