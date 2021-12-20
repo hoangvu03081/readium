@@ -64,16 +64,16 @@ const authMiddleware = (req, res, next) => {
   })(req, res, next);
 };
 
-// cookie
-// const re = /(\S+)\s+(\S+)/;
+// // cookie
+// // const re = /(\S+)\s+(\S+)/;
 
-// var cookieExtractor = function (req) {
-//   var token = null;
-//   if (req && req.cookies) {
-//     token = req.cookies["jwt"];
-//   }
-//   return token;
-// };
+// // var cookieExtractor = function (req) {
+// //   var token = null;
+// //   if (req && req.cookies) {
+// //     token = req.cookies["jwt"];
+// //   }
+// //   return token;
+// // };
 
 const jwtOptions = {
   // jwtFromRequest: cookieExtractor, // cookie
@@ -111,33 +111,14 @@ const decrypt = ([iv, content]) => {
   return JSON.parse(decrpyted.toString());
 };
 
-const Post = require("../../models/Post");
-const checkOwnPost = async (req, res, next) => {
-  const post = await Post.findById(req.params.id);
-  if (!post) {
-    return res.status(404).send({ message: "Post not found" });
-  }
-
-  if (post.author.toString() !== req.user._id.toString()) {
-    return res.status(400).send({
-      message: "You do not own this post to update its content",
-    });
-  }
-
-  req.post = post;
-  return next();
-};
-
 module.exports = {
+  PUB_KEY,
   authMiddleware,
-  checkOwnPost,
   issueJWT,
   decodeJWT,
   jwtOptions,
   encrypt,
   decrypt,
-  messageCode: {
-    NO_AUTH_TOKEN,
-    REQUIRE_ACTIVATE_ACCOUNT,
-  },
+  NO_AUTH_TOKEN,
+  REQUIRE_ACTIVATE_ACCOUNT,
 };

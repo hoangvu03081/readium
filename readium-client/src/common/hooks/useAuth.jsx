@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import React, { useState, useEffect, useContext, createContext } from "react";
 import { useDispatch } from "react-redux";
 import { modalClosed } from "../../slices/sign-in-slice";
+import useWs from "../../common/api/websocket";
 
 const isDev = process.env.NODE_ENV === "development";
 const LOCAL_URL = "http://localhost:5000";
@@ -75,7 +76,10 @@ function useProvideAuth() {
   function observeAuth() {
     axios.defaults.withCredentials = true;
     const token = localStorage.getItem("Authorization");
-    if (token) axios.defaults.headers.common.Authorization = token;
+    if (token) {
+      axios.defaults.headers.common.Authorization = token; 
+      authenticateWs(token);
+    }
     axios
       .get(`${LOCAL_URL}/users/protected`)
       .then(({ data: authResult }) => setAuth(authResult))

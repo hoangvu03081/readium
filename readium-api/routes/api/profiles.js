@@ -4,14 +4,14 @@ const sizeOf = require("image-size");
 const sharp = require("sharp");
 
 const User = require("../../models/User");
-const { authMiddleware } = require("../../utils/auth");
 const {
+  authMiddleware,
   validateDisplayName,
   validateEmail,
   validateFacebookLink,
   validateTwitterLink,
   validateInstaLink,
-} = require("../../utils/validator");
+} = require("../../utils");
 const configMulter = require("../../config/multer-config");
 
 const uploadAva = configMulter({
@@ -21,7 +21,7 @@ const uploadAva = configMulter({
 const checkFileSent = (req, res, next) => {
   try {
     if (!req.file) {
-      return res.status(400).send({ message: "Please provide avatar" });
+      return res.status(400).send({ message: "Please provide a file" });
     }
 
     const { width, height } = sizeOf(req.file.buffer);
@@ -143,26 +143,26 @@ router.post(
   checkFileSent,
   async (req, res) => {
     /*
-    #swagger.tags = ['Profile']
-    #swagger.summary = 'Upload avatar'
-    #swagger.requestBody = {
-      content: {
-        "multipart/form-data": {
-          schema: {
-            type: 'object',
-            properties: {
-              avatar: {
-                type: 'file',
+      #swagger.tags = ['Profile']
+      #swagger.summary = 'Upload avatar'
+      #swagger.requestBody = {
+        content: {
+          "multipart/form-data": {
+            schema: {
+              type: 'object',
+              properties: {
+                avatar: {
+                  type: 'file',
+                }
               }
             }
           }
         }
       }
-    }
-    #swagger.security = [{
-      "bearerAuth": []
-    }]
-  */
+      #swagger.security = [{
+        "bearerAuth": []
+      }]
+    */
     try {
       const { sharpInstance, file } = req;
 
@@ -186,26 +186,26 @@ router.post(
   checkFileSent,
   async (req, res) => {
     /*
-    #swagger.tags = ["Profile"]
-    #swagger.summary = "Post a cover image"
-    #swagger.requestBody = {
-      content: {
-        "multipart/form-data": {
-          schema: {
-            type: 'object',
-            properties: {
-              coverImage: {
-                type: 'file',
+      #swagger.tags = ["Profile"]
+      #swagger.summary = "Post a cover image"
+      #swagger.requestBody = {
+        content: {
+          "multipart/form-data": {
+            schema: {
+              type: 'object',
+              properties: {
+                coverImage: {
+                  type: 'file',
+                }
               }
             }
           }
         }
       }
-    }
-    #swagger.security = [{
-      "bearerAuth": []
-    }]
-  */
+      #swagger.security = [{
+        "bearerAuth": []
+      }]
+    */
     try {
       const { sharpInstance, file } = req;
 

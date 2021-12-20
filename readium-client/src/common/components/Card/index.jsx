@@ -13,7 +13,7 @@ export default function Card({
   userAvatar,
   loveNumber,
   commentNumber,
-  hideOptions,
+  type,
 }) {
   return (
     <>
@@ -26,7 +26,7 @@ export default function Card({
         userAvatar={userAvatar}
         loveNumber={loveNumber}
         commentNumber={commentNumber}
-        hideOptions={hideOptions}
+        type={type}
       />
       <CardMobile
         title={title}
@@ -36,27 +36,8 @@ export default function Card({
         userAvatar={userAvatar}
         loveNumber={loveNumber}
         commentNumber={commentNumber}
-        hideOptions={hideOptions}
+        type={type}
       />
-      {/* <CardDesktop
-        preview="./src/assets/images/preview_2.png"
-        title="Oniichan, Kimochi ~ ! Please touch me..."
-        content="No Nut November? Thảo should be Nut Nut November! He is better than you."
-        tags={["#kimochi", "#Okem", "Fresh", "#ikucu"]}
-        duration={3}
-        userAvatar="./src/assets/images/yasuo.png"
-        loveNumber={3049}
-        commentNumber={25}
-      />
-      <CardMobile
-        title="Oniichan, Kimochi ~ ! Please touch me..."
-        content="No Nut November? Thảo should be Nut Nut November! He is better than you."
-        tags={["#kimochi", "#Okem", "Fresh", "#ikucu"]}
-        user="VuHandsome"
-        userAvatar="./src/assets/images/yasuo.png"
-        loveNumber={3049}
-        commentNumber={25}
-      /> */}
     </>
   );
 }
@@ -71,5 +52,5 @@ Card.propTypes = {
   userAvatar: PropTypes.string.isRequired,
   loveNumber: PropTypes.number.isRequired,
   commentNumber: PropTypes.number.isRequired,
-  hideOptions: PropTypes.bool.isRequired,
+  type: PropTypes.string.isRequired,
 };

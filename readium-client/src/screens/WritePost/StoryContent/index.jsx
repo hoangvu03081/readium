@@ -1,4 +1,5 @@
-import React, { useRef, useCallback } from "react";
+/* eslint-disable no-param-reassign */
+import React, { useCallback } from "react";
 import PropTypes from "prop-types";
 import debounce from "lodash.debounce";
 import ReactQuill from "react-quill";
@@ -10,8 +11,9 @@ import "react-quill/dist/quill.bubble.css";
 const icons = ReactQuill.Quill.import("ui/icons");
 icons.code = '<i class="ionicons ion-code"></i>';
 
-export default function StoryContent({ id }) {
-  const quill = useRef(null);
+const StoryContent = React.forwardRef(({ id }, ref) => {
+  let contentSaved = true;
+  ref.current[0] = contentSaved;
 
   const editorModules = {
     toolbar: [
@@ -33,11 +35,17 @@ export default function StoryContent({ id }) {
   const resContentDraft = useContentDraft(id);
 
   const debounceSendContentDraft = useCallback(
-    debounce((editor) => resContentDraft.mutate(editor), 3000),
+    debounce((editor) => {
+      contentSaved = true;
+      ref.current[0] = contentSaved;
+      resContentDraft.mutate(editor);
+    }, 2000),
     [id]
   );
 
-  const handleChange = (content, delta, source, editor) => {
+  const handleContentChange = (content, delta, source, editor) => {
+    contentSaved = false;
+    ref.current[0] = contentSaved;
     debounceSendContentDraft(editor);
   };
 
@@ -50,10 +58,9 @@ export default function StoryContent({ id }) {
       <h1>Your story content</h1>
       <TextEditor>
         <ReactQuill
-          ref={quill}
           theme="bubble"
           modules={editorModules}
-          onChange={handleChange}
+          onChange={handleContentChange}
           placeholder="Tell your story..."
         />
         <Buttons className="ql-buttons">
@@ -64,7 +71,9 @@ export default function StoryContent({ id }) {
       </TextEditor>
     </Layout>
   );
-}
+});
+
+export default StoryContent;
 
 StoryContent.propTypes = {
   id: PropTypes.string.isRequired,

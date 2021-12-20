@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import FollowBtn from "../../../common/components/Buttons/FollowBtn";
+import FollowBtn from "./FollowBtn";
 
 const Card = styled.div`
   position: relative;

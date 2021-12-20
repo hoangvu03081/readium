@@ -3,8 +3,11 @@ const Delta = require("quill-delta");
 const configMulter = require("../../config/multer-config");
 
 const Post = require("../../models/Post");
-const { checkValidSkipAndDate } = require("../../utils");
-const { authMiddleware, checkOwnPost } = require("../../utils/auth");
+const { authMiddleware } = require("../../utils");
+const {
+  checkValidSkipAndDate,
+  checkOwnPost,
+} = require("../../middleware/posts-middleware");
 
 const uploadCover = configMulter({
   limits: { fields: 6, fileSize: 5e6, files: 1 },
@@ -48,10 +51,13 @@ router.get("/", authMiddleware, checkValidSkipAndDate, async (req, res) => {
   }
 });
 
-router.get("/:id/avatar", authMiddleware, async (req, res) => {
+router.get("/:id/cover-image", authMiddleware, async (req, res) => {
   /*
     #swagger.tags = ['Draft']
     #swagger.summary = 'Fetch a draft cover image'
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
   */
 
   try {
@@ -68,6 +74,10 @@ router.get("/:id/avatar", authMiddleware, async (req, res) => {
         .send({ message: `Cannot find post with ID: ${_id}` });
     }
 
+    if (!post.coverImage) {
+      return res.status(404).send({ message: "Post's cover image not found" });
+    }
+
     return res.set("Content-Type", "image/png").send(post.coverImage);
   } catch {
     return res
@@ -80,6 +90,9 @@ router.get("/:id", authMiddleware, async (req, res) => {
   /*
     #swagger.tags = ['Draft']
     #swagger.summary = 'Fetch a draft'
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
   */
   try {
     const post = await Post.findOne({
@@ -91,7 +104,8 @@ router.get("/:id", authMiddleware, async (req, res) => {
     if (!post) {
       return res.status(404).send({ message: "Cannot find post with ID" });
     }
-    return res.send(post);
+
+    return res.send(await post.getPostDetail());
   } catch {
     return res.status(500).send({ message: "Error in finding post with ID" });
   }
@@ -110,10 +124,8 @@ router.post("/", authMiddleware, async (req, res) => {
     post.author = req.user._id;
 
     await post.save();
-    post = await post.getPostDetail();
-    return res.status(201).send(post);
+    return res.status(201).send({ id: post._id });
   } catch (err) {
-    console.log(err);
     return res
       .status(500)
       .send({ message: "Something went wrong when initializing a post" });
@@ -191,16 +203,16 @@ router.patch("/:id/diff", authMiddleware, checkOwnPost, async (req, res) => {
 
     const { diff } = req.body;
 
-    if (!diff)
-      return res.status(400).send({
-        message: "Please provide post's content",
-      });
-
-    const diffContent = JSON.parse(diff);
-    const diffDelta = new Delta(diffContent);
+    if (!diff) {
+      post.textEditorContent = '{ "ops": [] }';
+      post.content = "";
+      post.duration = 0;
+      await post.save();
+      return res.send(await post.getPostDetail());
+    }
+    const diffDelta = new Delta(diff);
     const textEditorDelta = new Delta(JSON.parse(post.textEditorContent));
     const composedDelta = textEditorDelta.compose(diffDelta);
-    console.log(composedDelta);
 
     post.textEditorContent = JSON.stringify(composedDelta);
     post.content = composedDelta
@@ -211,8 +223,9 @@ router.patch("/:id/diff", authMiddleware, checkOwnPost, async (req, res) => {
     post.duration = duration;
 
     await post.save();
-    return res.send(post);
+    return res.send(await post.getPostDetail());
   } catch (err) {
+    console.log(err);
     return res
       .status(500)
       .send({ message: "Something went wrong when updating post's content" });
@@ -344,16 +357,16 @@ router.put(
         return res.status(400).send({ message: "Can not edit published post" });
       }
 
-      if (!req.file)
+      if (!req.file) {
         return res.status(400).send({
           message: "Please provide an image to update your post's cover image",
         });
+      }
 
       post.coverImage = req.file.buffer;
       await post.save();
-      return res.send(post);
+      return res.send(await post.getPostDetail());
     } catch (err) {
-      console.log(err);
       return res
         .status(500)
         .send({ message: "Something went wrong when updating cover image" });
@@ -386,7 +399,7 @@ router.put("/:id/title", authMiddleware, checkOwnPost, async (req, res) => {
       }
     */
   try {
-    const { post } = req;
+    let { post } = req;
 
     if (post.isPublished) {
       return res.status(400).send({ message: "Can not edit published post" });
@@ -397,9 +410,9 @@ router.put("/:id/title", authMiddleware, checkOwnPost, async (req, res) => {
     else post.title = "";
 
     await post.save();
+    post = await post.getPostDetail();
     return res.send(post);
   } catch (err) {
-    console.log(err);
     return res
       .status(500)
       .send({ message: "Something went wrong when updating post's title" });
@@ -443,8 +456,9 @@ router.put("/:id/tags", authMiddleware, checkOwnPost, async (req, res) => {
     const { tags } = req.body;
 
     if (tags) post.tags = tags;
-    else post.tags = undefined;
+    else post.tags = [];
     await post.save();
+
     return res.send(post);
   } catch (err) {
     return res
@@ -491,10 +505,12 @@ router.put(
       const { description } = req.body;
 
       if (description) post.description = description;
-      else post.description = undefined;
+      else post.description = "";
       await post.save();
+
       return res.send(post);
     } catch (err) {
+      console.log(err);
       return res.status(500).send({
         message: "Something went wrong when updating post's description",
       });
@@ -502,7 +518,7 @@ router.put(
   }
 );
 
-router.put("/publish/:id", authMiddleware, checkOwnPost, async (req, res) => {
+router.put("/:id/publish", authMiddleware, checkOwnPost, async (req, res) => {
   /*
     #swagger.tags = ['Draft']
     #swagger.summary = 'Endpoint to publish the draft'
@@ -525,12 +541,6 @@ router.put("/publish/:id", authMiddleware, checkOwnPost, async (req, res) => {
       });
     }
 
-    if (!post.textEditorContent || !post.content) {
-      return res.status(400).send({
-        message: "Please write the post's content before publishing",
-      });
-    }
-
     post.publishDate = new Date();
     post.isPublished = true;
     await post.save();
@@ -542,5 +552,38 @@ router.put("/publish/:id", authMiddleware, checkOwnPost, async (req, res) => {
   }
 });
 
+router.put("/:id/republish", authMiddleware, checkOwnPost, async (req, res) => {
+  /*
+      #swagger.tags = ['Draft']
+      #swagger.summary = 'Endpoint to republish draft'
+      #swagger.security = [{
+        "bearerAuth": []
+      }]
+    */
+  try {
+    if (req.post.isPublished || !req.post.publishedPost) {
+      return res.send({ message: "This post is already edited / published" });
+    }
+    const post = await Post.find({ _id: req.post.publishedPost });
+    if (!req.post.title) {
+      return res.send({ message: "Please provide title" });
+    }
+    if (!req.post.coverImage) {
+      return res.send({ message: "Please provide cover image" });
+    }
+    post.title = req.post.title;
+    post.coverImage = req.post.coverImage;
+    post.content = req.post.content;
+    post.tags = req.post.tags;
+    post.description = req.post.description;
+    await post.save();
+
+    return res.send();
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Something went wrong in republish post" });
+  }
+});
 
 module.exports = router;

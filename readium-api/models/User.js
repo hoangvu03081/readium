@@ -2,8 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
 const { serverUrl } = require("../config/url");
-const collectionSchema = require("./Collection");
-const notificationSchema = require("./Notification");
+const { getAvatarUrl, getCoverImageUrl } = require("../utils");
 
 const {
   model,
@@ -12,63 +11,24 @@ const {
 } = mongoose;
 
 const userSchema = new Schema({
-  profileId: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
+  email: { type: String, required: true, unique: true },
+  profileId: { type: String, required: true, unique: true },
+  displayName: { type: String, required: true },
+  activated: { type: Boolean, default: false },
   password: String,
-  displayName: {
-    // display name
-    type: String,
-    required: true,
-  },
   biography: String,
   job: String,
   avatar: Buffer,
   coverImage: Buffer,
-  followers: [
-    {
-      type: ObjectId,
-      ref: "User",
-    },
-  ],
-  followings: [
-    {
-      type: ObjectId,
-      ref: "User",
-    },
-  ],
-  notifications: {
-    type: [
-      // limit to 50 notifications, no longer than 3 months
-      notificationSchema,
-    ],
-  },
-  activated: {
-    type: Boolean,
-    default: false,
-  },
-  collections: {
-    default: () => [],
-    type: [collectionSchema],
-  },
+  followers: [{ type: ObjectId, ref: "User" }],
+  followings: [{ type: ObjectId, ref: "User" }],
+  notifications: [{ type: ObjectId, ref: "Notification", required: true }],
+  collections: [{ type: ObjectId, ref: "Collection", required: true }],
+  liked: [{ type: ObjectId, ref: "Post", required: true }],
+  tokens: [String],
   activationLink: String,
   resetLink: String,
   resetTimeout: Date,
-  tokens: [String],
-  liked: [
-    {
-      type: ObjectId,
-      required: true,
-      ref: "Post",
-    },
-  ],
   facebook: String,
   twitter: String,
   instagram: String,
@@ -78,24 +38,25 @@ const userSchema = new Schema({
 userSchema.methods.getPublicProfile = function () {
   const user = this;
   const userObject = user.toObject();
+
   userObject.id = userObject._id;
-  userObject.avatar = `${serverUrl}/users/profiles/avatar/${userObject._id}`;
+  userObject.avatar = getAvatarUrl(userObject.id);
+  userObject.followers = userObject.followers.length;
+  userObject.followings = userObject.followings.length;
   if (userObject.coverImage) {
-    userObject.coverImage = `${serverUrl}/users/profiles/cover-image/${userObject._id}`;
+    userObject.coverImage = getCoverImageUrl(userObject.id);
   }
 
-  delete userObject.mail;
+  delete userObject.email;
+  delete userObject.activated;
   delete userObject.password;
   delete userObject.tokens;
   delete userObject.notifications;
-  delete userObject.activated;
   delete userObject.activationLink;
   delete userObject.resetLink;
+  delete userObject.resetTimeout;
   delete userObject.__v;
   delete userObject._id;
-  delete userObject.email;
-  userObject.followers = userObject.followers.length;
-  userObject.followings = userObject.followings.length;
   delete userObject.liked;
   return userObject;
 };

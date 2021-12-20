@@ -4,12 +4,7 @@ const GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
 
 const User = require("../models/User");
 const { serverUrl } = require("./url");
-const { downloadImageFromUrl, convertBufferToPng } = require("../utils");
-const {
-  decodeJWT,
-  jwtOptions,
-  messageCode: { NO_AUTH_TOKEN },
-} = require("../utils/auth");
+const { downloadImageFromUrl, convertBufferToPng,decodeJWT, jwtOptions, NO_AUTH_TOKEN } = require("../utils");
 
 const activateUser = (user) => {
   user.activationLink = undefined;
@@ -72,15 +67,17 @@ module.exports = function (passport) {
         try {
           const user = await User.findOne({ email: profile.emails[0].value });
           let avatar = await downloadImageFromUrl(profile.photos[0].value);
-          avatar = await convertBufferToPng(avatar);
+          avatar = await convertBufferToPng(avatar[0]);
           if (user) {
             // haven't activated
-            if (!user.activated) activateUser(user);
+            if (!user.activated) {
+              activateUser(user);
+            }
             // no avatar
             if (!user.avatar) {
               user.avatar = avatar;
             }
-            if (!user.activated || !user.avatar) await user.save();
+            await user.save();
             return done(null, user);
           }
 
@@ -96,7 +93,7 @@ module.exports = function (passport) {
           const profileId = profile.displayName + (count ? "." + count : "");
 
           const newUser = new User({
-            avatar: avatar[0],
+            avatar: avatar,
             email: profile.emails[0].value,
             displayName: profile.displayName,
             activated: true,
@@ -106,6 +103,7 @@ module.exports = function (passport) {
 
           return done(null, newUser);
         } catch (err) {
+          console.log(err);
           return done(err);
         }
       }
@@ -129,13 +127,14 @@ module.exports = function (passport) {
           const user = await User.findOne({ email: profile.emails[0].value });
           let avatar = await downloadImageFromUrl(profile.photos[0].value);
           avatar = await convertBufferToPng(avatar[0]);
-
           if (user) {
-            if (!user.activated) activateUser(user);
+            if (!user.activated) {
+              activateUser(user);
+            }
             if (!user.avatar) {
               user.avatar = avatar;
             }
-            if (!user.activated || !user.avatar) await user.save();
+            await user.save();
             return done(null, user);
           }
 
@@ -150,7 +149,7 @@ module.exports = function (passport) {
           const profileId = profile.displayName + (count ? "." + count : "");
 
           const newUser = new User({
-            avatar: avatar[0],
+            avatar: avatar,
             email: profile.emails[0].value,
             displayName: profile.displayName,
             activated: true,
@@ -159,6 +158,7 @@ module.exports = function (passport) {
           await newUser.save();
           return done(null, newUser);
         } catch (err) {
+          console.log(err);
           return done(err);
         }
       }
