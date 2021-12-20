@@ -93,7 +93,6 @@ function useProvideAuth() {
   useEffect(() => {
     axios.defaults.withCredentials = true;
     window.addEventListener("storage", observeAuth);
-
     return () => {
       window.removeEventListener("storage", observeAuth);
     };

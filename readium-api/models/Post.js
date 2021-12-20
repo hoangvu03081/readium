@@ -1,9 +1,13 @@
+const { ObjectId: mObjectId } = require("mongodb");
 const mongoose = require("mongoose");
 const {
   getAvatarUrl,
-  getDraftCoverImageUrl,
   getPostCoverImageUrl,
+  getDraftCoverImageUrl,
+  getUserCoverImageUrl,
+  streamToString,
 } = require("../utils");
+const { getBucket } = require("../config/db");
 
 const {
   model,
@@ -24,11 +28,12 @@ const postSchema = new Schema({
     required: requiredArr,
     maxlength: [100, "Max 100, get {VALUE}"],
   },
-  textEditorContent: {
-    type: String,
-    default: '{ "ops": [] }',
-    required: requiredArr,
-  },
+  textEditorContent: { type: ObjectId, required: requiredArr },
+  // textEditorContent: {
+  // type: String,
+  // default: '{ "ops": [] }',
+  // required: requiredArr,
+  // },
   author: { type: ObjectId, ref: "User", required: true },
   coverImage: { type: Buffer, required: requiredArr },
   content: { type: String, default: "", required: requiredArr },
@@ -65,7 +70,7 @@ postSchema.methods.getPostPreview = async function () {
       postObject.coverImage = getPostCoverImageUrl(postObject.id);
     else postObject.coverImage = getDraftCoverImageUrl(postObject.id);
   }
-  postObject.author.avatar = getAvatarUrl(postObject.author._id);
+  postObject.author.avatar = getAvatarUrl(postObject.author._id.toString());
 
   delete postObject.author._id;
   delete postObject.__v;
@@ -77,18 +82,27 @@ postSchema.methods.getPostPreview = async function () {
 };
 
 postSchema.methods.getPostDetail = async function () {
-  await this.populate("author", { displayName: 1 });
+  const bucket = getBucket();
+  const stream = bucket.openDownloadStream(this.textEditorContent);
+  const textEditorContent = await streamToString(stream);
+
+  await this.populate("author", {
+    displayName: 1,
+    followers: 1,
+    followings: 1,
+  });
   const postObject = this.toObject();
 
   postObject.id = postObject._id.toString();
+  postObject.textEditorContent = textEditorContent;
   if (postObject.coverImage) {
-    if (postObject.isPublished) {
+    if (postObject.isPublished)
       postObject.coverImage = getPostCoverImageUrl(postObject.id);
-    } else {
-      postObject.coverImage = getDraftCoverImageUrl(postObject.id);
-    }
+    else postObject.coverImage = getDraftCoverImageUrl(postObject.id);
   }
   postObject.author.avatar = getAvatarUrl(postObject.author._id);
+  postObject.author.followers = postObject.author.followers.length;
+  postObject.author.followings = postObject.author.followings.length;
 
   delete postObject.author._id;
   delete postObject.__v;
@@ -104,7 +118,7 @@ postSchema.methods.toJSON = function () {
     userObject.id = userObject._id.toString();
     userObject.avatar = getAvatarUrl(userObject.id);
     if (userObject.coverImage) {
-      userObject.coverImage = getCoverImageUrl(userObject.id);
+      userObject.coverImage = getUserCoverImageUrl(userObject.id);
     }
     userObject.followers = userObject.followers.length;
     userObject.followings = userObject.followings.length;

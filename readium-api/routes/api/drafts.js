@@ -1,16 +1,22 @@
+const Stream = require("stream");
 const router = require("express").Router();
 const Delta = require("quill-delta");
+const { ObjectId } = require("mongodb");
+const { getBucket } = require("../../config/db");
+
 const configMulter = require("../../config/multer-config");
 
 const Post = require("../../models/Post");
-const { authMiddleware } = require("../../utils");
+const { authMiddleware, streamToString } = require("../../utils");
 const {
   checkValidSkipAndDate,
   checkOwnPost,
 } = require("../../middleware/posts-middleware");
+const { Readable } = require("stream");
+const { putPost } = require("../../utils/elasticsearch");
 
 const uploadCover = configMulter({
-  limits: { fields: 6, fileSize: 5e6, files: 1 },
+  limits: { fields: 6, fileSize: 12e6, files: 1 },
 });
 
 router.get("/", authMiddleware, checkValidSkipAndDate, async (req, res) => {
@@ -42,7 +48,7 @@ router.get("/", authMiddleware, checkValidSkipAndDate, async (req, res) => {
       .limit(5);
 
     posts = posts.map((post) => post.getPostPreview());
-    posts = Promise.all(posts);
+    posts = await Promise.all(posts);
 
     if (posts.length === 0) return res.send({ posts });
     return res.send({ posts, next: skip + 5 });
@@ -111,6 +117,16 @@ router.get("/:id", authMiddleware, async (req, res) => {
   }
 });
 
+const createInitialDraftEditorContent = () => {
+  const buf = Buffer.from('{ "ops": [] }', "utf8");
+  const readable = new Readable();
+  readable._read = () => {};
+  readable.push(buf);
+  readable.push(null);
+  return readable;
+};
+
+// TODO: test grid fs
 router.post("/", authMiddleware, async (req, res) => {
   /*
     #swagger.tags = ['Draft']
@@ -122,6 +138,15 @@ router.post("/", authMiddleware, async (req, res) => {
   try {
     let post = new Post();
     post.author = req.user._id;
+
+    const textEditorContentId = new ObjectId();
+    post.textEditorContent = textEditorContentId;
+    // create a file in grid fs and keep a ref to it
+    const bucket = getBucket();
+    const readable = createInitialDraftEditorContent();
+    readable.pipe(
+      bucket.openUploadStream("textEditorContent", { id: textEditorContentId })
+    );
 
     await post.save();
     return res.status(201).send({ id: post._id });
@@ -196,25 +221,72 @@ router.patch("/:id/diff", authMiddleware, checkOwnPost, async (req, res) => {
   */
   try {
     const { post } = req;
-
     if (post.isPublished) {
       return res.status(400).send({ message: "Can not edit published post" });
     }
 
     const { diff } = req.body;
 
+    ///
+    // const cursor = bucket.find({ _id: post.textEditorContent });
+    // cursor.forEach((doc) => {
+    //   console.log(doc);
+    // });
+    // return res.send();
+
+    ///
+    const bucket = getBucket();
     if (!diff) {
-      post.textEditorContent = '{ "ops": [] }';
+      console.log("here", diff);
+      // post.textEditorContent = '{ "ops": [] }';
+      bucket.delete(post.textEditorContent);
+      // post.textEditorContent = ObjectId;
+
+      const textEditorContentId = new ObjectId();
+      post.textEditorContent = textEditorContentId;
+      // create a file in grid fs and keep a ref to it
+      const readable = createInitialDraftEditorContent();
+      readable.pipe(
+        bucket.openUploadStream("textEditorContent", {
+          id: textEditorContentId,
+        })
+      );
+
       post.content = "";
       post.duration = 0;
       await post.save();
       return res.send(await post.getPostDetail());
     }
-    const diffDelta = new Delta(diff);
-    const textEditorDelta = new Delta(JSON.parse(post.textEditorContent));
-    const composedDelta = textEditorDelta.compose(diffDelta);
 
-    post.textEditorContent = JSON.stringify(composedDelta);
+    const stream = bucket.openDownloadStream(post.textEditorContent);
+    const textEditorContent = await streamToString(stream);
+
+    const diffDelta = new Delta(diff);
+    const textEditorDelta = new Delta(JSON.parse(textEditorContent));
+    const composedDelta = textEditorDelta.compose(diffDelta);
+    const mb = Buffer.byteLength(JSON.stringify(composedDelta), "utf8") * 10e-7;
+    if (mb > 50) {
+      return res.send({
+        message: "Your post content has reached the maximum size 50mb.",
+      });
+    }
+
+    bucket.delete(post.textEditorContent);
+    const textEditorContentId = new ObjectId();
+
+    const buf = Buffer.from(JSON.stringify(composedDelta), "utf8");
+    const readable = new Readable();
+    readable._read = () => {};
+    readable.push(buf);
+    readable.push(null);
+
+    readable.pipe(
+      bucket.openUploadStream("textEditorContent", {
+        id: textEditorContentId,
+      })
+    );
+
+    post.textEditorContent = textEditorContentId;
     post.content = composedDelta
       .filter((op) => typeof op.insert === "string")
       .map((op) => op.insert)
@@ -315,6 +387,7 @@ router.patch(
       await post.save();
       return res.send(post);
     } catch (err) {
+      console.log(err);
       return res
         .status(500)
         .send({ message: "Something went wrong when updating a post" });
@@ -376,28 +449,28 @@ router.put(
 
 router.put("/:id/title", authMiddleware, checkOwnPost, async (req, res) => {
   /*
-      #swagger.tags = ['Draft']
-      #swagger.summary = "Update draft's title"
-      #swagger.security = [{
-        "bearerAuth": []
-      }]
-      #swagger.requestBody = {
-        required: true,
-        content: {
-          "application/json": {
-            schema: {
-              type: 'object',
-              properties: {
-                title: {
-                  type: 'string',
-                  default: 'Post title'
-                }
+    #swagger.tags = ['Draft']
+    #swagger.summary = "Update draft's title"
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+    #swagger.requestBody = {
+      required: true,
+      content: {
+        "application/json": {
+          schema: {
+            type: 'object',
+            properties: {
+              title: {
+                type: 'string',
+                default: 'Post title'
               }
             }
           }
         }
       }
-    */
+    }
+  */
   try {
     let { post } = req;
 
@@ -541,11 +614,14 @@ router.put("/:id/publish", authMiddleware, checkOwnPost, async (req, res) => {
       });
     }
 
+    putPost(req.params.id, { tags: post.tags, title: post.title });
+
     post.publishDate = new Date();
     post.isPublished = true;
     await post.save();
     return res.send(post);
   } catch (err) {
+    console.log(err);
     return res.status(500).send({
       message: "Something went wrong when publishing the post",
     });
@@ -576,8 +652,10 @@ router.put("/:id/republish", authMiddleware, checkOwnPost, async (req, res) => {
     post.content = req.post.content;
     post.tags = req.post.tags;
     post.description = req.post.description;
-    await post.save();
 
+    putPost(req.params.id, { tags: post.tags, title: post.title });
+
+    await post.save();
     return res.send();
   } catch (err) {
     return res

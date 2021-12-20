@@ -11,7 +11,7 @@ const app = express();
 const cors = require("cors");
 const passport = require("passport");
 
-require("./config/db");
+require("./config/db").connect();
 require("./config/passport")(passport);
 
 app.use(express.json({ limit: "50mb" }));
