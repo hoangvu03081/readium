@@ -53,23 +53,50 @@ function useProvideAuth() {
     setTokenReceived(true);
   };
 
-  useEffect(async () => {
-    try {
-      axios.defaults.withCredentials = true;
+  // useEffect(async () => {
+  //   try {
+  //     axios.defaults.withCredentials = true;
 
-      const token = localStorage.getItem("Authorization");
-      if (token) axios.defaults.headers.common.Authorization = token;
+  //     const token = localStorage.getItem("Authorization");
+  //     if (token) axios.defaults.headers.common.Authorization = token;
 
-      const { data: authResult } = await axios.get(
-        `${LOCAL_URL}/users/protected`
-      );
+  //     const { data: authResult } = await axios.get(
+  //       `${LOCAL_URL}/users/protected`
+  //     );
 
-      setAuth(authResult);
-    } catch (e) {
-      setAuth(false);
-    } finally {
-      setTokenReceived(false);
-    }
+  //     setAuth(authResult);
+  //   } catch (e) {
+  //     setAuth(false);
+  //   } finally {
+  //     setTokenReceived(false);
+  //   }
+  // }, [tokenReceived]);
+
+  function observeAuth() {
+    axios.defaults.withCredentials = true;
+    const token = localStorage.getItem("Authorization");
+    if (token) axios.defaults.headers.common.Authorization = token;
+    axios
+      .get(`${LOCAL_URL}/users/protected`)
+      .then(({ data: authResult }) => setAuth(authResult))
+      .catch(() => setAuth(false))
+      .finally(() => {
+        setTokenReceived(false);
+        localStorage.removeItem("logout");
+      });
+  }
+
+  useEffect(() => {
+    axios.defaults.withCredentials = true;
+    window.addEventListener("storage", observeAuth);
+
+    return () => {
+      window.removeEventListener("storage", observeAuth);
+    };
+  }, []);
+
+  useEffect(() => {
+    observeAuth();
   }, [tokenReceived]);
 
   const clearState = () => {
@@ -85,6 +112,7 @@ function useProvideAuth() {
       clearState();
       await axios.get(LOGOUT_API);
       localStorage.removeItem("Authorization");
+      localStorage.setItem("logout", 1);
       axios.defaults.headers.common.Authorization = null;
       setAuth(false);
     } catch (e) {
