@@ -41,19 +41,21 @@ export function useCoverImageDraft(id) {
 let currentDelta = new Delta();
 export function useContentDraft(id) {
   return useMutation((editor) => {
+    // console.log(currentDelta);
     const newDelta = currentDelta.diff(editor.getContents());
     currentDelta = editor.getContents();
+    // console.log(currentDelta);
     axios.patch(DRAFT_API.PATCH_CONTENT(id), {
       diff: newDelta,
     });
   });
 }
 
-export function useDraft(id, isAuth) {
+export function useDraft(id, auth) {
   const res1 = useQuery("draft", () => axios.get(DRAFT_API.GET_A_DRAFT(id)), {
     staleTime: 0,
     refetchOnMount: true,
-    enabled: isAuth,
+    enabled: !!auth,
     refetchOnWindowFocus: false,
   });
   const res2 = useQuery(
@@ -63,7 +65,7 @@ export function useDraft(id, isAuth) {
     {
       staleTime: 0,
       refetchOnMount: true,
-      enabled: isAuth,
+      enabled: !!auth,
       refetchOnWindowFocus: false,
     }
   );

@@ -117,7 +117,7 @@ const PostTags = styled.div`
 // -----------------------------------------------------------------
 
 export default function PreviewPost() {
-  const { isAuth } = useAuth();
+  const { auth } = useAuth();
   const history = useHistory();
   const id = history.location.state;
 
@@ -125,7 +125,7 @@ export default function PreviewPost() {
   const [
     { isFetched: isFetchedDraft, data: dataDraft },
     { isFetched: isFetchedCoverImage, data: dataCoverImage },
-  ] = useDraft(id, isAuth);
+  ] = useDraft(id, auth);
 
   //  PUBLISH
   const publish = usePublish(id);

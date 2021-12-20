@@ -13,11 +13,11 @@ import { Layout, SubmitBtnContainer, SubmitBtn } from "./styles";
 export default function WritePost() {
   // GET DRAFT ID
   const [id, setId] = useState("");
-  const { isAuth } = useAuth();
+  const { auth } = useAuth();
   const draftId = useDraftID();
   useEffect(() => {
     async function initPost() {
-      if (!id && isAuth) {
+      if (!id && auth) {
         draftId.mutate(null, {
           onSuccess: (result) => {
             setId(result.data.id);
@@ -27,7 +27,7 @@ export default function WritePost() {
       }
     }
     initPost();
-  }, [id, isAuth]);
+  }, [id, auth]);
 
   // HANDLE SUBMIT --------------------------------------------------------------
   const storyInformationRef = useRef([

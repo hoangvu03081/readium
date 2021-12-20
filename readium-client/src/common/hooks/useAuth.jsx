@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import React, { useState, useEffect, useContext, createContext } from "react";
 import { useDispatch } from "react-redux";
 import { modalClosed } from "../../slices/sign-in-slice";
+import useWs from "../api/websocket";
 
 const isDev = process.env.NODE_ENV === "development";
 const LOCAL_URL = "http://localhost:5000";
@@ -26,7 +27,7 @@ const authContext = createContext();
 export function useAuth() {
   return useContext(authContext);
 }
-import useWs from "../../common/api/websocket";
+
 function useProvideAuth() {
   const [auth, setAuth] = useState(false);
   const [isLoading, setLoading] = useState(false);
