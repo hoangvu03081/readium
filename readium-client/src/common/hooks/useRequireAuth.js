@@ -3,9 +3,10 @@ import { useAuth } from "./useAuth";
 import useRouter from "./useRouter";
 
 export default function useRequireAuth(redirectUrl = "/") {
-  const auth = useAuth();
+  const { auth } = useAuth();
   const router = useRouter();
   useEffect(() => {
+    if (auth) return;
     if (auth === false) {
       router.push(redirectUrl);
     }

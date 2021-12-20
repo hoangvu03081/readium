@@ -38,7 +38,7 @@
     "vite-plugin-svgr": "^0.6.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^1.0.0",
+    "@vitejs/plugin-react": "1.0.8",
     "eslint": "^7.32.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^8.3.0",
