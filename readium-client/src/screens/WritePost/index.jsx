@@ -31,7 +31,7 @@ export default function WritePost() {
 
   // HANDLE SUBMIT --------------------------------------------------------------
   const storyInformationRef = useRef([
-    null, // titile input
+    null, // title input
     null, // note title
     null, // your tags
     null, // cover image input

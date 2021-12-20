@@ -14,11 +14,11 @@ const Layout = styled.div`
 
 export default function PostContent({ quillContent }) {
   const quill = useRef(null);
-  const delta = new Delta(JSON.parse(quillContent));
+  const delta = JSON.parse(quillContent);
 
   useEffect(() => {
     quill.current.getEditor().setContents(delta);
-  }, []);
+  }, [delta]);
 
   return (
     <Layout>

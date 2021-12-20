@@ -39,12 +39,13 @@ export function useCoverImageDraft(id) {
 }
 
 let currentDelta = new Delta();
+export function useNewContentDraft() {
+  currentDelta = new Delta();
+}
 export function useContentDraft(id) {
   return useMutation((editor) => {
-    // console.log(currentDelta);
     const newDelta = currentDelta.diff(editor.getContents());
     currentDelta = editor.getContents();
-    // console.log(currentDelta);
     axios.patch(DRAFT_API.PATCH_CONTENT(id), {
       diff: newDelta,
     });
