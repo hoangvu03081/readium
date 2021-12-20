@@ -63,6 +63,11 @@ const Middle = styled.div`
     margin: 0;
     font-family: "PT Sans";
     font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     color: ${({ theme }) => theme.colors.CardContent};
   }
   button {

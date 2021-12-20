@@ -40,7 +40,7 @@ const DRAFT_API = {
   PATCH_CONTENT: (id) => getURL(`/drafts/${id}/diff`),
   GET_A_DRAFT: (id) => getURL(`/drafts/${id}`),
   GET_COVER_IMAGE_DRAFT: (id) => getURL(`/drafts/${id}/cover-image`),
-  PUT_PUBLISH: (id) => getURL(`/drafts/publish/${id}`),
+  PUT_PUBLISH: (id) => getURL(`/drafts/${id}/publish`),
 };
 
 export { USER_API, PROFILE_API, POST_API, SETTING_API, DRAFT_API, WEBSOCKET };

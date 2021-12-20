@@ -77,8 +77,8 @@ function useProvideAuth() {
     axios.defaults.withCredentials = true;
     const token = localStorage.getItem("Authorization");
     if (token) {
-      axios.defaults.headers.common.Authorization = token; 
-      authenticateWs(token);
+      axios.defaults.headers.common.Authorization = token;
+      // authenticateWs(token);
     }
     axios
       .get(`${LOCAL_URL}/users/protected`)

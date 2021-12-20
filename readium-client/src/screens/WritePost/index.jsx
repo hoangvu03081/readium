@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../../common/hooks/useAuth";
-import { useDraftID } from "../../common/api/draftQuery";
+import { useDraft, useDraftID } from "../../common/api/draftQuery";
 import StoryInformation from "./StoryInformation";
 import StoryContent from "./StoryContent";
 import BackToTop from "../../common/components/Buttons/BackToTop";
@@ -11,7 +11,7 @@ import LoadingOverlay from "../../common/components/LoadingOverlay";
 import { Layout, SubmitBtnContainer, SubmitBtn } from "./styles";
 
 export default function WritePost() {
-  // GET DRAFT ID
+  // HANDLE DRAFT
   const [id, setId] = useState("");
   const { auth } = useAuth();
   const draftId = useDraftID();
@@ -30,19 +30,20 @@ export default function WritePost() {
   }, [id, auth]);
 
   // HANDLE SUBMIT --------------------------------------------------------------
+  const history = useHistory();
   const storyInformationRef = useRef([
-    null, // title input
-    null, // note title
-    null, // your tags
-    null, // cover image input
-    null, // cover image note
-    null, // draft title saved
-    null, // draft description saved
-    null, // draft tags saved
+    null, // [0] title input
+    null, // [1] note title
+    null, // [2] your tags
+    null, // [3] cover image input
+    null, // [4] cover image note
+    null, // [5] draft title saved
+    null, // [6] draft description saved
+    null, // [7] draft tags saved
+    null, // [8] cover image saved
   ]);
   const storyContentRef = useRef([null]);
   const [isLoading, setIsLoading] = useState(false);
-  const history = useHistory();
 
   const checkEmptyTitle = (titleRef, noteTitleRef) => {
     if (titleRef.value === "") {
@@ -81,9 +82,10 @@ export default function WritePost() {
       );
 
     const storyInformationSaved =
-      storyInformationRef.current[4] &&
       storyInformationRef.current[5] &&
-      storyInformationRef.current[6];
+      storyInformationRef.current[6] &&
+      storyInformationRef.current[7] &&
+      storyInformationRef.current[8];
 
     const storyContentSaved = storyContentRef.current[0];
 

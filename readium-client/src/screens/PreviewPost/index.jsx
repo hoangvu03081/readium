@@ -7,11 +7,12 @@ import LoadingOverlay from "../../common/components/LoadingOverlay";
 import PostInfo from "../../common/components/PostInfo";
 import PostContent from "../../common/components/PostContent";
 import TagBtn from "../../common/components/Buttons/TagBtn";
+import BackToTop from "../../common/components/Buttons/BackToTop";
 import HorizontalLine from "./HorizontalLine";
 
 // STYLES ----------------------------------------------------------
 const Layout = styled.div`
-  margin-bottom: 105px;
+  padding-bottom: 55px;
 `;
 
 const SubHeader = styled.div`
@@ -22,7 +23,7 @@ const SubHeader = styled.div`
   justify-content: center;
   border-bottom: 1px solid #d4d4d4;
   background-color: white;
-  z-index: 100;
+  z-index: 9;
   position: fixed;
   top: 80px;
 `;
@@ -99,7 +100,7 @@ const PostDescription = styled.p`
   padding: 0;
   font-family: "PT Sans";
   font-weight: 500;
-  font-size: 26px;
+  font-size: 24px;
 `;
 const PostCoverImage = styled.img`
   width: 100%;
@@ -127,10 +128,15 @@ export default function PreviewPost() {
     { isFetched: isFetchedCoverImage, data: dataCoverImage },
   ] = useDraft(id, auth);
 
-  //  PUBLISH
+  //  HANDLE PUBLISH
   const publish = usePublish(id);
   const handlePublish = () => {
     publish.mutate();
+  };
+
+  // HANDLE CONTINUE EDITING
+  const handleContinueEditing = () => {
+    history.push("/edit", id);
   };
 
   // WAIT FOR DATA
@@ -144,7 +150,9 @@ export default function PreviewPost() {
     <Layout>
       <SubHeader>
         <SubHeaderContainer className="container">
-          <ContinueEditingBtn>Continue Editing</ContinueEditingBtn>
+          <ContinueEditingBtn onClick={handleContinueEditing}>
+            Continue Editing
+          </ContinueEditingBtn>
           <PublishBtn onClick={handlePublish}>Publish</PublishBtn>
         </SubHeaderContainer>
       </SubHeader>
@@ -169,6 +177,8 @@ export default function PreviewPost() {
           ))}
         </PostTags>
       </Content>
+
+      <BackToTop />
     </Layout>
   );
 }

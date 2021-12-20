@@ -64,6 +64,11 @@ const Content = styled.p`
   font-weight: 500;
   font-size: 18px;
   margin: 0 0 18px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
 `;
 const BottomFlexContainer = styled.div`
   display: flex;

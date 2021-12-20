@@ -72,7 +72,7 @@ const StoryInformation = React.forwardRef(({ id }, ref) => {
   const handleDescriptionChange = (descriptionDraft) => {
     descriptionSaved = false;
     ref.current[6] = descriptionSaved;
-    if (descriptionDraft.target.value.length === 250) {
+    if (descriptionDraft.target.value.length === 300) {
       setDescriptionValidation(false);
     } else {
       setDescriptionValidation(true);
@@ -135,10 +135,14 @@ const StoryInformation = React.forwardRef(({ id }, ref) => {
   };
 
   // COVER IMAGE
+  let coverImageSaved = true;
+  ref.current[8] = coverImageSaved;
   const [coverImageSrc, setCoverImageSrc] = useState("");
   const resCoverImageDraft = useCoverImageDraft(id);
   const onDrop = useCallback(
     (acceptedFiles) => {
+      coverImageSaved = false;
+      ref.current[8] = coverImageSaved;
       ref.current[4].classList.remove("d-block");
       ref.current[4].classList.add("d-none");
       Resizer.imageFileResizer(
@@ -157,6 +161,8 @@ const StoryInformation = React.forwardRef(({ id }, ref) => {
           const coverImageDraft = new FormData();
           coverImageDraft.append("coverImage", file);
           resCoverImageDraft.mutate(coverImageDraft);
+          coverImageSaved = true;
+          ref.current[8] = coverImageSaved;
         },
         "file"
       );
@@ -196,10 +202,10 @@ const StoryInformation = React.forwardRef(({ id }, ref) => {
       <h3>Your description</h3>
       <InputDescription>
         <TextareaAutosize
-          placeholder="Maximum 250 characters"
+          placeholder="Maximum 300 characters"
           minRows={1}
           maxRows={25}
-          maxLength="250"
+          maxLength="300"
           onChange={handleDescriptionChange}
         />
       </InputDescription>
