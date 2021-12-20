@@ -74,7 +74,6 @@ const getPostCoverImageUrl = (postId) =>
 const getDraftCoverImageUrl = (postId) =>
   `${serverUrl}/drafts/${postId}/cover-image`;
 const getAvatarUrl = (userId) => `${serverUrl}/users/profiles/avatar/${userId}`;
-// TODO: FIX TO GET POST & GET PROFILE COVER IMAGE
 const getUserCoverImageUrl = (userId) =>
   `${serverUrl}/users/profiles/cover-image/${userId}`;
 

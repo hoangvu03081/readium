@@ -169,6 +169,7 @@ router.post("/ai", async (req, res) => {
     });
     await post.save();
     pushTask(posts[0]._id);
+    return res.send();
   } catch (err) {
     return res.status(500).send({ message: "Mock AI failed" });
   }

@@ -96,7 +96,9 @@ postSchema.methods.getPostDetail = async function () {
   postObject.id = postObject._id.toString();
   postObject.textEditorContent = textEditorContent;
   if (postObject.coverImage) {
-    postObject.coverImage = getPostCoverImageUrl(postObject.id);
+    if (postObject.isPublished)
+      postObject.coverImage = getPostCoverImageUrl(postObject.id);
+    else postObject.coverImage = getDraftCoverImageUrl(postObject.id);
   }
   postObject.author.avatar = getAvatarUrl(postObject.author._id);
   postObject.author.followers = postObject.author.followers.length;
