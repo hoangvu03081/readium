@@ -11,13 +11,13 @@ export default function useInfinitePosts() {
 
   const { fetchNextPage } = useInfiniteQuery("posts", fetchPosts, {
     getNextPageParam: (lastPage) => lastPage.data.next,
+    refetchOnWindowFocus: false,
   });
 
   const fetchPostsWrapper = () => {
     const website = document.documentElement;
     if (website.scrollHeight - website.scrollTop === website.clientHeight) {
       fetchNextPage().then((event) => {
-        // console.log(event);
         setData(event.data.pages);
       });
     }
@@ -25,7 +25,6 @@ export default function useInfinitePosts() {
 
   useEffect(() => {
     fetchNextPage().then((event) => {
-      // console.log(event);
       setData(event.data.pages);
     });
     window.addEventListener("scroll", fetchPostsWrapper);

@@ -3,6 +3,10 @@ import axios from "axios";
 import Delta from "quill-delta";
 import { DRAFT_API } from "./apiConstant";
 
+export function useDraftID() {
+  return useMutation(() => axios.post(DRAFT_API.GET_DRAFT_ID));
+}
+
 export function useTitleDraft(id) {
   return useMutation((titleDraft) => {
     axios.put(DRAFT_API.PUT_TITLE(id), {
@@ -40,13 +44,20 @@ export function useContentDraft(id) {
     const newDelta = currentDelta.diff(editor.getContents());
     currentDelta = editor.getContents();
     axios.patch(DRAFT_API.PATCH_CONTENT(id), {
-      diff: JSON.stringify(newDelta),
+      diff: newDelta,
     });
   });
 }
 
-export function useDraft(id) {
+export function useDraft(id, isAuth) {
   return useQuery("draft", () => axios.get(DRAFT_API.GET_A_DRAFT(id)), {
-    staleTime: Infinity,
+    staleTime: 0,
+    refetchOnMount: true,
+    enabled: isAuth,
+    refetchOnWindowFocus: false,
   });
+}
+
+export function usePublish(id) {
+  return useMutation(() => axios.put(DRAFT_API.PUT_PUBLISH(id)));
 }

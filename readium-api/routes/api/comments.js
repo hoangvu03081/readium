@@ -1,77 +1,30 @@
 const router = require("express").Router({ mergeParams: true });
 
 const Post = require("../../models/Post");
-const { authMiddleware } = require("../../utils/auth");
-
-const checkCommentContent = (req, res, next) => {
-  const { content } = req.body;
-  if (!content) {
-    return res.status(400).send({
-      message:
-        "Please provide comment content before request to POST/PATCH comments' endpoints!",
-    });
-  }
-
-  return next();
-};
+const Comment = require("../../models/Comment");
+const { authMiddleware } = require("../../utils");
+const { checkCommentContent } = require("../../middleware/comments-middleware");
 
 router.get("/", async (req, res) => {
   /* 
     #swagger.tags = ['Comment']
-    #swagger.summary = 'Get comment of a post'
+    #swagger.summary = 'Get comments of a post'
   */
   try {
-    const { id } = req.params;
-    const post = await Post.findById(id, { comments: 1 });
+    const { postId } = req.params;
+    const post = await Post.findOne(
+      { _id: postId, isPublished: true },
+      { comments: 1 }
+    ).populate("comments");
     if (!post) {
       return res.status(404).send({
-        message: `Post ${id} not found. Please be sure that this id is correct!`,
+        message: `Post ${postId} not found. Please be sure that this id is correct!`,
       });
     }
     return res.send(post.comments);
   } catch (err) {
     return res.status(500).send({
-      message: `Something went wrong when finding the comments of post ${id}`,
-    });
-  }
-});
-
-router.post("/", authMiddleware, checkCommentContent, async (req, res) => {
-  /*
-    #swagger.tags = ['Comment']
-    #swagger.summary = 'Comment on the post'
-    #swagger.requestBody = {
-      required: true,
-      content: {
-        "application/json": {
-          schema: {
-            $ref: "#/definitions/Comment"
-          }
-        }
-      }
-    }
-    #swagger.security = [{
-      "bearerAuth": []
-    }]
-  */
-  try {
-    const { id } = req.params;
-    const { content } = req.body;
-
-    const post = await Post.findById(id, { comments: 1 });
-    if (!post) {
-      return res.status(404).send({
-        message: `Post ${id} not found. Please be sure that this id is correct!`,
-      });
-    }
-
-    const commentObj = { user: req.user._id, content };
-    post.comments.push(commentObj);
-    await post.save();
-    return res.status(201).send(commentObj);
-  } catch (err) {
-    return res.status(500).send({
-      message: `Something went wrong when create a comment of post ${id}`,
+      message: `Something went wrong when finding the comments of post`,
     });
   }
 });
@@ -99,29 +52,41 @@ router.patch(
       }]
     */
     try {
-      const { id, commentId } = req.params;
+      const { postId, commentId } = req.params;
       const { content } = req.body;
 
-      const post = await Post.findById(id, { comments: 1 });
+      if (!content) {
+        return res
+          .status(400)
+          .send({ message: "Please provide content to edit your comment" });
+      }
+
+      const post = await Post.findOne(
+        { _id: postId, isPublished: true },
+        { comments: 1 }
+      ).populate("comments");
+
       if (!post) {
         return res.status(404).send({
-          message: `Post ${id} not found. Please be sure that this id is correct!`,
+          message: `Post ${postId} not found. Please be sure that this id is correct!`,
         });
       }
 
-      const comment = post.comments.id(commentId);
-      if (comment.user.toString() !== req.user._id.toString()) {
+      const comment = post.comments.find(
+        (comment) => comment._id.toString() === commentId
+      );
+
+      if (comment.user._id.toString() !== req.user._id.toString()) {
         return res.status(400).send({
-          message: `User ${req.user.displayName} can not edit comment of other users. Make sure that ${req.user.displayName} owned this comment to edit`,
+          message: "You do not own this comment to edit",
         });
       }
-
       comment.content = content;
-      await post.save();
+      await comment.save();
       return res.send(comment);
     } catch (err) {
       return res.status(500).send({
-        message: `Something went wrong when create a comment of post ${id}`,
+        message: `Something went wrong when editing a comment of post`,
       });
     }
   }
@@ -136,23 +101,39 @@ router.delete("/:commentId", authMiddleware, async (req, res) => {
     }]
   */
   try {
-    const { id, commentId } = req.params;
+    const { postId, commentId } = req.params;
 
-    const post = await Post.findById(id);
-    const index = post.comments.findIndex(
-      (c) => c._id.toString() === commentId
+    const post = await Post.findById(postId, { comments: 1 }).populate(
+      "comments"
     );
 
-    if (index === -1) {
+    if (!post) {
+      return res.status(404).send({ message: "Post not found" });
+    }
+
+    const commentIndex = post.comments.findIndex(
+      (comment) => comment._id.toString() === commentId
+    );
+
+    if (commentIndex === -1) {
       return res.status(404).send({ message: "Comment not found" });
     }
-    
-    const comment = post.comments.splice(index, 1);
+
+    if (
+      post.comments[commentIndex].user.toString() !== req.user._id.toString()
+    ) {
+      return res
+        .status(400)
+        .send({ message: "You must own this comment to delete it." });
+    }
+
+    post.comments.splice(commentIndex, 1);
+    const comment = await Comment.findByIdAndDelete(commentId);
     await post.save();
     return res.send(comment);
   } catch (err) {
-    res.status(500).send({
-      message: `Something went wrong when deleting comment ${commentId}`,
+    return res.status(500).send({
+      message: `Something went wrong when deleting comment`,
     });
   }
 });

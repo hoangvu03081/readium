@@ -3,43 +3,52 @@ const multer = require("multer");
 
 const User = require("../models/User");
 const Post = require("../models/Post");
-const { authMiddleware } = require("../utils/auth");
+const Collection = require("../models/Collection");
+const Comment = require("../models/Comment");
+const Notification = require("../models/Notification");
+const { authMiddleware } = require("../utils");
 
 router.get("/users", async (req, res) => {
-  // #swagger.tags = ['Dev']
-  // #swagger.summary = 'Get all users'
-  const users = await User.find({}, { avatar: 0 });
+  /* 
+    #swagger.tags = ['Dev']
+    #swagger.summary = 'Get all users'
+  */
+  const users = await User.find({}, { avatar: 0, coverImage: 0 });
   res.send(users);
 });
 
 router.get("/collections", async (req, res) => {
-  // #swagger.tags = ['Dev']
-  // #swagger.summary = "Get all users' collections"
-  const users = await User.find();
-  const collections = users
-    .map((user) => user.collections)
-    .reduce((acc, collections) => [...acc, ...collections], []);
-
+  /*
+    #swagger.tags = ['Dev']
+    #swagger.summary = "Get all collections"
+  */
+  const collections = await Collection.find();
   res.send(collections);
 });
 
 router.get("/posts", async (req, res) => {
-  // #swagger.tags = ['Dev']
-  // #swagger.summary = "Get all posts"
+  /*
+    #swagger.tags = ['Dev']
+    #swagger.summary = "Get all posts"
+  */
   const posts = await Post.find({}, { coverImage: 0 });
   return res.send(posts);
 });
 
 router.delete("/users", async (req, res) => {
-  // #swagger.tags = ['Dev']
-  // #swagger.summary = 'Delete all users'
+  /*
+    #swagger.tags = ['Dev']
+    #swagger.summary = 'Delete all users'
+  */
   await User.deleteMany();
-  res.send();
+  return res.send();
 });
 
 router.delete("/", async (req, res) => {
-  // #swagger.tags = ['Dev']
-  // #swagger.summary = 'Delete all data'
+  /*
+    #swagger.tags = ['Dev']
+    #swagger.summary = 'Delete all data'
+  */
   await User.deleteMany();
   await Post.deleteMany();
   res.send();
@@ -67,87 +76,105 @@ router.post(
   uploadCover.single("coverImage"),
   async (req, res) => {
     /*
-   #swagger.tags = ['Dev']
-   #swagger.summary = 'Create a post (DEV)'
-   #swagger.requestBody = {
-     required: true,
-     content: {
-       "multipart/form-data": {
-         schema: {
-           type: 'object',
-           properties: {
-             coverImage: {
-               type: 'file',
-             },
-             title: {
-               type: 'string',
-               example: "Post Title",
-             },
-             content: {
-               type: 'string',
-               example: "Text only content",
-             },
-             textEditorContent: {
-               type: 'string',
-               example: "Text Editor Content",
-             },
-             description: {
-               type: 'string',
-               example: "Description",
-             },
-           }
-         }
-       }
-     }
-   }
-   #swagger.security = [{
-     "bearerAuth": []
-   }]
- */
+      #swagger.tags = ['Dev']
+      #swagger.summary = 'Create a post (DEV)'
+      #swagger.requestBody = {
+        required: true,
+        content: {
+          "multipart/form-data": {
+            schema: {
+              type: 'object',
+              properties: {
+                coverImage: {
+                  type: 'file',
+                },
+                title: {
+                  type: 'string',
+                  example: "Post Title",
+                },
+                content: {
+                  type: 'string',
+                  example: "Text only content",
+                },
+                textEditorContent: {
+                  type: 'string',
+                  example: "Text Editor Content",
+                },
+                description: {
+                  type: 'string',
+                  example: "Description",
+                },
+                isPublished: {
+                  type: "string",
+                  example: "false",
+                },
+              }
+            }
+          }
+        }
+      }
+      #swagger.security = [{
+        "bearerAuth": []
+      }]
+    */
     try {
-      const { title, content, textEditorContent, description } = req.body;
+      let {
+        title,
+        content,
+        textEditorContent,
+        description,
+        isPublished,
+      } = req.body;
+      isPublished = isPublished === "true";
 
       const {
         file: { buffer: coverImage },
       } = req;
 
-      if (!title) {
-        return res.status(400).send({ message: "Please provide post's title" });
-      }
-
-      if (!textEditorContent) {
-        return res
-          .status(400)
-          .send({ message: "Please provide post's content" });
-      }
-      if (!content) {
-        return res.status(400).send({
-          message: "Please provide post's content in TEXT ONLY form",
-        });
-      }
-      if (!coverImage) {
-        return res
-          .status(400)
-          .send({ message: "Please add a cover image for post" });
-      }
-
       let post = new Post({
         title,
-        coverImage,
         content,
-        textEditorContent,
+        // textEditorContent,
+        description,
+        coverImage,
         author: req.user._id,
-        isPublished: true,
+        isPublished,
         publishDate: new Date(),
       });
 
       await post.save();
-      post = await post.getPostDetail();
       return res.status(201).send(post);
     } catch (err) {
-      res.status(500).send({ message: "Some errors occur in create posts" });
+      return res
+        .status(500)
+        .send({ message: "Some errors occur in create posts" });
     }
   }
 );
+
+const posts = require("../tests/fixtures/data/posts");
+const { pushTask } = require("../utils");
+router.post("/ai", async (req, res) => {
+  /*
+    #swagger.tags = ['Dev']
+    #swagger.summary = 'Create posts for AI service test'
+  */
+  try {
+    let post = new Post({
+      _id: posts[0]._id,
+      title: posts[0].title,
+      content: posts[0].content,
+      // textEditorContent: posts[0].textEditorContent,
+      coverImage: posts[0].coverImage,
+      author: posts[0].author,
+      isPublished: posts[0].isPublished,
+      publishDate: posts[0].publishDate,
+    });
+    await post.save();
+    pushTask(posts[0]._id);
+  } catch (err) {
+    return res.status(500).send({ message: "Mock AI failed" });
+  }
+});
 
 module.exports = router;

@@ -5,11 +5,11 @@ const TrendingButton = styled.button`
   font-weight: bold;
   font-size: 15px;
   padding: 5px 10px;
-  background-color: ${({ theme }) => theme.colors.TrendingBtnBackground};
-  color: ${({ theme }) => theme.colors.TrendingBtnText};
-  border: none;
+  background-color: #e8edff;
+  color: black;
+  border: 1px solid black;
   border-radius: 31px;
-  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  /* box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px; */
   position: relative;
   transition: all 0.5s;
   &:hover {
@@ -20,7 +20,7 @@ const TrendingButton = styled.button`
   &:after {
     content: "";
     width: 0;
-    border: 1px solid ${({ theme }) => theme.colors.TrendingBtnBackground};
+    border: 1px solid #e8edff;
     opacity: 0;
     position: absolute;
     left: 0;

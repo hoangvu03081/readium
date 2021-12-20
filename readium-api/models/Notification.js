@@ -4,24 +4,23 @@ const {
   SchemaTypes: { ObjectId },
 } = require("mongoose");
 
+// limit to 50 notifications, no longer than 3 months
 const notificationSchema = new Schema({
-  user: {
-    type: ObjectId,
-    ref: "User",
-    required: true,
-  },
-  content: {
-    type: String,
-    required: true,
-  },
-  url: {
-    type: String,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    expires: 3 * 30 * 24 * 60 * 60,
-  },
+  from: { type: ObjectId, ref: "User", required: true },
+  to: { type: ObjectId, ref: "User", required: true },
+  content: { type: String, required: true },
+  url: { type: String, required: true },
+  createdAt: { type: Date, expires: 3 },
+  // test
+  // expires: 3 * 30 * 24 * 60 * 60,
 });
 
-module.exports = notificationSchema;
+notificationSchema.methods.toJSON = function () {
+  const notification = this.toObject();
+  notification.id = notification._id;
+  delete notification._id;
+  delete notification.__v;
+  return notification;
+};
+
+module.exports = model("Notification", notificationSchema);

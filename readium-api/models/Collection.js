@@ -1,26 +1,14 @@
 const mongoose = require("mongoose");
 
 const {
+  model,
   Schema,
   SchemaTypes: { ObjectId },
 } = mongoose;
 
 const collectionSchema = new Schema({
-  name: {
-    type: String,
-    required: true,
-    default: "Default Collection",
-  },
-  posts: {
-    default: [],
-    type: [
-      {
-        type: ObjectId,
-        required: true,
-        ref: "Post",
-      },
-    ],
-  },
+  name: { type: String, required: true, default: "Default Collection" },
+  posts: [{ type: ObjectId, ref: "Post", required: true }],
 });
 
-module.exports = collectionSchema;
+module.exports = model("Collection", collectionSchema);

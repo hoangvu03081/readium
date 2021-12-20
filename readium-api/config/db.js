@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { getUrl } = require("../utils/db");
+const { getUrl } = require("../utils");
 
 mongoose
   .connect(getUrl())
