@@ -39,6 +39,7 @@ const DRAFT_API = {
   PUT_COVER_IMAGE: (id) => getURL(`/drafts/${id}/cover-image`),
   PATCH_CONTENT: (id) => getURL(`/drafts/${id}/diff`),
   GET_A_DRAFT: (id) => getURL(`/drafts/${id}`),
+  GET_COVER_IMAGE_DRAFT: (id) => getURL(`/drafts/${id}/cover-image`),
   PUT_PUBLISH: (id) => getURL(`/drafts/publish/${id}`),
 };
 

@@ -6,9 +6,13 @@ import { useDraft, usePublish } from "../../common/api/draftQuery";
 import LoadingOverlay from "../../common/components/LoadingOverlay";
 import PostInfo from "../../common/components/PostInfo";
 import PostContent from "../../common/components/PostContent";
+import TagBtn from "../../common/components/Buttons/TagBtn";
+import HorizontalLine from "./HorizontalLine";
 
 // STYLES ----------------------------------------------------------
-const Layout = styled.div``;
+const Layout = styled.div`
+  margin-bottom: 105px;
+`;
 
 const SubHeader = styled.div`
   height: 60px;
@@ -65,6 +69,7 @@ const PublishBtn = styled.button`
 
 const Content = styled.div`
   margin-top: 140px;
+  margin-bottom: 50px;
   padding-top: 15px;
   width: 55%;
 `;
@@ -88,7 +93,7 @@ const PostTitle = styled.p`
 `;
 const PostDescription = styled.p`
   margin-top: 0;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
   margin-left: auto;
   margin-right: auto;
   padding: 0;
@@ -96,16 +101,31 @@ const PostDescription = styled.p`
   font-weight: 500;
   font-size: 26px;
 `;
-const PostCoverImage = styled.img``;
+const PostCoverImage = styled.img`
+  width: 100%;
+  height: 450px;
+  object-fit: cover;
+  margin-bottom: 30px;
+`;
+const PostTags = styled.div`
+  border-top: 1px solid #d7d7d7;
+  padding-top: 13px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+`;
 // -----------------------------------------------------------------
 
 export default function PreviewPost() {
-  const { isAuth } = useAuth();
+  const { auth } = useAuth();
   const history = useHistory();
   const id = history.location.state;
 
   // GET DRAFT & COVER IMAGE DRAFT
-  const { isFetched, data } = useDraft(id, isAuth);
+  const [
+    { isFetched: isFetchedDraft, data: dataDraft },
+    { isFetched: isFetchedCoverImage, data: dataCoverImage },
+  ] = useDraft(id, auth);
 
   //  PUBLISH
   const publish = usePublish(id);
@@ -113,11 +133,12 @@ export default function PreviewPost() {
     publish.mutate();
   };
 
-  // WAIT FOR DRAFT DATA
-  if (!isFetched) {
+  // WAIT FOR DATA
+  if (!isFetchedDraft || !isFetchedCoverImage) {
     return <LoadingOverlay isLoading />;
   }
-  const draft = data.data;
+  const draft = dataDraft.data;
+  const coverImageSrc = window.URL.createObjectURL(dataCoverImage.data);
 
   return (
     <Layout>
@@ -136,12 +157,17 @@ export default function PreviewPost() {
           author={draft.author}
           publishedDate="Just now"
           duration={draft.duration}
-          isPreview={false}
+          isPreview
         />
-        <PostCoverImage
-          src={`http://localhost:5000/drafts/${id}/cover-image`}
-        />
+        <PostCoverImage src={coverImageSrc} />
+        <HorizontalLine />
         <PostContent quillContent={draft.textEditorContent} />
+        <PostTags>
+          {draft.tags.map((item, index) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <TagBtn key={index}>{item}</TagBtn>
+          ))}
+        </PostTags>
       </Content>
     </Layout>
   );
