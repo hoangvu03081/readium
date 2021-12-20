@@ -14,13 +14,16 @@ export function useFetchProfile(profileId) {
 export function useUpdateProfile(profileId) {
   const queryClient = useQueryClient();
   return useMutation(
-    (profile) =>
-      console.log(profile) ||
-      axios.patch(SETTING_API.PATCH_MY_PROFILE, profile),
+    (profile) => axios.patch(SETTING_API.PATCH_MY_PROFILE, profile),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["profile", profileId]);
         toast.success("Update successfully!", {
+          position: toast.POSITION.BOTTOM_RIGHT,
+        });
+      },
+      onError: (err) => {
+        toast.error(err.response.data.message, {
           position: toast.POSITION.BOTTOM_RIGHT,
         });
       },

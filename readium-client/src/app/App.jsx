@@ -13,6 +13,7 @@ import PreviewPost from "../screens/PreviewPost";
 import ResetPassword from "../screens/ResetPassword";
 import "./App.css";
 import Settings from "../screens/Settings";
+import SecureRoute from "../common/components/SecureRoute";
 
 function App() {
   return (
@@ -46,15 +47,15 @@ function App() {
           <Route exact path="/">
             <Home />
           </Route>
-          <Route path="/write">
+          <SecureRoute path="/write">
             <WritePost />
-          </Route>
-          <Route path="/settings">
+          </SecureRoute>
+          <SecureRoute path="/settings">
             <Settings />
-          </Route>
-          <Route path="/profile/:profileId?">
+          </SecureRoute>
+          <SecureRoute path="/profile/:profileId?">
             <Profile />
-          </Route>
+          </SecureRoute>
           <Route path="/preview">
             <PreviewPost />
           </Route>
