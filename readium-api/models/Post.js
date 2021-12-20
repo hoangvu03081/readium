@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const {
   getAvatarUrl,
   getPostCoverImageUrl,
+  getDraftCoverImageUrl,
   getUserCoverImageUrl,
   streamToString,
 } = require("../utils");
@@ -65,7 +66,9 @@ postSchema.methods.getPostPreview = async function () {
   postObject.comments = postObject.comments.length;
 
   if (postObject.coverImage) {
-    postObject.coverImage = getPostCoverImageUrl(postObject.id);
+    if (postObject.isPublished)
+      postObject.coverImage = getPostCoverImageUrl(postObject.id);
+    else postObject.coverImage = getDraftCoverImageUrl(postObject.id);
   }
   postObject.author.avatar = getAvatarUrl(postObject.author._id.toString());
 
@@ -82,7 +85,7 @@ postSchema.methods.getPostDetail = async function () {
   const bucket = getBucket();
   const stream = bucket.openDownloadStream(this.textEditorContent);
   const textEditorContent = await streamToString(stream);
-  
+
   await this.populate("author", {
     displayName: 1,
     followers: 1,

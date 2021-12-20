@@ -71,6 +71,8 @@ const convertBufferToPng = (buffer) => {
 
 const getPostCoverImageUrl = (postId) =>
   `${serverUrl}/posts/${postId}/cover-image`;
+const getDraftCoverImageUrl = (postId) =>
+  `${serverUrl}/drafts/${postId}/cover-image`;
 const getAvatarUrl = (userId) => `${serverUrl}/users/profiles/avatar/${userId}`;
 // TODO: FIX TO GET POST & GET PROFILE COVER IMAGE
 const getUserCoverImageUrl = (userId) =>
@@ -102,6 +104,7 @@ module.exports = {
   downloadImageFromUrl,
   convertBufferToPng,
   getPostCoverImageUrl,
+  getDraftCoverImageUrl,
   getAvatarUrl,
   getUserCoverImageUrl,
   getUrl,
