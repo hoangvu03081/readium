@@ -9,7 +9,7 @@ const TrendingButton = styled.button`
   color: black;
   border: 1px solid black;
   border-radius: 31px;
-  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  /* box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px; */
   position: relative;
   transition: all 0.5s;
   &:hover {
@@ -20,7 +20,7 @@ const TrendingButton = styled.button`
   &:after {
     content: "";
     width: 0;
-    border: 1px solid ${({ theme }) => theme.colors.TrendingBtnBackground};
+    border: 1px solid #e8edff;
     opacity: 0;
     position: absolute;
     left: 0;

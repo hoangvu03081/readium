@@ -3,25 +3,21 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../../common/hooks/useAuth";
+import { useDraftID } from "../../common/api/draftQuery";
 import StoryInformation from "./StoryInformation";
 import StoryContent from "./StoryContent";
 import BackToTop from "../../common/components/Buttons/BackToTop";
-import {
-  Layout,
-  SubmitBtnContainer,
-  SubmitBtn,
-  LoadingOverlay,
-} from "./styles";
-import { useDraftID } from "../../common/api/draftQuery";
+import LoadingOverlay from "../../common/components/LoadingOverlay";
+import { Layout, SubmitBtnContainer, SubmitBtn } from "./styles";
 
 export default function WritePost() {
   // GET DRAFT ID
   const [id, setId] = useState("");
-  const { isAuth } = useAuth();
+  const { auth } = useAuth();
   const draftId = useDraftID();
   useEffect(() => {
     async function initPost() {
-      if (!id && isAuth) {
+      if (!id && auth) {
         draftId.mutate(null, {
           onSuccess: (result) => {
             setId(result.data.id);
@@ -31,11 +27,11 @@ export default function WritePost() {
       }
     }
     initPost();
-  }, [id, isAuth]);
+  }, [id, auth]);
 
   // HANDLE SUBMIT --------------------------------------------------------------
   const storyInformationRef = useRef([
-    null, // titile input
+    null, // title input
     null, // note title
     null, // your tags
     null, // cover image input
@@ -106,12 +102,7 @@ export default function WritePost() {
 
   return (
     <Layout className="container">
-      <LoadingOverlay className={isLoading ? "d-flex" : "d-none"}>
-        <div className="lds-ripple">
-          <div />
-          <div />
-        </div>
-      </LoadingOverlay>
+      <LoadingOverlay isLoading={isLoading} />
       <StoryInformation id={id} ref={storyInformationRef} />
       <StoryContent id={id} ref={storyContentRef} />
       <SubmitBtnContainer>

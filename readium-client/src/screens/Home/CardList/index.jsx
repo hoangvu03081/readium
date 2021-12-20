@@ -10,13 +10,13 @@ export default function CardList() {
   return (
     <>
       {data.reduce((acc, item) => {
-        // console.log(item.data.posts); "./src/assets/images/preview_2.png"
+        // console.log(item.data.posts);
         acc.push(
           ...item.data.posts.map((post) => {
             return (
               <Card
                 key={post.id}
-                preview={post.coverImageUrl}
+                preview={post.coverImage}
                 title={post.title}
                 content={post.content}
                 tags={post.tags}
@@ -25,7 +25,7 @@ export default function CardList() {
                 userAvatar={post.author.avatar}
                 loveNumber={post.likes}
                 commentNumber={post.comments}
-                hideOptions={false}
+                type="global"
               />
             );
           })

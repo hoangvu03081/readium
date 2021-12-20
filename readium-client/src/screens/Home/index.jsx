@@ -12,7 +12,7 @@ export default function Home() {
   // const { notifications } = useWs();
   // console.log(notifications);
   return (
-    <div>
+    <>
       <Body
         contentLeft={
           <>
@@ -29,6 +29,6 @@ export default function Home() {
           </>
         }
       />
-    </div>
+    </>
   );
 }

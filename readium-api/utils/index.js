@@ -77,6 +77,7 @@ const getAvatarUrl = (userId) => `${serverUrl}/users/profiles/avatar/${userId}`;
 const getUserCoverImageUrl = (userId) =>
   `${serverUrl}/users/profiles/cover-image/${userId}`;
 
+
 module.exports = {
   checkEmpty,
   validateEmail,

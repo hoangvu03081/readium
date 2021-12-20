@@ -39,21 +39,38 @@ export function useCoverImageDraft(id) {
 }
 
 let currentDelta = new Delta();
+export function useNewContentDraft() {
+  currentDelta = new Delta();
+}
 export function useContentDraft(id) {
   return useMutation((editor) => {
     const newDelta = currentDelta.diff(editor.getContents());
     currentDelta = editor.getContents();
     axios.patch(DRAFT_API.PATCH_CONTENT(id), {
-      diff: JSON.stringify(newDelta),
+      diff: newDelta,
     });
   });
 }
 
-export function useDraft(id, isAuth) {
-  return useQuery("draft", () => axios.get(DRAFT_API.GET_A_DRAFT(id)), {
-    staleTime: Infinity,
-    enabled: isAuth,
+export function useDraft(id, auth) {
+  const res1 = useQuery("draft", () => axios.get(DRAFT_API.GET_A_DRAFT(id)), {
+    staleTime: 0,
+    refetchOnMount: true,
+    enabled: !!auth,
+    refetchOnWindowFocus: false,
   });
+  const res2 = useQuery(
+    "coverImageDraft",
+    () =>
+      axios.get(DRAFT_API.GET_COVER_IMAGE_DRAFT(id), { responseType: "blob" }),
+    {
+      staleTime: 0,
+      refetchOnMount: true,
+      enabled: !!auth,
+      refetchOnWindowFocus: false,
+    }
+  );
+  return [res1, res2];
 }
 
 export function usePublish(id) {
