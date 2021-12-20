@@ -1,15 +1,18 @@
 import React from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
+import { ToastContainer, Zoom } from "react-toastify";
 import ConfirmEmail from "../screens/ConfirmEmail";
 import SignInModal from "../common/components/SignInModal";
 import MobileNavbar from "../common/components/Header/MobileNavbar";
 import Header from "../common/components/Header";
 import Home from "../screens/Home";
+import Profile from "../screens/Profile";
 import Page404 from "../screens/Page404";
 import WritePost from "../screens/WritePost";
 import PreviewPost from "../screens/PreviewPost";
 import ResetPassword from "../screens/ResetPassword";
 import "./App.css";
+import Settings from "../screens/Settings";
 
 function App() {
   return (
@@ -27,6 +30,18 @@ function App() {
         <SignInModal />
         <MobileNavbar />
         <Header />
+        <ToastContainer
+          position="top-right"
+          autoClose={2000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          transition={Zoom}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
         <Switch>
           <Route exact path="/">
             <Home />
@@ -34,11 +49,15 @@ function App() {
           <Route path="/write">
             <WritePost />
           </Route>
+          <Route path="/settings">
+            <Settings />
+          </Route>
+          <Route path="/profile/:profileId?">
+            <Profile />
+          </Route>
           <Route path="/preview">
             <PreviewPost />
           </Route>
-          <Route path="/settings">settings</Route>
-          <Route path="/profile">profile</Route>
           <Route path="/post">post</Route>
           <Route path="/notifications">notifications</Route>
           <Route path="/collections">collections</Route>
