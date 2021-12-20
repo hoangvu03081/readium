@@ -29,6 +29,10 @@
     font-weight: bold;
   }
   @font-face {
+    font-family: "Lato";
+    src: url(../assets/fonts/Lato-Regular.ttf) format('truetype'), local('Lato Regular');
+  }
+  @font-face {
     font-family: "PT Sans";
     src: url(../assets/fonts/PTSans-Bold.ttf) format('truetype'), local('PT Sans Bold');
     font-weight: bold;

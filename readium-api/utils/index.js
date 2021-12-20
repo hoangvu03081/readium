@@ -60,10 +60,14 @@ const convertBufferToPng = (buffer) => {
   return sharp(buffer).png().toBuffer();
 };
 
-const getImageUrl = (postId) => `${serverUrl}/posts/${postId}/cover-image`;
+const getPostCoverImageUrl = (postId) =>
+  `${serverUrl}/posts/${postId}/cover-image`;
+const getDraftCoverImageUrl = (postId) =>
+  `${serverUrl}/drafts/${postId}/cover-image`;
 const getAvatarUrl = (userId) => `${serverUrl}/users/profiles/avatar/${userId}`;
-const getCoverImageUrl = (userId) =>
+const getUserCoverImageUrl = (userId) =>
   `${serverUrl}/users/profiles/cover-image/${userId}`;
+
 
 module.exports = {
   checkEmpty,
@@ -89,8 +93,9 @@ module.exports = {
   REQUIRE_ACTIVATE_ACCOUNT,
   downloadImageFromUrl,
   convertBufferToPng,
-  getImageUrl,
+  getPostCoverImageUrl,
   getAvatarUrl,
-  getCoverImageUrl,
+  getDraftCoverImageUrl,
+  getUserCoverImageUrl,
   getUrl,
 };

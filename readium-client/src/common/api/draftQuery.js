@@ -50,12 +50,24 @@ export function useContentDraft(id) {
 }
 
 export function useDraft(id, isAuth) {
-  return useQuery("draft", () => axios.get(DRAFT_API.GET_A_DRAFT(id)), {
+  const res1 = useQuery("draft", () => axios.get(DRAFT_API.GET_A_DRAFT(id)), {
     staleTime: 0,
     refetchOnMount: true,
     enabled: isAuth,
     refetchOnWindowFocus: false,
   });
+  const res2 = useQuery(
+    "coverImageDraft",
+    () =>
+      axios.get(DRAFT_API.GET_COVER_IMAGE_DRAFT(id), { responseType: "blob" }),
+    {
+      staleTime: 0,
+      refetchOnMount: true,
+      enabled: isAuth,
+      refetchOnWindowFocus: false,
+    }
+  );
+  return [res1, res2];
 }
 
 export function usePublish(id) {

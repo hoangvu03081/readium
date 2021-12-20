@@ -1,5 +1,9 @@
 const mongoose = require("mongoose");
-const { getAvatarUrl, getImageUrl, getCoverImageUrl } = require("../utils");
+const {
+  getAvatarUrl,
+  getDraftCoverImageUrl,
+  getPostCoverImageUrl,
+} = require("../utils");
 
 const {
   model,
@@ -57,11 +61,12 @@ postSchema.methods.getPostPreview = async function () {
   postObject.comments = postObject.comments.length;
 
   if (postObject.coverImage) {
-    postObject.coverImageUrl = getImageUrl(postObject.id);
+    if (postObject.isPublished)
+      postObject.coverImage = getPostCoverImageUrl(postObject.id);
+    else postObject.coverImage = getDraftCoverImageUrl(postObject.id);
   }
   postObject.author.avatar = getAvatarUrl(postObject.author._id);
 
-  delete postObject.coverImage;
   delete postObject.author._id;
   delete postObject.__v;
   delete postObject._id;
@@ -77,11 +82,14 @@ postSchema.methods.getPostDetail = async function () {
 
   postObject.id = postObject._id.toString();
   if (postObject.coverImage) {
-    postObject.coverImageUrl = getImageUrl(postObject.id);
+    if (postObject.isPublished) {
+      postObject.coverImage = getPostCoverImageUrl(postObject.id);
+    } else {
+      postObject.coverImage = getDraftCoverImageUrl(postObject.id);
+    }
   }
   postObject.author.avatar = getAvatarUrl(postObject.author._id);
 
-  delete postObject.coverImage;
   delete postObject.author._id;
   delete postObject.__v;
   delete postObject._id;
