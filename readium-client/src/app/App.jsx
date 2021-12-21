@@ -9,6 +9,8 @@ import Home from "../screens/Home";
 import Profile from "../screens/Profile";
 import Page404 from "../screens/Page404";
 import WritePost from "../screens/WritePost";
+import EditDraft from "../screens/EditDraft";
+import EditPost from "../screens/EditPost";
 import PreviewPost from "../screens/PreviewPost";
 import ResetPassword from "../screens/ResetPassword";
 import "./App.css";
@@ -49,6 +51,12 @@ function App() {
           </Route>
           <SecureRoute path="/write">
             <WritePost />
+          </SecureRoute>
+          <SecureRoute path="/edit/draft">
+            <EditDraft />
+          </SecureRoute>
+          <SecureRoute path="/edit/post">
+            <EditPost />
           </SecureRoute>
           <SecureRoute path="/settings">
             <Settings />

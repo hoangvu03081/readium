@@ -4,17 +4,13 @@ import { useHistory } from "react-router-dom";
 import { useAuth } from "../../common/hooks/useAuth";
 import { useDraft, usePublish } from "../../common/api/draftQuery";
 import LoadingOverlay from "../../common/components/LoadingOverlay";
-import PostInfo from "../../common/components/PostInfo";
-import PostContent from "../../common/components/PostContent";
-import TagBtn from "../../common/components/Buttons/TagBtn";
+import Post from "../../common/components/Post";
 import BackToTop from "../../common/components/Buttons/BackToTop";
-import HorizontalLine from "./HorizontalLine";
 
 // STYLES ----------------------------------------------------------
 const Layout = styled.div`
   padding-bottom: 55px;
 `;
-
 const SubHeader = styled.div`
   height: 60px;
   width: 100%;
@@ -67,54 +63,6 @@ const PublishBtn = styled.button`
     transition: all 0.3s;
   }
 `;
-
-const Content = styled.div`
-  margin-top: 140px;
-  margin-bottom: 50px;
-  padding-top: 15px;
-  width: 55%;
-`;
-const PreviewTitle = styled.p`
-  margin: 0 0 55px 0;
-  padding: 0;
-  text-align: center;
-  font-family: "Raleway";
-  font-weight: 500;
-  font-size: 46px;
-`;
-const PostTitle = styled.p`
-  margin-top: 0;
-  margin-bottom: 10px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 0;
-  font-family: "Raleway";
-  font-weight: bold;
-  font-size: 36px;
-`;
-const PostDescription = styled.p`
-  margin-top: 0;
-  margin-bottom: 25px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 0;
-  font-family: "PT Sans";
-  font-weight: 500;
-  font-size: 24px;
-`;
-const PostCoverImage = styled.img`
-  width: 100%;
-  height: 450px;
-  object-fit: cover;
-  margin-bottom: 30px;
-`;
-const PostTags = styled.div`
-  border-top: 1px solid #d7d7d7;
-  padding-top: 13px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-`;
 // -----------------------------------------------------------------
 
 export default function PreviewPost() {
@@ -157,26 +105,7 @@ export default function PreviewPost() {
         </SubHeaderContainer>
       </SubHeader>
 
-      <Content className="container">
-        <PreviewTitle>Preview your post</PreviewTitle>
-        <PostTitle>{draft.title}</PostTitle>
-        <PostDescription>{draft.description}</PostDescription>
-        <PostInfo
-          author={draft.author}
-          publishedDate="Just now"
-          duration={draft.duration}
-          isPreview
-        />
-        <PostCoverImage src={coverImageSrc} />
-        <HorizontalLine />
-        <PostContent quillContent={draft.textEditorContent} />
-        <PostTags>
-          {draft.tags.map((item, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <TagBtn key={index}>{item}</TagBtn>
-          ))}
-        </PostTags>
-      </Content>
+      <Post data={draft} coverImage={coverImageSrc} />
 
       <BackToTop />
     </Layout>

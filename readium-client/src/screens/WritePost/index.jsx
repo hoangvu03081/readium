@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../../common/hooks/useAuth";
-import { useDraft, useDraftID } from "../../common/api/draftQuery";
+import { useDraftID } from "../../common/api/draftQuery";
 import StoryInformation from "./StoryInformation";
 import StoryContent from "./StoryContent";
 import BackToTop from "../../common/components/Buttons/BackToTop";

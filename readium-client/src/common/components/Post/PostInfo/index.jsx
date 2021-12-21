@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import { ReactComponent as AddCollection } from "../../../assets/icons/add_collection.svg";
-import { ReactComponent as AddedCollection } from "../../../assets/icons/added_collection.svg";
-import { ReactComponent as Report } from "../../../assets/icons/report.svg";
+import { ReactComponent as AddCollection } from "../../../../assets/icons/add_collection.svg";
+import { ReactComponent as AddedCollection } from "../../../../assets/icons/added_collection.svg";
+import { ReactComponent as Report } from "../../../../assets/icons/report.svg";
 
 // STYLES -----------------------------------------------------------------------------
 const Layout = styled.div`
