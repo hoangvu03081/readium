@@ -37,6 +37,7 @@ function useProvideAuth() {
   const [data, setData] = useState(null);
   const [tokenReceived, setTokenReceived] = useState(false);
   const dispatch = useDispatch();
+  const { authenticateWs } = useWs();
 
   const handleData = (d) => {
     setData(d);
@@ -77,7 +78,7 @@ function useProvideAuth() {
     axios.defaults.withCredentials = true;
     const token = localStorage.getItem("Authorization");
     if (token) {
-      axios.defaults.headers.common.Authorization = token; 
+      axios.defaults.headers.common.Authorization = token;
       authenticateWs(token);
     }
     axios

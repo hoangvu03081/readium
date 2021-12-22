@@ -167,29 +167,27 @@ router.post("/:id", authMiddleware, checkOwnPost, async (req, res) => {
   */
   try {
     const {
+      title,
+      textEditorContent,
       _id,
       author,
-      title,
       coverImage,
-      textEditorContent,
       content,
-      textConnection,
       duration,
       tags,
       description,
     } = req.post;
 
     const newPost = new Post({
-      author,
       title,
-      coverImage,
       textEditorContent,
+      publishedPost: _id,
+      author,
+      coverImage,
       content,
-      textConnection,
       duration,
       tags,
       description,
-      publishedPost: _id,
     });
 
     await newPost.save();
@@ -648,8 +646,10 @@ router.put("/:id/republish", authMiddleware, checkOwnPost, async (req, res) => {
       return res.send({ message: "Please provide cover image" });
     }
     post.title = req.post.title;
+    post.textEditorContent = req.post.textEditorContent;
     post.coverImage = req.post.coverImage;
     post.content = req.post.content;
+    post.duration = req.post.duration;
     post.tags = req.post.tags;
     post.description = req.post.description;
 
