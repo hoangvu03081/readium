@@ -107,7 +107,7 @@ const doc = {
       $email: "john@example.com",
     },
     PostToCollection: {
-      $postId: "post object id",
+      $postId: "post id",
       $collectionName: "collection name",
     },
     Comment: {
