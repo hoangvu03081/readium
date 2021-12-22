@@ -12,15 +12,16 @@ router.get("/", async (req, res) => {
   */
   try {
     const { postId } = req.params;
-    const post = await Post.findOne(
-      { _id: postId, isPublished: true },
-      { comments: 1 }
-    ).populate("comments");
-    if (!post) {
+    const post = await Post.findById(postId, { comments: 1 }).populate(
+      "comments"
+    );
+
+    if (!post || !post.isPublished) {
       return res.status(404).send({
-        message: `Post ${postId} not found. Please be sure that this id is correct!`,
+        message: `Post not found. Please be sure that id is correct!`,
       });
     }
+
     return res.send(post.comments);
   } catch (err) {
     return res.status(500).send({
@@ -29,7 +30,49 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.patch(
+router.post("/", authMiddleware, async (req, res) => {
+  /*
+    #swagger.tags = ['Comment']
+    #swagger.summary = 'Post a comment'
+    #swagger.requestBody = {
+      required: true,
+      content: {
+        "application/json": {
+          schema: {
+            $ref: "#/definitions/Comment"
+          }
+        }
+      }
+    }
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+  */
+  try {
+    const { postId } = req.params;
+    const post = await Post.findById(req.params.postId, {
+      comments: 1,
+    }).populate("comments");
+    if (!post || !post.isPublished) {
+      return res.status(404).send({ message: "Post not found." });
+    }
+    const comment = new Comment({
+      user: req.user._id,
+      post: postId,
+      content: req.body.content,
+    });
+
+    post.comments.push(postId);
+    await post.save();
+    await comment.save();
+
+    return res.send(comment);
+  } catch (err) {
+    return res.send({ message: "Something went when posting a comment" });
+  }
+});
+
+router.put(
   "/:commentId",
   authMiddleware,
   checkCommentContent,
@@ -61,26 +104,24 @@ router.patch(
           .send({ message: "Please provide content to edit your comment" });
       }
 
-      const post = await Post.findOne(
-        { _id: postId, isPublished: true },
-        { comments: 1 }
-      ).populate("comments");
+      const post = await Post.findById(postId, { comments: 1 }).populate(
+        "comments"
+      );
 
-      if (!post) {
+      if (!post || !post.isPublished) {
         return res.status(404).send({
-          message: `Post ${postId} not found. Please be sure that this id is correct!`,
+          message: `Post not found. Please be sure that id is correct!`,
         });
       }
 
-      const comment = post.comments.find(
-        (comment) => comment._id.toString() === commentId
-      );
+      const comment = await Comment.findById(commentId);
 
-      if (comment.user._id.toString() !== req.user._id.toString()) {
+      if (comment.user.toString() !== req.user._id.toString()) {
         return res.status(400).send({
           message: "You do not own this comment to edit",
         });
       }
+
       comment.content = content;
       await comment.save();
       return res.send(comment);
