@@ -27,20 +27,20 @@ const StoryInformation = React.forwardRef(
   ({ id, data, dataCoverImage }, ref) => {
     // TITLE
     let titleSaved = true;
-    ref.current[5] = titleSaved;
+    ref.current[4] = titleSaved;
     const [titleValidation, setTitleValidation] = useState(true);
     const resTitleDraft = useTitleDraft(id);
     const debounceSendTitleDraft = useCallback(
       debounce((titleDraft) => {
         titleSaved = true;
-        ref.current[5] = titleSaved;
+        ref.current[4] = titleSaved;
         resTitleDraft.mutate(titleDraft);
       }, 2000),
       [id]
     );
     const handleTitleChange = (titleDraft) => {
       titleSaved = false;
-      ref.current[5] = titleSaved;
+      ref.current[4] = titleSaved;
       if (titleDraft.target.value.length === 0) {
         setTitleValidation(false);
         ref.current[1].innerHTML =
@@ -59,20 +59,20 @@ const StoryInformation = React.forwardRef(
 
     // DESCRIPTION
     let descriptionSaved = true;
-    ref.current[6] = descriptionSaved;
+    ref.current[5] = descriptionSaved;
     const [descriptionValidation, setDescriptionValidation] = useState(true);
     const resDescriptionDraft = useDescriptionDraft(id);
     const debounceSendDescriptionDraft = useCallback(
       debounce((descriptionDraft) => {
         descriptionSaved = true;
-        ref.current[6] = descriptionSaved;
+        ref.current[5] = descriptionSaved;
         resDescriptionDraft.mutate(descriptionDraft);
       }, 2000),
       [id]
     );
     const handleDescriptionChange = (descriptionDraft) => {
       descriptionSaved = false;
-      ref.current[6] = descriptionSaved;
+      ref.current[5] = descriptionSaved;
       if (descriptionDraft.target.value.length === 300) {
         setDescriptionValidation(false);
       } else {
@@ -83,7 +83,7 @@ const StoryInformation = React.forwardRef(
 
     // TAGS
     let tagsSaved = true;
-    ref.current[7] = tagsSaved;
+    ref.current[6] = tagsSaved;
     const KeyCodes = {
       comma: 188,
       enter: 13,
@@ -95,7 +95,7 @@ const StoryInformation = React.forwardRef(
     const debounceSendTagsDraft = useCallback(
       debounce((tagsDraft) => {
         tagsSaved = true;
-        ref.current[7] = tagsSaved;
+        ref.current[6] = tagsSaved;
         resTagsDraft.mutate(tagsDraft);
       }, 2000),
       [id]
@@ -110,7 +110,7 @@ const StoryInformation = React.forwardRef(
     const handleAddition = (tag) => {
       if (tagsValidation) {
         tagsSaved = false;
-        ref.current[7] = tagsSaved;
+        ref.current[6] = tagsSaved;
         const newTags = [...tags, tag];
         setTags(newTags);
         handleTagsChange(newTags);
@@ -119,7 +119,7 @@ const StoryInformation = React.forwardRef(
     };
     const handleDelete = (i) => {
       tagsSaved = false;
-      ref.current[7] = tagsSaved;
+      ref.current[6] = tagsSaved;
       const newTags = tags.filter((tag, index) => index !== i);
       setTags(newTags);
       handleTagsChange(newTags);
@@ -127,7 +127,7 @@ const StoryInformation = React.forwardRef(
     };
     const handleDrag = (tag, currPos, newPos) => {
       tagsSaved = false;
-      ref.current[7] = tagsSaved;
+      ref.current[6] = tagsSaved;
       const newTags = tags.slice();
       newTags.splice(currPos, 1);
       newTags.splice(newPos, 0, tag);
@@ -136,16 +136,14 @@ const StoryInformation = React.forwardRef(
     };
 
     // COVER IMAGE
-    let coverImageSaved = true;
-    ref.current[8] = coverImageSaved;
+    const [coverImageSaved, setCoverImageSaved] = useState(false);
+    ref.current[7] = coverImageSaved;
     const [coverImage, setCoverImage] = useState("");
     const resCoverImageDraft = useCoverImageDraft(id);
     const onDrop = useCallback(
       (acceptedFiles) => {
-        coverImageSaved = false;
-        ref.current[8] = coverImageSaved;
-        ref.current[4].classList.remove("d-block");
-        ref.current[4].classList.add("d-none");
+        ref.current[3].classList.remove("d-block");
+        ref.current[3].classList.add("d-none");
         Resizer.imageFileResizer(
           acceptedFiles[0],
           2048,
@@ -162,8 +160,8 @@ const StoryInformation = React.forwardRef(
             const coverImageDraft = new FormData();
             coverImageDraft.append("coverImage", file);
             resCoverImageDraft.mutate(coverImageDraft);
-            coverImageSaved = true;
-            ref.current[8] = coverImageSaved;
+            setCoverImageSaved(true);
+            ref.current[7] = coverImageSaved;
           },
           "file"
         );
@@ -273,7 +271,7 @@ const StoryInformation = React.forwardRef(
         <UploadImage backgroundImage={coverImage} {...getRootProps()}>
           <input {...getInputProps()} />
           {isDragActive ? (
-            <p>Drop a file here ...</p>
+            <p>Drop a file here</p>
           ) : (
             <div>
               <UploadIcon />
@@ -284,7 +282,7 @@ const StoryInformation = React.forwardRef(
         <Note
           className="d-none"
           ref={(element) => {
-            ref.current[4] = element;
+            ref.current[3] = element;
           }}
         />
       </Layout>

@@ -42,6 +42,9 @@ let currentDelta = new Delta();
 export function useNewContentDraft() {
   currentDelta = new Delta();
 }
+export function useFetchContentDraft(delta) {
+  currentDelta = new Delta(delta);
+}
 export function useContentDraft(id) {
   return useMutation((editor) => {
     const newDelta = currentDelta.diff(editor.getContents());

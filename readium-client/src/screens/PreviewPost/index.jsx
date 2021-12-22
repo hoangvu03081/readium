@@ -81,8 +81,9 @@ export default function PreviewPost() {
   const handlePublish = () => {
     if (auth) {
       publish.mutate();
+      history.push(`/post/${id}`);
     } else {
-      console.log(1);
+      console.log("Publish Error!");
     }
   };
 

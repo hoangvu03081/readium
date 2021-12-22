@@ -9,9 +9,10 @@ import Home from "../screens/Home";
 import Profile from "../screens/Profile";
 import Page404 from "../screens/Page404";
 import WritePost from "../screens/WritePost";
+import PreviewPost from "../screens/PreviewPost";
 import EditDraft from "../screens/EditDraft";
 import EditPost from "../screens/EditPost";
-import PreviewPost from "../screens/PreviewPost";
+import ReadPost from "../screens/ReadPost";
 import ResetPassword from "../screens/ResetPassword";
 import "./App.css";
 import Settings from "../screens/Settings";
@@ -52,11 +53,17 @@ function App() {
           <SecureRoute path="/write">
             <WritePost />
           </SecureRoute>
+          <SecureRoute path="/preview">
+            <PreviewPost />
+          </SecureRoute>
           <SecureRoute path="/edit/draft">
             <EditDraft />
           </SecureRoute>
           <SecureRoute path="/edit/post">
             <EditPost />
+          </SecureRoute>
+          <SecureRoute path="/post/:postId?">
+            <ReadPost />
           </SecureRoute>
           <SecureRoute path="/settings">
             <Settings />
@@ -64,10 +71,6 @@ function App() {
           <SecureRoute path="/profile/:profileId?">
             <Profile />
           </SecureRoute>
-          <Route path="/preview">
-            <PreviewPost />
-          </Route>
-          <Route path="/post">post</Route>
           <Route path="/notifications">notifications</Route>
           <Route path="/collections">collections</Route>
           <Route path="/tag">tag</Route>

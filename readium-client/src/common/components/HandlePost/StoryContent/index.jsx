@@ -3,7 +3,11 @@ import React, { useCallback, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import debounce from "lodash.debounce";
 import ReactQuill from "react-quill";
-import { useNewContentDraft, useContentDraft } from "../../../api/draftQuery";
+import {
+  useNewContentDraft,
+  useContentDraft,
+  useFetchContentDraft,
+} from "../../../api/draftQuery";
 import { ReactComponent as AddImage } from "../../../../assets/icons/add_image.svg";
 import { Layout, TextEditor, Buttons } from "./styles";
 import "react-quill/dist/quill.bubble.css";
@@ -58,6 +62,7 @@ const StoryContent = React.forwardRef(({ id, data }, ref) => {
     useNewContentDraft();
     if (data) {
       const delta = JSON.parse(data.textEditorContent);
+      useFetchContentDraft(delta);
       quill.current.getEditor().setContents(delta);
     }
   }, []);

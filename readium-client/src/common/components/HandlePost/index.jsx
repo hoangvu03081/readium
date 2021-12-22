@@ -16,12 +16,11 @@ export default function HandlePost({ id, data, dataCoverImage }) {
     null, // [0] title input
     null, // [1] note title
     null, // [2] your tags
-    null, // [3] cover image input
-    null, // [4] cover image note
-    null, // [5] draft title saved
-    null, // [6] draft description saved
-    null, // [7] draft tags saved
-    null, // [8] cover image saved
+    null, // [3] cover image note
+    null, // [4] draft title saved
+    null, // [5] draft description saved
+    null, // [6] draft tags saved
+    null, // [7] cover image saved
   ]);
   const storyContentRef = useRef([null]);
   const [isLoading, setIsLoading] = useState(false);
@@ -38,11 +37,16 @@ export default function HandlePost({ id, data, dataCoverImage }) {
     return true;
   };
 
-  const checkEmptyCoverImage = (yourTags, coverImageRef, noteCoverImageRef) => {
+  const checkEmptyCoverImage = (
+    yourTags,
+    coverImageSaved,
+    noteCoverImageRef
+  ) => {
     if (dataCoverImage) {
+      storyInformationRef.current[7] = true;
       return true;
     }
-    if (coverImageRef.current.files.length === 0) {
+    if (!coverImageSaved) {
       noteCoverImageRef.innerHTML =
         '<i class="ionicons ion-ios-information-outline"></i>Please insert a picture';
       noteCoverImageRef.classList.remove("d-none");
@@ -61,15 +65,15 @@ export default function HandlePost({ id, data, dataCoverImage }) {
       ) &&
       checkEmptyCoverImage(
         storyInformationRef.current[2],
-        storyInformationRef.current[3],
-        storyInformationRef.current[4]
+        storyInformationRef.current[7],
+        storyInformationRef.current[3]
       );
 
     const storyInformationSaved =
+      storyInformationRef.current[4] &&
       storyInformationRef.current[5] &&
       storyInformationRef.current[6] &&
-      storyInformationRef.current[7] &&
-      storyInformationRef.current[8];
+      storyInformationRef.current[7];
 
     const storyContentSaved = storyContentRef.current[0];
 
