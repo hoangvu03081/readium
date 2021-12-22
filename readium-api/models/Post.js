@@ -27,11 +27,10 @@ const postSchema = new Schema({
   textEditorContent: {
     type: String,
     default: '{ "ops": [] }',
-    required: requiredArr,
   },
   author: { type: ObjectId, ref: "User", required: true },
   coverImage: { type: Buffer, required: requiredArr },
-  content: { type: String, default: "", required: requiredArr },
+  content: { type: String, default: "" },
   publishDate: { type: Date, required: requiredArr },
   publishedPost: { type: ObjectId, ref: "Post" },
   isPublished: { type: Boolean, default: false },

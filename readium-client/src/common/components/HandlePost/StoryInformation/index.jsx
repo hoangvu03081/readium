@@ -12,8 +12,8 @@ import {
   useDescriptionDraft,
   useTagsDraft,
   useCoverImageDraft,
-} from "../../../common/api/draftQuery";
-import { ReactComponent as UploadIcon } from "../../../assets/icons/upload.svg";
+} from "../../../api/draftQuery";
+import { ReactComponent as UploadIcon } from "../../../../assets/icons/upload.svg";
 import {
   Layout,
   InputTitle,

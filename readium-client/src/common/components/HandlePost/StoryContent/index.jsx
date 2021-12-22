@@ -3,11 +3,8 @@ import React, { useCallback, useEffect } from "react";
 import PropTypes from "prop-types";
 import debounce from "lodash.debounce";
 import ReactQuill from "react-quill";
-import {
-  useNewContentDraft,
-  useContentDraft,
-} from "../../../common/api/draftQuery";
-import { ReactComponent as AddImage } from "../../../assets/icons/add_image.svg";
+import { useNewContentDraft, useContentDraft } from "../../../api/draftQuery";
+import { ReactComponent as AddImage } from "../../../../assets/icons/add_image.svg";
 import { Layout, TextEditor, Buttons } from "./styles";
 import "react-quill/dist/quill.bubble.css";
 

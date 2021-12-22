@@ -77,9 +77,13 @@ export default function PreviewPost() {
   ] = useDraft(id, auth);
 
   //  HANDLE PUBLISH
-  const publish = usePublish(id);
+  const publish = usePublish(id, auth);
   const handlePublish = () => {
-    publish.mutate();
+    if (auth) {
+      publish.mutate();
+    } else {
+      console.log(1);
+    }
   };
 
   // HANDLE CONTINUE EDITING
