@@ -9,8 +9,8 @@ import BackToTop from "../Buttons/BackToTop";
 import LoadingOverlay from "../LoadingOverlay";
 import { Layout, SubmitBtnContainer, SubmitBtn } from "./styles";
 
-export default function HandlePost({ id, data }) {
-  // HANDLE SUBMIT
+export default function HandlePost({ id, data, dataCoverImage }) {
+  // HANDLE SUBMIT ---------------------------------------------------------------
   const history = useHistory();
   const storyInformationRef = useRef([
     null, // [0] title input
@@ -39,6 +39,9 @@ export default function HandlePost({ id, data }) {
   };
 
   const checkEmptyCoverImage = (yourTags, coverImageRef, noteCoverImageRef) => {
+    if (dataCoverImage) {
+      return true;
+    }
     if (coverImageRef.current.files.length === 0) {
       noteCoverImageRef.innerHTML =
         '<i class="ionicons ion-ios-information-outline"></i>Please insert a picture';
@@ -81,15 +84,25 @@ export default function HandlePost({ id, data }) {
       }
     }
   };
+  // -----------------------------------------------------------------------------
 
   return (
     <Layout className="container">
       <LoadingOverlay isLoading={isLoading} />
-      <StoryInformation id={id} ref={storyInformationRef} />
-      <StoryContent id={id} ref={storyContentRef} />
+
+      <StoryInformation
+        id={id}
+        data={data}
+        dataCoverImage={dataCoverImage}
+        ref={storyInformationRef}
+      />
+
+      <StoryContent id={id} data={data} ref={storyContentRef} />
+
       <SubmitBtnContainer>
         <SubmitBtn onClick={handleSubmit}>Submit</SubmitBtn>
       </SubmitBtnContainer>
+
       <BackToTop />
     </Layout>
   );
@@ -98,7 +111,9 @@ export default function HandlePost({ id, data }) {
 HandlePost.propTypes = {
   id: PropTypes.string.isRequired,
   data: PropTypes.objectOf(PropTypes.any),
+  dataCoverImage: PropTypes.objectOf(PropTypes.any),
 };
 HandlePost.defaultProps = {
   data: null,
+  dataCoverImage: null,
 };

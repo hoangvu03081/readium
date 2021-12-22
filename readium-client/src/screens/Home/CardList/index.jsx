@@ -9,9 +9,9 @@ export default function CardList() {
 
   return (
     <>
-      {data.reduce((acc, item) => {
+      {data.reduce((result, item) => {
         // console.log(item.data.posts);
-        acc.push(
+        result.push(
           ...item.data.posts.map((post) => {
             return (
               <Card
@@ -30,7 +30,7 @@ export default function CardList() {
             );
           })
         );
-        return acc;
+        return result;
       }, [])}
     </>
   );
