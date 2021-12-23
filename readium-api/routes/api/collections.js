@@ -4,6 +4,7 @@
 const router = require("express").Router();
 
 const Post = require("../../models/Post");
+const Collection = require("../../models/Collection");
 const { authMiddleware } = require("../../utils");
 
 const checkPostAndCollectionExist = async (req, res, next) => {
@@ -18,13 +19,14 @@ const checkPostAndCollectionExist = async (req, res, next) => {
     }
 
     const post = await Post.findById(postId);
-    if (!post) {
+    if (!post || !post.isPublished) {
       return res.status(404).send({ message: "Invalid post id" });
     }
 
-    const collection = req.user.collections.find(
-      (col) => col.name === collectionName
-    );
+    const collection = await Collection.findOne({
+      name: collectionName,
+      user: req.user._id,
+    });
     if (!collection) {
       return res
         .status(404)
@@ -72,18 +74,17 @@ router.post("/", authMiddleware, async (req, res) => {
         .send({ message: "Please provides the collection's name" });
     }
 
-    const existed = req.user.collections.some(
-      (collection) => collection.name === name
-    );
-
+    const existed = await Collection.findOne({ name, user: req.user._id });
     if (existed) {
       return res
         .status(400)
         .send({ message: "You have already created this collection!" });
     }
 
-    const collection = { name, posts: [] };
-    req.user.collections.push(collection);
+    const collection = new Collection({ user: req.user._id, name, posts: [] });
+    req.user.collections.push(collection._id);
+
+    await collection.save();
     await req.user.save();
     return res.send(collection);
   } catch (err) {
@@ -93,28 +94,54 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
+router.delete("/:collectionId", authMiddleware, async (req, res) => {
+  /*
+    #swagger.tags = ['Collection']
+    #swagger.summary = 'Delete a collection'
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+  */
+  try {
+    const { collectionId } = req.params;
+    let collection = await Collection.findById(collectionId);
+    if (collection.user.toString() !== req.user._id.toString()) {
+      return res
+        .status(400)
+        .send({ message: "You do not own this collection to delete" });
+    }
+
+    collection = await Collection.deleteOne({ _id: collectionId });
+    return res.send(collection);
+  } catch (err) {
+    return res.send({
+      message: "Something went wrong when deleting a collection",
+    });
+  }
+});
+
 router.post(
   "/posts",
   authMiddleware,
   checkPostAndCollectionExist,
   async (req, res) => {
     /*
-    #swagger.tags = ['Collection']
-    #swagger.summary = 'Add post to collection'
-    #swagger.requestBody = {
-      required: true,
-      content: {
-        "application/json": {
-          schema: {
-            $ref: "#/definitions/PostToCollection"
-          }  
+      #swagger.tags = ['Collection']
+      #swagger.summary = 'Add post to collection'
+      #swagger.requestBody = {
+        required: true,
+        content: {
+          "application/json": {
+            schema: {
+              $ref: "#/definitions/PostToCollection"
+            }  
+          }
         }
       }
-    }
-    #swagger.security = [{
-      "bearerAuth": []
-    }]
-  */
+      #swagger.security = [{
+        "bearerAuth": []
+      }]
+    */
     try {
       const { postId } = req.body;
       const { collection } = req;
@@ -126,7 +153,7 @@ router.post(
       }
 
       collection.posts.push(postId);
-      await req.user.save();
+      await collection.save();
       return res.send(collection);
     } catch (err) {
       return res
@@ -142,22 +169,22 @@ router.delete(
   checkPostAndCollectionExist,
   async (req, res) => {
     /*
-    #swagger.tags = ['Collection']
-    #swagger.summary = 'Delete post from collection'
-    #swagger.requestBody = {
-      required: true,
-      content: {
-        "application/json": {
-          schema: {
-            $ref: "#/definitions/PostToCollection"
-          }  
+      #swagger.tags = ['Collection']
+      #swagger.summary = 'Delete post from collection'
+      #swagger.requestBody = {
+        required: true,
+        content: {
+          "application/json": {
+            schema: {
+              $ref: "#/definitions/PostToCollection"
+            }  
+          }
         }
       }
-    }
-    #swagger.security = [{
-      "bearerAuth": []
-    }]
-  */
+      #swagger.security = [{
+        "bearerAuth": []
+      }]
+    */
     try {
       const { postId } = req.body;
       const { collection } = req;
@@ -172,7 +199,7 @@ router.delete(
       }
 
       collection.posts.splice(postIndex, 1);
-      await req.user.save();
+      await collection.save();
       return res.send(collection);
     } catch (err) {
       return res.status(500).send({

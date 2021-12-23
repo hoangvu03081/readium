@@ -28,7 +28,7 @@ module.exports = function (app, wss) {
               algorithms: "RS256",
             }
           );
-          const user = await User.findById(jwtPayload.vux);
+          const user = await User.findById(jwtPayload.id);
           ws.user = user;
           break;
         }

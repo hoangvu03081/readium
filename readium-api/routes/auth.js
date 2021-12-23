@@ -59,7 +59,7 @@ router.post("/", async (req, res, next) => {
       return res.status(400).json({ message: "Wrong password" });
     }
 
-    const token = issueJWT(user._id);
+    const token = issueJWT(user);
 
     if (!user.tokens) user.tokens = [];
     user.tokens.push(token);
@@ -227,7 +227,7 @@ router.get("/confirm", async (req, res) => {
       return res.status(400).send({ message: "Account is already activated" });
     }
 
-    const token = issueJWT(user._id);
+    const token = issueJWT(user);
 
     if (!user.tokens) user.tokens = [];
     user.tokens.push(token);

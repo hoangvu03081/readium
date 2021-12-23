@@ -28,7 +28,7 @@ const postSchema = new Schema({
     required: requiredArr,
     maxlength: [100, "Max 100, get {VALUE}"],
   },
-  textEditorContent: { type: ObjectId, required: requiredArr },
+  textEditorContent: ObjectId,
   // textEditorContent: {
   // type: String,
   // default: '{ "ops": [] }',
@@ -36,7 +36,7 @@ const postSchema = new Schema({
   // },
   author: { type: ObjectId, ref: "User", required: true },
   coverImage: { type: Buffer, required: requiredArr },
-  content: { type: String, default: "", required: requiredArr },
+  content: { type: String, default: "" },
   publishDate: { type: Date, required: requiredArr },
   publishedPost: { type: ObjectId, ref: "Post" },
   isPublished: { type: Boolean, default: false },

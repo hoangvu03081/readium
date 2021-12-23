@@ -167,33 +167,31 @@ router.post("/:id", authMiddleware, checkOwnPost, async (req, res) => {
   */
   try {
     const {
+      title,
+      textEditorContent,
       _id,
       author,
-      title,
       coverImage,
-      textEditorContent,
       content,
-      textConnection,
       duration,
       tags,
       description,
     } = req.post;
 
     const newPost = new Post({
-      author,
       title,
-      coverImage,
       textEditorContent,
+      publishedPost: _id,
+      author,
+      coverImage,
       content,
-      textConnection,
       duration,
       tags,
       description,
-      publishedPost: _id,
     });
 
     await newPost.save();
-    return res.send(newPost);
+    return res.send({ id: newPost._id });
   } catch (err) {
     return res
       .status(500)
@@ -237,11 +235,7 @@ router.patch("/:id/diff", authMiddleware, checkOwnPost, async (req, res) => {
     ///
     const bucket = getBucket();
     if (!diff) {
-      console.log("here", diff);
-      // post.textEditorContent = '{ "ops": [] }';
       bucket.delete(post.textEditorContent);
-      // post.textEditorContent = ObjectId;
-
       const textEditorContentId = new ObjectId();
       post.textEditorContent = textEditorContentId;
       // create a file in grid fs and keep a ref to it
@@ -613,54 +607,37 @@ router.put("/:id/publish", authMiddleware, checkOwnPost, async (req, res) => {
         message: "Please provide a cover image for the post before publishing",
       });
     }
+    const _id = req.params.id;
+    putPost(_id, { tags: post.tags, title: post.title });
 
-    putPost(req.params.id, { tags: post.tags, title: post.title });
+    /// republish post
+    if (post.publishedPost) {
+      const publishedPost = await Post.findById(post.publishedPost);
+      publishedPost.title = post.title;
+      publishedPost.textEditorContent = post.textEditorContent;
+      publishedPost.coverImage = post.coverImage;
+      publishedPost.content = post.content;
+      publishedPost.duration = post.duration;
+      publishedPost.tags = post.tags;
+      publishedPost.description = post.description;
+      await publishedPost.save();
+      await Post.deleteOne({ _id });
+      return res.send();
+    }
+    /// republish post
 
+    /// publish post
     post.publishDate = new Date();
     post.isPublished = true;
     await post.save();
-    return res.send(post);
+    return res.send();
+    // return res.send(post);
+    /// publish post
   } catch (err) {
     console.log(err);
     return res.status(500).send({
       message: "Something went wrong when publishing the post",
     });
-  }
-});
-
-router.put("/:id/republish", authMiddleware, checkOwnPost, async (req, res) => {
-  /*
-      #swagger.tags = ['Draft']
-      #swagger.summary = 'Endpoint to republish draft'
-      #swagger.security = [{
-        "bearerAuth": []
-      }]
-    */
-  try {
-    if (req.post.isPublished || !req.post.publishedPost) {
-      return res.send({ message: "This post is already edited / published" });
-    }
-    const post = await Post.find({ _id: req.post.publishedPost });
-    if (!req.post.title) {
-      return res.send({ message: "Please provide title" });
-    }
-    if (!req.post.coverImage) {
-      return res.send({ message: "Please provide cover image" });
-    }
-    post.title = req.post.title;
-    post.coverImage = req.post.coverImage;
-    post.content = req.post.content;
-    post.tags = req.post.tags;
-    post.description = req.post.description;
-
-    putPost(req.params.id, { tags: post.tags, title: post.title });
-
-    await post.save();
-    return res.send();
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ message: "Something went wrong in republish post" });
   }
 });
 
