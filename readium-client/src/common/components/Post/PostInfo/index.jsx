@@ -97,12 +97,7 @@ const Right = styled.div`
 `;
 // -------------------------------------------------------------------------------------
 
-export default function PostInfo({
-  author,
-  publishedDate,
-  duration,
-  isPreview,
-}) {
+export default function PostInfo({ author, publishedDate, duration, type }) {
   // HANDLE ADD COLLECTION
   const [isAdded, setIsAdded] = useState(false);
   const handleAddCollection = () => {
@@ -128,7 +123,7 @@ export default function PostInfo({
         <FollowBtn>Follow</FollowBtn>
       </Left>
 
-      <Right className={isPreview ? "d-none" : "d-block"}>
+      <Right className={type === "preview" ? "d-none" : "d-block"}>
         <AddCollection
           className={isAdded ? "d-none" : "d-block"}
           onClick={handleAddCollection}
@@ -147,5 +142,5 @@ PostInfo.propTypes = {
   author: PropTypes.objectOf(PropTypes.string).isRequired,
   publishedDate: PropTypes.string.isRequired,
   duration: PropTypes.number.isRequired,
-  isPreview: PropTypes.bool.isRequired,
+  type: PropTypes.string.isRequired,
 };

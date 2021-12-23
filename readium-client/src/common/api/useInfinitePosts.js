@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { POST_API } from "./apiConstant";
 
 const fetchPosts = ({ pageParam = 0 }) =>
-  axios.get(POST_API.GET_POST(pageParam));
+  axios.get(POST_API.GET_POSTS(pageParam));
 
 export default function useInfinitePosts() {
   const [data, setData] = useState([]);

@@ -56,19 +56,21 @@ const PostTags = styled.div`
 `;
 // -----------------------------------------------------------------
 
-export default function Post({ data, coverImage }) {
+export default function Post({ data, coverImageSrc, type }) {
   return (
     <Content className="container">
-      <PreviewTitle>Preview your post</PreviewTitle>
+      <PreviewTitle className={type === "preview" ? "d-block" : "d-none"}>
+        Preview your post
+      </PreviewTitle>
       <PostTitle>{data.title}</PostTitle>
       <PostDescription>{data.description}</PostDescription>
       <PostInfo
         author={data.author}
         publishedDate="Just now"
         duration={data.duration}
-        isPreview
+        type={type}
       />
-      <PostCoverImage src={coverImage} />
+      <PostCoverImage src={coverImageSrc} />
       <HorizontalLine />
       <PostContent quillContent={data.textEditorContent} />
       <PostTags>
@@ -83,5 +85,6 @@ export default function Post({ data, coverImage }) {
 
 Post.propTypes = {
   data: PropTypes.objectOf(PropTypes.any).isRequired,
-  coverImage: PropTypes.string.isRequired,
+  coverImageSrc: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
 };

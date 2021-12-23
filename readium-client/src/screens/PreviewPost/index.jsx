@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../../common/hooks/useAuth";
@@ -69,6 +69,7 @@ export default function PreviewPost() {
   const { auth } = useAuth();
   const history = useHistory();
   const id = history.location.state;
+  const [isLoading, setIsLoading] = useState(false);
 
   // GET DRAFT & COVER IMAGE DRAFT
   const [
@@ -81,9 +82,13 @@ export default function PreviewPost() {
   const handlePublish = () => {
     if (auth) {
       publish.mutate();
-      history.push(`/post/${id}`);
+      setIsLoading(true);
+      setTimeout(() => {
+        history.push(`/post/${id}`, id);
+      }, 1250);
     } else {
-      console.log("Publish Error!");
+      // eslint-disable-next-line no-alert
+      alert("An error has occurred when publishing post.");
     }
   };
 
@@ -101,6 +106,8 @@ export default function PreviewPost() {
 
   return (
     <Layout>
+      <LoadingOverlay isLoading={isLoading} />
+
       <SubHeader>
         <SubHeaderContainer className="container">
           <ContinueEditingBtn onClick={handleContinueEditing}>
@@ -110,7 +117,7 @@ export default function PreviewPost() {
         </SubHeaderContainer>
       </SubHeader>
 
-      <Post data={draft} coverImage={coverImageSrc} />
+      <Post data={draft} coverImageSrc={coverImageSrc} type="preview" />
 
       <BackToTop />
     </Layout>
