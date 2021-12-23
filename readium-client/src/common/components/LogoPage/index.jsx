@@ -19,7 +19,7 @@ const ScreenCenter = styled.div`
   }
 `;
 
-const Logo = styled.div`
+export const Logo = styled.div`
   position: absolute;
   top: 80px;
   left: 0;
