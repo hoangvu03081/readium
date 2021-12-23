@@ -1139,6 +1139,29 @@
         }
       }
     },
+    "/users/collections/{collectionId}": {
+      "delete": {
+        "tags": [
+          "Collection"
+        ],
+        "summary": "Delete a collection",
+        "description": "",
+        "parameters": [
+          {
+            "name": "collectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/users/collections\r/posts": {
       "post": {
         "tags": [
@@ -1391,21 +1414,14 @@
         ]
       }
     },
-    "/posts/{postId}/comments/": {
+    "/comments/": {
       "get": {
         "tags": [
           "Comment"
         ],
         "summary": "Get comments of a post",
         "description": "",
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
+        "parameters": [],
         "responses": {
           "404": {
             "description": "Not Found"
@@ -1413,23 +1429,62 @@
           "500": {
             "description": "Internal Server Error"
           }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "postId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "Post a comment",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Comment"
+              }
+            }
+          }
         }
       }
     },
-    "/posts/{postId}/comments\r/{commentId}": {
-      "patch": {
+    "/comments\r/{commentId}": {
+      "put": {
         "tags": [
           "Comment"
         ],
         "summary": "Edit a comment",
         "description": "",
         "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
           {
             "name": "commentId",
             "in": "path",
@@ -1458,14 +1513,19 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Comment"
+                "properties": {
+                  "content": {
+                    "type": "string",
+                    "default": "edit comment"
+                  }
+                }
               }
             }
           }
         }
       }
     },
-    "/posts/{postId}/comments/{commentId}": {
+    "/comments/{commentId}": {
       "delete": {
         "tags": [
           "Comment"
@@ -1474,12 +1534,6 @@
         "description": "",
         "parameters": [
           {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
             "name": "commentId",
             "in": "path",
             "required": true,
@@ -1487,9 +1541,6 @@
           }
         ],
         "responses": {
-          "404": {
-            "description": "Not Found"
-          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -1968,36 +2019,6 @@
           }
         ]
       }
-    },
-    "/drafts/{id}/republish": {
-      "put": {
-        "tags": [
-          "Draft"
-        ],
-        "summary": "Endpoint to republish draft",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
     }
   },
   "components": {
@@ -2213,7 +2234,7 @@
         "properties": {
           "postId": {
             "type": "string",
-            "example": "post object id"
+            "example": "post id"
           },
           "collectionName": {
             "type": "string",
@@ -2231,10 +2252,15 @@
           "content": {
             "type": "string",
             "example": "Comment Content"
+          },
+          "postId": {
+            "type": "string",
+            "example": ""
           }
         },
         "required": [
-          "content"
+          "content",
+          "postId"
         ]
       },
       "TextEditorContent": {

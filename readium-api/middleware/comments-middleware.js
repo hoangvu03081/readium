@@ -3,7 +3,7 @@ const checkCommentContent = (req, res, next) => {
   if (!content) {
     return res.status(400).send({
       message:
-        "Please provide comment content before request to POST/PATCH comments' endpoints!",
+        "Please provide comment content before request to this endpoint!",
     });
   }
 
