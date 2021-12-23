@@ -6,8 +6,16 @@ import { SETTING_API } from "./apiConstant";
 export function useFetchProfile(profileId) {
   return useQuery(
     ["profile", profileId],
-    () => axios.get(SETTING_API.GET_MY_PROFILE).then(({ data }) => data),
-    { staleTime: Infinity }
+    () =>
+      axios
+        .get(SETTING_API.GET_MY_PROFILE, { validateStatus: () => true })
+        .then(({ data }) => data),
+    {
+      staleTime: Infinity,
+      onError: (e) => {
+        console.log("OK");
+      },
+    }
   );
 }
 

@@ -76,8 +76,8 @@ function useProvideAuth() {
   useEffect(() => {
     const token = localStorage.getItem("Authorization");
     if (token) {
-      const decodedToken = jwtDecode(token);
-      setAuth(true);
+      const { profileId } = jwtDecode(token);
+      setAuth({ profileId });
     }
   }, []);
 
@@ -104,8 +104,8 @@ function useProvideAuth() {
   const checkToken = () => {
     const token = localStorage.getItem("Authorization");
     if (token) {
-      const decodedToken = jwtDecode(token);
-      if (decodedToken) return true;
+      const { profileId } = jwtDecode(token);
+      if (profileId) return true;
     }
     return false;
   };

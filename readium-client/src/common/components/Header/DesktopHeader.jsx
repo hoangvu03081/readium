@@ -8,6 +8,7 @@ import { FiEdit, FiBookmark } from "react-icons/fi";
 import Avatar from "./Avatar";
 import { modalOpened } from "../../../slices/sign-in-slice";
 import { IconLink, Logo, SearchInput, SignInButton } from "./styles";
+import OnClickRequireAuth from "../OnClickRequireAuth";
 
 const Nav = styled.nav`
   position: fixed;
@@ -45,12 +46,16 @@ export default function DesktopHeader({ isLogin }) {
         </>
       )}
       <SearchInput type="text" placeholder="Search" className="ms-sm-4" />
-      <IconLink to="/write" className="ms-sm-4">
-        <FiEdit size={26} />
-      </IconLink>
-      <IconLink to="/settings" className="ms-sm-4">
-        <RiSettings3Line size={28} />
-      </IconLink>
+      <OnClickRequireAuth>
+        <IconLink to="/write" className="ms-sm-4">
+          <FiEdit size={26} />
+        </IconLink>
+      </OnClickRequireAuth>
+      <OnClickRequireAuth>
+        <IconLink to="/settings" className="ms-sm-4">
+          <RiSettings3Line size={28} />
+        </IconLink>
+      </OnClickRequireAuth>
     </Nav>
   );
 }

@@ -56,13 +56,12 @@ function App() {
           <SecureRoute path="/profile/:profileId?">
             <Profile />
           </SecureRoute>
-          <Route path="/preview">
+          <SecureRoute path="/preview">
             <PreviewPost />
-          </Route>
+          </SecureRoute>
           <Route path="/post">post</Route>
-          <Route path="/notifications">notifications</Route>
-          <Route path="/collections">collections</Route>
-          <Route path="/tag">tag</Route>
+          <SecureRoute path="/notifications">notifications</SecureRoute>
+          <SecureRoute path="/collections">collections</SecureRoute>
           <Route path="*">
             <Redirect to="/404" />
           </Route>
