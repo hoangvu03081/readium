@@ -4,7 +4,13 @@ const GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
 
 const User = require("../models/User");
 const { serverUrl } = require("./url");
-const { downloadImageFromUrl, convertBufferToPng,decodeJWT, jwtOptions, NO_AUTH_TOKEN } = require("../utils");
+const {
+  downloadImageFromUrl,
+  convertBufferToPng,
+  decodeJWT,
+  jwtOptions,
+  NO_AUTH_TOKEN,
+} = require("../utils");
 
 const activateUser = (user) => {
   user.activationLink = undefined;
@@ -26,7 +32,7 @@ module.exports = function (passport) {
   passport.use(
     new JwtStrategy(jwtOptions, async (jwt_payload, done) => {
       try {
-        const user = await User.findOne({ _id: jwt_payload.vux });
+        const user = await User.findById(jwt_payload.id);
         if (!user || !user.tokens) {
           return done(null, false, { message: NO_AUTH_TOKEN });
         }

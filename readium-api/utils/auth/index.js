@@ -23,12 +23,13 @@ const pathToPubKey = path.join(
 
 const PUB_KEY = fs.readFileSync(pathToPubKey, "utf8");
 
-const issueJWT = (_id) => {
+const issueJWT = ({_id, profileId}) => {
   const expiresIn = "10y";
 
   const payload = {
     iat: Date.now(),
-    vux: _id,
+    id: _id,
+    profileId,
   };
 
   const signedToken = jsonwebtoken.sign(payload, PRIV_KEY, {
