@@ -54,6 +54,7 @@ const postSchema = new Schema({
   ],
   duration: { type: Number, default: 0 },
   tags: [String],
+  summary: String,
   description: { type: String, default: "" },
 });
 
