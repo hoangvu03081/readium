@@ -1414,14 +1414,21 @@
         ]
       }
     },
-    "/comments/": {
+    "/posts/{postId}/comments": {
       "get": {
         "tags": [
           "Comment"
         ],
         "summary": "Get comments of a post",
         "description": "",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
         "responses": {
           "404": {
             "description": "Not Found"
@@ -1429,55 +1436,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "properties": {
-                  "postId": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Comment"
-        ],
-        "summary": "Post a comment",
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Comment"
-              }
-            }
-          }
         }
       }
     },
-    "/comments\r/{commentId}": {
+    "\r/{commentId}": {
       "put": {
         "tags": [
           "Comment"
@@ -1513,19 +1475,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "properties": {
-                  "content": {
-                    "type": "string",
-                    "default": "edit comment"
-                  }
-                }
+                "$ref": "#/components/schemas/Comment"
               }
             }
           }
         }
       }
     },
-    "/comments/{commentId}": {
+    "/{commentId}": {
       "delete": {
         "tags": [
           "Comment"
@@ -2252,15 +2209,10 @@
           "content": {
             "type": "string",
             "example": "Comment Content"
-          },
-          "postId": {
-            "type": "string",
-            "example": ""
           }
         },
         "required": [
-          "content",
-          "postId"
+          "content"
         ]
       },
       "TextEditorContent": {

@@ -15,7 +15,7 @@ router.use("/users", usersRoute);
 router.use("/users/profiles", profilesRoute);
 router.use("/users/collections", collectionsRoute);
 router.use("/posts", postsRoute);
-router.use("/comments", commentsRoute);
+router.use(commentsRoute);
 router.use("/drafts", draftsRoute);
 
 module.exports = router;
