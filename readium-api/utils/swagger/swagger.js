@@ -112,7 +112,6 @@ const doc = {
     },
     Comment: {
       $content: "Comment Content",
-      $postId: "",
     },
     TextEditorContent: {
       diff: {
