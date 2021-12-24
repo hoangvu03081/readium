@@ -9,8 +9,9 @@ import BackToTop from "../../common/components/Buttons/BackToTop";
 
 // STYLES ----------------------------------------------------------
 const Layout = styled.div`
-  padding-bottom: 55px;
+  padding-bottom: 50px;
 `;
+
 const SubHeader = styled.div`
   height: 60px;
   width: 100%;
@@ -23,12 +24,14 @@ const SubHeader = styled.div`
   position: fixed;
   top: 80px;
 `;
+
 const SubHeaderContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 `;
+
 const ContinueEditingBtn = styled.button`
   font-family: "Raleway";
   font-weight: bold;
@@ -46,6 +49,7 @@ const ContinueEditingBtn = styled.button`
     transition: all 0.3s;
   }
 `;
+
 const PublishBtn = styled.button`
   font-family: "Raleway";
   font-weight: bold;
@@ -63,6 +67,13 @@ const PublishBtn = styled.button`
     transition: all 0.3s;
   }
 `;
+
+const Container = styled.div`
+  width: 55%;
+  margin-top: 140px;
+  margin-bottom: 50px;
+  padding-top: 15px;
+`;
 // -----------------------------------------------------------------
 
 export default function PreviewPost() {
@@ -70,6 +81,11 @@ export default function PreviewPost() {
   const history = useHistory();
   const id = history.location.state;
   const [isLoading, setIsLoading] = useState(false);
+
+  // CHECKING
+  if (!id) {
+    return <LoadingOverlay isLoading text="No post found." />;
+  }
 
   // GET DRAFT & COVER IMAGE DRAFT
   const [
@@ -84,6 +100,7 @@ export default function PreviewPost() {
       publish.mutate();
       setIsLoading(true);
       setTimeout(() => {
+        history.replace({ pathname: "/preview", state: null });
         history.push(`/post/${id}`, id);
       }, 1250);
     } else {
@@ -117,7 +134,9 @@ export default function PreviewPost() {
         </SubHeaderContainer>
       </SubHeader>
 
-      <Post data={draft} coverImageSrc={coverImageSrc} type="preview" />
+      <Container className="container">
+        <Post data={draft} coverImageSrc={coverImageSrc} type="preview" />
+      </Container>
 
       <BackToTop />
     </Layout>

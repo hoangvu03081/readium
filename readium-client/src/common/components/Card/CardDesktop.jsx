@@ -12,7 +12,7 @@ const Card = styled.div`
   width: 91%;
   height: 204px;
   padding: 33px 20px;
-  margin-bottom: 42px;
+  margin-bottom: 50px;
   position: relative;
   @media (max-width: 930px) {
     width: 100%;

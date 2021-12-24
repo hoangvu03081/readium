@@ -82,7 +82,7 @@ const StoryInformation = React.forwardRef(
     };
 
     // TAGS
-    let tagsSaved = true;
+    const [tagsSaved, setTagsSaved] = useState(true);
     ref.current[6] = tagsSaved;
     const KeyCodes = {
       comma: 188,
@@ -94,7 +94,7 @@ const StoryInformation = React.forwardRef(
     const resTagsDraft = useTagsDraft(id);
     const debounceSendTagsDraft = useCallback(
       debounce((tagsDraft) => {
-        tagsSaved = true;
+        setTagsSaved(true);
         ref.current[6] = tagsSaved;
         resTagsDraft.mutate(tagsDraft);
       }, 2000),
@@ -109,7 +109,7 @@ const StoryInformation = React.forwardRef(
     };
     const handleAddition = (tag) => {
       if (tagsValidation) {
-        tagsSaved = false;
+        setTagsSaved(false);
         ref.current[6] = tagsSaved;
         const newTags = [...tags, tag];
         setTags(newTags);
@@ -118,7 +118,7 @@ const StoryInformation = React.forwardRef(
       }
     };
     const handleDelete = (i) => {
-      tagsSaved = false;
+      setTagsSaved(false);
       ref.current[6] = tagsSaved;
       const newTags = tags.filter((tag, index) => index !== i);
       setTags(newTags);
@@ -126,7 +126,7 @@ const StoryInformation = React.forwardRef(
       debounceSendTagsDraft(newTags);
     };
     const handleDrag = (tag, currPos, newPos) => {
-      tagsSaved = false;
+      setTagsSaved(false);
       ref.current[6] = tagsSaved;
       const newTags = tags.slice();
       newTags.splice(currPos, 1);

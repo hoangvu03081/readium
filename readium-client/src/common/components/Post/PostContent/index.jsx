@@ -8,7 +8,7 @@ const Layout = styled.div`
   .ql-editor {
     padding: 0;
   }
-  margin-bottom: 10px;
+  margin-bottom: 30px;
 `;
 
 export default function PostContent({ quillContent }) {

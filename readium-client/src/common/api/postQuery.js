@@ -25,6 +25,10 @@ export function usePost(id, auth) {
   return [res1, res2];
 }
 
-export function useNumberOfPosts() {
-  
+export function useNumberOfPosts(skip) {
+  return useQuery("numberOfPosts", () => axios.get(POST_API.GET_POSTS(skip)), {
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+  });
 }

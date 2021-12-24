@@ -8,11 +8,9 @@ import HorizontalLine from "./HorizontalLine";
 
 // STYLES ----------------------------------------------------------
 const Content = styled.div`
-  margin-top: 140px;
-  margin-bottom: 50px;
-  padding-top: 15px;
-  width: 55%;
+  width: 100%;
 `;
+
 const PreviewTitle = styled.p`
   margin: 0 0 55px 0;
   padding: 0;
@@ -21,6 +19,7 @@ const PreviewTitle = styled.p`
   font-weight: 500;
   font-size: 46px;
 `;
+
 const PostTitle = styled.p`
   margin-top: 0;
   margin-bottom: 10px;
@@ -31,6 +30,7 @@ const PostTitle = styled.p`
   font-weight: bold;
   font-size: 36px;
 `;
+
 const PostDescription = styled.p`
   margin-top: 0;
   margin-bottom: 25px;
@@ -41,12 +41,14 @@ const PostDescription = styled.p`
   font-weight: 500;
   font-size: 24px;
 `;
+
 const PostCoverImage = styled.img`
   width: 100%;
   height: 450px;
   object-fit: cover;
   margin-bottom: 30px;
 `;
+
 const PostTags = styled.div`
   border-top: 1px solid #d7d7d7;
   padding-top: 13px;
@@ -58,7 +60,7 @@ const PostTags = styled.div`
 
 export default function Post({ data, coverImageSrc, type }) {
   return (
-    <Content className="container">
+    <Content>
       <PreviewTitle className={type === "preview" ? "d-block" : "d-none"}>
         Preview your post
       </PreviewTitle>

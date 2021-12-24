@@ -49,17 +49,35 @@ const Layout = styled.div`
   }
 `;
 
-export default function LoadingOverlay({ isLoading }) {
+const Toast = styled.div`
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export default function LoadingOverlay({ isLoading, text }) {
   return (
     <Layout className={isLoading ? "d-flex" : "d-none"}>
-      <div className="lds-ripple">
+      <div className={text ? "" : "lds-ripple"}>
         <div />
         <div />
       </div>
+      <Toast>
+        <p>{text}</p>
+      </Toast>
     </Layout>
   );
 }
 
 LoadingOverlay.propTypes = {
   isLoading: PropTypes.bool.isRequired,
+  text: PropTypes.string,
+};
+LoadingOverlay.defaultProps = {
+  text: "",
 };

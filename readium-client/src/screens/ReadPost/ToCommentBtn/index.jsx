@@ -3,8 +3,8 @@ import styled from "styled-components";
 
 const Button = styled.button`
   display: block;
-  margin: 0 auto 0 auto;
-  width: 55%;
+  margin: 50px auto;
+  width: 100%;
   height: 60px;
   background-color: white;
   border: 1px solid #d2d2d2;
@@ -25,7 +25,9 @@ const Button = styled.button`
 
 export default function ToCommentBtn() {
   const handleToCommentBtn = () => {
-    // do something
+    document
+      .getElementById("comment_section")
+      .scrollIntoView({ behavior: "smooth" });
   };
   return (
     <Button onClick={handleToCommentBtn}>

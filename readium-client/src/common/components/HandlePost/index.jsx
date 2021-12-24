@@ -51,7 +51,7 @@ export default function HandlePost({ id, data, dataCoverImage }) {
         '<i class="ionicons ion-ios-information-outline"></i>Please insert a picture';
       noteCoverImageRef.classList.remove("d-none");
       noteCoverImageRef.classList.add("d-block");
-      yourTags.scrollIntoView();
+      yourTags.scrollIntoView({ behavior: "smooth" });
       return false;
     }
     return true;

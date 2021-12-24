@@ -45,4 +45,17 @@ const DRAFT_API = {
   PUT_PUBLISH: (id) => getURL(`/drafts/${id}/publish`),
 };
 
-export { USER_API, PROFILE_API, POST_API, SETTING_API, DRAFT_API, WEBSOCKET };
+const COMMENT_API = {
+  POST_COMMENT: (postId) => getURL(`/posts/${postId}/comments`),
+  GET_COMMENT: (postId) => getURL(`/posts/${postId}/comments`),
+};
+
+export {
+  USER_API,
+  PROFILE_API,
+  POST_API,
+  SETTING_API,
+  DRAFT_API,
+  COMMENT_API,
+  WEBSOCKET,
+};
