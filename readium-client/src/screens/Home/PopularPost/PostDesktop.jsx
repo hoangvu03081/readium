@@ -1,23 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import Interactions from "../../../common/components/Buttons/Interactions";
 import TagBtn from "../../../common/components/Buttons/TagBtn";
+import { ReactComponent as AddCollectionBtn } from "../../../assets/icons/add_collection.svg";
+import { ReactComponent as AddedCollectionBtn } from "../../../assets/icons/added_collection.svg";
 
 const Card = styled.div`
+  width: 100%;
   margin-bottom: 50px;
+  padding: 30px;
   border: 2px solid ${({ theme }) => theme.colors.PopularPostBlack};
   border-radius: 6px;
-  padding: 30px;
+  position: relative;
   @media (max-width: 650px) {
     display: none;
   }
 `;
 
 const Top = styled.div`
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 `;
-
 const TopLeft = styled.div`
   p {
     font-family: "Raleway";
@@ -48,7 +51,6 @@ const TopLeft = styled.div`
     }
   }
 `;
-
 const TopRight = styled.div`
   display: flex;
   flex-direction: column;
@@ -64,7 +66,7 @@ const TopRight = styled.div`
     margin: 0 0 5px 0;
     font-family: "Raleway";
     font-weight: bold;
-    font-size: 18px;
+    font-size: 16px;
     text-align: right;
     color: ${({ theme }) => theme.colors.PopularPostUser};
     &:hover {
@@ -82,11 +84,10 @@ const TopRight = styled.div`
 `;
 
 const Bottom = styled.div``;
-
 const BottomLeft = styled.div`
   img {
     width: 100%;
-    height: 100%;
+    height: 210px;
     object-fit: cover;
     transition: all 0.5s;
     &:hover {
@@ -96,7 +97,6 @@ const BottomLeft = styled.div`
     }
   }
 `;
-
 const BottomRight = styled.div`
   display: flex;
   flex-direction: column;
@@ -107,6 +107,11 @@ const BottomRight = styled.div`
     font-weight: bold;
     font-size: 18px;
     color: ${({ theme }) => theme.colors.PopularPostBlack};
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 7;
+    -webkit-box-orient: vertical;
   }
   @media (max-width: 900px) {
     p,
@@ -131,6 +136,30 @@ const BottomRight = styled.div`
   }
 `;
 
+const ButtonContainer = styled.div`
+  position: absolute;
+  bottom: 77px;
+  right: -24px;
+  background-color: white;
+  width: 45px;
+  height: 45px;
+  border: 2px solid black;
+  border-radius: 50%;
+  svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 40px;
+    padding: 6px;
+    transition: all 0.25s;
+    &:hover {
+      cursor: pointer;
+      transform: scale(1.1);
+      transition: all 0.25s;
+    }
+  }
+`;
+
 export default function PostDesktop({
   title,
   user,
@@ -143,6 +172,14 @@ export default function PostDesktop({
   loveNumber,
   commentNumber,
 }) {
+  const [isAddedCollection, setIsAddedCollection] = useState(false);
+  const handleAddCollection = () => {
+    if (isAddedCollection) {
+      setIsAddedCollection(false);
+    } else {
+      setIsAddedCollection(true);
+    }
+  };
   return (
     <Card>
       <Top className="row">
@@ -159,6 +196,7 @@ export default function PostDesktop({
           <img src={userAvatar} alt="" />
         </TopRight>
       </Top>
+
       <Bottom className="row">
         <BottomLeft className="col-6">
           <img src={preview} alt="" />
@@ -172,6 +210,15 @@ export default function PostDesktop({
           />
         </BottomRight>
       </Bottom>
+
+      <ButtonContainer onClick={handleAddCollection}>
+        <AddCollectionBtn
+          className={isAddedCollection ? "d-none" : "d-block"}
+        />
+        <AddedCollectionBtn
+          className={isAddedCollection ? "d-block" : "d-none"}
+        />
+      </ButtonContainer>
     </Card>
   );
 }

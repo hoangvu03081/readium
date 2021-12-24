@@ -2,7 +2,13 @@ import { useQuery } from "react-query";
 import axios from "axios";
 import { POST_API } from "./apiConstant";
 
-export function usePopularPost() {}
+export function usePopularPost() {
+  return useQuery("popularPost", () => axios.get(POST_API.GET_POPULAR_POST), {
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+  });
+}
 
 export function usePost(id, auth) {
   const res1 = useQuery("post", () => axios.get(POST_API.GET_A_POST(id)), {

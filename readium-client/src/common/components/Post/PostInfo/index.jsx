@@ -139,7 +139,7 @@ export default function PostInfo({ author, publishedDate, duration, type }) {
 }
 
 PostInfo.propTypes = {
-  author: PropTypes.objectOf(PropTypes.string).isRequired,
+  author: PropTypes.objectOf(PropTypes.any).isRequired,
   publishedDate: PropTypes.string.isRequired,
   duration: PropTypes.number.isRequired,
   type: PropTypes.string.isRequired,

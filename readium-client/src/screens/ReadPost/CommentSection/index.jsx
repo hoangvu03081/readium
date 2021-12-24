@@ -29,8 +29,11 @@ export default function CommentSection({ postId }) {
   const getMyAvatar = useMyAvatar();
   const getComment = useGetComment(postId);
   const postComment = usePostComment();
+  if (getMyAvatar.isFetching || getComment.isFetching) {
+    return <p id="comment_section">Loading comment section...</p>;
+  }
   if (!getMyAvatar.data || !getComment.data) {
-    return <p>Error loading avatar.</p>;
+    return <p id="comment_section">Error loading comment section...</p>;
   }
   const myAvatar = getMyAvatar.data;
   const comments = getComment.data.data;

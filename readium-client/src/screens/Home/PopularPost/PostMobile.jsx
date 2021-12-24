@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import Interactions from "../../../common/components/Buttons/Interactions";
 import TagBtn from "../../../common/components/Buttons/TagBtn";
+import { ReactComponent as AddCollectionBtn } from "../../../assets/icons/add_collection.svg";
+import { ReactComponent as AddedCollectionBtn } from "../../../assets/icons/added_collection.svg";
 
 const Layout = styled.div`
   border: 2px solid ${({ theme }) => theme.colors.PopularPostBlack};
   width: 100%;
+  position: relative;
   .interactions {
     border: none;
     border-top: 2px solid ${({ theme }) => theme.colors.PopularPostBlack};
@@ -34,8 +37,9 @@ const Title = styled.p`
 
 const Preview = styled.img`
   width: 82%;
-  border-radius: 4px;
+  height: auto;
   object-fit: cover;
+  border-radius: 4px;
   display: block;
   margin-top: 0;
   margin-bottom: 20px;
@@ -55,6 +59,7 @@ const PostInfo = styled.div`
   margin-left: auto;
   margin-right: auto;
 `;
+
 const UserAvatar = styled.img`
   display: block;
   height: 42px;
@@ -67,6 +72,7 @@ const UserAvatar = styled.img`
     cursor: pointer;
   }
 `;
+
 const UserName = styled.p`
   margin: 0;
   text-align: center;
@@ -79,6 +85,7 @@ const UserName = styled.p`
     cursor: pointer;
   }
 `;
+
 const Date = styled.p`
   margin: 0;
   text-align: center;
@@ -98,6 +105,30 @@ const PostTags = styled.div`
   margin: 0 20px 20px;
 `;
 
+const ButtonContainer = styled.div`
+  position: absolute;
+  top: -22px;
+  right: -22px;
+  background-color: white;
+  width: 45px;
+  height: 45px;
+  border: 2px solid black;
+  border-radius: 50%;
+  svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 40px;
+    padding: 6px;
+    transition: all 0.25s;
+    &:hover {
+      cursor: pointer;
+      transform: scale(1.1);
+      transition: all 0.25s;
+    }
+  }
+`;
+
 export default function PostMobile({
   title,
   user,
@@ -109,15 +140,26 @@ export default function PostMobile({
   loveNumber,
   commentNumber,
 }) {
+  const [isAddedCollection, setIsAddedCollection] = useState(false);
+  const handleAddCollection = () => {
+    if (isAddedCollection) {
+      setIsAddedCollection(false);
+    } else {
+      setIsAddedCollection(true);
+    }
+  };
   return (
     <Layout>
       <Title>{title}</Title>
+
       <Preview src={preview} />
+
       <PostInfo>
         <UserAvatar src={userAvatar} alt="" />
         <UserName>by {user}</UserName>
         <Date>{date}</Date>
       </PostInfo>
+
       <PostTags>
         <div>
           {tags.map((item, index) => (
@@ -126,11 +168,21 @@ export default function PostMobile({
           ))}
         </div>
       </PostTags>
+
       <Interactions
         watchNumber={watchNumber}
         loveNumber={loveNumber}
         commentNumber={commentNumber}
       />
+
+      <ButtonContainer onClick={handleAddCollection}>
+        <AddCollectionBtn
+          className={isAddedCollection ? "d-none" : "d-block"}
+        />
+        <AddedCollectionBtn
+          className={isAddedCollection ? "d-block" : "d-none"}
+        />
+      </ButtonContainer>
     </Layout>
   );
 }
