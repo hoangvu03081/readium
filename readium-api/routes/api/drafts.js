@@ -1,16 +1,22 @@
+const Stream = require("stream");
 const router = require("express").Router();
 const Delta = require("quill-delta");
+const { ObjectId } = require("mongodb");
+const { getBucket } = require("../../config/db");
+
 const configMulter = require("../../config/multer-config");
 
 const Post = require("../../models/Post");
-const { authMiddleware } = require("../../utils");
+const { authMiddleware, streamToString } = require("../../utils");
 const {
   checkValidSkipAndDate,
   checkOwnPost,
 } = require("../../middleware/posts-middleware");
+const { Readable } = require("stream");
+const { putPost } = require("../../utils/elasticsearch");
 
 const uploadCover = configMulter({
-  limits: { fields: 6, fileSize: 5e6, files: 1 },
+  limits: { fields: 6, fileSize: 12e6, files: 1 },
 });
 
 router.get("/", authMiddleware, checkValidSkipAndDate, async (req, res) => {
@@ -42,7 +48,7 @@ router.get("/", authMiddleware, checkValidSkipAndDate, async (req, res) => {
       .limit(5);
 
     posts = posts.map((post) => post.getPostPreview());
-    posts = Promise.all(posts);
+    posts = await Promise.all(posts);
 
     if (posts.length === 0) return res.send({ posts });
     return res.send({ posts, next: skip + 5 });
@@ -111,6 +117,16 @@ router.get("/:id", authMiddleware, async (req, res) => {
   }
 });
 
+const createInitialDraftEditorContent = () => {
+  const buf = Buffer.from('{ "ops": [] }', "utf8");
+  const readable = new Readable();
+  readable._read = () => {};
+  readable.push(buf);
+  readable.push(null);
+  return readable;
+};
+
+// TODO: test grid fs
 router.post("/", authMiddleware, async (req, res) => {
   /*
     #swagger.tags = ['Draft']
@@ -122,6 +138,15 @@ router.post("/", authMiddleware, async (req, res) => {
   try {
     let post = new Post();
     post.author = req.user._id;
+
+    const textEditorContentId = new ObjectId();
+    post.textEditorContent = textEditorContentId;
+    // create a file in grid fs and keep a ref to it
+    const bucket = getBucket();
+    const readable = createInitialDraftEditorContent();
+    readable.pipe(
+      bucket.openUploadStream("textEditorContent", { id: textEditorContentId })
+    );
 
     await post.save();
     return res.status(201).send({ id: post._id });
@@ -142,33 +167,31 @@ router.post("/:id", authMiddleware, checkOwnPost, async (req, res) => {
   */
   try {
     const {
+      title,
+      textEditorContent,
       _id,
       author,
-      title,
       coverImage,
-      textEditorContent,
       content,
-      textConnection,
       duration,
       tags,
       description,
     } = req.post;
 
     const newPost = new Post({
-      author,
       title,
-      coverImage,
       textEditorContent,
+      publishedPost: _id,
+      author,
+      coverImage,
       content,
-      textConnection,
       duration,
       tags,
       description,
-      publishedPost: _id,
     });
 
     await newPost.save();
-    return res.send(newPost);
+    return res.send({ id: newPost._id });
   } catch (err) {
     return res
       .status(500)
@@ -196,25 +219,68 @@ router.patch("/:id/diff", authMiddleware, checkOwnPost, async (req, res) => {
   */
   try {
     const { post } = req;
-
     if (post.isPublished) {
       return res.status(400).send({ message: "Can not edit published post" });
     }
 
     const { diff } = req.body;
 
+    ///
+    // const cursor = bucket.find({ _id: post.textEditorContent });
+    // cursor.forEach((doc) => {
+    //   console.log(doc);
+    // });
+    // return res.send();
+
+    ///
+    const bucket = getBucket();
     if (!diff) {
-      post.textEditorContent = '{ "ops": [] }';
+      bucket.delete(post.textEditorContent);
+      const textEditorContentId = new ObjectId();
+      post.textEditorContent = textEditorContentId;
+      // create a file in grid fs and keep a ref to it
+      const readable = createInitialDraftEditorContent();
+      readable.pipe(
+        bucket.openUploadStream("textEditorContent", {
+          id: textEditorContentId,
+        })
+      );
+
       post.content = "";
       post.duration = 0;
       await post.save();
       return res.send(await post.getPostDetail());
     }
-    const diffDelta = new Delta(diff);
-    const textEditorDelta = new Delta(JSON.parse(post.textEditorContent));
-    const composedDelta = textEditorDelta.compose(diffDelta);
 
-    post.textEditorContent = JSON.stringify(composedDelta);
+    const stream = bucket.openDownloadStream(post.textEditorContent);
+    const textEditorContent = await streamToString(stream);
+
+    const diffDelta = new Delta(diff);
+    const textEditorDelta = new Delta(JSON.parse(textEditorContent));
+    const composedDelta = textEditorDelta.compose(diffDelta);
+    const mb = Buffer.byteLength(JSON.stringify(composedDelta), "utf8") * 10e-7;
+    if (mb > 50) {
+      return res.send({
+        message: "Your post content has reached the maximum size 50mb.",
+      });
+    }
+
+    bucket.delete(post.textEditorContent);
+    const textEditorContentId = new ObjectId();
+
+    const buf = Buffer.from(JSON.stringify(composedDelta), "utf8");
+    const readable = new Readable();
+    readable._read = () => {};
+    readable.push(buf);
+    readable.push(null);
+
+    readable.pipe(
+      bucket.openUploadStream("textEditorContent", {
+        id: textEditorContentId,
+      })
+    );
+
+    post.textEditorContent = textEditorContentId;
     post.content = composedDelta
       .filter((op) => typeof op.insert === "string")
       .map((op) => op.insert)
@@ -315,6 +381,7 @@ router.patch(
       await post.save();
       return res.send(post);
     } catch (err) {
+      console.log(err);
       return res
         .status(500)
         .send({ message: "Something went wrong when updating a post" });
@@ -376,28 +443,28 @@ router.put(
 
 router.put("/:id/title", authMiddleware, checkOwnPost, async (req, res) => {
   /*
-      #swagger.tags = ['Draft']
-      #swagger.summary = "Update draft's title"
-      #swagger.security = [{
-        "bearerAuth": []
-      }]
-      #swagger.requestBody = {
-        required: true,
-        content: {
-          "application/json": {
-            schema: {
-              type: 'object',
-              properties: {
-                title: {
-                  type: 'string',
-                  default: 'Post title'
-                }
+    #swagger.tags = ['Draft']
+    #swagger.summary = "Update draft's title"
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+    #swagger.requestBody = {
+      required: true,
+      content: {
+        "application/json": {
+          schema: {
+            type: 'object',
+            properties: {
+              title: {
+                type: 'string',
+                default: 'Post title'
               }
             }
           }
         }
       }
-    */
+    }
+  */
   try {
     let { post } = req;
 
@@ -540,49 +607,37 @@ router.put("/:id/publish", authMiddleware, checkOwnPost, async (req, res) => {
         message: "Please provide a cover image for the post before publishing",
       });
     }
+    const _id = req.params.id;
+    putPost(_id, { tags: post.tags, title: post.title });
 
+    /// republish post
+    if (post.publishedPost) {
+      const publishedPost = await Post.findById(post.publishedPost);
+      publishedPost.title = post.title;
+      publishedPost.textEditorContent = post.textEditorContent;
+      publishedPost.coverImage = post.coverImage;
+      publishedPost.content = post.content;
+      publishedPost.duration = post.duration;
+      publishedPost.tags = post.tags;
+      publishedPost.description = post.description;
+      await publishedPost.save();
+      await Post.deleteOne({ _id });
+      return res.send();
+    }
+    /// republish post
+
+    /// publish post
     post.publishDate = new Date();
     post.isPublished = true;
     await post.save();
-    return res.send(post);
+    return res.send();
+    // return res.send(post);
+    /// publish post
   } catch (err) {
+    console.log(err);
     return res.status(500).send({
       message: "Something went wrong when publishing the post",
     });
-  }
-});
-
-router.put("/:id/republish", authMiddleware, checkOwnPost, async (req, res) => {
-  /*
-      #swagger.tags = ['Draft']
-      #swagger.summary = 'Endpoint to republish draft'
-      #swagger.security = [{
-        "bearerAuth": []
-      }]
-    */
-  try {
-    if (req.post.isPublished || !req.post.publishedPost) {
-      return res.send({ message: "This post is already edited / published" });
-    }
-    const post = await Post.find({ _id: req.post.publishedPost });
-    if (!req.post.title) {
-      return res.send({ message: "Please provide title" });
-    }
-    if (!req.post.coverImage) {
-      return res.send({ message: "Please provide cover image" });
-    }
-    post.title = req.post.title;
-    post.coverImage = req.post.coverImage;
-    post.content = req.post.content;
-    post.tags = req.post.tags;
-    post.description = req.post.description;
-    await post.save();
-
-    return res.send();
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ message: "Something went wrong in republish post" });
   }
 });
 

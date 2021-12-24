@@ -20,66 +20,6 @@ import SecureRoute from "../common/components/SecureRoute";
 
 function App() {
   return (
-    // <Switch>
-    //   <Route path="/auth/confirm">
-    //     <ConfirmEmail />
-    //   </Route>
-    //   <Route path="/auth/reset">
-    //     <ResetPassword />
-    //   </Route>
-    //   <Route path="/404">
-    //     <Page404 />
-    //   </Route>
-    //   <Route>
-    //     <SignInModal />
-    //     <MobileNavbar />
-    //     <Header />
-    //     <ToastContainer
-    //       position="top-right"
-    //       autoClose={2000}
-    //       hideProgressBar={false}
-    //       newestOnTop={false}
-    //       closeOnClick
-    //       rtl={false}
-    //       transition={Zoom}
-    //       pauseOnFocusLoss
-    //       draggable
-    //       pauseOnHover
-    //     />
-    //     <Switch>
-    //       <Route exact path="/">
-    //         <Home />
-    //       </Route>
-    //       <SecureRoute path="/write">
-    //         <WritePost />
-    //       </SecureRoute>
-    //       <SecureRoute path="/preview">
-    //         <PreviewPost />
-    //       </SecureRoute>
-    //       <SecureRoute path="/edit/draft">
-    //         <EditDraft />
-    //       </SecureRoute>
-    //       <SecureRoute path="/edit/post">
-    //         <EditPost />
-    //       </SecureRoute>
-    //       <SecureRoute path="/post/:postId?">
-    //         <ReadPost />
-    //       </SecureRoute>
-    //       <SecureRoute path="/settings">
-    //         <Settings />
-    //       </SecureRoute>
-    //       <SecureRoute path="/profile/:profileId?">
-    //         <Profile />
-    //       </SecureRoute>
-    //       <Route path="/notifications">notifications</Route>
-    //       <Route path="/collections">collections</Route>
-    //       <Route path="/tag">tag</Route>
-    //       <Route path="*">
-    //         <Redirect to="/404" />
-    //       </Route>
-    //     </Switch>
-    //   </Route>
-    // </Switch>
     <Switch>
       <Route path="/auth/confirm">
         <ConfirmEmail />
@@ -110,30 +50,30 @@ function App() {
           <Route exact path="/">
             <Home />
           </Route>
-          <Route path="/write">
+          <SecureRoute path="/write">
             <WritePost />
-          </Route>
-          <Route path="/preview">
+          </SecureRoute>
+          <SecureRoute path="/preview">
             <PreviewPost />
-          </Route>
-          <Route path="/edit/draft">
+          </SecureRoute>
+          <SecureRoute path="/edit/draft">
             <EditDraft />
-          </Route>
-          <Route path="/edit/post">
+          </SecureRoute>
+          <SecureRoute path="/edit/post">
             <EditPost />
-          </Route>
-          <Route path="/post/:postId?">
+          </SecureRoute>
+          <SecureRoute path="/post/:postId?">
             <ReadPost />
-          </Route>
-          <Route path="/settings">
+          </SecureRoute>
+          <SecureRoute path="/settings">
             <Settings />
-          </Route>
-          <Route path="/profile/:profileId?">
+          </SecureRoute>
+          <SecureRoute path="/profile/:profileId?">
             <Profile />
-          </Route>
-          <Route path="/notifications">notifications</Route>
-          <Route path="/collections">collections</Route>
-          <Route path="/tag">tag</Route>
+          </SecureRoute>
+          <Route path="/post">post</Route>
+          <SecureRoute path="/notifications">notifications</SecureRoute>
+          <SecureRoute path="/collections">collections</SecureRoute>
           <Route path="*">
             <Redirect to="/404" />
           </Route>

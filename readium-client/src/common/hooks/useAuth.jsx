@@ -2,6 +2,7 @@ import axios from "axios";
 import PropTypes from "prop-types";
 import React, { useState, useEffect, useContext, createContext } from "react";
 import { useDispatch } from "react-redux";
+import jwtDecode from "jwt-decode";
 import { modalClosed } from "../../slices/sign-in-slice";
 import useWs from "../api/websocket";
 
@@ -37,6 +38,7 @@ function useProvideAuth() {
   const [data, setData] = useState(null);
   const [tokenReceived, setTokenReceived] = useState(false);
   const dispatch = useDispatch();
+  const { authenticateWs } = useWs();
 
   const handleData = (d) => {
     setData(d);
@@ -54,31 +56,12 @@ function useProvideAuth() {
     setTokenReceived(true);
   };
 
-  // useEffect(async () => {
-  //   try {
-  //     axios.defaults.withCredentials = true;
-
-  //     const token = localStorage.getItem("Authorization");
-  //     if (token) axios.defaults.headers.common.Authorization = token;
-
-  //     const { data: authResult } = await axios.get(
-  //       `${LOCAL_URL}/users/protected`
-  //     );
-
-  //     setAuth(authResult);
-  //   } catch (e) {
-  //     setAuth(false);
-  //   } finally {
-  //     setTokenReceived(false);
-  //   }
-  // }, [tokenReceived]);
-
   function observeAuth() {
     axios.defaults.withCredentials = true;
     const token = localStorage.getItem("Authorization");
     if (token) {
       axios.defaults.headers.common.Authorization = token;
-      // authenticateWs(token);
+      authenticateWs(token);
     }
     axios
       .get(`${LOCAL_URL}/users/protected`)
@@ -91,9 +74,16 @@ function useProvideAuth() {
   }
 
   useEffect(() => {
+    const token = localStorage.getItem("Authorization");
+    if (token) {
+      const { profileId } = jwtDecode(token);
+      setAuth({ profileId });
+    }
+  }, []);
+
+  useEffect(() => {
     axios.defaults.withCredentials = true;
     window.addEventListener("storage", observeAuth);
-
     return () => {
       window.removeEventListener("storage", observeAuth);
     };
@@ -109,6 +99,15 @@ function useProvideAuth() {
     setHasData(false);
     setError(null);
     setData(null);
+  };
+
+  const checkToken = () => {
+    const token = localStorage.getItem("Authorization");
+    if (token) {
+      const { profileId } = jwtDecode(token);
+      if (profileId) return true;
+    }
+    return false;
   };
 
   const signOut = async () => {
@@ -237,6 +236,7 @@ function useProvideAuth() {
     forgotPassword,
     resetPassword,
     clearState,
+    checkToken,
   };
 }
 

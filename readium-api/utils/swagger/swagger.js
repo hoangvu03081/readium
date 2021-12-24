@@ -48,8 +48,8 @@ const doc = {
       description: "Testing routes",
     },
     {
-      name: "Notification",
-      description: "Notifications' routes",
+      name: "Search",
+      description: "Elastic Search  ",
     },
   ],
   definitions: {
@@ -107,11 +107,12 @@ const doc = {
       $email: "john@example.com",
     },
     PostToCollection: {
-      $postId: "post object id",
+      $postId: "post id",
       $collectionName: "collection name",
     },
     Comment: {
       $content: "Comment Content",
+      $postId: "",
     },
     TextEditorContent: {
       diff: {

@@ -131,7 +131,7 @@ function putUser(userId, user) {
   });
 }
 
-function search(text, tag) {
+function search(text = "", tag = "") {
   return client.search({
     index: ["post", "user"],
     body: {
@@ -163,15 +163,15 @@ function search(text, tag) {
 function deletePost(id) {
   return client.delete({
     id,
-    index: "post"
-  })
+    index: "post",
+  });
 }
 
 function deleteUser(id) {
   return client.delete({
     id,
-    index: "user"
-  })
+    index: "user",
+  });
 }
 
 module.exports = {
@@ -179,5 +179,5 @@ module.exports = {
   putUser,
   deletePost,
   deleteUser,
-  search
+  search,
 };

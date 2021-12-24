@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { getAvatarUrl } = require("../utils");
 
 const {
   model,
@@ -17,6 +18,20 @@ commentSchema.methods.toJSON = function () {
   comment.id = comment._id;
   delete comment._id;
   delete comment.__v;
+  return comment;
+};
+
+commentSchema.methods.getCommentDetails = async function () {
+  await this.populate("user", { displayName: 1 });
+  const comment = this.toObject();
+
+  comment.id = comment._id;
+  comment.user.avatar = getAvatarUrl(comment.user._id.toString());
+
+  delete comment.user._id;
+  delete comment._id;
+  delete comment.__v;
+
   return comment;
 };
 

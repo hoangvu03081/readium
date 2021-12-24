@@ -51,6 +51,15 @@ function getImageBufferFromUrl(url) {
   });
 }
 
+function streamToString(stream) {
+  const chunks = [];
+  return new Promise((resolve, reject) => {
+    stream.on("data", (chunk) => chunks.push(Buffer.from(chunk)));
+    stream.on("error", (err) => reject(err));
+    stream.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
+  });
+}
+
 const downloadImageFromUrl = (url) => {
   getImageBufferFromUrl(url);
   return once(bufferEmitter, "downloaded");
@@ -91,11 +100,12 @@ module.exports = {
   decrypt,
   NO_AUTH_TOKEN,
   REQUIRE_ACTIVATE_ACCOUNT,
+  streamToString,
   downloadImageFromUrl,
   convertBufferToPng,
   getPostCoverImageUrl,
-  getAvatarUrl,
   getDraftCoverImageUrl,
+  getAvatarUrl,
   getUserCoverImageUrl,
   getUrl,
 };

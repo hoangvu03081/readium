@@ -1,3 +1,4 @@
+const { ObjectId } = require("mongoose").SchemaTypes;
 const router = require("express").Router();
 const multer = require("multer");
 
@@ -57,7 +58,7 @@ router.delete("/", async (req, res) => {
 const uploadCover = multer({
   limits: {
     fields: 6,
-    fileSize: 5e6, // max 5mb
+    fileSize: 12e6,
     files: 1,
   },
   fileFilter(req, file, cb) {
@@ -118,23 +119,19 @@ router.post(
       }]
     */
     try {
-      let {
-        title,
-        content,
-        textEditorContent,
-        description,
-        isPublished,
-      } = req.body;
+      let { title, content, description, isPublished } = req.body;
       isPublished = isPublished === "true";
 
       const {
         file: { buffer: coverImage },
       } = req;
 
+      const textEditorContent = new ObjectId();
+
       let post = new Post({
         title,
         content,
-        // textEditorContent,
+        textEditorContent,
         description,
         coverImage,
         author: req.user._id,
@@ -172,6 +169,7 @@ router.post("/ai", async (req, res) => {
     });
     await post.save();
     pushTask(posts[0]._id);
+    return res.send();
   } catch (err) {
     return res.status(500).send({ message: "Mock AI failed" });
   }

@@ -7,6 +7,7 @@ const {
 } = mongoose;
 
 const collectionSchema = new Schema({
+  user: { type: ObjectId, required: true },
   name: { type: String, required: true, default: "Default Collection" },
   posts: [{ type: ObjectId, ref: "Post", required: true }],
 });
