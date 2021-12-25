@@ -48,6 +48,12 @@ const ContinueEditingBtn = styled.button`
     color: white;
     transition: all 0.3s;
   }
+  @media (max-width: 400px) {
+    font-size: 16px;
+  }
+  @media (max-width: 300px) {
+    font-size: 14px;
+  }
 `;
 
 const PublishBtn = styled.button`
@@ -66,13 +72,31 @@ const PublishBtn = styled.button`
     background-color: #ff528e;
     transition: all 0.3s;
   }
+  @media (max-width: 400px) {
+    font-size: 16px;
+  }
+  @media (max-width: 300px) {
+    font-size: 14px;
+  }
 `;
 
-const Container = styled.div`
-  width: 55%;
+const PostContainer = styled.div`
+  width: 60%;
   margin-top: 140px;
   margin-bottom: 50px;
   padding-top: 15px;
+  @media (max-width: 1200px) {
+    width: 70%;
+  }
+  @media (max-width: 900px) {
+    width: 80%;
+  }
+  @media (max-width: 767px) {
+    width: 90%;
+  }
+  @media (max-width: 650px) {
+    width: 92%;
+  }
 `;
 // -----------------------------------------------------------------
 
@@ -84,7 +108,7 @@ export default function PreviewPost() {
 
   // CHECKING
   if (!id) {
-    return <LoadingOverlay isLoading text="No post found." />;
+    return <LoadingOverlay isLoading text="No post found" />;
   }
 
   // GET DRAFT & COVER IMAGE DRAFT
@@ -134,9 +158,9 @@ export default function PreviewPost() {
         </SubHeaderContainer>
       </SubHeader>
 
-      <Container className="container">
+      <PostContainer className="container">
         <Post data={draft} coverImageSrc={coverImageSrc} type="preview" />
-      </Container>
+      </PostContainer>
 
       <BackToTop />
     </Layout>
