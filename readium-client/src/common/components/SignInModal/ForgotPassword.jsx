@@ -26,6 +26,12 @@ export default function ForgotPassword({ setModalType }) {
   const [emailInput, handleEmailInput] = useInput("");
   const [emailError, setEmailError] = useState("");
 
+  const enterPressed = (e) => {
+    if (e?.key === "Enter" && isSubmittable(emailInput, emailError)) {
+      forgotPassword(emailInput);
+    }
+  };
+
   const handleReturn = () => {
     setModalType(ModalType.EMAIL_SIGN_IN);
   };
@@ -63,6 +69,7 @@ export default function ForgotPassword({ setModalType }) {
         onChange={handleEmailInput}
         placeholder="Email"
         className="mb-3"
+        onKeyPress={enterPressed}
       />
       <SubmitButton
         className="mt-1"

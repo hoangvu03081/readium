@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import jwtDecode from "jwt-decode";
 import { modalClosed } from "../../slices/sign-in-slice";
 import useWs from "../api/websocket";
+import Loading from "../components/Loading";
 
 const isDev = process.env.NODE_ENV === "development";
 const LOCAL_URL = "http://localhost:5000";
@@ -37,6 +38,7 @@ function useProvideAuth() {
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
   const [tokenReceived, setTokenReceived] = useState(false);
+  const [initAuth, setInitAuth] = useState(false);
   const dispatch = useDispatch();
   const { authenticateWs } = useWs();
 
@@ -68,18 +70,19 @@ function useProvideAuth() {
       .then(({ data: authResult }) => setAuth(authResult))
       .catch(() => setAuth(false))
       .finally(() => {
+        if (!initAuth) setInitAuth(true);
         setTokenReceived(false);
         localStorage.removeItem("logout");
       });
   }
 
-  useEffect(() => {
-    const token = localStorage.getItem("Authorization");
-    if (token) {
-      const { profileId } = jwtDecode(token);
-      setAuth({ profileId });
-    }
-  }, []);
+  // useEffect(() => {
+  //   const token = localStorage.getItem("Authorization");
+  //   if (token) {
+  //     const { profileId } = jwtDecode(token);
+  //     setAuth({ profileId });
+  //   }
+  // }, []);
 
   useEffect(() => {
     axios.defaults.withCredentials = true;
@@ -237,12 +240,15 @@ function useProvideAuth() {
     resetPassword,
     clearState,
     checkToken,
+    initAuth,
   };
 }
 
 export function AuthProvider({ children }) {
   const auth = useProvideAuth();
-  return <authContext.Provider value={auth}>{children}</authContext.Provider>;
+  if (auth.initAuth)
+    return <authContext.Provider value={auth}>{children}</authContext.Provider>;
+  return <Loading />;
 }
 
 AuthProvider.propTypes = {
