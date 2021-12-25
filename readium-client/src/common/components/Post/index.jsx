@@ -18,6 +18,18 @@ const PreviewTitle = styled.p`
   font-family: "Raleway";
   font-weight: 500;
   font-size: 46px;
+  @media (max-width: 600px) {
+    font-size: 40px;
+  }
+  @media (max-width: 450px) {
+    font-size: 34px;
+  }
+  @media (max-width: 365px) {
+    font-size: 30px;
+  }
+  @media (max-width: 300px) {
+    font-size: 28px;
+  }
 `;
 
 const PostTitle = styled.p`
@@ -29,6 +41,15 @@ const PostTitle = styled.p`
   font-family: "Raleway";
   font-weight: bold;
   font-size: 36px;
+  @media (max-width: 650px) {
+    font-size: 32px;
+  }
+  @media (max-width: 550px) {
+    font-size: 30px;
+  }
+  @media (max-width: 450px) {
+    font-size: 28px;
+  }
 `;
 
 const PostDescription = styled.p`
@@ -40,6 +61,15 @@ const PostDescription = styled.p`
   font-family: "PT Sans";
   font-weight: 500;
   font-size: 24px;
+  @media (max-width: 650px) {
+    font-size: 22px;
+  }
+  @media (max-width: 550px) {
+    font-size: 20px;
+  }
+  @media (max-width: 450px) {
+    font-size: 18px;
+  }
 `;
 
 const PostCoverImage = styled.img`
@@ -47,6 +77,15 @@ const PostCoverImage = styled.img`
   height: 450px;
   object-fit: cover;
   margin-bottom: 30px;
+  @media (max-width: 1100px) {
+    height: 400px;
+  }
+  @media (max-width: 850px) {
+    height: 350px;
+  }
+  @media (max-width: 750px) {
+    height: 300px;
+  }
 `;
 
 const PostTags = styled.div`
@@ -64,17 +103,24 @@ export default function Post({ data, coverImageSrc, type }) {
       <PreviewTitle className={type === "preview" ? "d-block" : "d-none"}>
         Preview your post
       </PreviewTitle>
+
       <PostTitle>{data.title}</PostTitle>
+
       <PostDescription>{data.description}</PostDescription>
+
       <PostInfo
         author={data.author}
         publishedDate="Just now"
         duration={data.duration}
         type={type}
       />
+
       <PostCoverImage src={coverImageSrc} />
+
       <HorizontalLine />
+
       <PostContent quillContent={data.textEditorContent} />
+
       <PostTags>
         {data.tags.map((item, index) => (
           // eslint-disable-next-line react/no-array-index-key

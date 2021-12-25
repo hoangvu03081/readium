@@ -13,7 +13,19 @@ import BackToTop from "../../common/components/Buttons/BackToTop";
 const Layout = styled.div`
   margin: 140px auto 0 auto;
   padding-bottom: 100px;
-  width: 55%;
+  width: 60%;
+  @media (max-width: 1200px) {
+    width: 70%;
+  }
+  @media (max-width: 900px) {
+    width: 80%;
+  }
+  @media (max-width: 767px) {
+    width: 90%;
+  }
+  @media (max-width: 650px) {
+    width: 92%;
+  }
 `;
 
 export default function ReadPost() {

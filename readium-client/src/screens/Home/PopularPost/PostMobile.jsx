@@ -158,6 +158,11 @@ export default function PostMobile({
   const handleReadPost = () => {
     history.push(`/post/${postId}`, postId);
   };
+  const handleProfile = () => {
+    // const indexOfUserId = userAvatar.lastIndexOf("/");
+    // const userId = userAvatar.slice(indexOfUserId + 1);
+    history.push(`/profile/${user}`);
+  };
 
   return (
     <Layout>
@@ -166,8 +171,8 @@ export default function PostMobile({
       <Preview src={preview} alt="Cover Image" onClick={handleReadPost} />
 
       <PostInfo>
-        <UserAvatar src={userAvatar} alt="" />
-        <UserName>by {user}</UserName>
+        <UserAvatar src={userAvatar} alt="Avatar" onClick={handleProfile} />
+        <UserName onClick={handleProfile}>by {user}</UserName>
         <Date onClick={handleReadPost}>{date}</Date>
       </PostInfo>
 

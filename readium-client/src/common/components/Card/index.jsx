@@ -26,6 +26,7 @@ export default function Card({
         content={content}
         tags={tags}
         duration={duration}
+        user={user}
         userAvatar={userAvatar}
         loveNumber={loveNumber}
         commentNumber={commentNumber}

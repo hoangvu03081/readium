@@ -198,6 +198,7 @@ export default function CardDesktop({
   content,
   tags,
   duration,
+  user,
   userAvatar,
   loveNumber,
   commentNumber,
@@ -211,6 +212,11 @@ export default function CardDesktop({
     } else {
       history.push(`/post/${postId}`, postId);
     }
+  };
+  const handleProfile = () => {
+    // const indexOfUserId = userAvatar.lastIndexOf("/");
+    // const userId = userAvatar.slice(indexOfUserId + 1);
+    history.push(`/profile/${user}`);
   };
 
   return (
@@ -234,7 +240,7 @@ export default function CardDesktop({
         <p onClick={handleReadPost}>
           {duration > 1 ? `${duration} mins read` : `${duration} min read`}
         </p>
-        <img src={userAvatar} alt="Avatar" />
+        <img src={userAvatar} alt="Avatar" onClick={handleProfile} />
       </Right>
 
       <CornerContainer>
@@ -255,6 +261,7 @@ CardDesktop.propTypes = {
   content: PropTypes.string.isRequired,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
   duration: PropTypes.number.isRequired,
+  user: PropTypes.string.isRequired,
   userAvatar: PropTypes.string.isRequired,
   loveNumber: PropTypes.number.isRequired,
   commentNumber: PropTypes.number.isRequired,
