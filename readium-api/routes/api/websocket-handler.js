@@ -135,7 +135,7 @@ module.exports = function (app, wss) {
         }).populate("author");
         if (!post) {
           return res.status(404).send({
-            message: `Post ${postId} not found. Please be sure that this id is correct!`,
+            message: `Post not found. Please be sure that post id is correct!`,
           });
         }
 
@@ -174,9 +174,8 @@ module.exports = function (app, wss) {
           }
         }
 
-        return res.status(201).send(commentObj);
+        return res.status(201).send(await commentObj.getCommentDetails());
       } catch (err) {
-        console.log(err);
         return res.status(500).send({
           message: `Something went wrong when create a comment of post`,
         });

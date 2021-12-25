@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import { ReactComponent as AddCollection } from "../../../assets/icons/add_collection.svg";
-import { ReactComponent as AddedCollection } from "../../../assets/icons/added_collection.svg";
-import { ReactComponent as Report } from "../../../assets/icons/report.svg";
+import { ReactComponent as AddCollection } from "../../../../assets/icons/add_collection.svg";
+import { ReactComponent as AddedCollection } from "../../../../assets/icons/added_collection.svg";
+import { ReactComponent as Report } from "../../../../assets/icons/report.svg";
 
 // STYLES -----------------------------------------------------------------------------
 const Layout = styled.div`
@@ -97,12 +97,7 @@ const Right = styled.div`
 `;
 // -------------------------------------------------------------------------------------
 
-export default function PostInfo({
-  author,
-  publishedDate,
-  duration,
-  isPreview,
-}) {
+export default function PostInfo({ author, publishedDate, duration, type }) {
   // HANDLE ADD COLLECTION
   const [isAdded, setIsAdded] = useState(false);
   const handleAddCollection = () => {
@@ -128,7 +123,7 @@ export default function PostInfo({
         <FollowBtn>Follow</FollowBtn>
       </Left>
 
-      <Right className={isPreview ? "d-none" : "d-block"}>
+      <Right className={type === "preview" ? "d-none" : "d-block"}>
         <AddCollection
           className={isAdded ? "d-none" : "d-block"}
           onClick={handleAddCollection}
@@ -144,8 +139,8 @@ export default function PostInfo({
 }
 
 PostInfo.propTypes = {
-  author: PropTypes.objectOf(PropTypes.string).isRequired,
+  author: PropTypes.objectOf(PropTypes.any).isRequired,
   publishedDate: PropTypes.string.isRequired,
   duration: PropTypes.number.isRequired,
-  isPreview: PropTypes.bool.isRequired,
+  type: PropTypes.string.isRequired,
 };

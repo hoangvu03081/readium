@@ -23,10 +23,12 @@ commentSchema.methods.toJSON = function () {
 
 commentSchema.methods.getCommentDetails = async function () {
   await this.populate("user", { displayName: 1 });
+  const timestamp = this._id.getTimestamp();
   const comment = this.toObject();
 
   comment.id = comment._id;
   comment.user.avatar = getAvatarUrl(comment.user._id.toString());
+  comment.timestamp = timestamp;
 
   delete comment.user._id;
   delete comment._id;

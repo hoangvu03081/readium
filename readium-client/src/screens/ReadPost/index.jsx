@@ -1,0 +1,78 @@
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import { useHistory, useParams } from "react-router-dom";
+import { useAuth } from "../../common/hooks/useAuth";
+import { usePost } from "../../common/api/postQuery";
+import Post from "../../common/components/Post";
+import ToCommentBtn from "./ToCommentBtn";
+import PostSuggestion from "./PostSuggestion";
+import CommentSection from "./CommentSection";
+import LoadingOverlay from "../../common/components/LoadingOverlay";
+import BackToTop from "../../common/components/Buttons/BackToTop";
+
+const Layout = styled.div`
+  margin: 140px auto 0 auto;
+  padding-bottom: 100px;
+  width: 55%;
+`;
+
+export default function ReadPost() {
+  const { auth } = useAuth();
+  const { postId } = useParams();
+  const history = useHistory();
+  const [id, setId] = useState(history.location.state);
+  if (!id) {
+    setId(postId);
+  }
+
+  // GET POST & COVER IMAGE
+  const [
+    {
+      isFetched: isFetchedPost,
+      data: dataPost,
+      isError: isErrorPost,
+      remove: removePost,
+    },
+    {
+      isFetched: isFetchedCoverImage,
+      data: dataCoverImage,
+      isError: isErrorCoverImage,
+      remove: removeCoverImage,
+    },
+  ] = usePost(id, auth);
+
+  // COMPONENT UNMOUNT => CLEAR CACHE
+  useEffect(
+    () => () => {
+      removePost();
+      removeCoverImage();
+    },
+    []
+  );
+
+  // FETCHING
+  if (!isFetchedPost || !isFetchedCoverImage) {
+    return <LoadingOverlay isLoading />;
+  }
+  const post = dataPost.data;
+  const coverImageSrc = window.URL.createObjectURL(dataCoverImage.data);
+
+  // ERROR
+  if (isErrorPost || isErrorCoverImage) {
+    return <p>Error loading post...</p>;
+  }
+
+  return (
+    <Layout className="container">
+      <Post data={post} coverImageSrc={coverImageSrc} type="read" />
+
+      <ToCommentBtn />
+
+      <PostSuggestion />
+
+      <CommentSection postId={id} />
+
+      <BackToTop />
+    </Layout>
+  );
+}

@@ -1,11 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import { useHistory } from "react-router-dom";
 import Corner from "./Corner";
 import LoveComment from "../Buttons/LoveComment";
 import TagBtn from "../Buttons/TagBtn";
 
-// STYLES --------------------------------------------------
 const Layout = styled.div`
   border: 2px solid ${({ theme }) => theme.colors.CardBlack};
   border-radius: 4px;
@@ -64,6 +64,11 @@ const Content = styled.p`
   font-weight: 500;
   font-size: 18px;
   margin: 0 0 18px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
 `;
 const BottomFlexContainer = styled.div`
   display: flex;
@@ -84,9 +89,9 @@ const CornerContainer = styled.div`
   top: 13px;
   right: 13px;
 `;
-// ----------------------------------------------------------
 
 export default function CardMobile({
+  postId,
   title,
   content,
   tags,
@@ -95,13 +100,23 @@ export default function CardMobile({
   loveNumber,
   commentNumber,
   type,
+  isSuggestion,
 }) {
+  const history = useHistory();
+  const handleReadPost = () => {
+    if (isSuggestion) {
+      history.push(`/post/${postId}/reload`, postId);
+    } else {
+      history.push(`/post/${postId}`, postId);
+    }
+  };
+
   return (
     <Layout>
       <Top>
         <UserAvatar src={userAvatar} />
         <UserName>by {user}</UserName>
-        <Title>{title}</Title>
+        <Title onClick={handleReadPost}>{title}</Title>
       </Top>
 
       <Bottom>
@@ -131,6 +146,7 @@ export default function CardMobile({
 }
 
 CardMobile.propTypes = {
+  postId: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -139,4 +155,8 @@ CardMobile.propTypes = {
   loveNumber: PropTypes.number.isRequired,
   commentNumber: PropTypes.number.isRequired,
   type: PropTypes.string.isRequired,
+  isSuggestion: PropTypes.bool,
+};
+CardMobile.defaultProps = {
+  isSuggestion: false,
 };

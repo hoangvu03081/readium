@@ -1,17 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../../common/hooks/useAuth";
 import { useDraft, usePublish } from "../../common/api/draftQuery";
 import LoadingOverlay from "../../common/components/LoadingOverlay";
-import PostInfo from "../../common/components/PostInfo";
-import PostContent from "../../common/components/PostContent";
-import TagBtn from "../../common/components/Buttons/TagBtn";
-import HorizontalLine from "./HorizontalLine";
+import Post from "../../common/components/Post";
+import BackToTop from "../../common/components/Buttons/BackToTop";
 
 // STYLES ----------------------------------------------------------
 const Layout = styled.div`
-  margin-bottom: 105px;
+  padding-bottom: 50px;
 `;
 
 const SubHeader = styled.div`
@@ -22,16 +20,18 @@ const SubHeader = styled.div`
   justify-content: center;
   border-bottom: 1px solid #d4d4d4;
   background-color: white;
-  z-index: 100;
+  z-index: 9;
   position: fixed;
   top: 80px;
 `;
+
 const SubHeaderContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 `;
+
 const ContinueEditingBtn = styled.button`
   font-family: "Raleway";
   font-weight: bold;
@@ -49,6 +49,7 @@ const ContinueEditingBtn = styled.button`
     transition: all 0.3s;
   }
 `;
+
 const PublishBtn = styled.button`
   font-family: "Raleway";
   font-weight: bold;
@@ -67,52 +68,11 @@ const PublishBtn = styled.button`
   }
 `;
 
-const Content = styled.div`
+const Container = styled.div`
+  width: 55%;
   margin-top: 140px;
   margin-bottom: 50px;
   padding-top: 15px;
-  width: 55%;
-`;
-const PreviewTitle = styled.p`
-  margin: 0 0 55px 0;
-  padding: 0;
-  text-align: center;
-  font-family: "Raleway";
-  font-weight: 500;
-  font-size: 46px;
-`;
-const PostTitle = styled.p`
-  margin-top: 0;
-  margin-bottom: 10px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 0;
-  font-family: "Raleway";
-  font-weight: bold;
-  font-size: 36px;
-`;
-const PostDescription = styled.p`
-  margin-top: 0;
-  margin-bottom: 25px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 0;
-  font-family: "PT Sans";
-  font-weight: 500;
-  font-size: 26px;
-`;
-const PostCoverImage = styled.img`
-  width: 100%;
-  height: 450px;
-  object-fit: cover;
-  margin-bottom: 30px;
-`;
-const PostTags = styled.div`
-  border-top: 1px solid #d7d7d7;
-  padding-top: 13px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
 `;
 // -----------------------------------------------------------------
 
@@ -120,6 +80,12 @@ export default function PreviewPost() {
   const { auth } = useAuth();
   const history = useHistory();
   const id = history.location.state;
+  const [isLoading, setIsLoading] = useState(false);
+
+  // CHECKING
+  if (!id) {
+    return <LoadingOverlay isLoading text="No post found." />;
+  }
 
   // GET DRAFT & COVER IMAGE DRAFT
   const [
@@ -127,10 +93,25 @@ export default function PreviewPost() {
     { isFetched: isFetchedCoverImage, data: dataCoverImage },
   ] = useDraft(id, auth);
 
-  //  PUBLISH
-  const publish = usePublish(id);
+  //  HANDLE PUBLISH
+  const publish = usePublish(id, auth);
   const handlePublish = () => {
-    publish.mutate();
+    if (auth) {
+      publish.mutate();
+      setIsLoading(true);
+      setTimeout(() => {
+        history.replace({ pathname: "/preview", state: null });
+        history.push(`/post/${id}`, id);
+      }, 1250);
+    } else {
+      // eslint-disable-next-line no-alert
+      alert("An error has occurred when publishing post.");
+    }
+  };
+
+  // HANDLE CONTINUE EDITING
+  const handleContinueEditing = () => {
+    history.push("/edit/draft", id);
   };
 
   // WAIT FOR DATA
@@ -142,33 +123,22 @@ export default function PreviewPost() {
 
   return (
     <Layout>
+      <LoadingOverlay isLoading={isLoading} />
+
       <SubHeader>
         <SubHeaderContainer className="container">
-          <ContinueEditingBtn>Continue Editing</ContinueEditingBtn>
+          <ContinueEditingBtn onClick={handleContinueEditing}>
+            Continue Editing
+          </ContinueEditingBtn>
           <PublishBtn onClick={handlePublish}>Publish</PublishBtn>
         </SubHeaderContainer>
       </SubHeader>
 
-      <Content className="container">
-        <PreviewTitle>Preview your post</PreviewTitle>
-        <PostTitle>{draft.title}</PostTitle>
-        <PostDescription>{draft.description}</PostDescription>
-        <PostInfo
-          author={draft.author}
-          publishedDate="Just now"
-          duration={draft.duration}
-          isPreview
-        />
-        <PostCoverImage src={coverImageSrc} />
-        <HorizontalLine />
-        <PostContent quillContent={draft.textEditorContent} />
-        <PostTags>
-          {draft.tags.map((item, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <TagBtn key={index}>{item}</TagBtn>
-          ))}
-        </PostTags>
-      </Content>
+      <Container className="container">
+        <Post data={draft} coverImageSrc={coverImageSrc} type="preview" />
+      </Container>
+
+      <BackToTop />
     </Layout>
   );
 }

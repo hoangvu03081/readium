@@ -10,10 +10,13 @@ import Profile from "../screens/Profile";
 import Page404 from "../screens/Page404";
 import WritePost from "../screens/WritePost";
 import PreviewPost from "../screens/PreviewPost";
+import EditDraft from "../screens/EditDraft";
+import EditPost from "../screens/EditPost";
+import ReadPost from "../screens/ReadPost";
 import ResetPassword from "../screens/ResetPassword";
-import "./App.css";
 import Settings from "../screens/Settings";
 import SecureRoute from "../common/components/SecureRoute";
+import "./App.css";
 
 function App() {
   return (
@@ -50,14 +53,24 @@ function App() {
           <SecureRoute path="/write">
             <WritePost />
           </SecureRoute>
+          <SecureRoute path="/preview">
+            <PreviewPost />
+          </SecureRoute>
+          <SecureRoute path="/edit/draft">
+            <EditDraft />
+          </SecureRoute>
+          <SecureRoute path="/edit/post">
+            <EditPost />
+          </SecureRoute>
+          <Redirect from="/post/:postId/reload" to="/post/:postId" />
+          <SecureRoute path="/post/:postId">
+            <ReadPost />
+          </SecureRoute>
           <SecureRoute path="/settings">
             <Settings />
           </SecureRoute>
           <SecureRoute path="/profile/:profileId?">
             <Profile />
-          </SecureRoute>
-          <SecureRoute path="/preview">
-            <PreviewPost />
           </SecureRoute>
           <Route path="/post">post</Route>
           <SecureRoute path="/notifications">notifications</SecureRoute>

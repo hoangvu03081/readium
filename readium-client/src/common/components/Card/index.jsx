@@ -4,6 +4,7 @@ import CardDesktop from "./CardDesktop";
 import CardMobile from "./CardMobile";
 
 export default function Card({
+  postId,
   preview,
   title,
   content,
@@ -14,10 +15,12 @@ export default function Card({
   loveNumber,
   commentNumber,
   type,
+  isSuggestion,
 }) {
   return (
     <>
       <CardDesktop
+        postId={postId}
         preview={preview}
         title={title}
         content={content}
@@ -27,8 +30,10 @@ export default function Card({
         loveNumber={loveNumber}
         commentNumber={commentNumber}
         type={type}
+        isSuggestion={isSuggestion}
       />
       <CardMobile
+        postId={postId}
         title={title}
         content={content}
         tags={tags}
@@ -37,12 +42,14 @@ export default function Card({
         loveNumber={loveNumber}
         commentNumber={commentNumber}
         type={type}
+        isSuggestion={isSuggestion}
       />
     </>
   );
 }
 
 Card.propTypes = {
+  postId: PropTypes.string.isRequired,
   preview: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
@@ -53,4 +60,8 @@ Card.propTypes = {
   loveNumber: PropTypes.number.isRequired,
   commentNumber: PropTypes.number.isRequired,
   type: PropTypes.string.isRequired,
+  isSuggestion: PropTypes.bool,
+};
+Card.defaultProps = {
+  isSuggestion: false,
 };
