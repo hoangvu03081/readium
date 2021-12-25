@@ -14,9 +14,9 @@ import EditDraft from "../screens/EditDraft";
 import EditPost from "../screens/EditPost";
 import ReadPost from "../screens/ReadPost";
 import ResetPassword from "../screens/ResetPassword";
-import "./App.css";
 import Settings from "../screens/Settings";
 import SecureRoute from "../common/components/SecureRoute";
+import "./App.css";
 
 function App() {
   return (
@@ -62,7 +62,8 @@ function App() {
           <SecureRoute path="/edit/post">
             <EditPost />
           </SecureRoute>
-          <SecureRoute path="/post/:postId?">
+          <Redirect from="/post/:postId/reload" to="/post/:postId" />
+          <SecureRoute path="/post/:postId">
             <ReadPost />
           </SecureRoute>
           <SecureRoute path="/settings">

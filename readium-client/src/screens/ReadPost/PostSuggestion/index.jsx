@@ -41,6 +41,7 @@ export default function PostSuggestion() {
             return (
               <Card
                 key={item.id}
+                postId={item.id}
                 preview={item.coverImage}
                 title={item.title}
                 content={item.content}
@@ -51,6 +52,7 @@ export default function PostSuggestion() {
                 loveNumber={item.likes}
                 commentNumber={item.comments}
                 type="global"
+                isSuggestion
               />
             );
           }

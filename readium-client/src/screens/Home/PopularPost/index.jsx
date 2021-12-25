@@ -21,6 +21,7 @@ export default function PopularPost() {
   return (
     <>
       <PostDesktop
+        postId={popularPost.id}
         title={popularPost.title}
         user={popularPost.author.displayName}
         userAvatar={popularPost.author.avatar}
@@ -33,6 +34,7 @@ export default function PopularPost() {
         commentNumber={popularPost.comments}
       />
       <PostMobile
+        postId={popularPost.id}
         title={popularPost.title}
         user={popularPost.author.displayName}
         userAvatar={popularPost.author.avatar}

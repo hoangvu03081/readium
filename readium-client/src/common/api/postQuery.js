@@ -14,7 +14,7 @@ export function usePost(id, auth) {
   const res1 = useQuery("post", () => axios.get(POST_API.GET_A_POST(id)), {
     staleTime: 0,
     refetchOnMount: true,
-    enabled: !!auth,
+    enabled: !!id && !!auth,
     refetchOnWindowFocus: false,
   });
   const res2 = useQuery(
@@ -24,7 +24,7 @@ export function usePost(id, auth) {
     {
       staleTime: 0,
       refetchOnMount: true,
-      enabled: !!auth,
+      enabled: !!id && !!auth,
       refetchOnWindowFocus: false,
     }
   );

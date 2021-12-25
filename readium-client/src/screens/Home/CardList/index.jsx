@@ -16,6 +16,7 @@ export default function CardList() {
             return (
               <Card
                 key={post.id}
+                postId={post.id}
                 preview={post.coverImage}
                 title={post.title}
                 content={post.content}

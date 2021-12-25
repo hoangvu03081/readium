@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import { useHistory } from "react-router-dom";
 import Interactions from "../../../common/components/Buttons/Interactions";
 import TagBtn from "../../../common/components/Buttons/TagBtn";
 import { ReactComponent as AddCollectionBtn } from "../../../assets/icons/add_collection.svg";
@@ -93,6 +94,9 @@ const Date = styled.p`
   font-weight: bold;
   font-size: 18px;
   color: ${({ theme }) => theme.colors.PopularPostBlack};
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const PostTags = styled.div`
@@ -130,6 +134,7 @@ const ButtonContainer = styled.div`
 `;
 
 export default function PostMobile({
+  postId,
   title,
   user,
   userAvatar,
@@ -148,16 +153,22 @@ export default function PostMobile({
       setIsAddedCollection(true);
     }
   };
+
+  const history = useHistory();
+  const handleReadPost = () => {
+    history.push(`/post/${postId}`, postId);
+  };
+
   return (
     <Layout>
-      <Title>{title}</Title>
+      <Title onClick={handleReadPost}>{title}</Title>
 
-      <Preview src={preview} />
+      <Preview src={preview} alt="Cover Image" onClick={handleReadPost} />
 
       <PostInfo>
         <UserAvatar src={userAvatar} alt="" />
         <UserName>by {user}</UserName>
-        <Date>{date}</Date>
+        <Date onClick={handleReadPost}>{date}</Date>
       </PostInfo>
 
       <PostTags>
@@ -188,6 +199,7 @@ export default function PostMobile({
 }
 
 PostMobile.propTypes = {
+  postId: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   user: PropTypes.string.isRequired,
   userAvatar: PropTypes.string.isRequired,
