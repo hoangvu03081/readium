@@ -137,14 +137,18 @@ const StoryInformation = React.forwardRef(
       debounceSendTagsDraft(newTags);
     };
     const handleAddTagsBtn = () => {
-      const tagInputData = {
-        id: document.getElementsByClassName("ReactTags__tagInputField")[0]
-          .value,
-        text: document.getElementsByClassName("ReactTags__tagInputField")[0]
-          .value,
-      };
-      handleAddition(tagInputData);
-      document.getElementsByClassName("ReactTags__tagInputField")[0].value = "";
+      const tagInputData = document.getElementsByClassName(
+        "ReactTags__tagInputField"
+      )[0].value;
+      if (tagInputData) {
+        const newTags = {
+          id: tagInputData,
+          text: tagInputData,
+        };
+        handleAddition(newTags);
+        document.getElementsByClassName("ReactTags__tagInputField")[0].value =
+          "";
+      }
     };
 
     // COVER IMAGE

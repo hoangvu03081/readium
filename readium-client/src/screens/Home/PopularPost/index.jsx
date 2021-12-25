@@ -9,6 +9,9 @@ export default function PopularPost() {
     return <p className="mb-5">Loading popular post...</p>;
   }
   if (!getPopularPost.data) {
+    return <p className="mb-5">No popular post...</p>;
+  }
+  if (getPopularPost.isError) {
     return <p className="mb-5">Error loading popular post...</p>;
   }
 
