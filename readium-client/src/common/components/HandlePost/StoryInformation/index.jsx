@@ -7,6 +7,7 @@ import TextareaAutosize from "react-textarea-autosize";
 import { WithContext as ReactTags } from "react-tag-input";
 import { useDropzone } from "react-dropzone";
 import Resizer from "react-image-file-resizer";
+import { IoIosAddCircleOutline } from "react-icons/io";
 import {
   useTitleDraft,
   useDescriptionDraft,
@@ -21,6 +22,7 @@ import {
   InputTags,
   UploadImage,
   Note,
+  AddTagsBtn,
 } from "./styles";
 
 const StoryInformation = React.forwardRef(
@@ -133,6 +135,16 @@ const StoryInformation = React.forwardRef(
       newTags.splice(newPos, 0, tag);
       setTags(newTags);
       debounceSendTagsDraft(newTags);
+    };
+    const handleAddTagsBtn = () => {
+      const tagInputData = {
+        id: document.getElementsByClassName("ReactTags__tagInputField")[0]
+          .value,
+        text: document.getElementsByClassName("ReactTags__tagInputField")[0]
+          .value,
+      };
+      handleAddition(tagInputData);
+      document.getElementsByClassName("ReactTags__tagInputField")[0].value = "";
     };
 
     // COVER IMAGE
@@ -250,12 +262,16 @@ const StoryInformation = React.forwardRef(
           Your tags
         </h3>
         <InputTags>
+          <AddTagsBtn>
+            <IoIosAddCircleOutline onClick={handleAddTagsBtn} />
+          </AddTagsBtn>
           <ReactTags
             tags={tags}
             delimiters={delimiters}
             handleDelete={handleDelete}
             handleAddition={handleAddition}
             handleDrag={handleDrag}
+            allowUnique={false}
             inputFieldPosition="top"
             placeholder="Enter to create a tag"
             autofocus={false}

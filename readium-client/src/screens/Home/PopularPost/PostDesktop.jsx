@@ -193,6 +193,11 @@ export default function PostDesktop({
   const handleReadPost = () => {
     history.push(`/post/${postId}`, postId);
   };
+  const handleProfile = () => {
+    // const indexOfUserId = userAvatar.lastIndexOf("/");
+    // const userId = userAvatar.slice(indexOfUserId + 1);
+    history.push(`/profile/${user}`);
+  };
 
   return (
     <Card>
@@ -206,8 +211,8 @@ export default function PostDesktop({
         </TopLeft>
         <TopRight className="col-3">
           <h1 onClick={handleReadPost}>{date}</h1>
-          <h2>by {user}</h2>
-          <img src={userAvatar} alt="" />
+          <h2 onClick={handleProfile}>by {user}</h2>
+          <img src={userAvatar} alt="Avatar" onClick={handleProfile} />
         </TopRight>
       </Top>
 

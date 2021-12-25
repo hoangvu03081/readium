@@ -130,6 +130,7 @@ export const InputDescription = styled.div`
 `;
 
 export const InputTags = styled.div`
+  position: relative;
   & .ReactTags__selected {
     width: 460px;
     margin-top: 15px;
@@ -215,6 +216,34 @@ export const InputTags = styled.div`
     @media (max-width: 530px) {
       width: 90%;
     }
+  }
+  svg {
+    z-index: 9;
+    margin-top: 4px;
+    margin-right: -25px;
+    font-size: 20px;
+    transition: all 0.25s;
+    &:hover {
+      cursor: pointer;
+      transform: scale(1.1);
+      transition: all 0.25s;
+    }
+    @media (max-width: 550px) {
+      margin-top: 5px;
+      margin-right: -21px;
+      font-size: 18px;
+    }
+  }
+`;
+
+export const AddTagsBtn = styled.div`
+  width: 460px;
+  height: 1px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  @media (max-width: 530px) {
+    width: 90%;
   }
 `;
 

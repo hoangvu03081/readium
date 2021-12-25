@@ -110,12 +110,17 @@ export default function CardMobile({
       history.push(`/post/${postId}`, postId);
     }
   };
+  const handleProfile = () => {
+    // const indexOfUserId = userAvatar.lastIndexOf("/");
+    // const userId = userAvatar.slice(indexOfUserId + 1);
+    history.push(`/profile/${user}`);
+  };
 
   return (
     <Layout>
       <Top>
-        <UserAvatar src={userAvatar} />
-        <UserName>by {user}</UserName>
+        <UserAvatar src={userAvatar} onClick={handleProfile} />
+        <UserName onClick={handleProfile}>by {user}</UserName>
         <Title onClick={handleReadPost}>{title}</Title>
       </Top>
 
