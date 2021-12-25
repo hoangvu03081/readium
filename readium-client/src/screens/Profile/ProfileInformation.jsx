@@ -23,7 +23,7 @@ import { useIsFollow, useFollow } from "../../common/api/userQuery";
 import StyledLink from "../../common/components/StyledLink";
 
 function checkInformation(data) {
-  return data.facebook || data.twitter || data.instagram || data.email;
+  return data.facebook || data.twitter || data.instagram || data.contactEmail;
 }
 
 export default function ProfileInformation({ data, isMyProfile }) {

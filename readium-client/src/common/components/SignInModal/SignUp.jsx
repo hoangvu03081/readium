@@ -57,6 +57,22 @@ export default function SignUp({ setModalType }) {
   }, [emailInput, passwordInput, confirmPasswordInput]);
   useEffect(() => () => clearState(), []);
 
+  const enterPressed = (e) => {
+    if (
+      e?.key === "Enter" &&
+      isSubmittable(
+        emailInput,
+        passwordInput,
+        confirmPasswordInput,
+        emailError,
+        passwordError,
+        confirmPasswordError
+      )
+    ) {
+      signUp(emailInput, passwordInput);
+    }
+  };
+
   if (hasData)
     return (
       <>
@@ -80,6 +96,7 @@ export default function SignUp({ setModalType }) {
         className="mb-3"
         value={emailInput}
         onChange={handleEmailInput}
+        onKeyPress={enterPressed}
       />
       <InputText>
         <span>Password</span>
@@ -91,6 +108,7 @@ export default function SignUp({ setModalType }) {
         className="mb-3"
         value={passwordInput}
         onChange={handlePasswordInput}
+        onKeyPress={enterPressed}
       />
       <InputText>
         <span>Confirm password</span>
@@ -102,6 +120,7 @@ export default function SignUp({ setModalType }) {
         value={confirmPasswordInput}
         onChange={handleConfirmPasswordInput}
         className="mb-2"
+        onKeyPress={enterPressed}
       />
       <ErrorText className="mb-2">{error}</ErrorText>
       <SubmitButton
