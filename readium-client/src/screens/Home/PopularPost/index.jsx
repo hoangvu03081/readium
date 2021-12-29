@@ -9,7 +9,7 @@ export default function PopularPost() {
   if (getPopularPost.isFetching) {
     return <PuffLoader />;
   }
-  if (getPopularPost.isError || !getPopularPost.data) {
+  if (getPopularPost.isError || !getPopularPost.data.data) {
     return <div />;
   }
 

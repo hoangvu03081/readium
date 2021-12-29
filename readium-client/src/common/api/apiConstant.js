@@ -48,7 +48,7 @@ const DRAFT_API = {
 
 const COMMENT_API = {
   POST_COMMENT: (postId) => getURL(`/posts/${postId}/comments`),
-  GET_COMMENT: (postId) => getURL(`/posts/${postId}/comments`),
+  GET_COMMENT: (postId) => getURL(`/posts/${postId}/comments/`),
 };
 
 export {

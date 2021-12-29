@@ -10,11 +10,11 @@ export function usePopularPost() {
   });
 }
 
-export function usePost(id, auth) {
+export function usePost(id) {
   const res1 = useQuery("post", () => axios.get(POST_API.GET_A_POST(id)), {
     staleTime: 0,
     refetchOnMount: true,
-    enabled: !!id && !!auth,
+    enabled: !!id,
     refetchOnWindowFocus: false,
   });
   const res2 = useQuery(
@@ -24,7 +24,7 @@ export function usePost(id, auth) {
     {
       staleTime: 0,
       refetchOnMount: true,
-      enabled: !!id && !!auth,
+      enabled: !!id,
       refetchOnWindowFocus: false,
     }
   );

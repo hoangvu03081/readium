@@ -112,11 +112,11 @@
       }
     },
     "/posts/{postId}/comments": {
-      "get": {
+      "post": {
         "tags": [
           "Comment"
         ],
-        "summary": "Get comments of a post",
+        "summary": "Comment on the post",
         "description": "",
         "parameters": [
           {
@@ -127,11 +127,32 @@
           }
         ],
         "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
           "404": {
             "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Comment"
+              }
+            }
           }
         }
       }
@@ -407,38 +428,21 @@
         "responses": {}
       }
     },
-    "/auth/forget": {
-      "post": {
+    "/auth/reset": {
+      "get": {
         "tags": [
           "Auth"
         ],
-        "summary": "Users forget password",
+        "summary": "Send reset password link to authenticated users",
         "description": "",
         "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Request change password successfully "
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
+        "responses": {},
+        "security": [
+          {
+            "bearerAuth": []
           }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Email"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/reset": {
+        ]
+      },
       "post": {
         "tags": [
           "Auth"
@@ -478,20 +482,37 @@
             }
           }
         }
-      },
-      "get": {
+      }
+    },
+    "/auth/forget": {
+      "post": {
         "tags": [
           "Auth"
         ],
-        "summary": "Send reset password link to authenticated users",
+        "summary": "Users forget password",
         "description": "",
         "parameters": [],
-        "responses": {},
-        "security": [
-          {
-            "bearerAuth": []
+        "responses": {
+          "200": {
+            "description": "Request change password successfully "
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
-        ]
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Email"
+              }
+            }
+          }
+        }
       }
     },
     "/auth/change-password": {
@@ -665,7 +686,7 @@
         "tags": [
           "User"
         ],
-        "summary": "Delete my account",
+        "summary": "Delete account",
         "description": "",
         "parameters": [],
         "responses": {
@@ -1450,6 +1471,31 @@
         ]
       }
     },
+    "/posts/{postId}/comments/": {
+      "get": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "Get comments of a post",
+        "description": "",
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/{commentId}": {
       "put": {
         "tags": [
@@ -2004,6 +2050,14 @@
             "bearerAuth": []
           }
         ]
+      }
+    },
+    "/topics/trending": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [],
+        "responses": {}
       }
     }
   },

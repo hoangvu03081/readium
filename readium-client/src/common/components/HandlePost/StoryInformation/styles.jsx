@@ -36,7 +36,7 @@ export const InputTitle = styled.div`
     width: 460px;
     font-family: "Raleway";
     font-weight: bold;
-    font-size: 24px;
+    font-size: 36px;
     resize: none;
     &:focus {
       outline: none;
@@ -47,6 +47,7 @@ export const InputTitle = styled.div`
     }
     ::-webkit-input-placeholder {
       text-align: center;
+      line-height: 47px;
       font-family: "Raleway";
       font-weight: 500;
       font-size: 14px;

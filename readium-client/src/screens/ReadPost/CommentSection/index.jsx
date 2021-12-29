@@ -72,10 +72,10 @@ export default function CommentSection({ postId }) {
       <ReadComment>
         {comments.map((item) => (
           <Comment key={item.id}>
-            <ReadLeft src={myAvatar} alt="Avatar" />
+            <ReadLeft src={item.user.avatar} alt="Avatar" />
             <ReadRight>
               <Info>
-                <Name>{item.user}</Name>
+                <Name>{item.user.displayName}</Name>
                 <Time>Just now</Time>
               </Info>
               <Content>{item.content}</Content>

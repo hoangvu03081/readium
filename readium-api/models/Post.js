@@ -84,8 +84,11 @@ postSchema.methods.getPostPreview = async function () {
 
 postSchema.methods.getPostDetail = async function () {
   const bucket = getBucket();
-  const stream = bucket.openDownloadStream(this.textEditorContent);
-  const textEditorContent = await streamToString(stream);
+  let textEditorContent = "";
+  if (this.textEditorContent) {
+    const stream = bucket.openDownloadStream(this.textEditorContent);
+    textEditorContent = await streamToString(stream);
+  }
 
   await this.populate("author", {
     displayName: 1,

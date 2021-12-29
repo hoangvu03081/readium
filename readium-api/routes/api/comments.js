@@ -5,16 +5,17 @@ const Comment = require("../../models/Comment");
 const { authMiddleware } = require("../../utils");
 const { checkCommentContent } = require("../../middleware/comments-middleware");
 
-router.get("/posts/:postId/comments", async (req, res) => {
+router.get("/posts/:postId/comments/", async (req, res) => {
   /* 
     #swagger.tags = ["Comment"]
     #swagger.summary = "Get comments of a post"
   */
   try {
     const { postId } = req.params;
-    const post = await Post.findById(postId, { comments: 1 }).populate(
+    const post = await Post.findById(postId, { comments: 1, isPublished: 1 }).populate(
       "comments"
     );
+    console.log(post);
 
     if (!post || !post.isPublished) {
       return res.status(404).send({
