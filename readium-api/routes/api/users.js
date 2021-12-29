@@ -173,7 +173,7 @@ router.post("/follow/:userId", authMiddleware, async (req, res) => {
 router.delete("/", authMiddleware, async (req, res) => {
   /*
     #swagger.tags = ['User']
-    #swagger.summary = "Delete my account"
+    #swagger.summary = "Delete account"
     #swagger.security = [{
       "bearerAuth": []
     }]

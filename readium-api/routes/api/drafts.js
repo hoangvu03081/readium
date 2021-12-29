@@ -608,7 +608,9 @@ router.put("/:id/publish", authMiddleware, checkOwnPost, async (req, res) => {
       });
     }
     const _id = req.params.id;
-    putPost(_id, { tags: post.tags, title: post.title });
+    const postObject = post.toObject();
+    delete postObject._id;
+    putPost(_id, postObject);
 
     /// republish post
     if (post.publishedPost) {

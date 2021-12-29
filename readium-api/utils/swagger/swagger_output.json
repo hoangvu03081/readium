@@ -478,6 +478,20 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Send reset password link to authenticated users",
+        "description": "",
+        "parameters": [],
+        "responses": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/auth/change-password": {
