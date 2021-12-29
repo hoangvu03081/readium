@@ -47,13 +47,47 @@ app.post("/search", async (req, res) => {
     const text = arr.filter((word) => word[0] !== "#").join(" ");
     const tags = arr.filter((word) => word[0] === "#").join(" ");
     const result = await search(text, tags);
-    let mixedArrResult = result.body.hits.hits.map(async (ele) => {
+
+    const arrResult = [];
+
+    for (let ele of result.body.hits.hits) {
       switch (ele._index) {
         case "post": {
           let post = await Post.findById(ele._id, { title: 1 });
           post = post?.toObject();
           if (post) {
-            post.url = "";
+            post.url = `/post/${post._id.toString()}`;
+            post.type = "post";
+          }
+          arrResult.push(post);
+          break;
+        }
+        case "user": {
+          let user = await User.findById(ele._id, {
+            displayName: 1,
+            profileId: 1,
+          });
+          user = user?.toObject();
+          if (user) {
+            user.url = `/profile/${user.profileId}`;
+            user.type = "user";
+          }
+
+          arrResult.push(user);
+          break;
+        }
+        default:
+      }
+    }
+    return res.send(arrResult);
+
+    /*let mixedArrResult = result.body.hits.hits.map(async (ele) => {
+      switch (ele._index) {
+        case "post": {
+          let post = await Post.findById(ele._id, { title: 1 });
+          post = post?.toObject();
+          if (post) {
+            post.url = `/post/${post._id.toString()}`;
             post.type = "post";
           }
           return post;
@@ -75,12 +109,10 @@ app.post("/search", async (req, res) => {
           return null;
       }
     });
+
     mixedArrResult = await Promise.all(mixedArrResult);
     return res.send(mixedArrResult);
-    let posts = await Post.find({ _id: { $in: postIdArr } });
-    posts = posts.map((post) => post.getPostPreview());
-    posts = await Promise.all(posts);
-    return res.send(posts);
+    */
   } catch (err) {
     console.log(err);
     return res.status(500).send({ message: "Error in search" });
