@@ -57,15 +57,17 @@ export const OutlinedButton = styled.button`
   font-weight: bold;
   font-size: 16px;
   border-radius: 3px;
-  background-color: white;
+  background-color: ${({ backgroundColor = "white" }) => backgroundColor};
+  color: ${({ color = "black" }) => color};
   cursor: pointer;
   user-select: none;
   appearance: none;
   transition: all 0.2s;
 
   &:hover {
-    background-color: black;
-    color: white;
+    background-color: ${({ hoverBackgroundColor = "black" }) =>
+      hoverBackgroundColor};
+    color: ${({ hoverColor = "white" }) => hoverColor};
   }
 `;
 

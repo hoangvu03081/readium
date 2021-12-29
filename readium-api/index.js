@@ -46,6 +46,7 @@ app.post("/search", async (req, res) => {
     const text = arr.filter((word) => word[0] !== "#").join(" ");
     const tags = arr.filter((word) => word[0] === "#").join(" ");
     const result = await search(text, tags);
+    console.log(result.body.hits);
     const postIdArr = result.body.hits.hits.map((ele) => ele._id);
     let posts = await Post.find({ _id: { $in: postIdArr } });
     posts = posts.map((post) => post.getPostPreview());
