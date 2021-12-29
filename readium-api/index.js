@@ -4,6 +4,7 @@ const port = process.env.PORT || 5000;
 const server = app.listen(port);
 
 const Post = require("./models/Post");
+const User = require("./models/User");
 const { WebSocketServer } = require("ws");
 const { REQUIRE_ACTIVATE_ACCOUNT, NO_AUTH_TOKEN } = require("./utils");
 const { search } = require("./utils/elasticsearch");
@@ -46,12 +47,42 @@ app.post("/search", async (req, res) => {
     const text = arr.filter((word) => word[0] !== "#").join(" ");
     const tags = arr.filter((word) => word[0] === "#").join(" ");
     const result = await search(text, tags);
-    const postIdArr = result.body.hits.hits.map((ele) => ele._id);
+    let mixedArrResult = result.body.hits.hits.map(async (ele) => {
+      switch (ele._index) {
+        case "post": {
+          let post = await Post.findById(ele._id, { title: 1 });
+          post = post?.toObject();
+          if (post) {
+            post.url = "";
+            post.type = "post";
+          }
+          return post;
+        }
+        case "user": {
+          let user = await User.findById(ele._id, {
+            displayName: 1,
+            profileId: 1,
+          });
+          user = user?.toObject();
+          if (user) {
+            user.url = `/profile/${user.profileId}`;
+            user.type = "user";
+          }
+
+          return user;
+        }
+        default:
+          return null;
+      }
+    });
+    mixedArrResult = await Promise.all(mixedArrResult);
+    return res.send(mixedArrResult);
     let posts = await Post.find({ _id: { $in: postIdArr } });
     posts = posts.map((post) => post.getPostPreview());
     posts = await Promise.all(posts);
     return res.send(posts);
   } catch (err) {
+    console.log(err);
     return res.status(500).send({ message: "Error in search" });
   }
 });
