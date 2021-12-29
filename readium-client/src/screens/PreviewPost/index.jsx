@@ -23,13 +23,33 @@ const SubHeader = styled.div`
   z-index: 9;
   position: fixed;
   top: 80px;
+  @media (max-width: 290px) {
+    height: 100px;
+  }
 `;
 
 const SubHeaderContainer = styled.div`
+  width: 60%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  @media (max-width: 1200px) {
+    width: 70%;
+  }
+  @media (max-width: 900px) {
+    width: 80%;
+  }
+  @media (max-width: 767px) {
+    width: 90%;
+  }
+  @media (max-width: 650px) {
+    width: 92%;
+  }
+  @media (max-width: 290px) {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
 `;
 
 const ContinueEditingBtn = styled.button`
@@ -50,9 +70,13 @@ const ContinueEditingBtn = styled.button`
   }
   @media (max-width: 400px) {
     font-size: 16px;
+    padding: 5px 15px;
   }
-  @media (max-width: 300px) {
-    font-size: 14px;
+  @media (max-width: 330px) {
+    font-size: 15px;
+  }
+  @media (max-width: 290px) {
+    width: 100%;
   }
 `;
 
@@ -74,15 +98,19 @@ const PublishBtn = styled.button`
   }
   @media (max-width: 400px) {
     font-size: 16px;
+    padding: 5px 15px;
   }
-  @media (max-width: 300px) {
-    font-size: 14px;
+  @media (max-width: 330px) {
+    font-size: 15px;
+  }
+  @media (max-width: 290px) {
+    width: 100%;
   }
 `;
 
 const PostContainer = styled.div`
   width: 60%;
-  margin-top: 140px;
+  margin-top: 150px;
   margin-bottom: 50px;
   padding-top: 15px;
   @media (max-width: 1200px) {
@@ -96,6 +124,9 @@ const PostContainer = styled.div`
   }
   @media (max-width: 650px) {
     width: 92%;
+  }
+  @media (max-width: 290px) {
+    margin-top: 185px;
   }
 `;
 // -----------------------------------------------------------------

@@ -7,6 +7,10 @@ import "react-quill/dist/quill.bubble.css";
 const Layout = styled.div`
   .ql-editor {
     padding: 0;
+    font-size: 21px;
+    @media (max-width: 509px) {
+      font-size: 18px;
+    }
   }
   margin-bottom: 30px;
 `;

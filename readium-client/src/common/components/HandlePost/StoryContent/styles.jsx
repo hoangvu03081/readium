@@ -22,7 +22,10 @@ export const TextEditor = styled.div`
     min-height: 350px;
     font-family: "PT Sans";
     font-weight: 500;
-    font-size: 18px;
+    font-size: 21px;
+    @media (max-width: 509px) {
+      font-size: 18px;
+    }
   }
   .ql-bubble .ql-tooltip {
     z-index: 1;

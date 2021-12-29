@@ -10,7 +10,7 @@ export const Layout = styled.div`
     font-weight: 500;
     font-size: 48px;
     @media (max-width: 520px) {
-      font-size: 40px;
+      font-size: 38px;
     }
   }
   h2 {
@@ -18,14 +18,23 @@ export const Layout = styled.div`
     padding: 0;
     font-family: "PT Sans";
     font-weight: bold;
-    font-size: 24px;
+    font-size: 36px;
+    @media (max-width: 509px) {
+      font-size: 24px;
+    }
+    @media (max-width: 349px) {
+      font-size: 21px;
+    }
   }
   h3 {
     margin: 60px 0 15px 0;
     padding: 0;
     font-family: "PT Sans";
     font-weight: 500;
-    font-size: 18px;
+    font-size: 21px;
+    @media (max-width: 509px) {
+      font-size: 18px;
+    }
   }
 `;
 
@@ -47,35 +56,64 @@ export const InputTitle = styled.div`
     }
     ::-webkit-input-placeholder {
       text-align: center;
-      line-height: 47px;
       font-family: "Raleway";
       font-weight: 500;
       font-size: 14px;
-      padding-top: 9px;
+      padding-top: 25px;
+      @media (max-width: 509px) {
+        padding-top: 12px;
+      }
+      @media (max-width: 349px) {
+        padding-top: 7px;
+      }
     }
     :-moz-placeholder {
       text-align: center;
       font-family: "Raleway";
       font-weight: 500;
       font-size: 14px;
-      padding-top: 9px;
+      padding-top: 25px;
+      @media (max-width: 509px) {
+        padding-top: 12px;
+      }
+      @media (max-width: 349px) {
+        padding-top: 7px;
+      }
     }
     ::-moz-placeholder {
       text-align: center;
       font-family: "Raleway";
       font-weight: 500;
       font-size: 14px;
-      padding-top: 9px;
+      padding-top: 25px;
+      @media (max-width: 509px) {
+        padding-top: 12px;
+      }
+      @media (max-width: 349px) {
+        padding-top: 7px;
+      }
     }
     :-ms-input-placeholder {
       text-align: center;
       font-family: "Raleway";
       font-weight: 500;
       font-size: 14px;
-      padding-top: 9px;
+      padding-top: 25px;
+      @media (max-width: 509px) {
+        padding-top: 12px;
+      }
+      @media (max-width: 349px) {
+        padding-top: 7px;
+      }
     }
     @media (max-width: 530px) {
       width: 90%;
+    }
+    @media (max-width: 509px) {
+      font-size: 24px;
+    }
+    @media (max-width: 349px) {
+      font-size: 21px;
     }
   }
 `;
@@ -87,7 +125,7 @@ export const InputDescription = styled.div`
     width: 460px;
     font-family: "PT Sans";
     font-weight: 500;
-    font-size: 18px;
+    font-size: 21px;
     resize: none;
     &:focus {
       outline: none;
@@ -101,31 +139,46 @@ export const InputDescription = styled.div`
       font-family: "PT Sans";
       font-weight: 500;
       font-size: 14px;
-      padding-top: 3px;
+      padding-top: 8px;
+      @media (max-width: 509px) {
+        padding-top: 4px;
+      }
     }
     :-moz-placeholder {
       text-align: center;
       font-family: "PT Sans";
       font-weight: 500;
       font-size: 14px;
-      padding-top: 3px;
+      padding-top: 8px;
+      @media (max-width: 509px) {
+        padding-top: 4px;
+      }
     }
     ::-moz-placeholder {
       text-align: center;
       font-family: "PT Sans";
       font-weight: 500;
       font-size: 14px;
-      padding-top: 3px;
+      padding-top: 8px;
+      @media (max-width: 509px) {
+        padding-top: 4px;
+      }
     }
     :-ms-input-placeholder {
       text-align: center;
       font-family: "PT Sans";
       font-weight: 500;
       font-size: 14px;
-      padding-top: 3px;
+      padding-top: 8px;
+      @media (max-width: 509px) {
+        padding-top: 4px;
+      }
     }
     @media (max-width: 530px) {
       width: 90%;
+    }
+    @media (max-width: 509px) {
+      font-size: 18px;
     }
   }
 `;

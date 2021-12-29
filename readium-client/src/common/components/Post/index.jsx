@@ -40,7 +40,7 @@ const PostTitle = styled.p`
   padding: 0;
   font-family: "Raleway";
   font-weight: bold;
-  font-size: 36px;
+  font-size: 46px;
   @media (max-width: 650px) {
     font-size: 32px;
   }

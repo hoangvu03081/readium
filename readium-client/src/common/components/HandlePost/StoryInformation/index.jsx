@@ -277,7 +277,7 @@ const StoryInformation = React.forwardRef(
             handleDrag={handleDrag}
             allowUnique={false}
             inputFieldPosition="top"
-            placeholder="Enter to create a tag"
+            placeholder="Enter or click + to create a tag"
             autofocus={false}
             autocomplete
           />
