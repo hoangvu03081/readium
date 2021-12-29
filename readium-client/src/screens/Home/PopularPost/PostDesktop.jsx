@@ -12,7 +12,6 @@ import { ReactComponent as AddedCollectionBtn } from "../../../assets/icons/adde
 
 const Card = styled.div`
   width: 100%;
-  margin-bottom: 50px;
   padding: 30px;
   border: 2px solid ${({ theme }) => theme.colors.PopularPostBlack};
   border-radius: 6px;

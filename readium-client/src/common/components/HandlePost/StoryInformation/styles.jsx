@@ -42,7 +42,7 @@ export const InputTitle = styled.div`
   textarea {
     border: none;
     border-bottom: 1px solid #c8c8c8;
-    width: 460px;
+    width: 600px;
     font-family: "Raleway";
     font-weight: bold;
     font-size: 36px;
@@ -106,7 +106,10 @@ export const InputTitle = styled.div`
         padding-top: 7px;
       }
     }
-    @media (max-width: 530px) {
+    @media (max-width: 767px) {
+      width: 100%;
+    }
+    @media (max-width: 575px) {
       width: 90%;
     }
     @media (max-width: 509px) {
@@ -122,7 +125,7 @@ export const InputDescription = styled.div`
   textarea {
     border: none;
     border-bottom: 1px solid #c8c8c8;
-    width: 460px;
+    width: 600px;
     font-family: "PT Sans";
     font-weight: 500;
     font-size: 21px;
@@ -174,7 +177,10 @@ export const InputDescription = styled.div`
         padding-top: 4px;
       }
     }
-    @media (max-width: 530px) {
+    @media (max-width: 767px) {
+      width: 100%;
+    }
+    @media (max-width: 575px) {
       width: 90%;
     }
     @media (max-width: 509px) {
@@ -186,7 +192,7 @@ export const InputDescription = styled.div`
 export const InputTags = styled.div`
   position: relative;
   & .ReactTags__selected {
-    width: 460px;
+    width: 600px;
     margin-top: 15px;
     margin-bottom: 10px;
     margin-left: auto;
@@ -194,7 +200,10 @@ export const InputTags = styled.div`
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    @media (max-width: 530px) {
+    @media (max-width: 767px) {
+      width: 100%;
+    }
+    @media (max-width: 575px) {
       width: 90%;
     }
   }
@@ -227,7 +236,7 @@ export const InputTags = styled.div`
   input {
     border: none;
     border-bottom: 1px solid #c8c8c8;
-    width: 460px;
+    width: 600px;
     font-family: "PT Sans";
     font-weight: 500;
     font-size: 18px;
@@ -267,7 +276,10 @@ export const InputTags = styled.div`
       font-size: 14px;
       padding-top: 3px;
     }
-    @media (max-width: 530px) {
+    @media (max-width: 767px) {
+      width: 100%;
+    }
+    @media (max-width: 575px) {
       width: 90%;
     }
   }
@@ -291,12 +303,15 @@ export const InputTags = styled.div`
 `;
 
 export const AddTagsBtn = styled.div`
-  width: 460px;
+  width: 600px;
   height: 1px;
   margin: 0 auto;
   display: flex;
   justify-content: flex-end;
-  @media (max-width: 530px) {
+  @media (max-width: 767px) {
+    width: 100%;
+  }
+  @media (max-width: 575px) {
     width: 90%;
   }
 `;

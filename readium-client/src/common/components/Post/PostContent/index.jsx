@@ -8,6 +8,10 @@ const Layout = styled.div`
   .ql-editor {
     padding: 0;
     font-size: 21px;
+    .image-center {
+      display: block;
+      margin: 0 auto;
+    }
     @media (max-width: 509px) {
       font-size: 18px;
     }

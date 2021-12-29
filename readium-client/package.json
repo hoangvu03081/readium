@@ -16,6 +16,7 @@
     "prop-types": "^15.7.2",
     "query-string": "^7.0.1",
     "quill-delta": "^4.2.2",
+    "quill-image-compress": "^1.2.19",
     "react": "^17.0.2",
     "react-cookie": "^4.1.1",
     "react-device-detect": "^2.1.2",
