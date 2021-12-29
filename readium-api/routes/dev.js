@@ -8,6 +8,7 @@ const Collection = require("../models/Collection");
 const Comment = require("../models/Comment");
 const Notification = require("../models/Notification");
 const { authMiddleware } = require("../utils");
+const { deletePost, deleteUser, putPost } = require("../utils/elasticsearch");
 
 router.get("/users", async (req, res) => {
   /* 
@@ -41,7 +42,14 @@ router.delete("/users", async (req, res) => {
     #swagger.tags = ['Dev']
     #swagger.summary = 'Delete all users'
   */
-  await User.deleteMany();
+  const users = await User.find();
+  await Promise.all(
+    users.map(async (user) => {
+      const _id = user._id.toString();
+      deleteUser(_id);
+      return await User.deleteOne({ _id });
+    })
+  );
   return res.send();
 });
 
@@ -50,9 +58,23 @@ router.delete("/", async (req, res) => {
     #swagger.tags = ['Dev']
     #swagger.summary = 'Delete all data'
   */
-  await User.deleteMany();
-  await Post.deleteMany();
-  res.send();
+  const users = await User.find();
+  await Promise.all(
+    users.map(async (user) => {
+      const _id = user._id.toString();
+      deleteUser(_id);
+      return await User.deleteOne({ _id });
+    })
+  );
+  const posts = await Post.find();
+  await Promise.all(
+    posts.map(async (post) => {
+      const _id = post._id.toString();
+      deletePost(_id);
+      return await Post.deleteOne({ _id });
+    })
+  );
+  return res.send();
 });
 
 const uploadCover = multer({
@@ -140,6 +162,9 @@ router.post(
       });
 
       await post.save();
+      const postObject = post.toObject();
+      delete postObject._id;
+      putPost(post._id.toString(), postObject);
       return res.status(201).send(post);
     } catch (err) {
       return res
@@ -157,6 +182,7 @@ router.post("/ai", async (req, res) => {
     #swagger.summary = 'Create posts for AI service test'
   */
   try {
+    // push to elastic search
     let post = new Post({
       _id: posts[0]._id,
       title: posts[0].title,

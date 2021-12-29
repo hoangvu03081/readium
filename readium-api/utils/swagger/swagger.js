@@ -1,7 +1,11 @@
 const swaggerAutogen = require("swagger-autogen")({ openapi: "3.0.0" });
 
 const outputFile = "./utils/swagger/swagger_output.json";
-const endpointsFiles = ["./index.js", "./routes/index.js"];
+const endpointsFiles = [
+  "./index.js",
+  "./routes/index.js",
+  "./routes/api/websocket-handler.js",
+];
 
 const doc = {
   info: {

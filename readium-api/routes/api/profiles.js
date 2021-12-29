@@ -13,6 +13,7 @@ const {
   validateInstaLink,
 } = require("../../utils");
 const configMulter = require("../../config/multer-config");
+const { putUser } = require("../../utils/elasticsearch");
 
 const uploadAva = configMulter({
   limits: { fields: 0, fileSize: 12e6, files: 1 },
@@ -273,6 +274,9 @@ router.patch("/", authMiddleware, async (req, res) => {
     user.instagram = instagram ?? user.instagram;
     user.contactEmail = contactEmail ?? user.contactEmail;
     await user.save();
+    const userObject = user.toObject();
+    delete userObject._id;
+    putUser(user._id.toString(), userObject);
 
     // #swagger.responses[200] = { description: 'Successfully edit profile' }
     return res.send(user.getPublicProfile());
@@ -313,6 +317,9 @@ const handleEdit = async (
     } else user[field] = value;
 
     await user.save();
+    const userObject = user.toObject();
+    delete userObject._id;
+    putUser(user._id.toString(), userObject);
     return res.send(user.getPublicProfile());
   } catch (err) {
     return res
