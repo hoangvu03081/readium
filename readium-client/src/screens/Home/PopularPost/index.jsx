@@ -2,17 +2,15 @@ import React from "react";
 import { usePopularPost } from "../../../common/api/postQuery";
 import PostDesktop from "./PostDesktop";
 import PostMobile from "./PostMobile";
+import PuffLoader from "./PuffLoader";
 
 export default function PopularPost() {
   const getPopularPost = usePopularPost();
   if (getPopularPost.isFetching) {
-    return <p className="mb-5">Loading popular post...</p>;
+    return <PuffLoader />;
   }
-  if (!getPopularPost.data) {
-    return <p className="mb-5">No popular post...</p>;
-  }
-  if (getPopularPost.isError) {
-    return <p className="mb-5">Error loading popular post...</p>;
+  if (getPopularPost.isError || !getPopularPost.data) {
+    return <div />;
   }
 
   const popularPost = getPopularPost.data.data;
