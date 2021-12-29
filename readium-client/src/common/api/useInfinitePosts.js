@@ -4,17 +4,19 @@ import { useState, useEffect } from "react";
 import { POST_API } from "./apiConstant";
 
 const fetchPosts = ({ pageParam = 0 }) =>
-  axios.get(POST_API.GET_POST(pageParam));
+  axios.get(POST_API.GET_POSTS(pageParam));
 
 export default function useInfinitePosts() {
   const [data, setData] = useState([]);
 
-  const { fetchNextPage } = useInfiniteQuery("posts", fetchPosts, {
+  const { refetch, fetchNextPage } = useInfiniteQuery("posts", fetchPosts, {
     getNextPageParam: (lastPage) => lastPage.data.next,
+    staleTime: 0,
+    refetchOnMount: true,
     refetchOnWindowFocus: false,
   });
 
-  const fetchPostsWrapper = () => {
+  const fetchScrollBottom = () => {
     const website = document.documentElement;
     if (website.scrollHeight - website.scrollTop === website.clientHeight) {
       fetchNextPage().then((event) => {
@@ -24,12 +26,13 @@ export default function useInfinitePosts() {
   };
 
   useEffect(() => {
-    fetchNextPage().then((event) => {
-      setData(event.data.pages);
+    refetch().then((e) => {
+      setData(e.data.pages);
     });
-    window.addEventListener("scroll", fetchPostsWrapper);
+    window.addEventListener("scroll", fetchScrollBottom);
     return () => {
-      window.removeEventListener("scroll", fetchPostsWrapper);
+      setData([]);
+      window.removeEventListener("scroll", fetchScrollBottom);
     };
   }, []);
 

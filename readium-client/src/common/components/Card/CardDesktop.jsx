@@ -1,18 +1,21 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/img-redundant-alt */
 import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import { useHistory } from "react-router-dom";
 import TagBtn from "../Buttons/TagBtn";
 import Corner from "./Corner";
 import LoveComment from "../Buttons/LoveComment";
 
-// STYLES ----------------------------------------------------
 const Card = styled.div`
   border: 2px solid ${({ theme }) => theme.colors.CardBlack};
   border-radius: 5px;
   width: 91%;
   height: 204px;
   padding: 33px 20px;
-  margin-bottom: 42px;
+  margin-bottom: 50px;
   position: relative;
   @media (max-width: 930px) {
     width: 100%;
@@ -54,6 +57,11 @@ const Middle = styled.div`
     font-family: "Raleway";
     font-weight: bold;
     font-size: 24px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     color: ${({ theme }) => theme.colors.CardBlack};
     &:hover {
       cursor: pointer;
@@ -63,6 +71,11 @@ const Middle = styled.div`
     margin: 0;
     font-family: "PT Sans";
     font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     color: ${({ theme }) => theme.colors.CardContent};
   }
   button {
@@ -177,27 +190,43 @@ const LoveCommentContainer = styled.div`
     top: -30px;
   }
 `;
-// -----------------------------------------------------------
 
 export default function CardDesktop({
+  postId,
   preview,
   title,
   content,
   tags,
   duration,
+  user,
   userAvatar,
   loveNumber,
   commentNumber,
   type,
+  isSuggestion,
 }) {
+  const history = useHistory();
+  const handleReadPost = () => {
+    if (isSuggestion) {
+      history.push(`/post/${postId}/reload`, postId);
+    } else {
+      history.push(`/post/${postId}`, postId);
+    }
+  };
+  const handleProfile = () => {
+    // const indexOfUserId = userAvatar.lastIndexOf("/");
+    // const userId = userAvatar.slice(indexOfUserId + 1);
+    history.push(`/profile/${user}`);
+  };
+
   return (
     <Card className="row">
       <Left className="col-3">
-        <img src={preview} alt="" />
+        <img src={preview} alt="Cover Image" onClick={handleReadPost} />
       </Left>
 
       <Middle className="col-7">
-        <h1>{title}</h1>
+        <h1 onClick={handleReadPost}>{title}</h1>
         <p>{content}</p>
         <div>
           {tags.map((item, index) => (
@@ -208,8 +237,10 @@ export default function CardDesktop({
       </Middle>
 
       <Right className="col-2">
-        <p>{duration > 1 ? `${duration} mins read` : `${duration} min read`}</p>
-        <img src={userAvatar} alt="" />
+        <p onClick={handleReadPost}>
+          {duration > 1 ? `${duration} mins read` : `${duration} min read`}
+        </p>
+        <img src={userAvatar} alt="Avatar" onClick={handleProfile} />
       </Right>
 
       <CornerContainer>
@@ -224,13 +255,19 @@ export default function CardDesktop({
 }
 
 CardDesktop.propTypes = {
+  postId: PropTypes.string.isRequired,
   preview: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
   duration: PropTypes.number.isRequired,
+  user: PropTypes.string.isRequired,
   userAvatar: PropTypes.string.isRequired,
   loveNumber: PropTypes.number.isRequired,
   commentNumber: PropTypes.number.isRequired,
   type: PropTypes.string.isRequired,
+  isSuggestion: PropTypes.bool,
+};
+CardDesktop.defaultProps = {
+  isSuggestion: false,
 };

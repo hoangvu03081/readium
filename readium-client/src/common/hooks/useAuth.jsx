@@ -2,8 +2,10 @@ import axios from "axios";
 import PropTypes from "prop-types";
 import React, { useState, useEffect, useContext, createContext } from "react";
 import { useDispatch } from "react-redux";
+import jwtDecode from "jwt-decode";
 import { modalClosed } from "../../slices/sign-in-slice";
 import useWs from "../api/websocket";
+import Loading from "../components/Loading";
 
 const isDev = process.env.NODE_ENV === "development";
 const LOCAL_URL = "http://localhost:5000";
@@ -36,6 +38,7 @@ function useProvideAuth() {
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
   const [tokenReceived, setTokenReceived] = useState(false);
+  const [initAuth, setInitAuth] = useState(false);
   const dispatch = useDispatch();
   const { authenticateWs } = useWs();
 
@@ -55,25 +58,6 @@ function useProvideAuth() {
     setTokenReceived(true);
   };
 
-  // useEffect(async () => {
-  //   try {
-  //     axios.defaults.withCredentials = true;
-
-  //     const token = localStorage.getItem("Authorization");
-  //     if (token) axios.defaults.headers.common.Authorization = token;
-
-  //     const { data: authResult } = await axios.get(
-  //       `${LOCAL_URL}/users/protected`
-  //     );
-
-  //     setAuth(authResult);
-  //   } catch (e) {
-  //     setAuth(false);
-  //   } finally {
-  //     setTokenReceived(false);
-  //   }
-  // }, [tokenReceived]);
-
   function observeAuth() {
     axios.defaults.withCredentials = true;
     const token = localStorage.getItem("Authorization");
@@ -86,10 +70,19 @@ function useProvideAuth() {
       .then(({ data: authResult }) => setAuth(authResult))
       .catch(() => setAuth(false))
       .finally(() => {
+        if (!initAuth) setInitAuth(true);
         setTokenReceived(false);
         localStorage.removeItem("logout");
       });
   }
+
+  // useEffect(() => {
+  //   const token = localStorage.getItem("Authorization");
+  //   if (token) {
+  //     const { profileId } = jwtDecode(token);
+  //     setAuth({ profileId });
+  //   }
+  // }, []);
 
   useEffect(() => {
     axios.defaults.withCredentials = true;
@@ -109,6 +102,15 @@ function useProvideAuth() {
     setHasData(false);
     setError(null);
     setData(null);
+  };
+
+  const checkToken = () => {
+    const token = localStorage.getItem("Authorization");
+    if (token) {
+      const { profileId } = jwtDecode(token);
+      if (profileId) return true;
+    }
+    return false;
   };
 
   const signOut = async () => {
@@ -237,12 +239,16 @@ function useProvideAuth() {
     forgotPassword,
     resetPassword,
     clearState,
+    checkToken,
+    initAuth,
   };
 }
 
 export function AuthProvider({ children }) {
   const auth = useProvideAuth();
-  return <authContext.Provider value={auth}>{children}</authContext.Provider>;
+  if (auth.initAuth)
+    return <authContext.Provider value={auth}>{children}</authContext.Provider>;
+  return <Loading />;
 }
 
 AuthProvider.propTypes = {

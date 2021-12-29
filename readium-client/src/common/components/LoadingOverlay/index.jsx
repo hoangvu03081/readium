@@ -1,6 +1,8 @@
+/* eslint-disable react/button-has-type */
 import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import { useHistory } from "react-router-dom";
 
 const Layout = styled.div`
   position: fixed;
@@ -49,17 +51,59 @@ const Layout = styled.div`
   }
 `;
 
-export default function LoadingOverlay({ isLoading }) {
+const Toast = styled.div`
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  p {
+    font-family: "Raleway";
+    font-size: 20px;
+  }
+  button {
+    background-color: black;
+    color: white;
+    font-size: 18px;
+    padding: 5px 15px;
+    border: none;
+    border-radius: 20px;
+    transition: all 0.25s;
+    &:hover {
+      cursor: pointer;
+      transform: scale(1.1);
+      transition: all 0.25s;
+    }
+  }
+`;
+
+export default function LoadingOverlay({ isLoading, text }) {
+  const history = useHistory();
+  const handleBackToHome = () => {
+    history.push("/");
+  };
   return (
     <Layout className={isLoading ? "d-flex" : "d-none"}>
-      <div className="lds-ripple">
+      <div className={text ? "" : "lds-ripple"}>
         <div />
         <div />
       </div>
+      <Toast className={text ? "d-flex" : "d-none"}>
+        <p>{text}</p>
+        <button onClick={handleBackToHome}>Back to homepage</button>
+      </Toast>
     </Layout>
   );
 }
 
 LoadingOverlay.propTypes = {
   isLoading: PropTypes.bool.isRequired,
+  text: PropTypes.string,
+};
+LoadingOverlay.defaultProps = {
+  text: "",
 };

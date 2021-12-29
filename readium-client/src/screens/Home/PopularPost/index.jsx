@@ -1,47 +1,53 @@
 import React from "react";
+import { usePopularPost } from "../../../common/api/postQuery";
 import PostDesktop from "./PostDesktop";
 import PostMobile from "./PostMobile";
 
 export default function PopularPost() {
+  const getPopularPost = usePopularPost();
+  if (getPopularPost.isFetching) {
+    return <p className="mb-5">Loading popular post...</p>;
+  }
+  if (!getPopularPost.data) {
+    return <p className="mb-5">Error loading popular post...</p>;
+  }
+
+  const popularPost = getPopularPost.data.data;
+  const getDate = (publishDate) => {
+    const formatDate = new Date(publishDate.slice(0, 10));
+    return formatDate.toLocaleDateString();
+  };
+
   return (
     <>
       <PostDesktop
-        title="Coding is bad for your health and your soul"
-        user="Oniichan"
-        userAvatar="./src/assets/images/yasuo.png"
-        date="11/4/2021"
-        tags={[
-          "#health",
-          "#coding",
-          "#programmer",
-          "#NNN",
-          "#pain",
-          "#Hayasuo",
-        ]}
-        preview="./src/assets/images/preview_1.png"
-        content="Does programming affect your health in the long run? Are old programmers suffering from back pain, etc? Is there a way to avoid it?"
-        watchNumber={10253}
-        loveNumber={3021}
-        commentNumber={2050}
+        postId={popularPost.id}
+        title={popularPost.title}
+        user={popularPost.author.displayName}
+        userAvatar={popularPost.author.avatar}
+        date={getDate(popularPost.publishDate)}
+        tags={popularPost.tags}
+        preview={popularPost.coverImage}
+        content={popularPost.content}
+        watchNumber={popularPost.views}
+        loveNumber={popularPost.likes}
+        commentNumber={popularPost.comments}
       />
       <PostMobile
-        title="Coding is bad for your health and your soul"
-        user="Oniichan"
-        userAvatar="./src/assets/images/yasuo.png"
-        date="11/4/2021"
-        tags={[
-          "#health",
-          "#coding",
-          "#programmer",
-          "#NNN",
-          "#pain",
-          "#Hayasuo",
-        ]}
-        preview="./src/assets/images/preview_1.png"
-        watchNumber={10253}
-        loveNumber={3021}
-        commentNumber={2050}
+        postId={popularPost.id}
+        title={popularPost.title}
+        user={popularPost.author.displayName}
+        userAvatar={popularPost.author.avatar}
+        date={getDate(popularPost.publishDate)}
+        tags={popularPost.tags}
+        preview={popularPost.coverImage}
+        watchNumber={popularPost.views}
+        loveNumber={popularPost.likes}
+        commentNumber={popularPost.comments}
       />
     </>
   );
 }
+
+// preview="src/assets/images/preview_1.png"
+// content="Does programming affect your health in the long run? Are old programmers suffering from back pain, etc? Is there a way to avoid it? Does programming affect your health in the long run? Are old programmers suffering from back pain Does programming affect your health in the long run? Are old programmers suffering from back pain..."

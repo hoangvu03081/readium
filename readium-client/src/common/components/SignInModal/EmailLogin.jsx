@@ -31,6 +31,15 @@ export default function EmailLogin({ setModalType }) {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
+  const enterPressed = (e) => {
+    if (
+      e?.key === "Enter" &&
+      isSubmittable(emailInput, passwordInput, emailError, passwordError)
+    ) {
+      signIn(emailInput, passwordInput);
+    }
+  };
+
   useEffect(() => {
     setEmailError(validateEmail(emailInput));
     setPasswordError(validatePassword(passwordInput));
@@ -50,6 +59,7 @@ export default function EmailLogin({ setModalType }) {
       <Input
         value={emailInput}
         onChange={handleEmailInput}
+        onKeyPress={enterPressed}
         placeholder="Email"
         className="mb-3"
       />
@@ -62,6 +72,7 @@ export default function EmailLogin({ setModalType }) {
         type="password"
         value={passwordInput}
         onChange={handlePasswordInput}
+        onKeyPress={enterPressed}
         className="mb-2"
       />
       <ErrorText className="mb-2">{error}</ErrorText>
