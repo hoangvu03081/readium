@@ -2,7 +2,7 @@ import React from "react";
 import { usePopularPost } from "../../../common/api/postQuery";
 import PostDesktop from "./PostDesktop";
 import PostMobile from "./PostMobile";
-import PuffLoader from "./PuffLoader";
+import PuffLoader from "../../../common/components/PuffLoader";
 
 export default function PopularPost() {
   const getPopularPost = usePopularPost();

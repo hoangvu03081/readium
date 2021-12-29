@@ -63,9 +63,9 @@ function App() {
             <EditPost />
           </SecureRoute>
           <Redirect from="/post/:postId/reload" to="/post/:postId" />
-          <SecureRoute path="/post/:postId">
+          <Route path="/post/:postId">
             <ReadPost />
-          </SecureRoute>
+          </Route>
           <SecureRoute path="/settings">
             <Settings />
           </SecureRoute>

@@ -47,6 +47,7 @@ const DRAFT_API = {
 };
 
 const COMMENT_API = {
+  GET_MY_AVATAR: getURL(`/users/profiles/avatar/`),
   POST_COMMENT: (postId) => getURL(`/posts/${postId}/comments`),
   GET_COMMENT: (postId) => getURL(`/posts/${postId}/comments/`),
 };
