@@ -78,7 +78,7 @@ export default function ReadPost() {
 
       <ToCommentBtn />
 
-      <PostSuggestion />
+      <PostSuggestion postId={id} />
 
       <CommentSection postId={id} />
 
