@@ -16,6 +16,7 @@ const {
   validatePassword,
   sendWelcomeEmail,
   sendResetPasswordEmail,
+  removeAccents,
 } = require("../utils");
 const User = require("../models/User");
 const { clientUrl } = require("../config/url");
@@ -146,11 +147,13 @@ router.post("/register", async (req, res) => {
       .split(/[.@]/)
       .find((word) => Boolean(word));
 
+    const profileIdBase = removeAccents(displayName);
+
     const count = await User.find({
-      profileId: { $regex: displayName, $options: "i" },
+      profileId: { $regex: profileIdBase, $options: "i" },
     }).countDocuments();
 
-    const profileId = displayName + (count ? "." + count : "");
+    const profileId = profileIdBase + (count ? "." + count : "");
 
     const avatarSvg = createAvatar(style, {
       seed: displayName,
@@ -178,10 +181,8 @@ router.post("/register", async (req, res) => {
     await newUser.hashPassword();
     await newUser.save();
     await sendWelcomeEmail({ to: email, url: activationLink });
-    const newUserObject = newUser.toObject();
-    delete newUserObject._id;
-    delete newUserObject.avatar;
-    putUser(newUserId, newUserObject);
+    const newUserObject = newUser.getElastic();
+    await putUser(newUserId, newUserObject);
 
     // #swagger.responses[201] = { description: 'Account created' }
     return res.status(201).send({

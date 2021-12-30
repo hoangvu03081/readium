@@ -191,7 +191,7 @@ router.delete("/", authMiddleware, async (req, res) => {
     await Promise.all(promises);
     await User.deleteOne({ _id: id });
 
-    deleteUser(id);
+    await deleteUser(id);
 
     return res.send({ message: "Sorry to see you go.", user: deletedUser });
   } catch (err) {

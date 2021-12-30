@@ -86,10 +86,8 @@ module.exports = function (passport) {
               user.avatar = avatar;
             }
             await user.save();
-            const userObject = user.toObject();
-            delete userObject._id;
-            delete userObject.avatar;
-            putUser(user._id.toString(), userObject);
+            const userObject = user.getElastic();
+            await putUser(user._id.toString(), userObject);
             return done(null, user);
           }
 
@@ -112,10 +110,8 @@ module.exports = function (passport) {
             profileId,
           });
           await newUser.save();
-          const newUserObject = newUser.toObject();
-          delete newUserObject._id;
-          delete newUserObject.avatar;
-          putUser(newUser._id.toString(), newUserObject);
+          const newUserObject = newUser.getElastic();
+          await putUser(newUser._id.toString(), newUserObject);
 
           return done(null, newUser);
         } catch (err) {
@@ -151,10 +147,8 @@ module.exports = function (passport) {
               user.avatar = avatar;
             }
             await user.save();
-            const userObject = user.toObject();
-            delete userObject._id;
-            delete userObject.avatar;
-            putUser(user._id.toString(), userObject);
+            const userObject = user.getElastic();
+            await putUser(user._id.toString(), userObject);
             return done(null, user);
           }
 
@@ -176,10 +170,8 @@ module.exports = function (passport) {
             profileId,
           });
           await newUser.save();
-          const newUserObject = newUser.toObject();
-          delete newUserObject._id;
-          delete newUserObject.avatar;
-          putUser(newUser._id.toString(), newUserObject);
+          const newUserObject = newUser.getElastic();
+          await putUser(newUser._id.toString(), newUserObject);
 
           return done(null, newUser);
         } catch (err) {
