@@ -15,11 +15,13 @@ router.get("/popular", async (req, res) => {
   */
   try {
     let post = await Post.findOne({ isPublished: true });
-    if (!post) return res.send();
+    if (!post) {
+      return res.status(404).send({ message: "No popular post found" });
+    }
     post = await post.getPostPreview();
     return res.send(post);
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     return res
       .status(500)
       .send({ message: "Some errors occur in finding popular posts" });
@@ -96,8 +98,7 @@ router.get("/:id", async (req, res) => {
     await post.save();
     post = await post.getPostDetail();
     return res.send(post);
-  } catch (err) {
-    console.log(err);
+  } catch {
     return res.status(500).send({ message: "Error in finding post with ID" });
   }
 });
@@ -166,7 +167,7 @@ router.put("/:id/unpublish", authMiddleware, checkOwnPost, async (req, res) => {
     post.isPublished = false;
     post.likes = [];
 
-    deletePost(id);
+    await deletePost(id);
 
     await post.save();
     post = await post.getPostPreview();
@@ -205,7 +206,7 @@ router.delete("/:id", authMiddleware, checkOwnPost, async (req, res) => {
       if (pId !== -1) user.liked.splice(pId, 1);
     });
 
-    deletePost(id);
+    await deletePost(id);
 
     post = await post.getPostPreview();
     await Post.deleteOne({ _id: id });

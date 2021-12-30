@@ -46,7 +46,7 @@ router.delete("/users", async (req, res) => {
   await Promise.all(
     users.map(async (user) => {
       const _id = user._id.toString();
-      deleteUser(_id);
+      await deleteUser(_id);
       return await User.deleteOne({ _id });
     })
   );
@@ -58,23 +58,28 @@ router.delete("/", async (req, res) => {
     #swagger.tags = ['Dev']
     #swagger.summary = 'Delete all data'
   */
-  const users = await User.find();
-  await Promise.all(
-    users.map(async (user) => {
-      const _id = user._id.toString();
-      deleteUser(_id);
-      return await User.deleteOne({ _id });
-    })
-  );
-  const posts = await Post.find();
-  await Promise.all(
-    posts.map(async (post) => {
-      const _id = post._id.toString();
-      deletePost(_id);
-      return await Post.deleteOne({ _id });
-    })
-  );
-  return res.send();
+  try {
+    const users = await User.find();
+    await Promise.all(
+      users.map(async (user) => {
+        const _id = user._id.toString();
+        await deleteUser(_id);
+        return await User.deleteOne({ _id });
+      })
+    );
+    const posts = await Post.find();
+    await Promise.all(
+      posts.map(async (post) => {
+        const _id = post._id.toString();
+        await deletePost(_id);
+        return await Post.deleteOne({ _id });
+      })
+    );
+    return res.send();
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send();
+  }
 });
 
 const uploadCover = multer({
@@ -162,9 +167,8 @@ router.post(
       });
 
       await post.save();
-      const postObject = post.toObject();
-      delete postObject._id;
-      putPost(post._id.toString(), postObject);
+      const postObject = post.getElastic();
+      await putPost(post._id.toString(), postObject);
       return res.status(201).send(post);
     } catch (err) {
       return res
