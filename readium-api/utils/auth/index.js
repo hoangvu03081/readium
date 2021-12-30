@@ -23,7 +23,7 @@ const pathToPubKey = path.join(
 
 const PUB_KEY = fs.readFileSync(pathToPubKey, "utf8");
 
-const issueJWT = ({_id, profileId}) => {
+const issueJWT = ({ _id, profileId }) => {
   const expiresIn = "10y";
 
   const payload = {
