@@ -3,7 +3,7 @@ import styled from "styled-components";
 const TagBtn = styled.button`
   font-family: "PT Sans";
   font-weight: bold;
-  font-size: 13px;
+  font-size: 14px;
   padding: 5px 10px;
   background-color: ${({ theme }) => theme.colors.TagBtnBackground};
   color: ${({ theme }) => theme.colors.TagBtnText};
@@ -14,6 +14,9 @@ const TagBtn = styled.button`
     cursor: pointer;
     background-color: ${({ theme }) => theme.colors.TagBtnHover};
     transition: all 0.25s;
+  }
+  @media (max-width: 830px) {
+    font-size: 13px;
   }
 `;
 

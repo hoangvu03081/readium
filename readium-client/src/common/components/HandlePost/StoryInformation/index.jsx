@@ -102,6 +102,12 @@ const StoryInformation = React.forwardRef(
       }, 2000),
       [id]
     );
+    const handleFormatTags = (tag) => {
+      if (tag.text.indexOf("#") === 0) {
+        return tag;
+      }
+      return { id: `#${tag.id}`, text: `#${tag.text}` };
+    };
     const handleTagsChange = (newTags) => {
       if (newTags.length === 5) {
         setTagsValidation(false);
@@ -113,6 +119,7 @@ const StoryInformation = React.forwardRef(
       if (tagsValidation) {
         setTagsSaved(false);
         ref.current[6] = tagsSaved;
+        tag = handleFormatTags(tag);
         const newTags = [...tags, tag];
         setTags(newTags);
         handleTagsChange(newTags);
@@ -206,6 +213,9 @@ const StoryInformation = React.forwardRef(
           result.push({ id: item, text: item });
           return result;
         }, []);
+        if (tagsData.length === 5) {
+          setTagsValidation(false);
+        }
         setTags(tagsData);
 
         // cover image

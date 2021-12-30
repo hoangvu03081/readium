@@ -33,7 +33,6 @@ const StoryContent = React.forwardRef(({ id, data }, ref) => {
           { header: "2" },
           { list: "ordered" },
           { list: "bullet" },
-          { align: "center" },
         ],
         ["blockquote", "code", "code-block", "image"],
       ],
