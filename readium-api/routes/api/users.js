@@ -12,7 +12,6 @@ router.get("/protected", authMiddleware, (req, res) => {
       "bearerAuth": []
     }]
    */
-
   return res.send({ profileId: req.user.profileId });
 });
 

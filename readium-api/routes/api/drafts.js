@@ -224,21 +224,11 @@ router.patch("/:id/diff", authMiddleware, checkOwnPost, async (req, res) => {
     }
 
     const { diff } = req.body;
-
-    ///
-    // const cursor = bucket.find({ _id: post.textEditorContent });
-    // cursor.forEach((doc) => {
-    //   console.log(doc);
-    // });
-    // return res.send();
-
-    ///
     const bucket = getBucket();
     if (!diff) {
       bucket.delete(post.textEditorContent);
       const textEditorContentId = new ObjectId();
       post.textEditorContent = textEditorContentId;
-      // create a file in grid fs and keep a ref to it
       const readable = createInitialDraftEditorContent();
       readable.pipe(
         bucket.openUploadStream("textEditorContent", {
@@ -289,9 +279,8 @@ router.patch("/:id/diff", authMiddleware, checkOwnPost, async (req, res) => {
     post.duration = duration;
 
     await post.save();
-    return res.send(await post.getPostDetail());
+    return res.send();
   } catch (err) {
-    console.log(err);
     return res
       .status(500)
       .send({ message: "Something went wrong when updating post's content" });
@@ -379,9 +368,8 @@ router.patch(
       if (description) post.description = description;
 
       await post.save();
-      return res.send(post);
+      return res.send();
     } catch (err) {
-      console.log(err);
       return res
         .status(500)
         .send({ message: "Something went wrong when updating a post" });
@@ -432,7 +420,7 @@ router.put(
 
       post.coverImage = req.file.buffer;
       await post.save();
-      return res.send(await post.getPostDetail());
+      return res.send();
     } catch (err) {
       return res
         .status(500)
@@ -477,8 +465,7 @@ router.put("/:id/title", authMiddleware, checkOwnPost, async (req, res) => {
     else post.title = "";
 
     await post.save();
-    post = await post.getPostDetail();
-    return res.send(post);
+    return res.send();
   } catch (err) {
     return res
       .status(500)
@@ -524,9 +511,9 @@ router.put("/:id/tags", authMiddleware, checkOwnPost, async (req, res) => {
 
     if (tags) post.tags = tags;
     else post.tags = [];
-    await post.save();
 
-    return res.send(post);
+    await post.save();
+    return res.send();
   } catch (err) {
     return res
       .status(500)
@@ -573,11 +560,10 @@ router.put(
 
       if (description) post.description = description;
       else post.description = "";
-      await post.save();
 
-      return res.send(post);
+      await post.save();
+      return res.send();
     } catch (err) {
-      console.log(err);
       return res.status(500).send({
         message: "Something went wrong when updating post's description",
       });
@@ -633,10 +619,8 @@ router.put("/:id/publish", authMiddleware, checkOwnPost, async (req, res) => {
     post.isPublished = true;
     await post.save();
     return res.send();
-    // return res.send(post);
     /// publish post
   } catch (err) {
-    console.log(err);
     return res.status(500).send({
       message: "Something went wrong when publishing the post",
     });

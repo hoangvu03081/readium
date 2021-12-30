@@ -88,6 +88,7 @@ module.exports = function (passport) {
             await user.save();
             const userObject = user.toObject();
             delete userObject._id;
+            delete userObject.avatar;
             putUser(user._id.toString(), userObject);
             return done(null, user);
           }
@@ -113,6 +114,7 @@ module.exports = function (passport) {
           await newUser.save();
           const newUserObject = newUser.toObject();
           delete newUserObject._id;
+          delete newUserObject.avatar;
           putUser(newUser._id.toString(), newUser);
 
           return done(null, newUser);
@@ -151,6 +153,7 @@ module.exports = function (passport) {
             await user.save();
             const userObject = user.toObject();
             delete userObject._id;
+            delete userObject.avatar;
             putUser(user._id.toString(), userObject);
             return done(null, user);
           }
@@ -175,8 +178,9 @@ module.exports = function (passport) {
           await newUser.save();
           const newUserObject = newUser.toObject();
           delete newUserObject._id;
+          delete newUserObject.avatar;
           putUser(newUser._id.toString(), newUser);
-          
+
           return done(null, newUser);
         } catch (err) {
           console.log(err);

@@ -276,6 +276,7 @@ router.patch("/", authMiddleware, async (req, res) => {
     await user.save();
     const userObject = user.toObject();
     delete userObject._id;
+    delete userObject.avatar;
     putUser(user._id.toString(), userObject);
 
     // #swagger.responses[200] = { description: 'Successfully edit profile' }
@@ -319,6 +320,7 @@ const handleEdit = async (
     await user.save();
     const userObject = user.toObject();
     delete userObject._id;
+    delete userObject.avatar;
     putUser(user._id.toString(), userObject);
     return res.send(user.getPublicProfile());
   } catch (err) {

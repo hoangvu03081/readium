@@ -88,7 +88,7 @@ router.get("/logout", authMiddleware, async (req, res, next) => {
 
   req.session.destroy((err) => {
     if (err) return next(err);
-    res.send({ message: "Logout successfully" });
+    return res.send({ message: "Logout successfully" });
   });
 });
 
@@ -180,6 +180,7 @@ router.post("/register", async (req, res) => {
     await sendWelcomeEmail({ to: email, url: activationLink });
     const newUserObject = newUser.toObject();
     delete newUserObject._id;
+    delete newUserObject.avatar;
     putUser(newUserId, newUserObject);
 
     // #swagger.responses[201] = { description: 'Account created' }

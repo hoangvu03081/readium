@@ -109,22 +109,22 @@ module.exports = function (app, wss) {
     checkCommentContent,
     async (req, res) => {
       /*
-      #swagger.tags = ['Comment']
-      #swagger.summary = 'Comment on the post'
-      #swagger.requestBody = {
-        required: true,
-        content: {
-          "application/json": {
-            schema: {
-              $ref: "#/definitions/Comment"
+        #swagger.tags = ['Comment']
+        #swagger.summary = 'Comment on the post'
+        #swagger.requestBody = {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/definitions/Comment"
+              }
             }
           }
         }
-      }
-      #swagger.security = [{
-        "bearerAuth": []
-      }]
-    */
+        #swagger.security = [{
+          "bearerAuth": []
+        }]
+      */
       try {
         const { postId } = req.params;
         const { content } = req.body;

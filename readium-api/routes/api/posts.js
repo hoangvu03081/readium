@@ -15,9 +15,13 @@ router.get("/popular", async (req, res) => {
   */
   try {
     let post = await Post.findOne({ isPublished: true });
+    if (!post) {
+      return res.status(404).send({ message: "No popular post found" });
+    }
     post = await post.getPostPreview();
     return res.send(post);
   } catch (err) {
+    // console.log(err);
     return res
       .status(500)
       .send({ message: "Some errors occur in finding popular posts" });
