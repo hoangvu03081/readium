@@ -58,6 +58,25 @@ const postSchema = new Schema({
   description: { type: String, default: "" },
 });
 
+postSchema.methods.getElastic = function () {
+  const post = this.toObject();
+  post.author = post.author.toString();
+  if (post.publishDate) post.publishDate = post.publishDate.getTime();
+  if (post.publishedPost) post.publishedPost = post.publishedPost.toString();
+  post.likes = post.likes.map((userId) => userId.toString());
+  post.comments = post.comments.map((commentId) => commentId.toString());
+  post.textConnection = post.textConnection.map((con) => {
+    con.toPost = con.toPost.toString();
+    return con;
+  });
+
+  delete post.__v;
+  delete post._id;
+  delete post.coverImage;
+  delete post.textEditorContent;
+  return post;
+};
+
 postSchema.methods.getPostPreview = async function () {
   await this.populate("author", { displayName: 1 });
   const postObject = this.toObject();

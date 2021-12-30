@@ -167,7 +167,7 @@ router.put("/:id/unpublish", authMiddleware, checkOwnPost, async (req, res) => {
     post.isPublished = false;
     post.likes = [];
 
-    deletePost(id);
+    await deletePost(id);
 
     await post.save();
     post = await post.getPostPreview();
@@ -206,7 +206,7 @@ router.delete("/:id", authMiddleware, checkOwnPost, async (req, res) => {
       if (pId !== -1) user.liked.splice(pId, 1);
     });
 
-    deletePost(id);
+    await deletePost(id);
 
     post = await post.getPostPreview();
     await Post.deleteOne({ _id: id });

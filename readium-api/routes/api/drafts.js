@@ -594,9 +594,8 @@ router.put("/:id/publish", authMiddleware, checkOwnPost, async (req, res) => {
       });
     }
     const _id = req.params.id;
-    const postObject = post.toObject();
-    delete postObject._id;
-    putPost(_id, postObject);
+    const postObject = post.getElastic();
+    await putPost(_id, postObject);
 
     /// republish post
     if (post.publishedPost) {

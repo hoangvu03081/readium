@@ -35,6 +35,28 @@ const userSchema = new Schema({
   contactEmail: String,
 });
 
+userSchema.methods.getElastic = function () {
+  const user = this.toObject();
+
+  user.followers = user.followers.map((userId) => userId.toString());
+  user.followings = user.followings.map((userId) => userId.toString());
+  user.notifications = user.notifications.map((notificationId) =>
+    notificationId.toString()
+  );
+  user.collections = user.collections.map((collectionId) =>
+    collectionId.toString()
+  );
+  user.liked = user.liked.map((postId) => postId.toString());
+  if (user.resetTimeout) user.resetTimeout = user.resetTimeout.getTime();
+
+  delete user.__v;
+  delete user._id;
+  delete user.avatar;
+  delete user.coverImage;
+
+  return user;
+};
+
 userSchema.methods.getPublicProfile = function () {
   const user = this;
   const userObject = user.toObject();
