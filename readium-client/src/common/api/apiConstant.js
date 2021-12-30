@@ -52,6 +52,11 @@ const COMMENT_API = {
   GET_COMMENT: (postId) => getURL(`/posts/${postId}/comments/`),
 };
 
+const OTHER_API = {
+  GET_TRENDING_TOPICS: getURL(`/topics/trending`),
+  GET_RECOMMENDED_WRITERS: getURL(`/users/recommended`),
+};
+
 export {
   USER_API,
   PROFILE_API,
@@ -59,5 +64,6 @@ export {
   SETTING_API,
   DRAFT_API,
   COMMENT_API,
+  OTHER_API,
   WEBSOCKET,
 };

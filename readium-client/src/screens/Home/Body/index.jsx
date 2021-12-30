@@ -48,7 +48,7 @@ const FixedScroll = styled.div`
 `;
 
 const ColumnRight = styled.div`
-  width: 380px;
+  width: 405px;
   height: calc(100vh - 80px);
   padding: 30px 30px 30px 42px;
   overflow-y: scroll;
@@ -59,7 +59,7 @@ const ColumnRight = styled.div`
   }
   @media (min-width: 1400px) {
     width: 420px;
-    padding: 30px 48px;
+    padding: 30px 42px;
   }
 `;
 
