@@ -179,7 +179,7 @@ module.exports = function (passport) {
           const newUserObject = newUser.toObject();
           delete newUserObject._id;
           delete newUserObject.avatar;
-          putUser(newUser._id.toString(), newUser);
+          putUser(newUser._id.toString(), newUserObject);
 
           return done(null, newUser);
         } catch (err) {
