@@ -32,6 +32,7 @@ const SETTING_API = {
 };
 
 const POST_API = {
+  GET_PROFILE_POST: (userId) => getURL(`/posts/user/${userId}`),
   GET_POPULAR_POST: getURL(`/posts/popular`),
   GET_POSTS: (pageParam) => getURL(`/posts/?skip=${pageParam}`),
   GET_A_POST: (id) => getURL(`/posts/${id}`),

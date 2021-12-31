@@ -4,7 +4,7 @@ import SearchForm from "./SearchForm";
 import PostList from "./components/PostList";
 import DraftList from "./components/DraftList";
 
-export default function ProfilePost({ id, isMyProfile }) {
+export default function ProfilePost({ userId, isMyProfile }) {
   const [isPost, setisPost] = useState(true);
   return (
     <div className="mt-5">
@@ -26,7 +26,7 @@ export default function ProfilePost({ id, isMyProfile }) {
       </div>
       <div className="row mt-5">
         <div className="col-md-8 d-flex justify-content-center">
-          {isPost ? <PostList /> : <DraftList />}
+          {isPost ? <PostList userId={userId} /> : <DraftList />}
         </div>
         <div className="col-md-4">
           <SearchForm />

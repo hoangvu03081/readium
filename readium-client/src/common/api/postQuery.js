@@ -10,6 +10,12 @@ export function usePopularPost() {
   });
 }
 
+export function useGetProfilePost(userId) {
+  return useQuery(["post", "profile", userId], () =>
+    axios.get(POST_API.GET_PROFILE_POST(userId)).then(({ data }) => data)
+  );
+}
+
 export function usePost(id, auth) {
   const res1 = useQuery("post", () => axios.get(POST_API.GET_A_POST(id)), {
     staleTime: 0,
