@@ -6,7 +6,6 @@ const sharp = require("sharp");
 const User = require("../../models/User");
 const {
   authMiddleware,
-  validateDisplayName,
   validateEmail,
   validateFacebookLink,
   validateTwitterLink,
@@ -256,7 +255,6 @@ router.patch("/", authMiddleware, async (req, res) => {
     const { user } = req;
 
     let errMessage;
-    if (displayName) errMessage = validateDisplayName(displayName);
     if (facebook) errMessage = validateFacebookLink(facebook);
     if (twitter) errMessage = validateTwitterLink(twitter);
     if (instagram) errMessage = validateInstaLink(instagram);
@@ -348,14 +346,7 @@ router.put("/display-name", authMiddleware, async (req, res) => {
       }
     }
   */
-  return handleEdit(
-    req,
-    res,
-    "displayName",
-    "display name",
-    true,
-    validateDisplayName
-  );
+  return handleEdit(req, res, "displayName", "display name", true);
 });
 
 router.put("/biography", authMiddleware, async (req, res) => {

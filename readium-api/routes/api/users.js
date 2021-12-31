@@ -186,22 +186,6 @@ router.delete("/", authMiddleware, async (req, res) => {
       { likes: 1, comments: 1 }
     ).populate("likes", { liked: 1 });
 
-    for (const post of posts) {
-      // xóa mấy ng like post
-      post.likes.forEach((user) => {
-        const index = user.liked.findIndex(
-          (p) => p._id.toString() === post._id.toString()
-        );
-        if (index !== -1) {
-          user.liked.splice(index, 1);
-          await user.save();
-        }
-      });
-      // xóa
-    }
-
-    //
-
     const promises = deletedUser.liked.map((post) => {
       const uId = post.likes.findIndex((u) => u.toString() === id);
       if (uId !== -1) {

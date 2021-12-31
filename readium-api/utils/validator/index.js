@@ -14,12 +14,6 @@ function validatePassword(password) {
     return "Your password must be greater than 6 characters";
   }
 }
-function validateDisplayName(displayName) {
-  const re = /^[a-zA-Z 0-9]+$/g;
-  if (!re.test(displayName)) {
-    return "Your displayName must be a string or a number from 0 to 9";
-  }
-}
 function validateURL(url) {
   const re = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
 
@@ -47,7 +41,6 @@ module.exports = {
   checkEmpty,
   validateEmail,
   validatePassword,
-  validateDisplayName,
   validateURL,
   validateRePattern,
   validateFacebookLink,
