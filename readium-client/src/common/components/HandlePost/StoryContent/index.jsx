@@ -2,7 +2,8 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import debounce from "lodash.debounce";
-import ReactQuill from "react-quill";
+import ReactQuill, { Quill } from "react-quill";
+import ImageCompress from "quill-image-compress";
 import {
   useNewContentDraft,
   useContentDraft,
@@ -14,6 +15,9 @@ import "react-quill/dist/quill.bubble.css";
 
 const icons = ReactQuill.Quill.import("ui/icons");
 icons.code = '<i class="ionicons ion-code"></i>';
+const Image = Quill.import("formats/image");
+Image.className = "image-center";
+Quill.register("modules/imageCompress", ImageCompress);
 
 const StoryContent = React.forwardRef(({ id, data }, ref) => {
   const quill = useRef(null);
@@ -21,19 +25,28 @@ const StoryContent = React.forwardRef(({ id, data }, ref) => {
   ref.current[0] = contentSaved;
 
   const editorModules = {
-    toolbar: [
-      ["bold", "italic", "link"],
-      [
-        { header: "1" },
-        { header: "2" },
-        { list: "ordered" },
-        { list: "bullet" },
+    toolbar: {
+      container: [
+        ["bold", "italic", "link"],
+        [
+          { header: "1" },
+          { header: "2" },
+          { list: "ordered" },
+          { list: "bullet" },
+        ],
+        ["blockquote", "code", "code-block", "image"],
       ],
-      ["blockquote", "code", "code-block", "image"],
-    ],
+    },
     clipboard: {
-      // toggle to add extra line breaks when pasting HTML:
-      matchVisual: false,
+      matchVisual: false, // toggle to add extra line breaks when pasting HTML
+    },
+    imageCompress: {
+      quality: 1,
+      maxWidth: 700,
+      maxHeight: 700,
+      imageType: "image/jpeg",
+      // debug: true,
+      // suppressErrorLogging: false,
     },
   };
 

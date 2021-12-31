@@ -78,9 +78,11 @@ const Middle = styled.div`
     -webkit-box-orient: vertical;
     color: ${({ theme }) => theme.colors.CardContent};
   }
-  button {
-    margin-right: 10px;
-    margin-bottom: 2px;
+  > div {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 5px 10px;
   }
 `;
 
@@ -193,12 +195,12 @@ const LoveCommentContainer = styled.div`
 
 export default function CardDesktop({
   postId,
+  profileId,
   preview,
   title,
   content,
   tags,
   duration,
-  user,
   userAvatar,
   loveNumber,
   commentNumber,
@@ -216,7 +218,7 @@ export default function CardDesktop({
   const handleProfile = () => {
     // const indexOfUserId = userAvatar.lastIndexOf("/");
     // const userId = userAvatar.slice(indexOfUserId + 1);
-    history.push(`/profile/${user}`);
+    history.push(`/profile/${profileId}`);
   };
 
   return (
@@ -244,7 +246,7 @@ export default function CardDesktop({
       </Right>
 
       <CornerContainer>
-        <Corner type={type} />
+        <Corner type={type} postId={postId} />
       </CornerContainer>
 
       <LoveCommentContainer>
@@ -256,12 +258,12 @@ export default function CardDesktop({
 
 CardDesktop.propTypes = {
   postId: PropTypes.string.isRequired,
+  profileId: PropTypes.string.isRequired,
   preview: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
   duration: PropTypes.number.isRequired,
-  user: PropTypes.string.isRequired,
   userAvatar: PropTypes.string.isRequired,
   loveNumber: PropTypes.number.isRequired,
   commentNumber: PropTypes.number.isRequired,

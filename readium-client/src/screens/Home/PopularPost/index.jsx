@@ -2,14 +2,15 @@ import React from "react";
 import { usePopularPost } from "../../../common/api/postQuery";
 import PostDesktop from "./PostDesktop";
 import PostMobile from "./PostMobile";
+import PuffLoader from "../../../common/components/PuffLoader";
 
 export default function PopularPost() {
   const getPopularPost = usePopularPost();
   if (getPopularPost.isFetching) {
-    return <p className="mb-5">Loading popular post...</p>;
+    return <PuffLoader />;
   }
-  if (!getPopularPost.data) {
-    return <p className="mb-5">Error loading popular post...</p>;
+  if (getPopularPost.isError || !getPopularPost.data.data) {
+    return <div />;
   }
 
   const popularPost = getPopularPost.data.data;
@@ -22,6 +23,7 @@ export default function PopularPost() {
     <>
       <PostDesktop
         postId={popularPost.id}
+        profileId={popularPost.author.profileId}
         title={popularPost.title}
         user={popularPost.author.displayName}
         userAvatar={popularPost.author.avatar}
@@ -35,6 +37,7 @@ export default function PopularPost() {
       />
       <PostMobile
         postId={popularPost.id}
+        profileId={popularPost.author.profileId}
         title={popularPost.title}
         user={popularPost.author.displayName}
         userAvatar={popularPost.author.avatar}

@@ -111,7 +111,7 @@
         ]
       }
     },
-    "\r/posts/{postId}/comments": {
+    "/posts/{postId}/comments": {
       "post": {
         "tags": [
           "Comment"
@@ -214,7 +214,7 @@
         }
       }
     },
-    "/dev\r/post": {
+    "/dev/post": {
       "post": {
         "tags": [
           "Dev"
@@ -225,6 +225,9 @@
         "responses": {
           "201": {
             "description": "Created"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         },
         "security": [
@@ -407,7 +410,7 @@
         }
       }
     },
-    "/auth\r/facebook": {
+    "/auth/facebook": {
       "get": {
         "tags": [
           "Auth"
@@ -418,7 +421,7 @@
         "responses": {}
       }
     },
-    "/auth\r/google": {
+    "/auth/google": {
       "get": {
         "tags": [
           "Auth"
@@ -496,6 +499,9 @@
         "responses": {
           "200": {
             "description": "Request change password successfully "
+          },
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -584,7 +590,14 @@
             "type": "integer"
           }
         ],
-        "responses": {},
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
         "security": [
           {
             "bearerAuth": []
@@ -632,6 +645,9 @@
           "200": {
             "description": "Success"
           },
+          "400": {
+            "description": "Bad Request"
+          },
           "404": {
             "description": "Not Found"
           },
@@ -677,7 +693,11 @@
         "summary": "Delete account",
         "description": "",
         "parameters": [],
-        "responses": {},
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
         "security": [
           {
             "bearerAuth": []
@@ -748,6 +768,41 @@
             "bearerAuth": []
           }
         ]
+      },
+      "post": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Upload avatar",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "avatar": {
+                    "type": "file"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/users/profiles/cover-image": {
@@ -768,6 +823,41 @@
             "bearerAuth": []
           }
         ]
+      },
+      "post": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Post a cover image",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "coverImage": {
+                    "type": "file"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/users/profiles/{profileId}": {
@@ -844,74 +934,6 @@
           },
           "500": {
             "description": "Object Id is error or mongodb error"
-          }
-        }
-      }
-    },
-    "/users/profiles\r/avatar": {
-      "post": {
-        "tags": [
-          "Profile"
-        ],
-        "summary": "Upload avatar",
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "400": {
-            "description": "Bad Request"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "avatar": {
-                    "type": "file"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users/profiles\r/cover-image": {
-      "post": {
-        "tags": [
-          "Profile"
-        ],
-        "summary": "Post a cover image",
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "400": {
-            "description": "Bad Request"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "coverImage": {
-                    "type": "file"
-                  }
-                }
-              }
-            }
           }
         }
       }
@@ -1134,7 +1156,11 @@
         "summary": "get all collections of me",
         "description": "",
         "parameters": [],
-        "responses": {},
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
         "security": [
           {
             "bearerAuth": []
@@ -1148,7 +1174,14 @@
         "summary": "Create new collection",
         "description": "",
         "parameters": [],
-        "responses": {},
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
         "security": [
           {
             "bearerAuth": []
@@ -1171,7 +1204,7 @@
         }
       }
     },
-    "/users/collections\r/posts": {
+    "/users/collections/posts": {
       "post": {
         "tags": [
           "Collection"
@@ -1256,7 +1289,14 @@
             "type": "string"
           }
         ],
-        "responses": {},
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
         "security": [
           {
             "bearerAuth": []
@@ -1294,7 +1334,11 @@
             "type": "string"
           }
         ],
-        "responses": {},
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        },
         "security": [
           {
             "bearerAuth": []
@@ -1313,6 +1357,9 @@
         "responses": {
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -1401,6 +1448,9 @@
         "responses": {
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -1511,6 +1561,9 @@
           },
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         },
         "security": [
@@ -1520,7 +1573,7 @@
         ]
       }
     },
-    "/posts/{postId}/comments": {
+    "/posts/{postId}/comments/": {
       "get": {
         "tags": [
           "Comment"
@@ -1545,7 +1598,7 @@
         }
       }
     },
-    "\r/{commentId}": {
+    "/{commentId}": {
       "put": {
         "tags": [
           "Comment"
@@ -1586,9 +1639,7 @@
             }
           }
         }
-      }
-    },
-    "/{commentId}": {
+      },
       "delete": {
         "tags": [
           "Comment"
@@ -1658,6 +1709,9 @@
         "responses": {
           "201": {
             "description": "Created"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         },
         "security": [
@@ -1685,6 +1739,9 @@
         "responses": {
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         },
         "security": [
@@ -1692,6 +1749,52 @@
             "bearerAuth": []
           }
         ]
+      },
+      "put": {
+        "tags": [
+          "Draft"
+        ],
+        "summary": "Update draft's cover image",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "coverImage": {
+                    "type": "file"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/drafts/{id}": {
@@ -1743,6 +1846,9 @@
           },
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         },
         "security": [
@@ -1750,49 +1856,7 @@
             "bearerAuth": []
           }
         ]
-      }
-    },
-    "/drafts/{id}/diff": {
-      "patch": {
-        "tags": [
-          "Draft"
-        ],
-        "summary": "Update draft's textEditorContent",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TextEditorContent"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/drafts\r/{id}": {
+      },
       "patch": {
         "tags": [
           "Draft"
@@ -1813,6 +1877,9 @@
           },
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         },
         "security": [
@@ -1858,12 +1925,12 @@
         }
       }
     },
-    "/drafts\r/{id}/cover-image": {
-      "put": {
+    "/drafts/{id}/diff": {
+      "patch": {
         "tags": [
           "Draft"
         ],
-        "summary": "Update draft's cover image",
+        "summary": "Update draft's textEditorContent",
         "description": "",
         "parameters": [
           {
@@ -1879,6 +1946,9 @@
           },
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         },
         "security": [
@@ -1889,14 +1959,9 @@
         "requestBody": {
           "required": true,
           "content": {
-            "multipart/form-data": {
+            "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "coverImage": {
-                    "type": "file"
-                  }
-                }
+                "$ref": "#/components/schemas/TextEditorContent"
               }
             }
           }
@@ -1924,6 +1989,9 @@
           },
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         },
         "security": [
@@ -1970,6 +2038,9 @@
           },
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         },
         "security": [
@@ -2001,7 +2072,7 @@
         }
       }
     },
-    "/drafts\r/{id}/description": {
+    "/drafts/{id}/description": {
       "put": {
         "tags": [
           "Draft"

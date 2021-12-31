@@ -1,10 +1,13 @@
+/* eslint-disable react/no-array-index-key */
 import React from "react";
 import styled from "styled-components";
+import { useGetTrendingTopics } from "../../../common/api/otherQuery";
+import PuffLoader from "../../../common/components/PuffLoader";
 import TrendingBtn from "./TrendingBtn";
 import CustomBackground from "./CustomBackground";
 
 const Background = styled.div`
-  padding: 30px 18px 12px 30px;
+  padding: 30px;
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   backdrop-filter: blur(0px);
   border-radius: 10px;
@@ -14,38 +17,49 @@ const Background = styled.div`
     font-size: 22px;
     text-align: center;
     margin: 0 0 25px 0;
-    background: -webkit-linear-gradient(white, #38495a);
+    color: #e8edff;
+    /* background: -webkit-linear-gradient(white, #38495a);
     background-clip: text;
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    -webkit-text-fill-color: transparent; */
   }
 `;
 
 const Content = styled.div`
   display: flex;
   flex-wrap: wrap;
-  button {
-    margin-right: 12px;
-    margin-bottom: 28px;
-  }
+  gap: 20px 10px;
 `;
 
 export default function TrendingTopics() {
+  const getTrendingTopics = useGetTrendingTopics();
+  if (getTrendingTopics.isFetching) {
+    return <PuffLoader />;
+  }
+  if (!getTrendingTopics.data || getTrendingTopics.isError) {
+    return <div />;
+  }
+  const trendingTopics = getTrendingTopics.data.data;
+
   return (
     <Background>
       <p>TRENDING TOPICS</p>
       <Content>
-        <TrendingBtn>#Programming</TrendingBtn>
-        <TrendingBtn>#Designing</TrendingBtn>
-        <TrendingBtn>#NFT</TrendingBtn>
-        <TrendingBtn>#Blockchain</TrendingBtn>
-        <TrendingBtn>#Devops</TrendingBtn>
-        <TrendingBtn>#Technique</TrendingBtn>
-        <TrendingBtn>#Technique</TrendingBtn>
-        <TrendingBtn>#Technique</TrendingBtn>
-        <TrendingBtn>#Henry</TrendingBtn>
+        {trendingTopics.map((item, index) => (
+          <TrendingBtn key={index}>{item}</TrendingBtn>
+        ))}
       </Content>
       <CustomBackground />
     </Background>
   );
 }
+
+/* <TrendingBtn>#Programming</TrendingBtn>
+<TrendingBtn>#Designing</TrendingBtn>
+<TrendingBtn>#NFT</TrendingBtn>
+<TrendingBtn>#Blockchain</TrendingBtn>
+<TrendingBtn>#Devops</TrendingBtn>
+<TrendingBtn>#Technique</TrendingBtn>
+<TrendingBtn>#Technique</TrendingBtn>
+<TrendingBtn>#Technique</TrendingBtn>
+<TrendingBtn>#Henry</TrendingBtn> */

@@ -135,6 +135,7 @@ const ButtonContainer = styled.div`
 
 export default function PostMobile({
   postId,
+  profileId,
   title,
   user,
   userAvatar,
@@ -161,7 +162,7 @@ export default function PostMobile({
   const handleProfile = () => {
     // const indexOfUserId = userAvatar.lastIndexOf("/");
     // const userId = userAvatar.slice(indexOfUserId + 1);
-    history.push(`/profile/${user}`);
+    history.push(`/profile/${profileId}`);
   };
 
   return (
@@ -205,6 +206,7 @@ export default function PostMobile({
 
 PostMobile.propTypes = {
   postId: PropTypes.string.isRequired,
+  profileId: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   user: PropTypes.string.isRequired,
   userAvatar: PropTypes.string.isRequired,

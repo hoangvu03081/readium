@@ -5,6 +5,7 @@ import CardMobile from "./CardMobile";
 
 export default function Card({
   postId,
+  profileId,
   preview,
   title,
   content,
@@ -21,12 +22,12 @@ export default function Card({
     <>
       <CardDesktop
         postId={postId}
+        profileId={profileId}
         preview={preview}
         title={title}
         content={content}
         tags={tags}
         duration={duration}
-        user={user}
         userAvatar={userAvatar}
         loveNumber={loveNumber}
         commentNumber={commentNumber}
@@ -35,6 +36,7 @@ export default function Card({
       />
       <CardMobile
         postId={postId}
+        profileId={profileId}
         title={title}
         content={content}
         tags={tags}
@@ -51,6 +53,7 @@ export default function Card({
 
 Card.propTypes = {
   postId: PropTypes.string.isRequired,
+  profileId: PropTypes.string.isRequired,
   preview: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
