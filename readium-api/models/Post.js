@@ -85,7 +85,7 @@ postSchema.methods.getElastic = function () {
 };
 
 postSchema.methods.getPostPreview = async function () {
-  await this.populate("author", { displayName: 1 });
+  await this.populate("author", { displayName: 1, profileId: 1 });
   const postObject = this.toObject();
 
   postObject.id = postObject._id;
@@ -121,6 +121,7 @@ postSchema.methods.getPostDetail = async function () {
     displayName: 1,
     followers: 1,
     followings: 1,
+    profileId: 1,
   });
   const postObject = this.toObject();
 

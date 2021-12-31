@@ -21,7 +21,6 @@ router.get("/popular", async (req, res) => {
     post = await post.getPostPreview();
     return res.send(post);
   } catch (err) {
-    // console.log(err);
     return res
       .status(500)
       .send({ message: "Some errors occur in finding popular posts" });
