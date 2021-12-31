@@ -166,7 +166,7 @@ export default function PreviewPost() {
 
   // HANDLE CONTINUE EDITING
   const handleContinueEditing = () => {
-    history.push("/edit/draft", id);
+    history.push(`/edit/draft/${id}`, id);
   };
 
   // WAIT FOR DATA

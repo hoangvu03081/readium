@@ -55,10 +55,10 @@ function App() {
           <SecureRoute path="/write">
             <WritePost />
           </SecureRoute>
-          <SecureRoute path="/preview">
+          <SecureRoute path="/preview/:draftId">
             <PreviewPost />
           </SecureRoute>
-          <SecureRoute path="/edit/draft">
+          <SecureRoute path="/edit/draft/:draftId">
             <EditDraft />
           </SecureRoute>
           <SecureRoute path="/edit/post">
