@@ -207,7 +207,11 @@
         "summary": "Delete all data",
         "description": "",
         "parameters": [],
-        "responses": {}
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
       }
     },
     "/dev\r/post": {
@@ -1123,6 +1127,20 @@
       }
     },
     "/users/collections/": {
+      "get": {
+        "tags": [
+          "Collection"
+        ],
+        "summary": "get all collections of me",
+        "description": "",
+        "parameters": [],
+        "responses": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
       "post": {
         "tags": [
           "Collection"
@@ -1151,29 +1169,6 @@
             }
           }
         }
-      }
-    },
-    "/users/collections/{collectionId}": {
-      "delete": {
-        "tags": [
-          "Collection"
-        ],
-        "summary": "Delete a collection",
-        "description": "",
-        "parameters": [
-          {
-            "name": "collectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {},
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
       }
     },
     "/users/collections\r/posts": {
@@ -1246,6 +1241,67 @@
         }
       }
     },
+    "/users/collections/{collectionId}/name": {
+      "put": {
+        "tags": [
+          "Collection"
+        ],
+        "summary": "Edit collection name",
+        "description": "",
+        "parameters": [
+          {
+            "name": "collectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "default": "collection name"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/collections/{collectionId}": {
+      "delete": {
+        "tags": [
+          "Collection"
+        ],
+        "summary": "Delete a collection",
+        "description": "",
+        "parameters": [
+          {
+            "name": "collectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/posts/popular": {
       "get": {
         "tags": [
@@ -1254,7 +1310,11 @@
         "summary": "Get 1 popular post",
         "description": "",
         "parameters": [],
-        "responses": {}
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          }
+        }
       }
     },
     "/posts/me": {
@@ -1289,6 +1349,38 @@
             "bearerAuth": []
           }
         ]
+      }
+    },
+    "/posts/user/{userId}": {
+      "get": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "Get user id's published posts",
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
       }
     },
     "/posts/{id}/cover-image": {

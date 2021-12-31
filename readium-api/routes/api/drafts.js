@@ -41,19 +41,22 @@ router.get("/", authMiddleware, checkValidSkipAndDate, async (req, res) => {
     let posts = await Post.find({
       isPublished: false,
       author: req.user._id,
-      publishDate: { $lte: date },
     })
-      .sort({ publishDate: -1 })
       .skip(skip)
       .limit(5);
 
+    posts = posts.filter((post) => {
+      const timestamp = post._id.getTimestamp();
+      return timestamp < date;
+    });
+    posts.sort((a, b) => b._id.getTimestamp() - a._id.getTimestamp());
     posts = posts.map((post) => post.getPostPreview());
     posts = await Promise.all(posts);
 
-    if (posts.length === 0) return res.send({ posts });
-    return res.send({ posts, next: skip + 5 });
+    if (posts.length === 0) return res.send({ drafts: [] });
+    return res.send({ drafts: posts, next: skip + 5 });
   } catch {
-    return res.status(500).send({ message: "Error in finding post with ID" });
+    return res.status(500).send({ message: "Error in fetching drafts" });
   }
 });
 

@@ -66,6 +66,42 @@ router.get("/me", authMiddleware, checkValidSkipAndDate, async (req, res) => {
   }
 });
 
+router.get("/user/:userId", checkValidSkipAndDate, async () => {
+  /*
+    #swagger.tags = ['Post']
+    #swagger.summary = "Get user id's published posts"
+    #swagger.parameters['skip'] = {
+      in: 'query',
+      type: 'integer',
+    }
+    #swagger.parameters['date'] = {
+      in: 'query',
+      type: 'string',
+    }
+  */
+  try {
+    const { userId } = req.params;
+    let { date, skip } = req;
+
+    let posts = await Post.find({
+      isPublished: true,
+      publishDate: { $lte: date },
+      author: userId,
+    })
+      .sort({ publishDate: -1 })
+      .skip(skip)
+      .limit(5);
+
+    posts = posts.map((post) => post.getPostPreview());
+    posts = await Promise.all(posts);
+
+    if (posts.length === 0) return res.send({ posts });
+    return res.send({ posts, next: skip + 5 });
+  } catch (err) {
+    return res.status(500).send({ message: "Some errors occur in get posts" });
+  }
+});
+
 router.get("/:id/cover-image", async (req, res) => {
   /*
     #swagger.tags = ['Post']

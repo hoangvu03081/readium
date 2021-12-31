@@ -6,7 +6,12 @@ const server = app.listen(port);
 const Post = require("./models/Post");
 const User = require("./models/User");
 const { WebSocketServer } = require("ws");
-const { REQUIRE_ACTIVATE_ACCOUNT, NO_AUTH_TOKEN } = require("./utils");
+const {
+  REQUIRE_ACTIVATE_ACCOUNT,
+  NO_AUTH_TOKEN,
+  getPostCoverImageUrl,
+  getAvatarUrl,
+} = require("./utils");
 const { search } = require("./utils/elasticsearch");
 
 const wss = new WebSocketServer({ noServer: true });
@@ -53,11 +58,27 @@ app.post("/search", async (req, res) => {
     for (let ele of result.body.hits.hits) {
       switch (ele._index) {
         case "post": {
-          let post = await Post.findById(ele._id, { title: 1 });
+          let post = await Post.findById(ele._id, {
+            title: 1,
+            content: 1,
+            description: 1,
+            tags: 1,
+            duration: 1,
+            likes: 1,
+            comments: 1,
+          }).populate("author", { _id: 1 });
           post = post?.toObject();
           if (post) {
-            post.url = `/post/${post._id.toString()}`;
+            post.id = post._id;
+            post.author.id = post.author._id;
+            post.url = `/post/${post.id.toString()}`;
             post.type = "post";
+            post.likes = post.likes.length;
+            post.comments = post.comments.length;
+            post.coverImage = getPostCoverImageUrl(post.id);
+            post.author.avatar = getAvatarUrl(post.author.id);
+            delete post._id;
+            delete post.author._id;
           }
           arrResult.push(post);
           break;
@@ -80,39 +101,6 @@ app.post("/search", async (req, res) => {
       }
     }
     return res.send(arrResult);
-
-    /*let mixedArrResult = result.body.hits.hits.map(async (ele) => {
-      switch (ele._index) {
-        case "post": {
-          let post = await Post.findById(ele._id, { title: 1 });
-          post = post?.toObject();
-          if (post) {
-            post.url = `/post/${post._id.toString()}`;
-            post.type = "post";
-          }
-          return post;
-        }
-        case "user": {
-          let user = await User.findById(ele._id, {
-            displayName: 1,
-            profileId: 1,
-          });
-          user = user?.toObject();
-          if (user) {
-            user.url = `/profile/${user.profileId}`;
-            user.type = "user";
-          }
-
-          return user;
-        }
-        default:
-          return null;
-      }
-    });
-
-    mixedArrResult = await Promise.all(mixedArrResult);
-    return res.send(mixedArrResult);
-    */
   } catch (err) {
     return res.status(500).send({ message: "Error in search" });
   }

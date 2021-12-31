@@ -58,6 +58,13 @@ const postSchema = new Schema({
   description: { type: String, default: "" },
 });
 
+postSchema.methods.getSearch = function () {
+  const post = this.toObject();
+  post.id = post._id;
+
+  delete post._id;
+};
+
 postSchema.methods.getElastic = function () {
   const post = this.toObject();
   post.author = post.author.toString();
@@ -90,7 +97,8 @@ postSchema.methods.getPostPreview = async function () {
       postObject.coverImage = getPostCoverImageUrl(postObject.id);
     else postObject.coverImage = getDraftCoverImageUrl(postObject.id);
   }
-  postObject.author.avatar = getAvatarUrl(postObject.author._id.toString());
+  postObject.author.id = postObject.author._id.toString();
+  postObject.author.avatar = getAvatarUrl(postObject.author.id);
 
   delete postObject.author._id;
   delete postObject.__v;
