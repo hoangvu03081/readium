@@ -62,7 +62,7 @@ export function useDraft(id, auth) {
     {
       staleTime: 0,
       refetchOnMount: true,
-      enabled: !!auth,
+      enabled: !!id && !!auth,
       refetchOnWindowFocus: false,
     }
   );
@@ -73,7 +73,7 @@ export function useDraft(id, auth) {
     {
       staleTime: 0,
       refetchOnMount: true,
-      enabled: !!auth,
+      enabled: !!id && !!auth,
       refetchOnWindowFocus: false,
     }
   );

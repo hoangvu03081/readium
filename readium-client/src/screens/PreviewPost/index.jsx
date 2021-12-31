@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { useAuth } from "../../common/hooks/useAuth";
 import { useDraft, usePublish } from "../../common/api/draftQuery";
 import LoadingOverlay from "../../common/components/LoadingOverlay";
@@ -133,19 +133,25 @@ const PostContainer = styled.div`
 
 export default function PreviewPost() {
   const { auth } = useAuth();
+  const { draftId } = useParams();
   const history = useHistory();
-  const id = history.location.state;
+  const [id, setId] = useState(history.location.state);
   const [isLoading, setIsLoading] = useState(false);
-
-  // CHECKING
   if (!id) {
+    setId(draftId);
+  }
+  if (id === "published") {
     return <LoadingOverlay isLoading text="No post found" />;
   }
 
   // GET DRAFT & COVER IMAGE DRAFT
   const [
-    { isFetched: isFetchedDraft, data: dataDraft },
-    { isFetched: isFetchedCoverImage, data: dataCoverImage },
+    { isFetched: isFetchedDraft, data: dataDraft, isError: isErrorDraft },
+    {
+      isFetched: isFetchedCoverImage,
+      data: dataCoverImage,
+      isError: isErrorCoverImage,
+    },
   ] = useDraft(id, auth);
 
   //  HANDLE PUBLISH
@@ -155,7 +161,7 @@ export default function PreviewPost() {
       publish.mutate();
       setIsLoading(true);
       setTimeout(() => {
-        history.replace({ pathname: "/preview", state: null });
+        history.replace({ pathname: `/preview/${id}`, state: "published" });
         history.push(`/post/${id}`, id);
       }, 1250);
     } else {
@@ -172,6 +178,9 @@ export default function PreviewPost() {
   // WAIT FOR DATA
   if (!isFetchedDraft || !isFetchedCoverImage) {
     return <LoadingOverlay isLoading />;
+  }
+  if (isErrorDraft || isErrorCoverImage) {
+    return <LoadingOverlay isLoading text="No post found" />;
   }
   const draft = dataDraft.data;
   const coverImageSrc = window.URL.createObjectURL(dataCoverImage.data);
