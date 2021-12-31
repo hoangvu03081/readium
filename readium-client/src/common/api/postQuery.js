@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import axios from "axios";
 import { POST_API } from "./apiConstant";
 
@@ -10,11 +10,11 @@ export function usePopularPost() {
   });
 }
 
-export function usePost(id, auth) {
+export function usePost(id) {
   const res1 = useQuery("post", () => axios.get(POST_API.GET_A_POST(id)), {
     staleTime: 0,
     refetchOnMount: true,
-    enabled: !!id && !!auth,
+    enabled: !!id,
     refetchOnWindowFocus: false,
   });
   const res2 = useQuery(
@@ -24,7 +24,7 @@ export function usePost(id, auth) {
     {
       staleTime: 0,
       refetchOnMount: true,
-      enabled: !!id && !!auth,
+      enabled: !!id,
       refetchOnWindowFocus: false,
     }
   );
@@ -37,4 +37,8 @@ export function useNumberOfPosts(skip) {
     refetchOnMount: true,
     refetchOnWindowFocus: false,
   });
+}
+
+export function useDeletePost() {
+  return useMutation((postId) => axios.delete(POST_API.DELETE_POST(postId)));
 }

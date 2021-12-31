@@ -17,6 +17,9 @@ const Love = styled.button`
     stroke-width: 0.8;
     font-size: 18px;
     transition: all 0.3s;
+    > path {
+      fill: ${({ theme }) => theme.colors.LoveCommentText};
+    }
   }
   span {
     padding-left: 3px;
@@ -29,6 +32,9 @@ const Love = styled.button`
       fill: ${({ theme }) => theme.colors.LoveCommentBackground};
       stroke: ${({ theme }) => theme.colors.LoveCommentBackground};
       transition: all 0.3s;
+      > path {
+        fill: ${({ theme }) => theme.colors.LoveCommentBackground};
+      }
     }
     transition: all 0.3s;
   }

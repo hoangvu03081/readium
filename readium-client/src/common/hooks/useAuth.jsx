@@ -66,7 +66,9 @@ function useProvideAuth() {
       authenticateWs(token);
     }
     axios
-      .get(`${LOCAL_URL}/users/protected`)
+      .get(`${LOCAL_URL}/users/protected`, {
+        headers: { "Cache-Control": "no-cache" },
+      })
       .then(({ data: authResult }) => setAuth(authResult))
       .catch(() => setAuth(false))
       .finally(() => {

@@ -12,7 +12,6 @@ router.get("/protected", authMiddleware, (req, res) => {
       "bearerAuth": []
     }]
    */
-
   return res.send({ profileId: req.user.profileId });
 });
 
@@ -91,7 +90,7 @@ router.get("/follow/:userId", authMiddleware, async (req, res) => {
   return res.send({ is_followed });
 });
 
-router.get("/recommended", authMiddleware, async (req, res) => {
+router.get("/recommended", async (req, res) => {
   /*
     #swagger.tags = ['User']
     #swagger.summary = 'Get recommended writers'
@@ -173,7 +172,7 @@ router.post("/follow/:userId", authMiddleware, async (req, res) => {
 router.delete("/", authMiddleware, async (req, res) => {
   /*
     #swagger.tags = ['User']
-    #swagger.summary = "Delete my account"
+    #swagger.summary = "Delete account"
     #swagger.security = [{
       "bearerAuth": []
     }]
@@ -192,7 +191,7 @@ router.delete("/", authMiddleware, async (req, res) => {
     await Promise.all(promises);
     await User.deleteOne({ _id: id });
 
-    deleteUser(id);
+    await deleteUser(id);
 
     return res.send({ message: "Sorry to see you go.", user: deletedUser });
   } catch (err) {

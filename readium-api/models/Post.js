@@ -58,8 +58,34 @@ const postSchema = new Schema({
   description: { type: String, default: "" },
 });
 
+postSchema.methods.getSearch = function () {
+  const post = this.toObject();
+  post.id = post._id;
+
+  delete post._id;
+};
+
+postSchema.methods.getElastic = function () {
+  const post = this.toObject();
+  post.author = post.author.toString();
+  if (post.publishDate) post.publishDate = post.publishDate.getTime();
+  if (post.publishedPost) post.publishedPost = post.publishedPost.toString();
+  post.likes = post.likes.map((userId) => userId.toString());
+  post.comments = post.comments.map((commentId) => commentId.toString());
+  post.textConnection = post.textConnection.map((con) => {
+    con.toPost = con.toPost.toString();
+    return con;
+  });
+
+  delete post.__v;
+  delete post._id;
+  delete post.coverImage;
+  delete post.textEditorContent;
+  return post;
+};
+
 postSchema.methods.getPostPreview = async function () {
-  await this.populate("author", { displayName: 1 });
+  await this.populate("author", { displayName: 1, profileId: 1 });
   const postObject = this.toObject();
 
   postObject.id = postObject._id;
@@ -71,7 +97,8 @@ postSchema.methods.getPostPreview = async function () {
       postObject.coverImage = getPostCoverImageUrl(postObject.id);
     else postObject.coverImage = getDraftCoverImageUrl(postObject.id);
   }
-  postObject.author.avatar = getAvatarUrl(postObject.author._id.toString());
+  postObject.author.id = postObject.author._id.toString();
+  postObject.author.avatar = getAvatarUrl(postObject.author.id);
 
   delete postObject.author._id;
   delete postObject.__v;
@@ -84,13 +111,17 @@ postSchema.methods.getPostPreview = async function () {
 
 postSchema.methods.getPostDetail = async function () {
   const bucket = getBucket();
-  const stream = bucket.openDownloadStream(this.textEditorContent);
-  const textEditorContent = await streamToString(stream);
+  let textEditorContent = "";
+  if (this.textEditorContent) {
+    const stream = bucket.openDownloadStream(this.textEditorContent);
+    textEditorContent = await streamToString(stream);
+  }
 
   await this.populate("author", {
     displayName: 1,
     followers: 1,
     followings: 1,
+    profileId: 1,
   });
   const postObject = this.toObject();
 

@@ -16,6 +16,7 @@ const {
   validatePassword,
   sendWelcomeEmail,
   sendResetPasswordEmail,
+  removeAccents,
 } = require("../utils");
 const User = require("../models/User");
 const { clientUrl } = require("../config/url");
@@ -88,7 +89,7 @@ router.get("/logout", authMiddleware, async (req, res, next) => {
 
   req.session.destroy((err) => {
     if (err) return next(err);
-    res.send({ message: "Logout successfully" });
+    return res.send({ message: "Logout successfully" });
   });
 });
 
@@ -146,11 +147,15 @@ router.post("/register", async (req, res) => {
       .split(/[.@]/)
       .find((word) => Boolean(word));
 
+    const profileIdBase = removeAccents(displayName)
+      .toLowerCase()
+      .replace(/ +/g, "-");
+
     const count = await User.find({
-      profileId: { $regex: displayName, $options: "i" },
+      profileId: profileIdBase,
     }).countDocuments();
 
-    const profileId = displayName + (count ? "." + count : "");
+    const profileId = profileIdBase + (count ? "." + count : "");
 
     const avatarSvg = createAvatar(style, {
       seed: displayName,
@@ -171,8 +176,6 @@ router.post("/register", async (req, res) => {
     });
 
     const newUserId = newUser._id.toString();
-    putUser(newUserId, { displayName });
-
     const [iv, encryptedId] = encrypt(newUserId);
 
     const activationLink = `${clientUrl}/auth/confirm?iv=${iv}&id=${encryptedId}`;
@@ -180,6 +183,8 @@ router.post("/register", async (req, res) => {
     await newUser.hashPassword();
     await newUser.save();
     await sendWelcomeEmail({ to: email, url: activationLink });
+    const newUserObject = newUser.getElastic();
+    await putUser(newUserId, newUserObject);
 
     // #swagger.responses[201] = { description: 'Account created' }
     return res.status(201).send({
@@ -253,8 +258,10 @@ router.get("/confirm", async (req, res) => {
 router.get(
   "/facebook",
   passport.authenticate("facebook", {
-    // #swagger.tags = ['Auth']
-    // #swagger.summary = 'User Login by Facebook'
+    /*
+      #swagger.tags = ['Auth']
+      #swagger.summary = 'User Login by Facebook'
+    */
     scope: ["email"],
   })
 );
@@ -277,8 +284,10 @@ router.get("/facebook/login-failed", (req, res) => {
 // redirect users to google
 router.get(
   "/google",
-  // #swagger.tags = ['Auth']
-  // #swagger.summary = 'Login Google'
+  /* 
+    #swagger.tags = ['Auth']
+    #swagger.summary = 'Login Google'
+  */
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
@@ -295,6 +304,28 @@ router.get(
 router.get("/google/login-failed", (req, res) => {
   // #swagger.ignore = true
   res.status(500).send({ message: "Google Login failed for some reason" });
+});
+
+router.get("/reset", authMiddleware, async (req, res) => {
+  /*
+    #swagger.tags = ['Auth']
+    #swagger.summary = "Send reset password link to authenticated users"
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+  */
+  try {
+    const user = req.user;
+    await user.sendResetLink();
+    await sendResetPasswordEmail({ to: user.email, url: user.resetLink });
+    return res.send({
+      message: "Please check your mail and reset your password!",
+    });
+  } catch (err) {
+    return res.send({
+      message: "Some errors occurred in reset password (GET)",
+    });
+  }
 });
 
 router.post("/forget", async (req, res, next) => {
@@ -322,18 +353,20 @@ router.post("/forget", async (req, res, next) => {
         .send({ message: "Your account is not registered! Please register." });
     }
 
-    const due = new Date();
-    due.setDate(due.getDate() + 7);
+    // const due = new Date();
+    // due.setDate(due.getDate() + 7);
 
-    const [iv, hashedId] = encrypt({ due, id: user._id.toString() });
-    const resetLink = `${clientUrl}/auth/reset?iv=${iv}&id=${hashedId}`;
+    // const [iv, hashedId] = encrypt({ due, id: user._id.toString() });
+    // const resetLink = `${clientUrl}/auth/reset?iv=${iv}&id=${hashedId}`;
 
-    user.resetLink = resetLink;
-    user.resetTimeout = due;
+    // user.resetLink = resetLink;
+    // user.resetTimeout = due;
 
-    await user.save();
+    // await user.save();
 
-    await sendResetPasswordEmail({ to: user.email, url: resetLink });
+    await user.sendResetLink();
+
+    await sendResetPasswordEmail({ to: user.email, url: user.resetLink });
     // #swagger.responses[200] = { description: 'Request change password successfully ' }
     return res.send({
       message: "Please check your mail and reset your password!",

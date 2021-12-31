@@ -60,14 +60,22 @@ function streamToString(stream) {
   });
 }
 
-const downloadImageFromUrl = (url) => {
+function downloadImageFromUrl(url) {
   getImageBufferFromUrl(url);
   return once(bufferEmitter, "downloaded");
-};
+}
 
-const convertBufferToPng = (buffer) => {
+function convertBufferToPng(buffer) {
   return sharp(buffer).png().toBuffer();
-};
+}
+
+function removeAccents(str) {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D");
+}
 
 const getPostCoverImageUrl = (postId) =>
   `${serverUrl}/posts/${postId}/cover-image`;
@@ -76,7 +84,6 @@ const getDraftCoverImageUrl = (postId) =>
 const getAvatarUrl = (userId) => `${serverUrl}/users/profiles/avatar/${userId}`;
 const getUserCoverImageUrl = (userId) =>
   `${serverUrl}/users/profiles/cover-image/${userId}`;
-
 
 module.exports = {
   checkEmpty,
@@ -103,6 +110,7 @@ module.exports = {
   streamToString,
   downloadImageFromUrl,
   convertBufferToPng,
+  removeAccents,
   getPostCoverImageUrl,
   getDraftCoverImageUrl,
   getAvatarUrl,

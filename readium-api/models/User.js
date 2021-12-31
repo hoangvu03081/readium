@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
-const { serverUrl } = require("../config/url");
-const { getAvatarUrl, getUserCoverImageUrl } = require("../utils");
+const { clientUrl } = require("../config/url");
+const { getAvatarUrl, getUserCoverImageUrl, encrypt } = require("../utils");
 
 const {
   model,
@@ -15,9 +15,9 @@ const userSchema = new Schema({
   profileId: { type: String, required: true, unique: true },
   displayName: { type: String, required: true },
   activated: { type: Boolean, default: false },
+  job: { type: String, default: "" },
   password: String,
   biography: String,
-  job: String,
   avatar: Buffer,
   coverImage: Buffer,
   followers: [{ type: ObjectId, ref: "User" }],
@@ -34,6 +34,28 @@ const userSchema = new Schema({
   instagram: String,
   contactEmail: String,
 });
+
+userSchema.methods.getElastic = function () {
+  const user = this.toObject();
+
+  user.followers = user.followers.map((userId) => userId.toString());
+  user.followings = user.followings.map((userId) => userId.toString());
+  user.notifications = user.notifications.map((notificationId) =>
+    notificationId.toString()
+  );
+  user.collections = user.collections.map((collectionId) =>
+    collectionId.toString()
+  );
+  user.liked = user.liked.map((postId) => postId.toString());
+  if (user.resetTimeout) user.resetTimeout = user.resetTimeout.getTime();
+
+  delete user.__v;
+  delete user._id;
+  delete user.avatar;
+  delete user.coverImage;
+
+  return user;
+};
 
 userSchema.methods.getPublicProfile = function () {
   const user = this;
@@ -61,8 +83,22 @@ userSchema.methods.getPublicProfile = function () {
   return userObject;
 };
 
-const saltRounds = 10;
+userSchema.methods.sendResetLink = async function () {
+  const user = this;
+  if (user.resetLink) return;
+  const due = new Date();
+  due.setDate(due.getDate() + 7);
 
+  const [iv, hashedId] = encrypt({ due, id: user._id.toString() });
+  const resetLink = `${clientUrl}/auth/reset?iv=${iv}&id=${hashedId}`;
+
+  user.resetLink = resetLink;
+  user.resetTimeout = due;
+
+  await user.save();
+};
+
+const saltRounds = 10;
 userSchema.methods.hashPassword = async function () {
   this.password = await bcrypt.hash(this.password, saltRounds);
 };

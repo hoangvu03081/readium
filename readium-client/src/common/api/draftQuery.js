@@ -4,7 +4,7 @@ import Delta from "quill-delta";
 import { DRAFT_API } from "./apiConstant";
 
 export function useDraftID() {
-  return useMutation(() => axios.post(DRAFT_API.GET_DRAFT_ID));
+  return useMutation(() => axios.post(DRAFT_API.POST_DRAFT_ID));
 }
 
 export function useTitleDraft(id) {
@@ -56,20 +56,24 @@ export function useContentDraft(id) {
 }
 
 export function useDraft(id, auth) {
-  const res1 = useQuery("draft", () => axios.get(DRAFT_API.GET_A_DRAFT(id)), {
-    staleTime: 0,
-    refetchOnMount: true,
-    enabled: !!auth,
-    refetchOnWindowFocus: false,
-  });
+  const res1 = useQuery(
+    ["draft", id],
+    () => axios.get(DRAFT_API.GET_A_DRAFT(id)),
+    {
+      staleTime: 0,
+      refetchOnMount: true,
+      enabled: !!id && !!auth,
+      refetchOnWindowFocus: false,
+    }
+  );
   const res2 = useQuery(
-    "coverImageDraft",
+    ["coverImageDraft", id],
     () =>
       axios.get(DRAFT_API.GET_COVER_IMAGE_DRAFT(id), { responseType: "blob" }),
     {
       staleTime: 0,
       refetchOnMount: true,
-      enabled: !!auth,
+      enabled: !!id && !!auth,
       refetchOnWindowFocus: false,
     }
   );

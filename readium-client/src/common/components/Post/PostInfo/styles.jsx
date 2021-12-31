@@ -8,7 +8,7 @@ export const Layout = styled.div`
   justify-content: space-between;
   align-items: center;
   position: relative;
-  @media (max-width: 500px) {
+  @media (max-width: 550px) {
     margin-bottom: 57px;
   }
 `;
@@ -47,6 +47,7 @@ export const Time = styled.p`
   font-family: "Lato";
   font-size: 12px;
   color: #888888;
+  white-space: pre;
 `;
 export const FollowBtn = styled.button`
   font-family: "Lato";
@@ -63,31 +64,18 @@ export const FollowBtn = styled.button`
     color: white;
     transition: all 0.3s;
   }
-  @media (max-width: 500px) {
-    display: none;
+  @media (max-width: 550px) {
+    display: none !important;
   }
 `;
 export const Right = styled.div`
   width: 80px;
   height: 32px;
   position: relative;
-  svg:first-child {
-    font-size: 32px;
-    top: 0;
-    left: 0;
-  }
-  svg:nth-child(2) {
-    font-size: 32px;
-    top: 0;
-    left: 0;
-  }
-  svg:nth-child(3) {
-    font-size: 30px;
-    top: 0;
-    right: 0;
-  }
   svg {
+    font-size: 32px;
     position: absolute;
+    top: 0;
     transition: all 0.25s;
     &:hover {
       cursor: pointer;
@@ -95,7 +83,15 @@ export const Right = styled.div`
       transition: all 0.25s;
     }
   }
-  @media (max-width: 500px) {
+  svg:first-child,
+  svg:nth-child(2) {
+    ${(props) => (props.isMyself ? `right: 0;` : `left: 0;`)}
+  }
+  svg:nth-child(3) {
+    right: 0;
+    ${(props) => (props.isMyself ? `display: none;` : `display: block;`)}
+  }
+  @media (max-width: 550px) {
     display: none !important;
   }
 `;
@@ -109,7 +105,14 @@ export const AdditionRow = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  @media (min-width: 501px) {
+  > .opacity-0 {
+    opacity: 0;
+    pointer-events: none;
+  }
+  > .opacity-1 {
+    opacity: 1;
+  }
+  @media (min-width: 551px) {
     display: none;
   }
 `;
@@ -133,28 +136,30 @@ export const AdditionRight = styled.div`
   width: 80px;
   height: 32px;
   position: relative;
-  svg:first-child {
-    font-size: 32px;
-    top: 0;
-    left: 0;
-  }
-  svg:nth-child(2) {
-    font-size: 32px;
-    top: 0;
-    left: 0;
-  }
-  svg:nth-child(3) {
-    font-size: 30px;
-    top: 0;
-    right: 0;
-  }
   svg {
+    font-size: 32px;
     position: absolute;
+    top: 0;
     transition: all 0.25s;
     &:hover {
       cursor: pointer;
       transform: scale(1.2);
       transition: all 0.25s;
+    }
+  }
+  svg:first-child,
+  svg:nth-child(2) {
+    ${(props) => (props.isMyself ? `right: 0;` : `left: 0;`)}
+  }
+  svg:nth-child(3) {
+    right: 0;
+    ${(props) => (props.isMyself ? `display: none;` : `display: block;`)}
+  }
+  @media (max-width: 550px) {
+    display: block;
+    width: 70px;
+    svg {
+      font-size: 28px;
     }
   }
 `;

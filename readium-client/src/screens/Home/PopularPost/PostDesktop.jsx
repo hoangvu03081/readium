@@ -12,7 +12,6 @@ import { ReactComponent as AddedCollectionBtn } from "../../../assets/icons/adde
 
 const Card = styled.div`
   width: 100%;
-  margin-bottom: 50px;
   padding: 30px;
   border: 2px solid ${({ theme }) => theme.colors.PopularPostBlack};
   border-radius: 6px;
@@ -169,6 +168,7 @@ const ButtonContainer = styled.div`
 
 export default function PostDesktop({
   postId,
+  profileId,
   title,
   user,
   userAvatar,
@@ -196,7 +196,7 @@ export default function PostDesktop({
   const handleProfile = () => {
     // const indexOfUserId = userAvatar.lastIndexOf("/");
     // const userId = userAvatar.slice(indexOfUserId + 1);
-    history.push(`/profile/${user}`);
+    history.push(`/profile/${profileId}`);
   };
 
   return (
@@ -244,6 +244,7 @@ export default function PostDesktop({
 
 PostDesktop.propTypes = {
   postId: PropTypes.string.isRequired,
+  profileId: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   user: PropTypes.string.isRequired,
   userAvatar: PropTypes.string.isRequired,

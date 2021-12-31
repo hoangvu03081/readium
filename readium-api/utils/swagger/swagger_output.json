@@ -112,11 +112,11 @@
       }
     },
     "/posts/{postId}/comments": {
-      "get": {
+      "post": {
         "tags": [
           "Comment"
         ],
-        "summary": "Get comments of a post",
+        "summary": "Comment on the post",
         "description": "",
         "parameters": [
           {
@@ -127,11 +127,32 @@
           }
         ],
         "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
           "404": {
             "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Comment"
+              }
+            }
           }
         }
       }
@@ -186,7 +207,11 @@
         "summary": "Delete all data",
         "description": "",
         "parameters": [],
-        "responses": {}
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
       }
     },
     "/dev/post": {
@@ -407,38 +432,21 @@
         "responses": {}
       }
     },
-    "/auth/forget": {
-      "post": {
+    "/auth/reset": {
+      "get": {
         "tags": [
           "Auth"
         ],
-        "summary": "Users forget password",
+        "summary": "Send reset password link to authenticated users",
         "description": "",
         "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Request change password successfully "
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
+        "responses": {},
+        "security": [
+          {
+            "bearerAuth": []
           }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Email"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/reset": {
+        ]
+      },
       "post": {
         "tags": [
           "Auth"
@@ -474,6 +482,37 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/ResetPassword"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/forget": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Users forget password",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Request change password successfully "
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Email"
               }
             }
           }
@@ -651,7 +690,7 @@
         "tags": [
           "User"
         ],
-        "summary": "Delete my account",
+        "summary": "Delete account",
         "description": "",
         "parameters": [],
         "responses": {
@@ -1110,6 +1149,24 @@
       }
     },
     "/users/collections/": {
+      "get": {
+        "tags": [
+          "Collection"
+        ],
+        "summary": "get all collections of me",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
       "post": {
         "tags": [
           "Collection"
@@ -1145,33 +1202,6 @@
             }
           }
         }
-      }
-    },
-    "/users/collections/{collectionId}": {
-      "delete": {
-        "tags": [
-          "Collection"
-        ],
-        "summary": "Delete a collection",
-        "description": "",
-        "parameters": [
-          {
-            "name": "collectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Bad Request"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
       }
     },
     "/users/collections/posts": {
@@ -1244,6 +1274,78 @@
         }
       }
     },
+    "/users/collections/{collectionId}/name": {
+      "put": {
+        "tags": [
+          "Collection"
+        ],
+        "summary": "Edit collection name",
+        "description": "",
+        "parameters": [
+          {
+            "name": "collectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "default": "collection name"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/collections/{collectionId}": {
+      "delete": {
+        "tags": [
+          "Collection"
+        ],
+        "summary": "Delete a collection",
+        "description": "",
+        "parameters": [
+          {
+            "name": "collectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/posts/popular": {
       "get": {
         "tags": [
@@ -1253,6 +1355,9 @@
         "description": "",
         "parameters": [],
         "responses": {
+          "404": {
+            "description": "Not Found"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -1291,6 +1396,38 @@
             "bearerAuth": []
           }
         ]
+      }
+    },
+    "/posts/user/{userId}": {
+      "get": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "Get user id's published posts",
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
       }
     },
     "/posts/{id}/cover-image": {
@@ -1434,6 +1571,31 @@
             "bearerAuth": []
           }
         ]
+      }
+    },
+    "/posts/{postId}/comments/": {
+      "get": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "Get comments of a post",
+        "description": "",
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
       }
     },
     "/{commentId}": {
@@ -1990,6 +2152,14 @@
             "bearerAuth": []
           }
         ]
+      }
+    },
+    "/topics/trending": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [],
+        "responses": {}
       }
     }
   },

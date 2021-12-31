@@ -15,6 +15,9 @@ router.get("/popular", async (req, res) => {
   */
   try {
     let post = await Post.findOne({ isPublished: true });
+    if (!post) {
+      return res.status(404).send({ message: "No popular post found" });
+    }
     post = await post.getPostPreview();
     return res.send(post);
   } catch (err) {
@@ -47,6 +50,42 @@ router.get("/me", authMiddleware, checkValidSkipAndDate, async (req, res) => {
       isPublished: true,
       publishDate: { $lte: date },
       author: req.user._id,
+    })
+      .sort({ publishDate: -1 })
+      .skip(skip)
+      .limit(5);
+
+    posts = posts.map((post) => post.getPostPreview());
+    posts = await Promise.all(posts);
+
+    if (posts.length === 0) return res.send({ posts });
+    return res.send({ posts, next: skip + 5 });
+  } catch (err) {
+    return res.status(500).send({ message: "Some errors occur in get posts" });
+  }
+});
+
+router.get("/user/:userId", checkValidSkipAndDate, async () => {
+  /*
+    #swagger.tags = ['Post']
+    #swagger.summary = "Get user id's published posts"
+    #swagger.parameters['skip'] = {
+      in: 'query',
+      type: 'integer',
+    }
+    #swagger.parameters['date'] = {
+      in: 'query',
+      type: 'string',
+    }
+  */
+  try {
+    const { userId } = req.params;
+    let { date, skip } = req;
+
+    let posts = await Post.find({
+      isPublished: true,
+      publishDate: { $lte: date },
+      author: userId,
     })
       .sort({ publishDate: -1 })
       .skip(skip)
@@ -163,7 +202,7 @@ router.put("/:id/unpublish", authMiddleware, checkOwnPost, async (req, res) => {
     post.isPublished = false;
     post.likes = [];
 
-    deletePost(id);
+    await deletePost(id);
 
     await post.save();
     post = await post.getPostPreview();
@@ -202,7 +241,7 @@ router.delete("/:id", authMiddleware, checkOwnPost, async (req, res) => {
       if (pId !== -1) user.liked.splice(pId, 1);
     });
 
-    deletePost(id);
+    await deletePost(id);
 
     post = await post.getPostPreview();
     await Post.deleteOne({ _id: id });

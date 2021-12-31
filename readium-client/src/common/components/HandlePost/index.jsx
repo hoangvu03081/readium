@@ -81,10 +81,10 @@ export default function HandlePost({ id, data, dataCoverImage }) {
       if (!storyInformationSaved || !storyContentSaved) {
         setIsLoading(true);
         setTimeout(() => {
-          history.push("/preview", id);
+          history.push(`/preview/${id}`, id);
         }, 2001);
       } else {
-        history.push("/preview", id);
+        history.push(`/preview/${id}`, id);
       }
     }
   };

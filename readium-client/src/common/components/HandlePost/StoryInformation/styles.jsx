@@ -10,7 +10,7 @@ export const Layout = styled.div`
     font-weight: 500;
     font-size: 48px;
     @media (max-width: 520px) {
-      font-size: 40px;
+      font-size: 38px;
     }
   }
   h2 {
@@ -18,14 +18,23 @@ export const Layout = styled.div`
     padding: 0;
     font-family: "PT Sans";
     font-weight: bold;
-    font-size: 24px;
+    font-size: 36px;
+    @media (max-width: 509px) {
+      font-size: 24px;
+    }
+    @media (max-width: 349px) {
+      font-size: 21px;
+    }
   }
   h3 {
     margin: 60px 0 15px 0;
     padding: 0;
     font-family: "PT Sans";
     font-weight: 500;
-    font-size: 18px;
+    font-size: 21px;
+    @media (max-width: 509px) {
+      font-size: 18px;
+    }
   }
 `;
 
@@ -33,10 +42,10 @@ export const InputTitle = styled.div`
   textarea {
     border: none;
     border-bottom: 1px solid #c8c8c8;
-    width: 460px;
+    width: 600px;
     font-family: "Raleway";
     font-weight: bold;
-    font-size: 24px;
+    font-size: 36px;
     resize: none;
     &:focus {
       outline: none;
@@ -50,31 +59,64 @@ export const InputTitle = styled.div`
       font-family: "Raleway";
       font-weight: 500;
       font-size: 14px;
-      padding-top: 9px;
+      padding-top: 25px;
+      @media (max-width: 509px) {
+        padding-top: 12px;
+      }
+      @media (max-width: 349px) {
+        padding-top: 7px;
+      }
     }
     :-moz-placeholder {
       text-align: center;
       font-family: "Raleway";
       font-weight: 500;
       font-size: 14px;
-      padding-top: 9px;
+      padding-top: 25px;
+      @media (max-width: 509px) {
+        padding-top: 12px;
+      }
+      @media (max-width: 349px) {
+        padding-top: 7px;
+      }
     }
     ::-moz-placeholder {
       text-align: center;
       font-family: "Raleway";
       font-weight: 500;
       font-size: 14px;
-      padding-top: 9px;
+      padding-top: 25px;
+      @media (max-width: 509px) {
+        padding-top: 12px;
+      }
+      @media (max-width: 349px) {
+        padding-top: 7px;
+      }
     }
     :-ms-input-placeholder {
       text-align: center;
       font-family: "Raleway";
       font-weight: 500;
       font-size: 14px;
-      padding-top: 9px;
+      padding-top: 25px;
+      @media (max-width: 509px) {
+        padding-top: 12px;
+      }
+      @media (max-width: 349px) {
+        padding-top: 7px;
+      }
     }
-    @media (max-width: 530px) {
+    @media (max-width: 767px) {
+      width: 100%;
+    }
+    @media (max-width: 575px) {
       width: 90%;
+    }
+    @media (max-width: 509px) {
+      font-size: 24px;
+    }
+    @media (max-width: 349px) {
+      font-size: 21px;
     }
   }
 `;
@@ -83,10 +125,10 @@ export const InputDescription = styled.div`
   textarea {
     border: none;
     border-bottom: 1px solid #c8c8c8;
-    width: 460px;
+    width: 600px;
     font-family: "PT Sans";
     font-weight: 500;
-    font-size: 18px;
+    font-size: 21px;
     resize: none;
     &:focus {
       outline: none;
@@ -100,31 +142,49 @@ export const InputDescription = styled.div`
       font-family: "PT Sans";
       font-weight: 500;
       font-size: 14px;
-      padding-top: 3px;
+      padding-top: 8px;
+      @media (max-width: 509px) {
+        padding-top: 4px;
+      }
     }
     :-moz-placeholder {
       text-align: center;
       font-family: "PT Sans";
       font-weight: 500;
       font-size: 14px;
-      padding-top: 3px;
+      padding-top: 8px;
+      @media (max-width: 509px) {
+        padding-top: 4px;
+      }
     }
     ::-moz-placeholder {
       text-align: center;
       font-family: "PT Sans";
       font-weight: 500;
       font-size: 14px;
-      padding-top: 3px;
+      padding-top: 8px;
+      @media (max-width: 509px) {
+        padding-top: 4px;
+      }
     }
     :-ms-input-placeholder {
       text-align: center;
       font-family: "PT Sans";
       font-weight: 500;
       font-size: 14px;
-      padding-top: 3px;
+      padding-top: 8px;
+      @media (max-width: 509px) {
+        padding-top: 4px;
+      }
     }
-    @media (max-width: 530px) {
+    @media (max-width: 767px) {
+      width: 100%;
+    }
+    @media (max-width: 575px) {
       width: 90%;
+    }
+    @media (max-width: 509px) {
+      font-size: 18px;
     }
   }
 `;
@@ -132,7 +192,7 @@ export const InputDescription = styled.div`
 export const InputTags = styled.div`
   position: relative;
   & .ReactTags__selected {
-    width: 460px;
+    width: 600px;
     margin-top: 15px;
     margin-bottom: 10px;
     margin-left: auto;
@@ -140,7 +200,10 @@ export const InputTags = styled.div`
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    @media (max-width: 530px) {
+    @media (max-width: 767px) {
+      width: 100%;
+    }
+    @media (max-width: 575px) {
       width: 90%;
     }
   }
@@ -173,7 +236,7 @@ export const InputTags = styled.div`
   input {
     border: none;
     border-bottom: 1px solid #c8c8c8;
-    width: 460px;
+    width: 600px;
     font-family: "PT Sans";
     font-weight: 500;
     font-size: 18px;
@@ -213,7 +276,10 @@ export const InputTags = styled.div`
       font-size: 14px;
       padding-top: 3px;
     }
-    @media (max-width: 530px) {
+    @media (max-width: 767px) {
+      width: 100%;
+    }
+    @media (max-width: 575px) {
       width: 90%;
     }
   }
@@ -237,12 +303,15 @@ export const InputTags = styled.div`
 `;
 
 export const AddTagsBtn = styled.div`
-  width: 460px;
+  width: 600px;
   height: 1px;
   margin: 0 auto;
   display: flex;
   justify-content: flex-end;
-  @media (max-width: 530px) {
+  @media (max-width: 767px) {
+    width: 100%;
+  }
+  @media (max-width: 575px) {
     width: 90%;
   }
 `;

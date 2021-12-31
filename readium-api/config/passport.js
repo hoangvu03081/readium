@@ -10,7 +10,10 @@ const {
   decodeJWT,
   jwtOptions,
   NO_AUTH_TOKEN,
+  removeAccents,
 } = require("../utils");
+
+const { putUser } = require("../utils/elasticsearch");
 
 const activateUser = (user) => {
   user.activationLink = undefined;
@@ -84,19 +87,20 @@ module.exports = function (passport) {
               user.avatar = avatar;
             }
             await user.save();
+            const userObject = user.getElastic();
+            await putUser(user._id.toString(), userObject);
             return done(null, user);
           }
 
+          const profileIdBase = removeAccents(profile.displayName)
+            .toLowerCase()
+            .replace(/ +/g, "-");
+
           const count = await User.find({
-            profileId: {
-              $regex: profile.displayName
-                .split(".")
-                .find((word) => Boolean(word)),
-              $options: "i",
-            },
+            profileId: profileIdBase,
           }).countDocuments();
 
-          const profileId = profile.displayName + (count ? "." + count : "");
+          const profileId = profileIdBase + (count ? "." + count : "");
 
           const newUser = new User({
             avatar: avatar,
@@ -106,6 +110,8 @@ module.exports = function (passport) {
             profileId,
           });
           await newUser.save();
+          const newUserObject = newUser.getElastic();
+          await putUser(newUser._id.toString(), newUserObject);
 
           return done(null, newUser);
         } catch (err) {
@@ -141,18 +147,20 @@ module.exports = function (passport) {
               user.avatar = avatar;
             }
             await user.save();
+            const userObject = user.getElastic();
+            await putUser(user._id.toString(), userObject);
             return done(null, user);
           }
 
+          const profileIdBase = removeAccents(profile.displayName)
+            .toLowerCase()
+            .replace(/ +/g, "-");
+
           const count = await User.find({
-            profileId: {
-              $regex: profile.displayName
-                .split(".")
-                .find((word) => Boolean(word)),
-              $options: "i",
-            },
+            profileId: profileIdBase,
           }).countDocuments();
-          const profileId = profile.displayName + (count ? "." + count : "");
+
+          const profileId = profileIdBase + (count ? "." + count : "");
 
           const newUser = new User({
             avatar: avatar,
@@ -162,6 +170,9 @@ module.exports = function (passport) {
             profileId,
           });
           await newUser.save();
+          const newUserObject = newUser.getElastic();
+          await putUser(newUser._id.toString(), newUserObject);
+
           return done(null, newUser);
         } catch (err) {
           console.log(err);

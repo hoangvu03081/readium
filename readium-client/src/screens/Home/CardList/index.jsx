@@ -17,9 +17,11 @@ export default function CardList() {
               <Card
                 key={post.id}
                 postId={post.id}
+                profileId={post.author.profileId}
+                userId={post.author.profileId}
                 preview={post.coverImage}
                 title={post.title}
-                content={post.content}
+                content={post.content || post.description}
                 tags={post.tags}
                 duration={post.duration}
                 user={post.author.displayName}

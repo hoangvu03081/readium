@@ -2,6 +2,7 @@
 /* eslint-disable array-callback-return */
 import React from "react";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 import { useNumberOfPosts } from "../../../common/api/postQuery";
 import Card from "../../../common/components/Card";
 
@@ -26,22 +27,24 @@ const Loading = styled.p`
   text-align: center;
 `;
 
-export default function PostSuggestion() {
+export default function PostSuggestion({ postId }) {
   const getNumberOfPosts = useNumberOfPosts(0);
   if (!getNumberOfPosts.data) {
     return <Loading>Loading...</Loading>;
   }
   const { posts } = getNumberOfPosts.data.data; // 5 posts
+
   return (
     <Layout>
       <Title>You may also like</Title>
       <CardList>
-        {posts.map((item, index) => {
-          if (index === 1 || index === 2 || index === 3) {
+        {posts.map((item) => {
+          if (item.id !== postId) {
             return (
               <Card
                 key={item.id}
                 postId={item.id}
+                profileId={item.author.profileId}
                 preview={item.coverImage}
                 title={item.title}
                 content={item.content}
@@ -61,3 +64,7 @@ export default function PostSuggestion() {
     </Layout>
   );
 }
+
+PostSuggestion.propTypes = {
+  postId: PropTypes.string.isRequired,
+};

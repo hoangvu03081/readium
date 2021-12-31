@@ -20,6 +20,7 @@ const PROFILE_API = {
   GET_MY_COVER_IMAGE: getURL("/users/profiles/cover-image)"),
   POST_UPLOAD_AVATAR: getURL("/users/profiles/avatar"),
   POST_UPLOAD_COVER_IMAGE: getURL("/users/profiles/cover-image"),
+  GET_MY_PROFILE: getURL(`/users/profiles`),
 };
 
 const SETTING_API = {
@@ -32,10 +33,11 @@ const POST_API = {
   GET_POSTS: (pageParam) => getURL(`/posts/?skip=${pageParam}`),
   GET_A_POST: (id) => getURL(`/posts/${id}`),
   GET_COVER_IMAGE_POST: (id) => getURL(`/posts/${id}/cover-image`),
+  DELETE_POST: (postId) => getURL(`/posts/${postId}`),
 };
 
 const DRAFT_API = {
-  GET_DRAFT_ID: getURL("/drafts"),
+  POST_DRAFT_ID: getURL("/drafts"),
   PUT_TITLE: (id) => getURL(`/drafts/${id}/title`),
   PUT_DESCRIPTION: (id) => getURL(`/drafts/${id}/description`),
   PUT_TAGS: (id) => getURL(`/drafts/${id}/tags`),
@@ -47,8 +49,14 @@ const DRAFT_API = {
 };
 
 const COMMENT_API = {
+  GET_MY_AVATAR: getURL(`/users/profiles/avatar/`),
   POST_COMMENT: (postId) => getURL(`/posts/${postId}/comments`),
-  GET_COMMENT: (postId) => getURL(`/posts/${postId}/comments`),
+  GET_COMMENT: (postId) => getURL(`/posts/${postId}/comments/`),
+};
+
+const OTHER_API = {
+  GET_TRENDING_TOPICS: getURL(`/topics/trending`),
+  GET_RECOMMENDED_WRITERS: getURL(`/users/recommended`),
 };
 
 export {
@@ -58,5 +66,6 @@ export {
   SETTING_API,
   DRAFT_API,
   COMMENT_API,
+  OTHER_API,
   WEBSOCKET,
 };
