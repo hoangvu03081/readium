@@ -65,7 +65,7 @@ router.get("/me", authMiddleware, checkValidSkipAndDate, async (req, res) => {
   }
 });
 
-router.get("/user/:userId", checkValidSkipAndDate, async () => {
+router.get("/user/:userId", checkValidSkipAndDate, async (req, res) => {
   /*
     #swagger.tags = ['Post']
     #swagger.summary = "Get user id's published posts"
