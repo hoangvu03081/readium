@@ -147,10 +147,12 @@ router.post("/register", async (req, res) => {
       .split(/[.@]/)
       .find((word) => Boolean(word));
 
-    const profileIdBase = removeAccents(displayName).toLowerCase().replace(/ +/g, "-");
+    const profileIdBase = removeAccents(displayName)
+      .toLowerCase()
+      .replace(/ +/g, "-");
 
     const count = await User.find({
-      profileId: { $regex: profileIdBase, $options: "i" },
+      profileId: profileIdBase,
     }).countDocuments();
 
     const profileId = profileIdBase + (count ? "." + count : "");

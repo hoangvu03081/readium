@@ -97,7 +97,7 @@ module.exports = function (passport) {
             .replace(/ +/g, "-");
 
           const count = await User.find({
-            profileId: { $regex: profileIdBase, $options: "i" },
+            profileId: profileIdBase,
           }).countDocuments();
 
           const profileId = profileIdBase + (count ? "." + count : "");
@@ -157,7 +157,7 @@ module.exports = function (passport) {
             .replace(/ +/g, "-");
 
           const count = await User.find({
-            profileId: { $regex: profileIdBase, $options: "i" },
+            profileId: profileIdBase,
           }).countDocuments();
 
           const profileId = profileIdBase + (count ? "." + count : "");
