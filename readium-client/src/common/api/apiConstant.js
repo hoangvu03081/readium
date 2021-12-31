@@ -39,6 +39,7 @@ const POST_API = {
 };
 
 const DRAFT_API = {
+  GET_MY_DRAFT: getURL("/drafts"),
   GET_DRAFT_ID: getURL("/drafts"),
   PUT_TITLE: (id) => getURL(`/drafts/${id}/title`),
   PUT_DESCRIPTION: (id) => getURL(`/drafts/${id}/description`),

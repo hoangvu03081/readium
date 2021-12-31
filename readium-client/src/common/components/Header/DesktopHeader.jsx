@@ -46,7 +46,7 @@ export default function DesktopHeader({ isLogin }) {
           <Avatar />
         </>
       )}
-      {/* <SearchBar /> */}
+      <SearchBar />
       <OnClickRequireAuth>
         <IconLink to="/write" className="ms-sm-4">
           <FiEdit size={26} />

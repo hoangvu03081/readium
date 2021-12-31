@@ -3,6 +3,12 @@ import axios from "axios";
 import Delta from "quill-delta";
 import { DRAFT_API } from "./apiConstant";
 
+export function useGetMyDraft() {
+  return useQuery("drafts", () =>
+    axios.get(DRAFT_API.GET_MY_DRAFT).then(({ data }) => data)
+  );
+}
+
 export function useDraftID() {
   return useMutation(() => axios.post(DRAFT_API.GET_DRAFT_ID));
 }
