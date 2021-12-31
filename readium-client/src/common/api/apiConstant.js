@@ -20,6 +20,7 @@ const PROFILE_API = {
   GET_MY_COVER_IMAGE: getURL("/users/profiles/cover-image)"),
   POST_UPLOAD_AVATAR: getURL("/users/profiles/avatar"),
   POST_UPLOAD_COVER_IMAGE: getURL("/users/profiles/cover-image"),
+  GET_MY_PROFILE: getURL(`/users/profiles`),
 };
 
 const SETTING_API = {

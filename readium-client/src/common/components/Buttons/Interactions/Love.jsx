@@ -13,6 +13,9 @@ const Love = styled.button`
     stroke: ${({ theme }) => theme.colors.LoveText};
     stroke-width: 0.8;
     font-size: 18px;
+    > path {
+      fill: ${({ theme }) => theme.colors.LoveText};
+    }
     transition: all 0.4s;
   }
   span {
@@ -28,6 +31,9 @@ const Love = styled.button`
       fill: ${({ theme }) => theme.colors.InteractionsBackground};
       stroke: ${({ theme }) => theme.colors.InteractionsBackground};
       stroke-width: 0.8;
+      > path {
+        fill: ${({ theme }) => theme.colors.InteractionsBackground};
+      }
       transition: all 0.4s;
     }
     transition: all 0.4s;

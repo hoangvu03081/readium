@@ -106,3 +106,12 @@ export function useUploadCoverImage(userId) {
 export function useProfile(profileId) {
   return useFetchProfile(profileId);
 }
+
+export function useGetMyProfile(auth) {
+  return useQuery("myProfile", () => axios.get(PROFILE_API.GET_MY_PROFILE), {
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    enabled: !!auth,
+  });
+}

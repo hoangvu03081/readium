@@ -1,9 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import { useAuth } from "../../hooks/useAuth";
+import { useGetMyProfile } from "../../api/profileQuery";
+import PuffLoader from "../PuffLoader";
 import PostInfo from "./PostInfo";
 import PostContent from "./PostContent";
-import TagBtn from "../Buttons/TagBtn";
+import PostBottom from "./PostBottom";
 import HorizontalLine from "./HorizontalLine";
 
 // STYLES ----------------------------------------------------------
@@ -47,9 +50,6 @@ const PostTitle = styled.p`
   @media (max-width: 550px) {
     font-size: 30px;
   }
-  @media (max-width: 450px) {
-    font-size: 28px;
-  }
 `;
 
 const PostDescription = styled.p`
@@ -66,9 +66,6 @@ const PostDescription = styled.p`
   }
   @media (max-width: 550px) {
     font-size: 20px;
-  }
-  @media (max-width: 450px) {
-    font-size: 18px;
   }
 `;
 
@@ -87,17 +84,34 @@ const PostCoverImage = styled.img`
     height: 300px;
   }
 `;
-
-const PostTags = styled.div`
-  border-top: 1px solid #d7d7d7;
-  padding-top: 13px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-`;
 // -----------------------------------------------------------------
 
 export default function Post({ data, coverImageSrc, type }) {
+  const auth = useAuth();
+  const getMyProfile = useGetMyProfile(auth.auth);
+
+  // GET AUTHENTICATED USER
+  let authId = "";
+  if (auth.auth) {
+    if (getMyProfile.isFetching) {
+      return <PuffLoader />;
+    }
+    if (!getMyProfile.data || getMyProfile.isError) {
+      return <p>An error occured while loading author...</p>;
+    }
+    authId = getMyProfile.data.data.id;
+  }
+
+  // CHECK IS MYSELF
+  const isMyself = () => {
+    const indexOfUserId = data.author.avatar.lastIndexOf("/");
+    const authorId = data.author.avatar.slice(indexOfUserId + 1);
+    if (authorId !== authId) {
+      return false;
+    }
+    return true;
+  };
+
   return (
     <Content>
       <PreviewTitle className={type === "preview" ? "d-block" : "d-none"}>
@@ -110,9 +124,10 @@ export default function Post({ data, coverImageSrc, type }) {
 
       <PostInfo
         author={data.author}
-        publishedDate="Just now"
+        publishedDate={data.publishDate}
         duration={data.duration}
         type={type}
+        isMyself={isMyself()}
       />
 
       <PostCoverImage src={coverImageSrc} />
@@ -121,12 +136,7 @@ export default function Post({ data, coverImageSrc, type }) {
 
       <PostContent quillContent={data.textEditorContent} />
 
-      <PostTags>
-        {data.tags.map((item, index) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <TagBtn key={index}>{item}</TagBtn>
-        ))}
-      </PostTags>
+      <PostBottom tags={data.tags} type={type} isMyself={isMyself()} />
     </Content>
   );
 }
