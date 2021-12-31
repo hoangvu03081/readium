@@ -40,7 +40,7 @@ export default function PostInfo({
 
   // HANDLE PROFILE
   const handleProfile = () => {
-    history.push(`/profile/${author.displayName}`);
+    history.push(`/profile/${author.profileId}`);
   };
 
   // HANDLE FOLLOW

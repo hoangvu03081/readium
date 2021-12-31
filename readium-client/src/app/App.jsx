@@ -13,6 +13,8 @@ import PreviewPost from "../screens/PreviewPost";
 import EditDraft from "../screens/EditDraft";
 import EditPost from "../screens/EditPost";
 import ReadPost from "../screens/ReadPost";
+import Collection from "../screens/Collection";
+import Notifications from "../screens/Notifications";
 import ResetPassword from "../screens/ResetPassword";
 import Settings from "../screens/Settings";
 import SecureRoute from "../common/components/SecureRoute";
@@ -72,9 +74,12 @@ function App() {
           <SecureRoute path="/profile/:profileId?">
             <Profile />
           </SecureRoute>
-          <Route path="/post">post</Route>
-          <SecureRoute path="/notifications">notifications</SecureRoute>
-          <SecureRoute path="/collections">collections</SecureRoute>
+          <SecureRoute path="/collections">
+            <Collection />
+          </SecureRoute>
+          <SecureRoute path="/notifications">
+            <Notifications />
+          </SecureRoute>
           <Route path="*">
             <Redirect to="/404" />
           </Route>

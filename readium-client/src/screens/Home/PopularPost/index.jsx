@@ -23,6 +23,7 @@ export default function PopularPost() {
     <>
       <PostDesktop
         postId={popularPost.id}
+        profileId={popularPost.author.profileId}
         title={popularPost.title}
         user={popularPost.author.displayName}
         userAvatar={popularPost.author.avatar}
@@ -36,6 +37,7 @@ export default function PopularPost() {
       />
       <PostMobile
         postId={popularPost.id}
+        profileId={popularPost.author.profileId}
         title={popularPost.title}
         user={popularPost.author.displayName}
         userAvatar={popularPost.author.avatar}

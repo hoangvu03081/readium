@@ -44,6 +44,7 @@ export default function PostSuggestion({ postId }) {
               <Card
                 key={item.id}
                 postId={item.id}
+                profileId={item.author.profileId}
                 preview={item.coverImage}
                 title={item.title}
                 content={item.content}

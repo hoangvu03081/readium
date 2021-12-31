@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import axios from "axios";
 import { POST_API } from "./apiConstant";
 
@@ -37,4 +37,8 @@ export function useNumberOfPosts(skip) {
     refetchOnMount: true,
     refetchOnWindowFocus: false,
   });
+}
+
+export function useDeletePost() {
+  return useMutation((postId) => axios.delete(POST_API.DELETE_POST(postId)));
 }

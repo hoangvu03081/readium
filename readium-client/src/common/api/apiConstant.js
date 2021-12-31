@@ -33,10 +33,11 @@ const POST_API = {
   GET_POSTS: (pageParam) => getURL(`/posts/?skip=${pageParam}`),
   GET_A_POST: (id) => getURL(`/posts/${id}`),
   GET_COVER_IMAGE_POST: (id) => getURL(`/posts/${id}/cover-image`),
+  DELETE_POST: (postId) => getURL(`/posts/${postId}`),
 };
 
 const DRAFT_API = {
-  GET_DRAFT_ID: getURL("/drafts"),
+  POST_DRAFT_ID: getURL("/drafts"),
   PUT_TITLE: (id) => getURL(`/drafts/${id}/title`),
   PUT_DESCRIPTION: (id) => getURL(`/drafts/${id}/description`),
   PUT_TAGS: (id) => getURL(`/drafts/${id}/tags`),
