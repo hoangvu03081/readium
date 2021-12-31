@@ -90,7 +90,7 @@ router.get("/follow/:userId", authMiddleware, async (req, res) => {
   return res.send({ is_followed });
 });
 
-router.get("/recommended", authMiddleware, async (req, res) => {
+router.get("/recommended", async (req, res) => {
   /*
     #swagger.tags = ['User']
     #swagger.summary = 'Get recommended writers'
