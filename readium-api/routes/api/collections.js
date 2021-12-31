@@ -2,7 +2,7 @@ const router = require("express").Router();
 
 const Post = require("../../models/Post");
 const Collection = require("../../models/Collection");
-const { authMiddleware } = require("../../utils");
+const { authMiddleware, getPostCoverImageUrl } = require("../../utils");
 
 const checkPostAndCollectionExist = async (req, res, next) => {
   try {
@@ -39,6 +39,40 @@ const checkPostAndCollectionExist = async (req, res, next) => {
     });
   }
 };
+
+router.get("/", authMiddleware, async (req, res) => {
+  /*
+    #swagger.tags = ['Collection']
+    #swagger.summary = 'get all collections of me'
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+  */
+  try {
+    let collections = await Collection.find({
+      user: req.user._id,
+    }).populate("posts", { _id: 1 });
+
+    collections = collections.map((collection) => {
+      collection = collection.toObject();
+      collection.id = collection._id;
+      collection.posts.map((post) => {
+        post.id = post._id;
+        post.coverImage = getPostCoverImageUrl(post.id);
+        delete post._id;
+        return post;
+      });
+      delete collection._id;
+      delete collection.__v;
+      return collection;
+    });
+    return res.send(collections);
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Some errors occurred in get collections" });
+  }
+});
 
 router.post("/", authMiddleware, async (req, res) => {
   /*
@@ -91,32 +125,6 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
-router.delete("/:collectionId", authMiddleware, async (req, res) => {
-  /*
-    #swagger.tags = ['Collection']
-    #swagger.summary = 'Delete a collection'
-    #swagger.security = [{
-      "bearerAuth": []
-    }]
-  */
-  try {
-    const { collectionId } = req.params;
-    let collection = await Collection.findById(collectionId);
-    if (collection.user.toString() !== req.user._id.toString()) {
-      return res
-        .status(400)
-        .send({ message: "You do not own this collection to delete" });
-    }
-
-    collection = await Collection.deleteOne({ _id: collectionId });
-    return res.send(collection);
-  } catch (err) {
-    return res.send({
-      message: "Something went wrong when deleting a collection",
-    });
-  }
-});
-
 router.post(
   "/posts",
   authMiddleware,
@@ -151,7 +159,7 @@ router.post(
 
       collection.posts.push(postId);
       await collection.save();
-      return res.send(collection);
+      return res.send();
     } catch (err) {
       return res
         .status(500)
@@ -159,6 +167,74 @@ router.post(
     }
   }
 );
+
+router.put("/:collectionId/name", authMiddleware, async (req, res) => {
+  /*
+    #swagger.tags = ['Collection']
+    #swagger.summary = 'Edit collection name'
+    #swagger.requestBody = {
+      required: true,
+      content: {
+        "application/json": {
+          schema: {
+            properties: {
+              name: {
+                type: 'string',
+                default: 'collection name',
+              }
+            }
+          }  
+        }
+      }
+    }
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+  */
+  try {
+    const { name } = req.body;
+    const { collectionId } = req.params;
+    if (!name) {
+      return res
+        .status(400)
+        .send({ message: "Please provide name to edit collection's name" });
+    }
+    const collection = await Collection.findById(collectionId);
+    collection.name = name;
+    await collection.save();
+    return res.send();
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "some errors occurred in edit collection name" });
+  }
+});
+
+router.delete("/:collectionId", authMiddleware, async (req, res) => {
+  /*
+    #swagger.tags = ['Collection']
+    #swagger.summary = 'Delete a collection'
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+  */
+  try {
+    const { collectionId } = req.params;
+    let collection = await Collection.findById(collectionId);
+    if (collection.user.toString() !== req.user._id.toString()) {
+      return res
+        .status(400)
+        .send({ message: "You do not own this collection to delete" });
+    }
+
+    collection = await Collection.deleteOne({ _id: collectionId });
+    return res.send(collection);
+  } catch (err) {
+    return res.send({
+      message: "Something went wrong when deleting a collection",
+    });
+  }
+});
 
 router.delete(
   "/posts",
