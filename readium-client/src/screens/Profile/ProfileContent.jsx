@@ -40,7 +40,7 @@ export default function ProfileContent({ id, isMyProfile }) {
         )}
         <div className="container">
           <ProfileInformation data={profile} isMyProfile={isMyProfile} />
-          <ProfilePost id={profile.id} isMyProfile={isMyProfile} />
+          <ProfilePost userId={profile.id} isMyProfile={isMyProfile} />
         </div>
       </ContentLayout>
     );

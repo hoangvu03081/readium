@@ -168,7 +168,6 @@ router.post("/follow/:userId", authMiddleware, async (req, res) => {
   }
 });
 
-// TODO: need test
 router.delete("/", authMiddleware, async (req, res) => {
   /*
     #swagger.tags = ['User']
@@ -180,6 +179,12 @@ router.delete("/", authMiddleware, async (req, res) => {
   try {
     const id = req.user._id.toString();
     const deletedUser = await User.findById(id).populate("liked");
+
+    // xóa hết post của user
+    const posts = await Post.find(
+      { author: id },
+      { likes: 1, comments: 1 }
+    ).populate("likes", { liked: 1 });
 
     const promises = deletedUser.liked.map((post) => {
       const uId = post.likes.findIndex((u) => u.toString() === id);

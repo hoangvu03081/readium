@@ -7,6 +7,10 @@ export default function getURL(endpoint) {
   return isDev ? LOCAL_URL + endpoint : HOST_URL + endpoint;
 }
 
+const SEARCH_API = {
+  POST_SEARCH: getURL("/search"),
+};
+
 const USER_API = {
   GET_AVATAR: (id) => getURL(`/users/profiles/avatar/${id}`),
   GET_MY_AVATAR: getURL(`/users/profiles/avatar/`),
@@ -29,6 +33,7 @@ const SETTING_API = {
 };
 
 const POST_API = {
+  GET_PROFILE_POST: (userId) => getURL(`/posts/user/${userId}`),
   GET_POPULAR_POST: getURL(`/posts/popular`),
   GET_POSTS: (pageParam) => getURL(`/posts/?skip=${pageParam}`),
   GET_A_POST: (id) => getURL(`/posts/${id}`),
@@ -37,6 +42,7 @@ const POST_API = {
 };
 
 const DRAFT_API = {
+  GET_MY_DRAFT: getURL("/drafts"),
   POST_DRAFT_ID: getURL("/drafts"),
   PUT_TITLE: (id) => getURL(`/drafts/${id}/title`),
   PUT_DESCRIPTION: (id) => getURL(`/drafts/${id}/description`),
@@ -66,6 +72,7 @@ export {
   SETTING_API,
   DRAFT_API,
   COMMENT_API,
+  SEARCH_API,
   OTHER_API,
   WEBSOCKET,
 };
