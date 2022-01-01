@@ -201,7 +201,7 @@ const StoryInformation = React.forwardRef(
     // BINDING DATA
     const descriptionRef = useRef(null);
     useEffect(() => {
-      if (data && dataCoverImage) {
+      if (data || dataCoverImage) {
         // title
         ref.current[0].value = data.title;
 
@@ -219,11 +219,13 @@ const StoryInformation = React.forwardRef(
         setTags(tagsData);
 
         // cover image
-        const reader = new FileReader();
-        reader.readAsDataURL(dataCoverImage);
-        reader.onloadend = () => {
-          setCoverImage(reader.result);
-        };
+        if (dataCoverImage) {
+          const reader = new FileReader();
+          reader.readAsDataURL(dataCoverImage);
+          reader.onloadend = () => {
+            setCoverImage(reader.result);
+          };
+        }
       }
     }, []);
 
