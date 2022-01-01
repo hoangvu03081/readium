@@ -38,12 +38,25 @@ const Top = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 60px;
+  @media (max-width: 575px) {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+  }
 `;
 const Title = styled.p`
   font-family: "Raleway";
   font-weight: bold;
   font-size: 36px;
   margin: 0;
+  @media (max-width: 575px) {
+    width: 100%;
+    text-align: center;
+  }
+  @media (max-width: 400px) {
+    font-size: 32px;
+  }
 `;
 const AddCollectionBtn = styled.button`
   font-family: "Raleway";
@@ -66,6 +79,9 @@ const AddCollectionBtn = styled.button`
     background-color: black;
     color: white;
     transition: all 0.25s;
+  }
+  @media (max-width: 575px) {
+    width: 100%;
   }
 `;
 

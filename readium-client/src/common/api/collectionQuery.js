@@ -15,3 +15,9 @@ export function useCreateCollection() {
     axios.post(COLLECTION_API.POST_COLLECTION, { name: collectionName })
   );
 }
+
+export function useAddCollection() {
+  return useMutation(({ postId, collectionName }) =>
+    axios.post(COLLECTION_API.POST_POST_COLLECTION, { postId, collectionName })
+  );
+}

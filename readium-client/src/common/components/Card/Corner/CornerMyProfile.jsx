@@ -3,10 +3,10 @@
 import React, { useState, useRef } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import ModalCollection from "../../ModalCollections";
 import useOutsideClickAlerter from "../../../hooks/useOutsideClickAlerter";
 import { useDeletePost } from "../../../api/postQuery";
 import { ReactComponent as AddCollection } from "../../../../assets/icons/add_collection.svg";
-import { ReactComponent as AddedCollection } from "../../../../assets/icons/added_collection.svg";
 import { ReactComponent as More } from "../../../../assets/icons/more.svg";
 
 const Layout = styled.div`
@@ -92,18 +92,21 @@ const MoreContent = styled.div`
 `;
 
 export default function CornerMyProfile({ postId }) {
-  const [isAdded, setIsAdded] = useState(false);
+  const [modalCollection, setModalCollection] = useState(false);
   const [isMore, setIsMore] = useState(false);
   const moreBtnContainer = useRef(null);
   const deletePost = useDeletePost(postId);
 
   // HANDLE ADD COLLECTION
-  const handleAddCollection = () => {
-    if (isAdded) {
-      setIsAdded(false);
+  const handleModalCollection = () => {
+    if (modalCollection) {
+      setModalCollection(false);
     } else {
-      setIsAdded(true);
+      setModalCollection(true);
     }
+  };
+  const handleCloseModalCollection = () => {
+    setModalCollection(false);
   };
 
   // HANDLE MORE OPTIONS
@@ -131,14 +134,12 @@ export default function CornerMyProfile({ postId }) {
 
   return (
     <Layout>
-      <AddCollection
-        className={isAdded ? "d-none" : "d-block"}
-        onClick={handleAddCollection}
-      />
-
-      <AddedCollection
-        className={isAdded ? "d-block" : "d-none"}
-        onClick={handleAddCollection}
+      <AddCollection onClick={handleModalCollection} />
+      <ModalCollection
+        postId={postId}
+        trigger={modalCollection}
+        handleTrigger={handleModalCollection}
+        handleCloseTrigger={handleCloseModalCollection}
       />
 
       <MoreBtnContainer ref={moreBtnContainer}>

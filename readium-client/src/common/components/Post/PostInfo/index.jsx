@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import Moment from "moment";
 import { useHistory } from "react-router-dom";
+import ModalCollection from "../../ModalCollections";
 import { ReactComponent as AddCollection } from "../../../../assets/icons/add_collection.svg";
-import { ReactComponent as AddedCollection } from "../../../../assets/icons/added_collection.svg";
 import { ReactComponent as Report } from "../../../../assets/icons/report.svg";
 import {
   AdditionLeft,
@@ -20,6 +20,7 @@ import {
 } from "./styles";
 
 export default function PostInfo({
+  postId,
   author,
   publishedDate,
   duration,
@@ -27,15 +28,18 @@ export default function PostInfo({
   isMyself,
 }) {
   const history = useHistory();
-  const [isAdded, setIsAdded] = useState(false);
+  const [modalCollection, setModalCollection] = useState(false);
 
   // HANDLE ADD COLLECTION
-  const handleAddCollection = () => {
-    if (isAdded) {
-      setIsAdded(false);
+  const handleModalCollection = () => {
+    if (modalCollection) {
+      setModalCollection(false);
     } else {
-      setIsAdded(true);
+      setModalCollection(true);
     }
+  };
+  const handleCloseModalCollection = () => {
+    setModalCollection(false);
   };
 
   // HANDLE PROFILE
@@ -83,13 +87,12 @@ export default function PostInfo({
         className={type === "preview" ? "d-none" : "d-block"}
         isMyself={isMyself}
       >
-        <AddCollection
-          className={isAdded ? "d-none" : "d-block"}
-          onClick={handleAddCollection}
-        />
-        <AddedCollection
-          className={isAdded ? "d-block" : "d-none"}
-          onClick={handleAddCollection}
+        <AddCollection onClick={handleModalCollection} />
+        <ModalCollection
+          postId={postId}
+          trigger={modalCollection}
+          handleTrigger={handleModalCollection}
+          handleCloseTrigger={handleCloseModalCollection}
         />
         <Report />
       </Right>
@@ -105,13 +108,12 @@ export default function PostInfo({
           className={type === "preview" ? "d-none" : "d-block"}
           isMyself={isMyself}
         >
-          <AddCollection
-            className={isAdded ? "d-none" : "d-block"}
-            onClick={handleAddCollection}
-          />
-          <AddedCollection
-            className={isAdded ? "d-block" : "d-none"}
-            onClick={handleAddCollection}
+          <AddCollection onClick={handleModalCollection} />
+          <ModalCollection
+            postId={postId}
+            trigger={modalCollection}
+            handleTrigger={handleModalCollection}
+            handleCloseTrigger={handleCloseModalCollection}
           />
           <Report />
         </AdditionRight>
@@ -121,6 +123,7 @@ export default function PostInfo({
 }
 
 PostInfo.propTypes = {
+  postId: PropTypes.string.isRequired,
   author: PropTypes.objectOf(PropTypes.any).isRequired,
   publishedDate: PropTypes.string,
   duration: PropTypes.number.isRequired,
