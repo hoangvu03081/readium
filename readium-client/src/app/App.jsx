@@ -19,6 +19,7 @@ import ResetPassword from "../screens/ResetPassword";
 import Settings from "../screens/Settings";
 import SecureRoute from "../common/components/SecureRoute";
 import "./App.css";
+import SearchPage from "../screens/SearchPage";
 
 function App() {
   return (
@@ -51,6 +52,9 @@ function App() {
         <Switch>
           <Route exact path="/">
             <Home />
+          </Route>
+          <Route path="/search">
+            <SearchPage />
           </Route>
           <SecureRoute path="/write">
             <WritePost />

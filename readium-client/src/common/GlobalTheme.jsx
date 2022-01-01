@@ -1,16 +1,16 @@
 const theme = {
   colors: {
+    information: "#2D76FF",
     header: "#8EB3FB",
     body: "#F7F6F2",
     background: "#FEFBF3",
     text: "#F6F6F6",
     accent: "#E53170",
+    danger: "#F3274B",
     grey: "#636776",
     middleGrey: "#C0C0C0",
     subtleGrey: "#EBEBEB",
     lightGrey: "#D4D4D4",
-    information: "#2D76FF",
-    danger: "#F3274B",
 
     HeaderBackground: "#ffffff",
 
