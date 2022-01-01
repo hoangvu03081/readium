@@ -194,6 +194,7 @@ const StoryInformation = React.forwardRef(
     const { getRootProps, getInputProps, isDragActive, inputRef } = useDropzone(
       {
         onDrop,
+        accept: "image/jpeg, image/jpg, image/png",
       }
     );
     ref.current[3] = inputRef;
