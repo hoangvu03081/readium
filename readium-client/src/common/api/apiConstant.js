@@ -60,6 +60,17 @@ const COMMENT_API = {
   GET_COMMENT: (postId) => getURL(`/posts/${postId}/comments/`),
 };
 
+const COLLECTION_API = {
+  GET_ALL_COLLECTION: getURL(`/users/collections/`),
+  POST_COLLECTION: getURL(`/users/collections/`),
+  POST_POST_COLLECTION: getURL(`/users/collections/posts`),
+  PUT_COLLECTION_NAME: (collectionId) =>
+    getURL(`/users/collections/${collectionId}/name`),
+  DELETE_POST_COLLECTION: getURL(`/users/collections/posts`),
+  DELETE_COLLECTION: (collectionId) =>
+    getURL(`/users/collections/${collectionId}`),
+};
+
 const OTHER_API = {
   GET_TRENDING_TOPICS: getURL(`/topics/trending`),
   GET_RECOMMENDED_WRITERS: getURL(`/users/recommended`),
@@ -72,6 +83,7 @@ export {
   SETTING_API,
   DRAFT_API,
   COMMENT_API,
+  COLLECTION_API,
   SEARCH_API,
   OTHER_API,
   WEBSOCKET,
