@@ -7,8 +7,8 @@ import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 import Interactions from "../../../common/components/Buttons/Interactions";
 import TagBtn from "../../../common/components/Buttons/TagBtn";
+import ModalCollection from "../../../common/components/ModalCollections";
 import { ReactComponent as AddCollectionBtn } from "../../../assets/icons/add_collection.svg";
-import { ReactComponent as AddedCollectionBtn } from "../../../assets/icons/added_collection.svg";
 
 const Card = styled.div`
   width: 100%;
@@ -180,13 +180,16 @@ export default function PostDesktop({
   loveNumber,
   commentNumber,
 }) {
-  const [isAddedCollection, setIsAddedCollection] = useState(false);
-  const handleAddCollection = () => {
-    if (isAddedCollection) {
-      setIsAddedCollection(false);
+  const [modalCollection, setModalCollection] = useState(false);
+  const handleModalCollection = () => {
+    if (modalCollection) {
+      setModalCollection(false);
     } else {
-      setIsAddedCollection(true);
+      setModalCollection(true);
     }
+  };
+  const handleCloseModalCollection = () => {
+    setModalCollection(false);
   };
 
   const history = useHistory();
@@ -230,12 +233,13 @@ export default function PostDesktop({
         </BottomRight>
       </Bottom>
 
-      <ButtonContainer onClick={handleAddCollection}>
-        <AddCollectionBtn
-          className={isAddedCollection ? "d-none" : "d-block"}
-        />
-        <AddedCollectionBtn
-          className={isAddedCollection ? "d-block" : "d-none"}
+      <ButtonContainer>
+        <AddCollectionBtn onClick={handleModalCollection} />
+        <ModalCollection
+          postId={postId}
+          trigger={modalCollection}
+          handleTrigger={handleModalCollection}
+          handleCloseTrigger={handleCloseModalCollection}
         />
       </ButtonContainer>
     </Card>

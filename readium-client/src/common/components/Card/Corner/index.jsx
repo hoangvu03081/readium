@@ -10,13 +10,13 @@ export default function Corner({ type, postId }) {
     return <CornerMyProfile postId={postId} />;
   }
   if (type === "otherProfile") {
-    return <CornerOtherProfile />;
+    return <CornerOtherProfile postId={postId} />;
   }
   if (type === "global") {
-    return <CornerGlobal />;
+    return <CornerGlobal postId={postId} />;
   }
   if (type === "collection") {
-    return <CornerCollection />;
+    return <CornerCollection postId={postId} />;
   }
   return <>Wrong Type</>;
 }
