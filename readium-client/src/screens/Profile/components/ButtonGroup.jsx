@@ -65,7 +65,7 @@ const SortTag = styled.div`
   left: 0;
   top: 18px;
   left: ${(props) => props.left};
-  z-index: 100;
+  z-index: 2;
   pointer-events: none;
 `;
 
