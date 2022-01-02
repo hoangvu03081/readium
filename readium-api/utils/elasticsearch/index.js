@@ -50,6 +50,30 @@ function createPostMapping() {
               },
             },
           },
+          isPublished: {
+            type: "boolean",
+          },
+          author: {
+            type: "keyword",
+          },
+          views: {
+            type: "integer",
+          },
+          likes: {
+            type: "integer",
+          },
+          comments: {
+            type: "integer",
+          },
+          lastEdit: {
+            type: "date",
+          },
+          publishDate: {
+            type: "date",
+          },
+          duration: {
+            type: "integer",
+          },
         },
       },
       settings: {
