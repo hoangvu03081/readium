@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { Redirect } from "react-router-dom";
 import { ContentLayout, CoverImage, Avatar } from "./components/style";
 import ProfileInformation from "./ProfileInformation";
 import ProfilePost from "./ProfilePost";
@@ -10,7 +11,7 @@ import MyCoverImage from "./components/MyCoverImage";
 
 export default function ProfileContent({ id, isMyProfile }) {
   const [
-    { data: profile, isError: profileIsError, error: profileError },
+    { data: profile, isError: profileIsError },
     { data: avatar, isFetched: avatarIsFetched },
     {
       data: coverImage,
@@ -19,7 +20,7 @@ export default function ProfileContent({ id, isMyProfile }) {
     },
   ] = useProfile(id);
 
-  if (profileIsError) return <h1>{profileError}</h1>;
+  if (profileIsError) return <Redirect to="/404" />;
   if (
     profile &&
     (coverImageIsFetched || coverImageIsError) &&

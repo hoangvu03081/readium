@@ -6,10 +6,11 @@ import StyledLink from "../../../common/components/StyledLink";
 const StyledDraftCard = styled.div`
   min-width: 280px;
   height: 162px;
-  width: 85%;
+  width: 100%;
   border: solid 2px ${({ theme }) => theme.colors.lightGrey};
   display: relative;
   padding-left: 33px;
+  margin-bottom: 30px;
 `;
 
 const DraftTitle = styled.span`

@@ -33,7 +33,8 @@ const SETTING_API = {
 };
 
 const POST_API = {
-  GET_PROFILE_POST: (userId) => getURL(`/posts/user/${userId}`),
+  GET_PROFILE_POST: (userId, skip = 0) =>
+    getURL(`/posts/user/${userId}?skip=${skip}`),
   GET_POPULAR_POST: getURL(`/posts/popular`),
   GET_POSTS: (pageParam) => getURL(`/posts/?skip=${pageParam}`),
   GET_A_POST: (id) => getURL(`/posts/${id}`),
@@ -42,7 +43,7 @@ const POST_API = {
 };
 
 const DRAFT_API = {
-  GET_MY_DRAFT: getURL("/drafts"),
+  GET_MY_DRAFT: (skip = 0) => getURL(`/drafts/?skip=${skip}`),
   POST_DRAFT_ID: getURL("/drafts"),
   PUT_TITLE: (id) => getURL(`/drafts/${id}/title`),
   PUT_DESCRIPTION: (id) => getURL(`/drafts/${id}/description`),

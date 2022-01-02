@@ -42,7 +42,7 @@ export default function SearchResult({ data, isLoading }) {
         {data.map((sr) => {
           if (sr.type === "user") return <UserResult user={sr} key={sr._id} />;
           if (sr.type === "post")
-            return <PostResult title={sr.title} url={sr.url} key={sr._id} />;
+            return <PostResult title={sr.title} url={sr.url} key={sr.id} />;
           return null;
         })}
       </StyledSearchResult>
