@@ -2,11 +2,16 @@ import { useMutation, useQuery } from "react-query";
 import axios from "axios";
 import { COLLECTION_API } from "./apiConstant";
 
-export function useGetAllCollections() {
+export function useGetAllCollections(auth) {
   return useQuery(
     "collections",
     () => axios.get(COLLECTION_API.GET_ALL_COLLECTION),
-    { staleTime: 0, refetchOnMount: true, refetchOnWindowFocus: false }
+    {
+      staleTime: 0,
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!auth,
+    }
   );
 }
 

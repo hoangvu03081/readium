@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 const Layout = styled.div`
   &.arrow {
@@ -34,10 +35,14 @@ const Layout = styled.div`
   }
 `;
 
-export default function DownArrow() {
+export default function DownArrow({ length }) {
   return (
-    <Layout className="arrow">
+    <Layout className={length > 4 ? "d-block arrow" : "d-none"}>
       <span />
     </Layout>
   );
 }
+
+DownArrow.propTypes = {
+  length: PropTypes.number.isRequired,
+};

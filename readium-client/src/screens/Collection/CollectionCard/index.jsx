@@ -15,7 +15,8 @@ const Layout = styled.div`
   border: 2px solid black;
   border-radius: 5px;
   @media (max-width: 600px) {
-    width: 100%;
+    width: 270px;
+    padding: 20px;
   }
 `;
 
@@ -62,9 +63,9 @@ const BottomDesktop = styled.div`
   width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
   @media (max-width: 600px) {
     display: none;
   }
@@ -73,23 +74,31 @@ const BottomMobile = styled.div`
   width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
   @media (min-width: 601px) {
     display: none;
   }
 `;
 const Image = styled.img`
   object-fit: cover;
-  width: 70px;
-  height: 70px;
+  width: 75px;
+  height: 75px;
   border-radius: 8px;
+  @media (max-width: 600px) {
+    width: 65px;
+    height: 65px;
+  }
 `;
 const MoreImage = styled.div`
-  width: 70px;
-  height: 70px;
+  width: 75px;
+  height: 75px;
   position: relative;
+  @media (max-width: 600px) {
+    width: 65px;
+    height: 65px;
+  }
 `;
 const Overlay = styled.div`
   width: 100%;
@@ -127,8 +136,8 @@ export default function CollectionCard({ collection }) {
             }
             if (index === 4) {
               return (
-                <MoreImage>
-                  <Image key={index} src={item.coverImage} alt="Cover Image" />
+                <MoreImage key={index}>
+                  <Image src={item.coverImage} alt="Cover Image" />
                   <Overlay>
                     <div />
                     <div />
@@ -156,8 +165,8 @@ export default function CollectionCard({ collection }) {
             }
             if (index === 2) {
               return (
-                <MoreImage>
-                  <Image key={index} src={item.coverImage} alt="Cover Image" />
+                <MoreImage key={index}>
+                  <Image src={item.coverImage} alt="Cover Image" />
                   <Overlay>
                     <div />
                     <div />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import ModalCollection from "../../ModalCollections";
@@ -37,6 +37,7 @@ const Layout = styled.div`
 
 export default function CornerGlobal({ postId }) {
   // HANDLE ADD COLLECTION
+  const modalCollectionRef = useRef(null);
   const [modalCollection, setModalCollection] = useState(false);
   const handleModalCollection = () => {
     if (modalCollection) {
@@ -55,13 +56,14 @@ export default function CornerGlobal({ postId }) {
   };
 
   return (
-    <Layout>
+    <Layout ref={modalCollectionRef}>
       <AddCollection onClick={handleModalCollection} />
       <ModalCollection
         postId={postId}
         trigger={modalCollection}
         handleTrigger={handleModalCollection}
         handleCloseTrigger={handleCloseModalCollection}
+        modalCollectionRef={modalCollectionRef}
       />
       <Dismiss onClick={handleDismiss} />
     </Layout>

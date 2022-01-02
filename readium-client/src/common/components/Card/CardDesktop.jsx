@@ -82,7 +82,17 @@ const Middle = styled.div`
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 5px 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    font-family: "Nunito";
+    font-weight: bold;
+    font-size: 30px;
+    > button {
+      margin-right: 10px;
+    }
   }
 `;
 
