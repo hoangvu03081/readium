@@ -15,6 +15,7 @@ const Layout = styled.div`
   gap: 15px;
   width: 100%;
   padding: 30px;
+  margin-bottom: 40px;
 `;
 
 const Avatar = styled.img`
