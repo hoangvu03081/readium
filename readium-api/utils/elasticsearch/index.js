@@ -184,12 +184,41 @@ function search(text = "", tag = "") {
   });
 }
 
+function getTrendingTopics(dayRange = 1) {
+  return client.search({
+    index: ["post"],
+    body: {
+      size: 0,
+      aggs: {
+        time_range: {
+          date_range: {
+            field: "publishDate",
+            ranges: [
+              {
+                from: `now-${dayRange}d/d`,
+                to: "now",
+              },
+            ],
+          },
+          aggs: {
+            popular_tags: {
+              terms: { field: "tags.keyword" },
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
 function deletePost(id) {
   return client.delete({
     id,
     index: "post",
   });
 }
+
+getTrendingTopics(1).then(data => console.log(data))
 
 function deleteUser(id) {
   return client.delete({
@@ -204,4 +233,5 @@ module.exports = {
   deletePost,
   deleteUser,
   search,
+  getTrendingTopics,
 };
