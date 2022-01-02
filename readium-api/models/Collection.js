@@ -8,7 +8,7 @@ const {
 
 const collectionSchema = new Schema({
   user: { type: ObjectId, required: true },
-  name: { type: String, required: true, default: "Default Collection" },
+  name: { type: String, default: "Default Collection" },
   posts: [{ type: ObjectId, ref: "Post", required: true }],
 });
 

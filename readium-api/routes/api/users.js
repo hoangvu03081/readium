@@ -15,7 +15,6 @@ router.get("/protected", authMiddleware, (req, res) => {
   return res.send({ profileId: req.user.profileId });
 });
 
-//TODO: review
 router.get("/following/posts", authMiddleware, async (req, res) => {
   /*
     #swagger.tags = ['User']
@@ -181,6 +180,8 @@ router.delete("/", authMiddleware, async (req, res) => {
     const deletedUser = await User.findById(id).populate("liked");
 
     // xóa hết post của user
+    // xóa hết notifications của users
+    // xóa hết followings của mấy thằng kia vô user
     const posts = await Post.find(
       { author: id },
       { likes: 1, comments: 1 }

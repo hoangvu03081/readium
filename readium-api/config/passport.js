@@ -1,8 +1,10 @@
 const JwtStrategy = require("passport-jwt").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
+const { ObjectId } = require("mongoose").Types;
 
 const User = require("../models/User");
+const Collection = require("../models/Collection");
 const { serverUrl } = require("./url");
 const {
   downloadImageFromUrl,
@@ -27,8 +29,12 @@ module.exports = function (passport) {
   });
 
   passport.deserializeUser(async function (id, done) {
-    const user = await User.findById(id);
-    return done(null, user);
+    try {
+      const user = await User.findById(id);
+      return done(null, user);
+    } catch (err) {
+      return done(err);
+    }
   });
 
   // JWT strategy
@@ -102,13 +108,19 @@ module.exports = function (passport) {
 
           const profileId = profileIdBase + (count ? "." + count : "");
 
+          const newUserId = new ObjectId();
+          const defaultCollection = new Collection({ user: newUserId });
           const newUser = new User({
+            _id: newUserId,
             avatar: avatar,
             email: profile.emails[0].value,
             displayName: profile.displayName,
             activated: true,
             profileId,
+            collections: [defaultCollection._id],
           });
+
+          await defaultCollection.save();
           await newUser.save();
           const newUserObject = newUser.getElastic();
           await putUser(newUser._id.toString(), newUserObject);
@@ -162,13 +174,19 @@ module.exports = function (passport) {
 
           const profileId = profileIdBase + (count ? "." + count : "");
 
+          const newUserId = new ObjectId();
+          const defaultCollection = new Collection({ user: newUserId });
           const newUser = new User({
+            _id: newUserId,
             avatar: avatar,
             email: profile.emails[0].value,
             displayName: profile.displayName,
             activated: true,
             profileId,
+            collections: [defaultCollection._id],
           });
+
+          await defaultCollection.save();
           await newUser.save();
           const newUserObject = newUser.getElastic();
           await putUser(newUser._id.toString(), newUserObject);
