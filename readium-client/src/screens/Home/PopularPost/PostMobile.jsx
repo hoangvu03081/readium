@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
@@ -146,6 +146,7 @@ export default function PostMobile({
   loveNumber,
   commentNumber,
 }) {
+  const modalCollectionRef = useRef(null);
   const [modalCollection, setModalCollection] = useState(false);
   const handleModalCollection = () => {
     if (modalCollection) {
@@ -195,13 +196,14 @@ export default function PostMobile({
         commentNumber={commentNumber}
       />
 
-      <ButtonContainer>
+      <ButtonContainer ref={modalCollectionRef}>
         <AddCollectionBtn onClick={handleModalCollection} />
         <ModalCollection
           postId={postId}
           trigger={modalCollection}
           handleTrigger={handleModalCollection}
           handleCloseTrigger={handleCloseModalCollection}
+          modalCollectionRef={modalCollectionRef}
         />
       </ButtonContainer>
     </Layout>

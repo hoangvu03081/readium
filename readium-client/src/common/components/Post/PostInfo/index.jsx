@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import PropTypes from "prop-types";
 import Moment from "moment";
 import { useHistory } from "react-router-dom";
@@ -28,6 +28,7 @@ export default function PostInfo({
   isMyself,
 }) {
   const history = useHistory();
+  const modalCollectionRef = useRef(null);
   const [modalCollection, setModalCollection] = useState(false);
 
   // HANDLE ADD COLLECTION
@@ -61,6 +62,53 @@ export default function PostInfo({
     return result === "A few seconds ago" ? "Just now" : result;
   };
 
+  const render = () => {
+    if (window.innerWidth > 550) {
+      return (
+        <Right
+          className={type === "preview" ? "d-none" : "d-block"}
+          isMyself={isMyself}
+          ref={modalCollectionRef}
+        >
+          <AddCollection onClick={handleModalCollection} />
+          <ModalCollection
+            postId={postId}
+            trigger={modalCollection}
+            handleTrigger={handleModalCollection}
+            handleCloseTrigger={handleCloseModalCollection}
+            modalCollectionRef={modalCollectionRef}
+          />
+          <Report />
+        </Right>
+      );
+    }
+    return (
+      <AdditionRow>
+        <AdditionLeft
+          className={type === "preview" || isMyself ? "opacity-0" : "opacity-1"}
+          onClick={handleFollow}
+        >
+          Follow
+        </AdditionLeft>
+        <AdditionRight
+          className={type === "preview" ? "d-none" : "d-block"}
+          isMyself={isMyself}
+          ref={modalCollectionRef}
+        >
+          <AddCollection onClick={handleModalCollection} />
+          <ModalCollection
+            postId={postId}
+            trigger={modalCollection}
+            handleTrigger={handleModalCollection}
+            handleCloseTrigger={handleCloseModalCollection}
+            modalCollectionRef={modalCollectionRef}
+          />
+          <Report />
+        </AdditionRight>
+      </AdditionRow>
+    );
+  };
+
   return (
     <Layout>
       <Left>
@@ -82,48 +130,13 @@ export default function PostInfo({
           Follow
         </FollowBtn>
       </Left>
-
-      <Right
-        className={type === "preview" ? "d-none" : "d-block"}
-        isMyself={isMyself}
-      >
-        <AddCollection onClick={handleModalCollection} />
-        <ModalCollection
-          postId={postId}
-          trigger={modalCollection}
-          handleTrigger={handleModalCollection}
-          handleCloseTrigger={handleCloseModalCollection}
-        />
-        <Report />
-      </Right>
-
-      <AdditionRow>
-        <AdditionLeft
-          className={type === "preview" || isMyself ? "opacity-0" : "opacity-1"}
-          onClick={handleFollow}
-        >
-          Follow
-        </AdditionLeft>
-        <AdditionRight
-          className={type === "preview" ? "d-none" : "d-block"}
-          isMyself={isMyself}
-        >
-          <AddCollection onClick={handleModalCollection} />
-          <ModalCollection
-            postId={postId}
-            trigger={modalCollection}
-            handleTrigger={handleModalCollection}
-            handleCloseTrigger={handleCloseModalCollection}
-          />
-          <Report />
-        </AdditionRight>
-      </AdditionRow>
+      {render()}
     </Layout>
   );
 }
 
 PostInfo.propTypes = {
-  postId: PropTypes.string.isRequired,
+  postId: PropTypes.string,
   author: PropTypes.objectOf(PropTypes.any).isRequired,
   publishedDate: PropTypes.string,
   duration: PropTypes.number.isRequired,
@@ -131,5 +144,6 @@ PostInfo.propTypes = {
   isMyself: PropTypes.bool.isRequired,
 };
 PostInfo.defaultProps = {
+  postId: "",
   publishedDate: "",
 };
