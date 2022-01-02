@@ -89,9 +89,7 @@ router.get("/:id/cover-image", authMiddleware, async (req, res) => {
 
     return res.set("Content-Type", "image/png").send(post.coverImage);
   } catch {
-    return res
-      .status(500)
-      .send({ message: `Error in fetching cover image of post ${_id}` });
+    return res.status(500).send({ message: `Error in fetching cover image` });
   }
 });
 
@@ -129,7 +127,6 @@ const createInitialDraftEditorContent = () => {
   return readable;
 };
 
-// TODO: test grid fs
 router.post("/", authMiddleware, async (req, res) => {
   /*
     #swagger.tags = ['Draft']
@@ -281,6 +278,7 @@ router.patch("/:id/diff", authMiddleware, checkOwnPost, async (req, res) => {
     const duration = Math.ceil(post.content.trim().split(/\s+/).length / 250);
     post.duration = duration;
 
+    post.lastEdit = new Date();
     await post.save();
     return res.send();
   } catch (err) {
@@ -370,6 +368,7 @@ router.patch(
       if (tags) post.tags = tags;
       if (description) post.description = description;
 
+      post.lastEdit = new Date();
       await post.save();
       return res.send();
     } catch (err) {
@@ -422,6 +421,7 @@ router.put(
       }
 
       post.coverImage = req.file.buffer;
+      post.lastEdit = new Date();
       await post.save();
       return res.send();
     } catch (err) {
@@ -467,6 +467,7 @@ router.put("/:id/title", authMiddleware, checkOwnPost, async (req, res) => {
     if (title) post.title = title;
     else post.title = "";
 
+    post.lastEdit = new Date();
     await post.save();
     return res.send();
   } catch (err) {
@@ -515,6 +516,7 @@ router.put("/:id/tags", authMiddleware, checkOwnPost, async (req, res) => {
     if (tags) post.tags = tags;
     else post.tags = [];
 
+    post.lastEdit = new Date();
     await post.save();
     return res.send();
   } catch (err) {
@@ -564,6 +566,7 @@ router.put(
       if (description) post.description = description;
       else post.description = "";
 
+      post.lastEdit = new Date();
       await post.save();
       return res.send();
     } catch (err) {
@@ -597,8 +600,6 @@ router.put("/:id/publish", authMiddleware, checkOwnPost, async (req, res) => {
       });
     }
     const _id = req.params.id;
-    const postObject = post.getElastic();
-    await putPost(_id, postObject);
 
     /// republish post
     if (post.publishedPost) {
@@ -607,10 +608,14 @@ router.put("/:id/publish", authMiddleware, checkOwnPost, async (req, res) => {
       publishedPost.textEditorContent = post.textEditorContent;
       publishedPost.coverImage = post.coverImage;
       publishedPost.content = post.content;
+      publishedPost.lastEdit = post.lastEdit;
       publishedPost.duration = post.duration;
       publishedPost.tags = post.tags;
       publishedPost.description = post.description;
+      publishedPost.summary = post.summary;
       await publishedPost.save();
+      const postObject = publishedPost.getElastic();
+      await putPost(publishedPost._id.toString(), postObject);
       await Post.deleteOne({ _id });
       return res.send();
     }
@@ -619,6 +624,8 @@ router.put("/:id/publish", authMiddleware, checkOwnPost, async (req, res) => {
     /// publish post
     post.publishDate = new Date();
     post.isPublished = true;
+    const postObject = post.getElastic();
+    await putPost(_id, postObject);
     await post.save();
     return res.send();
     /// publish post

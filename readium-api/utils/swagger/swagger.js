@@ -20,6 +20,14 @@ const doc = {
   // produces: ["application/json", "image/png"],
   tags: [
     {
+      name: "Notification",
+      description: "Notifications' related endpoints",
+    },
+    {
+      name: "Topic",
+      description: "Notifications' related endpoints",
+    },
+    {
       name: "Draft",
       description: "Posts' related endpoints",
     },
