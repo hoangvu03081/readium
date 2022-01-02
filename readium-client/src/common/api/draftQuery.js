@@ -1,11 +1,16 @@
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useInfiniteQuery } from "react-query";
 import axios from "axios";
 import Delta from "quill-delta";
 import { DRAFT_API } from "./apiConstant";
 
 export function useGetMyDraft() {
-  return useQuery("drafts", () =>
-    axios.get(DRAFT_API.GET_MY_DRAFT).then(({ data }) => data)
+  return useInfiniteQuery(
+    "drafts",
+    ({ pageParam = 0 }) =>
+      axios.get(DRAFT_API.GET_MY_DRAFT(pageParam)).then(({ data }) => data),
+    {
+      getNextPageParam: (lastPage) => lastPage.next,
+    }
   );
 }
 
@@ -81,6 +86,7 @@ export function useDraft(id, auth) {
       refetchOnMount: true,
       enabled: !!id && !!auth,
       refetchOnWindowFocus: false,
+      retry: 2,
     }
   );
   return [res1, res2];

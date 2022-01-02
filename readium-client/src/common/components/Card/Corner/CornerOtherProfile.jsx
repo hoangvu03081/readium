@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import PropTypes from "prop-types";
+import ModalCollection from "../../ModalCollections";
 import { ReactComponent as AddCollection } from "../../../../assets/icons/add_collection.svg";
-import { ReactComponent as AddedCollection } from "../../../../assets/icons/added_collection.svg";
 
 const Layout = styled.div`
   width: 34px;
@@ -21,27 +22,36 @@ const Layout = styled.div`
   }
 `;
 
-export default function CornerOtherProfile() {
+export default function CornerOtherProfile({ postId }) {
   // HANDLE ADD COLLECTION
-  const [isAdded, setIsAdded] = useState(false);
-  const handleAddCollection = () => {
-    if (isAdded) {
-      setIsAdded(false);
+  const [modalCollection, setModalCollection] = useState(false);
+  const handleModalCollection = () => {
+    if (modalCollection) {
+      setModalCollection(false);
     } else {
-      setIsAdded(true);
+      setModalCollection(true);
     }
+  };
+  const handleCloseModalCollection = () => {
+    setModalCollection(false);
   };
 
   return (
     <Layout>
-      <AddCollection
-        className={isAdded ? "d-none" : "d-block"}
-        onClick={handleAddCollection}
-      />
-      <AddedCollection
-        className={isAdded ? "d-block" : "d-none"}
-        onClick={handleAddCollection}
+      <AddCollection onClick={handleModalCollection} />
+      <ModalCollection
+        postId={postId}
+        trigger={modalCollection}
+        handleTrigger={handleModalCollection}
+        handleCloseTrigger={handleCloseModalCollection}
       />
     </Layout>
   );
 }
+
+CornerOtherProfile.propTypes = {
+  postId: PropTypes.string,
+};
+CornerOtherProfile.defaultProps = {
+  postId: "",
+};

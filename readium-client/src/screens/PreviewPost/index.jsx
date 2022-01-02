@@ -179,8 +179,18 @@ export default function PreviewPost() {
   if (!isFetchedDraft || !isFetchedCoverImage) {
     return <LoadingOverlay isLoading />;
   }
-  if (isErrorDraft || isErrorCoverImage) {
-    return <LoadingOverlay isLoading text="No post found" />;
+  if (
+    isErrorDraft ||
+    !dataDraft.data ||
+    isErrorCoverImage ||
+    !dataCoverImage.data
+  ) {
+    return (
+      <LoadingOverlay
+        isLoading
+        text="Some errors occurred while loading draft..."
+      />
+    );
   }
   const draft = dataDraft.data;
   const coverImageSrc = window.URL.createObjectURL(dataCoverImage.data);

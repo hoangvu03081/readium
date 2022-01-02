@@ -10,9 +10,12 @@ import LoadingOverlay from "../../common/components/LoadingOverlay";
 import BackToTop from "../../common/components/Buttons/BackToTop";
 
 const Layout = styled.div`
-  margin: 140px auto 0 auto;
+  margin: 140px auto 0;
   padding-bottom: 100px;
   width: 60%;
+  @media (min-width: 1440px) {
+    width: 850px;
+  }
   @media (max-width: 1200px) {
     width: 70%;
   }

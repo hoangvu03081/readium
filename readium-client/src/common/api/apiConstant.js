@@ -33,7 +33,8 @@ const SETTING_API = {
 };
 
 const POST_API = {
-  GET_PROFILE_POST: (userId) => getURL(`/posts/user/${userId}`),
+  GET_PROFILE_POST: (userId, skip = 0) =>
+    getURL(`/posts/user/${userId}?skip=${skip}`),
   GET_POPULAR_POST: getURL(`/posts/popular`),
   GET_POSTS: (pageParam) => getURL(`/posts/?skip=${pageParam}`),
   GET_A_POST: (id) => getURL(`/posts/${id}`),
@@ -42,7 +43,7 @@ const POST_API = {
 };
 
 const DRAFT_API = {
-  GET_MY_DRAFT: getURL("/drafts"),
+  GET_MY_DRAFT: (skip = 0) => getURL(`/drafts/?skip=${skip}`),
   POST_DRAFT_ID: getURL("/drafts"),
   PUT_TITLE: (id) => getURL(`/drafts/${id}/title`),
   PUT_DESCRIPTION: (id) => getURL(`/drafts/${id}/description`),
@@ -60,6 +61,17 @@ const COMMENT_API = {
   GET_COMMENT: (postId) => getURL(`/posts/${postId}/comments/`),
 };
 
+const COLLECTION_API = {
+  GET_ALL_COLLECTION: getURL(`/users/collections/`),
+  POST_COLLECTION: getURL(`/users/collections/`),
+  POST_POST_COLLECTION: getURL(`/users/collections/posts`),
+  PUT_COLLECTION_NAME: (collectionId) =>
+    getURL(`/users/collections/${collectionId}/name`),
+  DELETE_POST_COLLECTION: getURL(`/users/collections/posts`),
+  DELETE_COLLECTION: (collectionId) =>
+    getURL(`/users/collections/${collectionId}`),
+};
+
 const OTHER_API = {
   GET_TRENDING_TOPICS: getURL(`/topics/trending`),
   GET_RECOMMENDED_WRITERS: getURL(`/users/recommended`),
@@ -72,6 +84,7 @@ export {
   SETTING_API,
   DRAFT_API,
   COMMENT_API,
+  COLLECTION_API,
   SEARCH_API,
   OTHER_API,
   WEBSOCKET,

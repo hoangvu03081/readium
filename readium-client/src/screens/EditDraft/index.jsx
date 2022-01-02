@@ -24,9 +24,12 @@ export default function EditDraft() {
   if (!isFetchedDraft || !isFetchedCoverImage) {
     return <LoadingOverlay isLoading />;
   }
-  const draft = dataDraft.data;
 
   return (
-    <HandlePost id={id} data={draft} dataCoverImage={dataCoverImage.data} />
+    <HandlePost
+      id={id}
+      data={dataDraft.data}
+      dataCoverImage={dataCoverImage?.data}
+    />
   );
 }
