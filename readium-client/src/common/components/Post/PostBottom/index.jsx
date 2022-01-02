@@ -70,12 +70,11 @@ export default function PostBottom({ postId, tags, type, isMyself }) {
 }
 
 PostBottom.propTypes = {
-  postId: PropTypes.string,
+  postId: PropTypes.string.isRequired,
   tags: PropTypes.arrayOf(PropTypes.string),
   type: PropTypes.string.isRequired,
   isMyself: PropTypes.bool.isRequired,
 };
 PostBottom.defaultProps = {
-  postId: "",
   tags: [],
 };

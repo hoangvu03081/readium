@@ -136,7 +136,7 @@ export default function PostInfo({
 }
 
 PostInfo.propTypes = {
-  postId: PropTypes.string,
+  postId: PropTypes.string.isRequired,
   author: PropTypes.objectOf(PropTypes.any).isRequired,
   publishedDate: PropTypes.string,
   duration: PropTypes.number.isRequired,
@@ -144,6 +144,5 @@ PostInfo.propTypes = {
   isMyself: PropTypes.bool.isRequired,
 };
 PostInfo.defaultProps = {
-  postId: "",
   publishedDate: "",
 };
