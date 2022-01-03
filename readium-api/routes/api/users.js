@@ -179,9 +179,13 @@ router.delete("/", authMiddleware, async (req, res) => {
     const id = req.user._id.toString();
     const deletedUser = await User.findById(id).populate("liked");
 
-    // xóa hết post của user
-    // xóa hết notifications của users
-    // xóa hết followings của mấy thằng kia vô user
+    // delete posts of user
+    // delete likes from user
+    // delete from db users followings field who have ref to this user
+    // delete from db users who followers field who have ref to this user
+    // delete all notifications of this user
+    // delete all comments of this users
+
     const posts = await Post.find(
       { author: id },
       { likes: 1, comments: 1 }
