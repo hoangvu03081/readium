@@ -4,6 +4,7 @@ const Collection = require("../../models/Collection");
 const { deletePost } = require("../elasticsearch");
 
 const removePostDependenciesMongoose = async (post, cb) => {
+  post = await post.populate("likes");
   const id = post._id.toString();
 
   // unref if exist
@@ -49,9 +50,10 @@ const removePostDependenciesMongoose = async (post, cb) => {
     await post.save();
   }
 
-  await deletePost(id);
+  try {
+    await deletePost(id);
+  } catch (err) {}
   await cb(id);
-
   post = await post.getPostPreview();
   return post;
 };

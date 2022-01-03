@@ -1,7 +1,7 @@
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const sender = "par14kour2@gmail.com";
+const sender = "readium.dev@gmail.com";
 
 const sendWelcomeEmail = async ({ to, url }) => {
   const msg = {
@@ -575,7 +575,7 @@ const sendWelcomeEmail = async ({ to, url }) => {
                                             line-height: 20px;
                                           "
                                         >
-                                          John Leo
+                                          Readium
                                         </p>
                                       </div>
                                     </div>

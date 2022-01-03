@@ -107,7 +107,7 @@ router.delete("/:commentId", authMiddleware, async (req, res) => {
     return res.send(await comment.getCommentDetails());
   } catch (err) {
     return res.status(500).send({
-      message: `Something went wrong when deleting comment`,
+      message: "Something went wrong when deleting comment",
     });
   }
 });

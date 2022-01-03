@@ -16,7 +16,7 @@ const getDb = () => db;
 
 let bucket,
   count = 0;
-const init = async () => {
+const init = () => {
   try {
     bucket = new GridFSBucket(getDb());
   } catch (err) {
