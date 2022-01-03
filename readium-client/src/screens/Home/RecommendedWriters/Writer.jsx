@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import FollowBtn from "./FollowBtn";
+import StyledLink from "../../../common/components/StyledLink";
 
 const Card = styled.div`
   width: 100%;
@@ -52,12 +53,16 @@ const Info = styled.div`
   }
 `;
 
-export default function Writer({ name, type, avatar }) {
+export default function Writer({ name, type, avatar, profileId }) {
   return (
     <Card>
-      <img src={avatar} alt="" />
+      <StyledLink to={`/profile/${profileId}`}>
+        <img src={avatar} alt="Avatar" />
+      </StyledLink>
       <Info>
-        <h1>{name}</h1>
+        <h1>
+          <StyledLink to={`/profile/${profileId}`}>{name}</StyledLink>
+        </h1>
         <h2>{type}</h2>
       </Info>
       <FollowBtn />
@@ -69,4 +74,5 @@ Writer.propTypes = {
   name: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   avatar: PropTypes.string.isRequired,
+  profileId: PropTypes.string.isRequired,
 };

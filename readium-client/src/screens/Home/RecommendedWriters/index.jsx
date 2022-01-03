@@ -34,6 +34,7 @@ export default function RecommendedWriters() {
           name={item.displayName}
           type={item.job}
           avatar={item.avatar}
+          profileId={item.profileId}
         />
       ))}
     </Background>

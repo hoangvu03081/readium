@@ -104,6 +104,8 @@ export default function CardMobile({
   commentNumber,
   type,
   isSuggestion,
+  refetchList,
+  collectionId,
 }) {
   const history = useHistory();
   const handleReadPost = () => {
@@ -154,7 +156,11 @@ export default function CardMobile({
       </Bottom>
 
       <CornerContainer>
-        <Corner type={type} />
+        <Corner
+          type={type}
+          collectionId={collectionId}
+          refetchList={refetchList}
+        />
       </CornerContainer>
     </Layout>
   );
@@ -172,7 +178,11 @@ CardMobile.propTypes = {
   commentNumber: PropTypes.number.isRequired,
   type: PropTypes.string.isRequired,
   isSuggestion: PropTypes.bool,
+  refetchList: PropTypes.func,
+  collectionId: PropTypes.string,
 };
 CardMobile.defaultProps = {
   isSuggestion: false,
+  refetchList: () => {},
+  collectionId: "",
 };

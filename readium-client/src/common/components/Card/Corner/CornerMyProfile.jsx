@@ -91,7 +91,7 @@ const MoreContent = styled.div`
   }
 `;
 
-export default function CornerMyProfile({ postId }) {
+export default function CornerMyProfile({ postId, refetchList }) {
   const modalCollectionRef = useRef(null);
   const [modalCollection, setModalCollection] = useState(false);
   const [isMore, setIsMore] = useState(false);
@@ -129,8 +129,12 @@ export default function CornerMyProfile({ postId }) {
 
   // HANDLE DELETE POST
   const handleDeletePost = () => {
-    deletePost.mutate(postId); // done delete
-    // refetch card list on profile here...
+    setIsMore(false);
+    if (!postId) {
+      alert("An error occurred while deleting post.");
+    }
+    deletePost.mutate(postId);
+    refetchList();
   };
 
   return (
@@ -156,8 +160,6 @@ export default function CornerMyProfile({ postId }) {
 }
 
 CornerMyProfile.propTypes = {
-  postId: PropTypes.string,
-};
-CornerMyProfile.defaultProps = {
-  postId: "",
+  postId: PropTypes.string.isRequired,
+  refetchList: PropTypes.func.isRequired,
 };

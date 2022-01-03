@@ -17,6 +17,8 @@ export default function Card({
   commentNumber,
   type,
   isSuggestion,
+  refetchList,
+  collectionId,
 }) {
   return (
     <>
@@ -33,6 +35,8 @@ export default function Card({
         commentNumber={commentNumber}
         type={type}
         isSuggestion={isSuggestion}
+        refetchList={refetchList}
+        collectionId={collectionId}
       />
       <CardMobile
         postId={postId}
@@ -46,6 +50,8 @@ export default function Card({
         commentNumber={commentNumber}
         type={type}
         isSuggestion={isSuggestion}
+        refetchList={refetchList}
+        collectionId={collectionId}
       />
     </>
   );
@@ -65,7 +71,11 @@ Card.propTypes = {
   commentNumber: PropTypes.number.isRequired,
   type: PropTypes.string.isRequired,
   isSuggestion: PropTypes.bool,
+  refetchList: PropTypes.func,
+  collectionId: PropTypes.string,
 };
 Card.defaultProps = {
   isSuggestion: false,
+  refetchList: () => {},
+  collectionId: "",
 };

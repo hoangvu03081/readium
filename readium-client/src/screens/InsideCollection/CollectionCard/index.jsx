@@ -4,7 +4,7 @@ import { usePost } from "../../../common/api/postQuery";
 import Card from "../../../common/components/Card";
 import PuffLoader from "../../../common/components/PuffLoader";
 
-export default function CollectionCard({ post }) {
+export default function CollectionCard({ post, collectionId, refetchList }) {
   const postContent = usePost(post.id);
   const postCoverImage = post.coverImage;
 
@@ -14,7 +14,6 @@ export default function CollectionCard({ post }) {
   if (postContent.isError || !postContent.data) {
     return <div />;
   }
-
   const { data } = postContent.data;
 
   return (
@@ -33,10 +32,14 @@ export default function CollectionCard({ post }) {
       loveNumber={data.likes.length}
       commentNumber={data.comments.length}
       type="collection"
+      refetchList={refetchList}
+      collectionId={collectionId}
     />
   );
 }
 
 CollectionCard.propTypes = {
   post: PropTypes.objectOf(PropTypes.string).isRequired,
+  collectionId: PropTypes.string.isRequired,
+  refetchList: PropTypes.func.isRequired,
 };
