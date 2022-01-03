@@ -18,7 +18,6 @@ const SearchResultLayout = styled.div`
 
 export default function SearchBody({ query }) {
   const { data, isIdle } = useSearch(query);
-  console.log(data);
   return (
     <>
       <h2 className="mb-2">You search for:</h2>
