@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 import StoryInformation from "./StoryInformation";
@@ -10,7 +10,6 @@ import LoadingOverlay from "../LoadingOverlay";
 import { Layout, SubmitBtnContainer, SubmitBtn } from "./styles";
 
 export default function HandlePost({ id, data, dataCoverImage }) {
-  // HANDLE SUBMIT ---------------------------------------------------------------
   const history = useHistory();
   const storyInformationRef = useRef([
     null, // [0] title input
@@ -25,6 +24,22 @@ export default function HandlePost({ id, data, dataCoverImage }) {
   const storyContentRef = useRef([null]);
   const [isLoading, setIsLoading] = useState(false);
 
+  // HANDLE LEAVE SITE
+  useEffect(
+    () => () => {
+      const storyInformationSaved =
+        storyInformationRef.current[4] &&
+        storyInformationRef.current[5] &&
+        storyInformationRef.current[6];
+      const storyContentSaved = storyContentRef.current[0];
+      if (!storyInformationSaved || !storyContentSaved) {
+        alert("Changes you made may not be saved.");
+      }
+    },
+    []
+  );
+
+  // HANDLE SUBMIT ---------------------------------------------------------------
   const checkEmptyTitle = (titleRef, noteTitleRef) => {
     if (titleRef.value === "") {
       titleRef.focus();
@@ -36,7 +51,6 @@ export default function HandlePost({ id, data, dataCoverImage }) {
     }
     return true;
   };
-
   const checkEmptyCoverImage = (
     yourTags,
     coverImageSaved,
@@ -74,7 +88,6 @@ export default function HandlePost({ id, data, dataCoverImage }) {
       storyInformationRef.current[5] &&
       storyInformationRef.current[6] &&
       storyInformationRef.current[7];
-
     const storyContentSaved = storyContentRef.current[0];
 
     if (isNotEmpty) {

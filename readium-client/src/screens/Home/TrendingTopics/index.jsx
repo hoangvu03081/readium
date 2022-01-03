@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { useGetTrendingTopics } from "../../../common/api/otherQuery";
 import PuffLoader from "../../../common/components/PuffLoader";
 import TrendingBtn from "./TrendingBtn";
+import StyledLink from "../../../common/components/StyledLink";
 import CustomBackground from "./CustomBackground";
 
 const Background = styled.div`
@@ -39,14 +40,17 @@ export default function TrendingTopics() {
   if (!getTrendingTopics.data || getTrendingTopics.isError) {
     return <div />;
   }
-  const trendingTopics = getTrendingTopics.data.data;
+  // const trendingTopics = getTrendingTopics.data.data;
+  const trendingTopics = ["#son dep trai"];
 
   return (
     <Background>
       <p>TRENDING TOPICS</p>
       <Content>
         {trendingTopics.map((item, index) => (
-          <TrendingBtn key={index}>{item}</TrendingBtn>
+          <StyledLink key={index} to={`search?q=${encodeURIComponent(item)}`}>
+            <TrendingBtn>{item}</TrendingBtn>
+          </StyledLink>
         ))}
       </Content>
       <CustomBackground />

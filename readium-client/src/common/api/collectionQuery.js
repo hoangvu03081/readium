@@ -22,7 +22,7 @@ export function useCreateCollection() {
 }
 
 export function useAddCollection() {
-  return useMutation(({ postId, collectionName }) =>
-    axios.post(COLLECTION_API.POST_POST_COLLECTION, { postId, collectionName })
+  return useMutation(({ postId, collectionId }) =>
+    axios.post(COLLECTION_API.POST_POST_COLLECTION, { postId, collectionId })
   );
 }

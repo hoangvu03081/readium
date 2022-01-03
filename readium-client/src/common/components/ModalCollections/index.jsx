@@ -86,10 +86,10 @@ export default function ModalCollection({
   }
   const allCollections = getAllCollections.data.data;
 
-  const handleAddCollection = (event) => {
+  const handleAddCollection = (collectionId) => {
     addCollection.mutate({
       postId,
-      collectionName: event.target.innerHTML,
+      collectionId,
     });
     handleTrigger();
   };
@@ -98,7 +98,12 @@ export default function ModalCollection({
     <Layout className={trigger ? "show" : "hide"}>
       <CollectionContainer>
         {allCollections.map((item, index) => (
-          <Collection key={index} onClick={handleAddCollection}>
+          <Collection
+            key={index}
+            onClick={() => {
+              handleAddCollection(item.id);
+            }}
+          >
             {item.name}
           </Collection>
         ))}
