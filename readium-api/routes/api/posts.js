@@ -1,14 +1,15 @@
 const router = require("express").Router();
 
 const Post = require("../../models/Post");
-const Comment = require("../../models/Comment");
-const Collection = require("../../models/Collection");
 const { authMiddleware } = require("../../utils");
 const {
   checkValidSkipAndDate,
   checkOwnPost,
 } = require("../../middleware/posts-middleware");
-const { deletePost } = require("../../utils/elasticsearch");
+const {
+  deletePostMongoose,
+  unpublishPostMongoose,
+} = require("../../utils/posts");
 
 router.get("/popular", async (req, res) => {
   /*
@@ -177,7 +178,7 @@ router.get("/", checkValidSkipAndDate, async (req, res) => {
 router.put("/:id/unpublish", authMiddleware, checkOwnPost, async (req, res) => {
   /*
     #swagger.tags = ['Post']
-    #swagger.summary = 'Endpoint to unpublish the post'
+    #swagger.summary = 'Endpoint to unpublish post'
     #swagger.security = [{
       "bearerAuth": []
     }]
@@ -187,60 +188,7 @@ router.put("/:id/unpublish", authMiddleware, checkOwnPost, async (req, res) => {
       return res.send({
         message: "Post is not published, can not unpublish this post.",
       });
-    let post = await req.post.populate("likes");
-    const id = post._id.toString();
-
-    // unref if exist
-    const draftOfPost = await Post.find({
-      publishedPost: id,
-    });
-    if (draftOfPost.length) {
-      for (let draft of draftOfPost) {
-        draft.publishedPost = undefined;
-        await draft.save();
-      }
-    }
-
-    // remove this post in user liked list
-    for (const user of post.likes) {
-      const pId = user.liked.findIndex((pId) => pId.toString() === id);
-      if (pId !== -1) {
-        user.liked.splice(pId, 1);
-        await user.save();
-      }
-    }
-
-    // remove all comments of this post
-    await Comment.deleteMany({ post: id });
-
-    // remove this post in all collection
-    const collections = await Collection.find({ posts: id });
-    for (const collection of collections) {
-      const pId = collection.posts.findIndex((pId) => pId === id);
-      if (pId !== -1) {
-        collection.posts.splice(pId, 1);
-        await collection.save();
-      }
-    }
-
-    // remove textConnection
-    const posts = await Post.find({ "textConnection.toPost": id });
-    for (const post of posts) {
-      post.textConnection.splice(
-        post.textConnection.findIndex((obj) => obj.toPost.toString() === id),
-        1
-      );
-      await post.save();
-    }
-
-    await deletePost(id);
-
-    post.publishDate = undefined;
-    post.isPublished = false;
-    post.likes = [];
-
-    await post.save();
-    post = await post.getPostPreview();
+    const post = await unpublishPostMongoose(req.post);
     return res.send(post);
   } catch (err) {
     return res
@@ -262,56 +210,7 @@ router.delete("/:id", authMiddleware, checkOwnPost, async (req, res) => {
       return res.send({
         message: "Post is not published, can not delete at this endpoint.",
       });
-    let post = await req.post.populate("likes");
-    const id = post._id.toString();
-
-    // unref if exist
-    const draftOfPost = await Post.find({
-      publishedPost: id,
-    });
-    if (draftOfPost.length) {
-      for (let draft of draftOfPost) {
-        draft.publishedPost = undefined;
-        await draft.save();
-      }
-    }
-
-    // remove this post in user liked list
-    for (const user of post.likes) {
-      const pId = user.liked.findIndex((pId) => pId.toString() === id);
-      if (pId !== -1) {
-        user.liked.splice(pId, 1);
-        await user.save();
-      }
-    }
-
-    // remove all comments of this post
-    await Comment.deleteMany({ post: id });
-
-    // remove this post in all collection
-    const collections = await Collection.find({ posts: id });
-    for (const collection of collections) {
-      const pId = collection.posts.findIndex((pId) => pId === id);
-      if (pId !== -1) {
-        collection.posts.splice(pId, 1);
-        await collection.save();
-      }
-    }
-
-    // remove textConnection
-    const posts = await Post.find({ "textConnection.toPost": id });
-    for (const post of posts) {
-      post.textConnection.splice(
-        post.textConnection.findIndex((obj) => obj.toPost.toString() === id),
-        1
-      );
-      await post.save();
-    }
-
-    await deletePost(id);
-
-    post = await post.getPostPreview();
-    await Post.deleteOne({ _id: id });
+    const post = await deletePostMongoose(req.post);
     return res.send(post);
   } catch (e) {
     res.status(500).send({ message: "Error in deleting post with ID" });

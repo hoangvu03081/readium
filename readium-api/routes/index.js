@@ -13,7 +13,6 @@ const notificationsRoute = require("./api/notifications");
 if (process.env.NODE_ENV === "development")
   router.use("/dev", require("./dev"));
 
-router.use(commentsRoute);
 router.use("/auth", authRoute);
 router.use("/users", usersRoute);
 router.use("/users/profiles", profilesRoute);
@@ -22,5 +21,6 @@ router.use("/posts", postsRoute);
 router.use("/drafts", draftsRoute);
 router.use("/topics", topicsRoute);
 router.use("/notifications", notificationsRoute);
+router.use(commentsRoute);
 
 module.exports = router;

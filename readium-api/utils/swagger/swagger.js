@@ -29,7 +29,7 @@ const doc = {
     },
     {
       name: "Draft",
-      description: "Posts' related endpoints",
+      description: "Drafts' related endpoints",
     },
     {
       name: "Post",

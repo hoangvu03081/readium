@@ -1,7 +1,11 @@
 const router = require("express").Router();
 const Post = require("../../models/Post");
 const User = require("../../models/User");
+const Notification = require("../../models/Notification");
+const Comment = require("../../models/Comment");
+const Collection = require("../../models/Collection");
 const { getPostCoverImageUrl, authMiddleware } = require("../../utils");
+const { deletePostMongoose } = require("../../utils/posts");
 const { deleteUser } = require("../../utils/elasticsearch");
 
 router.get("/protected", authMiddleware, (req, res) => {
@@ -98,7 +102,17 @@ router.get("/recommended", async (req, res) => {
     }]
    */
   try {
-    let users = await User.find().limit(10);
+    const count = await User.countDocuments();
+
+    let random = Math.floor(Math.random() * count),
+      acc = 0;
+
+    while (count - random < 10 && acc >= 1 && count > 10) {
+      acc += 0.1;
+      random = Math.floor((Math.random() - acc) * count);
+    }
+
+    let users = await User.find().skip(random).limit(10);
     users = users.map((user) => user.getPublicProfile());
 
     // #swagger.responses[200] = { description: 'Successfully recommend users' }
@@ -138,13 +152,10 @@ router.post("/follow/:userId", authMiddleware, async (req, res) => {
       return authorId.toString() === userId;
     });
 
-    // if user didn't follow this author -> now following
     if (authorIndex === -1) {
       followings.push(userId);
       user.followers.push(_id);
-    }
-    // if user followed this author -> now unfollowing
-    else {
+    } else {
       followings.splice(authorIndex, 1);
       user.followers.splice(
         user.followers.findIndex(
@@ -177,33 +188,70 @@ router.delete("/", authMiddleware, async (req, res) => {
   */
   try {
     const id = req.user._id.toString();
-    const deletedUser = await User.findById(id).populate("liked");
+    const deletedUser = await User.findById(id);
 
     // delete posts of user
+    let temp = await Post.find({ author: id });
+    for (const post of temp) {
+      await deletePostMongoose(post);
+    }
     // delete likes from user
+    temp = await Post.find({ likes: req.user._id });
+    for (const post of temp) {
+      post.likes.splice(
+        post.likes.findIndex((uId) => uId.toString() === id),
+        1
+      );
+      await post.save();
+    }
+
     // delete from db users followings field who have ref to this user
+    temp = await User.find({ followings: req.user._id });
+    for (const user of temp) {
+      user.followings.splice(
+        user.followings.findIndex((uId) => uId.toString() === id),
+        1
+      );
+      await user.save();
+    }
     // delete from db users who followers field who have ref to this user
-    // delete all notifications of this user
+    temp = await User.find({ followers: req.user._id });
+    for (const user of temp) {
+      user.followers.splice(
+        user.followers.findIndex((uId) => uId.toString() === id),
+        1
+      );
+      await user.save();
+    }
+    // delete all notifications to this user
+    await Notification.deleteMany({ to: req.user._id });
     // delete all comments of this users
+    const comments = await Comment.find({ user: req.user._id }, { _id: 1 });
+    const commentIds = comments.map((comment) => comment._id);
+    temp = await Post.find({ comments: { $in: commentIds } });
+    for (const post of temp) {
+      post.comments.splice(
+        post.comments.findIndex((cId) =>
+          commentIds.some((c) => c.toString() === cId.toString())
+        )
+      );
+      await post.save();
+    }
 
-    const posts = await Post.find(
-      { author: id },
-      { likes: 1, comments: 1 }
-    ).populate("likes", { liked: 1 });
-
-    const promises = deletedUser.liked.map((post) => {
-      const uId = post.likes.findIndex((u) => u.toString() === id);
-      if (uId !== -1) {
-        post.likes.splice(uId, 1);
-        return post.save();
-      }
-    });
-    await Promise.all(promises);
+    await Comment.deleteMany({ user: req.user._id });
+    // delete collections of user
+    await Collection.deleteMany({ user: req.user._id });
+    // delete user
     await User.deleteOne({ _id: id });
-
-    await deleteUser(id);
-
-    return res.send({ message: "Sorry to see you go.", user: deletedUser });
+    try {
+      await deleteUser(id);
+    } catch (err) {}
+    deletedUser.id = deletedUser._id;
+    delete deletedUser._id;
+    return res.send({
+      message: "Sorry to see you go.",
+      user: deletedUser.getPublicProfile(),
+    });
   } catch (err) {
     return res
       .status(500)

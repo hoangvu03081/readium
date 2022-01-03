@@ -10,9 +10,11 @@ const notificationSchema = new Schema({
   to: { type: ObjectId, ref: "User", required: true },
   content: { type: String, required: true },
   url: { type: String, required: true },
-  createdAt: { type: Date, expires: 3 },
-  // test
-  // expires: 3 * 30 * 24 * 60 * 60,
+  createdAt: {
+    type: Date,
+    default: Date.now,
+    expires: 3 * 30 * 24 * 60 * 60 * 1000,
+  },
 });
 
 notificationSchema.methods.toJSON = function () {
