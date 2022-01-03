@@ -5,6 +5,8 @@ services:
     build: ./readium-client
     ports:
       - "80:80"
+    depends_on:
+      - readium-api
   readium-api:
     build:
       context: ./readium-api
