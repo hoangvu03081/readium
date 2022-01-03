@@ -26,3 +26,17 @@ export function useAddCollection() {
     axios.post(COLLECTION_API.POST_POST_COLLECTION, { postId, collectionId })
   );
 }
+
+export function useRenameCollection() {
+  return useMutation(({ collectionId, newName }) =>
+    axios.put(COLLECTION_API.PUT_COLLECTION_NAME(collectionId), {
+      name: newName,
+    })
+  );
+}
+
+export function useDeleteCollection() {
+  return useMutation((collectionId) =>
+    axios.delete(COLLECTION_API.DELETE_COLLECTION(collectionId))
+  );
+}

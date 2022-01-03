@@ -40,8 +40,7 @@ export default function TrendingTopics() {
   if (!getTrendingTopics.data || getTrendingTopics.isError) {
     return <div />;
   }
-  // const trendingTopics = getTrendingTopics.data.data;
-  const trendingTopics = ["#son dep trai"];
+  const trendingTopics = getTrendingTopics.data.data;
 
   return (
     <Background>

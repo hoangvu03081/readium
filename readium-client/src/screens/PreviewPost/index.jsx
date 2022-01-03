@@ -176,15 +176,15 @@ export default function PreviewPost() {
   };
 
   // WAIT FOR DATA
-  if (!isFetchedDraft || !isFetchedCoverImage) {
+  if (
+    !isFetchedDraft ||
+    !isFetchedCoverImage ||
+    !dataDraft.data ||
+    !dataCoverImage
+  ) {
     return <LoadingOverlay isLoading />;
   }
-  if (
-    isErrorDraft ||
-    !dataDraft.data ||
-    isErrorCoverImage ||
-    !dataCoverImage.data
-  ) {
+  if (isErrorDraft || isErrorCoverImage) {
     return (
       <LoadingOverlay
         isLoading

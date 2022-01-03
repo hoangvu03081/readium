@@ -7,6 +7,7 @@ export function usePopularPost() {
     staleTime: 0,
     refetchOnMount: true,
     refetchOnWindowFocus: false,
+    retry: 2,
   });
 }
 

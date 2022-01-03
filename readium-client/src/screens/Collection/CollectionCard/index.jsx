@@ -123,7 +123,12 @@ const Overlay = styled.div`
   }
 `;
 
-export default function CollectionCard({ collection }) {
+export default function CollectionCard({
+  collection,
+  openModalRename,
+  setRenameCollectionId,
+  setDeleteCollectionId,
+}) {
   const renderBottomDesktop = () => {
     if (collection.posts.length !== 0) {
       return (
@@ -187,8 +192,17 @@ export default function CollectionCard({ collection }) {
       <Top>
         <CollectionName>{collection.name}</CollectionName>
         <Buttons>
-          <EditName />
-          <Trash />
+          <EditName
+            onClick={() => {
+              openModalRename();
+              setRenameCollectionId(collection.id);
+            }}
+          />
+          <Trash
+            onClick={() => {
+              setDeleteCollectionId(collection.id);
+            }}
+          />
         </Buttons>
       </Top>
 
@@ -200,4 +214,7 @@ export default function CollectionCard({ collection }) {
 
 CollectionCard.propTypes = {
   collection: PropTypes.objectOf(PropTypes.any).isRequired,
+  openModalRename: PropTypes.func.isRequired,
+  setRenameCollectionId: PropTypes.func.isRequired,
+  setDeleteCollectionId: PropTypes.func.isRequired,
 };

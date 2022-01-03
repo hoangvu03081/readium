@@ -33,7 +33,7 @@ export default function HandlePost({ id, data, dataCoverImage }) {
         storyInformationRef.current[6];
       const storyContentSaved = storyContentRef.current[0];
       if (!storyInformationSaved || !storyContentSaved) {
-        alert("Changes you made may not be saved.");
+        alert("Please wait a second to save your draft.");
       }
     },
     []

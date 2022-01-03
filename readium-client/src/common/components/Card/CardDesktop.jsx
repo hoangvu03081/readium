@@ -89,7 +89,7 @@ const Middle = styled.div`
     font-weight: bold;
     font-size: 30px;
     line-height: 10px;
-    > button {
+    button {
       margin-right: 10px;
     }
   }

@@ -12,11 +12,11 @@ import PuffLoader from "../PuffLoader";
 import DownArrow from "./DownArrow";
 
 const Layout = styled.div`
-  width: 180px;
+  width: 185px;
   height: fit-content;
   position: absolute;
   top: 0;
-  left: -185px;
+  left: -190px;
   z-index: 9;
   &.show {
     opacity: 1;
@@ -30,7 +30,7 @@ const Layout = styled.div`
 `;
 
 const CollectionContainer = styled.div`
-  width: 180px;
+  width: 185px;
   height: auto;
   min-height: 31px;
   max-height: 128px;
