@@ -1,7 +1,5 @@
 import React from "react";
 import Body from "../Home/Body";
-import PopularPost from "../Home/PopularPost";
-import FollowingRecommendedBtn from "../Home/FollowingRecommendedBtn";
 import TrendingTopics from "../Home/TrendingTopics";
 import RecommendedWriters from "../Home/RecommendedWriters";
 import useWs from "../../common/api/websocket";
@@ -13,7 +11,7 @@ export default function SearchPage() {
   return (
     <>
       <Body
-        contentLeft={<SearchBody query={query.q} />}
+        contentLeft={<SearchBody query={query} />}
         contentRight={
           <>
             <TrendingTopics />

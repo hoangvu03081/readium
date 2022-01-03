@@ -218,6 +218,119 @@ function deletePost(id) {
   });
 }
 
+const SortType = {
+  ASCENDING: "asc",
+  DESCENDING: "desc",
+};
+
+const PostSortField = {
+  VIEWS: "views",
+  LIKES: "likes",
+  COMMENTS: "comments",
+  PUBLISH_DATE: "publishDate",
+};
+
+function searchProfilePost(
+  query,
+  authorId,
+  tags,
+  sortType = SortType.DESCENDING,
+  sortField = PostSortField.PUBLISH_DATE,
+  skip = 0
+) {
+  return client.search({
+    index: "post",
+    body: {
+      from: skip,
+      size: 5,
+      sort: [
+        {
+          [sortField]: sortType,
+        },
+      ],
+      query: {
+        bool: {
+          must: [
+            {
+              match: {
+                author: authorId,
+              },
+            },
+            ...(tags && {
+              match: {
+                tags: tags,
+              },
+            }),
+            {
+              match: {
+                isPublished: true,
+              },
+            },
+          ],
+          should: [
+            {
+              match: {
+                title: query,
+              },
+            },
+          ],
+        },
+      },
+    },
+  });
+}
+
+const DraftSortField = {
+  LAST_EDIT: "lastEdit",
+  DURATION: "duration",
+};
+
+function searchProfileDraft(
+  query,
+  authorId,
+  sortType = SortType.DESCENDING,
+  sortField = DraftSortField.LAST_EDIT,
+  skip=0
+) {
+  return client.search({
+    index: "post",
+    body: {
+      from: skip,
+      size: 5,
+      sort: [
+        {
+          [sortField]: sortType,
+        },
+      ],
+      query: {
+        bool: {
+          must: [
+            {
+              match: {
+                author: authorId,
+              },
+            },
+            {
+              match: {
+                isPublished: false,
+              },
+            },
+          ],
+          should: [
+            {
+              match: {
+                title: query,
+              },
+            },
+          ],
+        },
+      },
+    },
+  });
+}
+
+getTrendingTopics(1).then((data) => console.log(data));
+
 function deleteUser(id) {
   return client.delete({
     id,
@@ -232,4 +345,9 @@ module.exports = {
   deleteUser,
   search,
   getTrendingTopics,
+  DraftSortField,
+  PostSortField,
+  SortType,
+  searchProfileDraft,
+  searchProfilePost
 };

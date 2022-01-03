@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import { useDeletePostFromCollection } from "../../../api/collectionQuery";
 import ModalCollection from "../../ModalCollections";
 import { ReactComponent as AddCollection } from "../../../../assets/icons/add_collection.svg";
 import { ReactComponent as Delete } from "../../../../assets/icons/delete.svg";
@@ -34,9 +35,11 @@ const Layout = styled.div`
 `;
 
 export default function CornerCollection({ postId }) {
-  // HANDLE ADD COLLECTION
   const modalCollectionRef = useRef(null);
   const [modalCollection, setModalCollection] = useState(false);
+  // const deletePostFromCollection = useDeletePostFromCollection();
+
+  // HANDLE ADD COLLECTION
   const handleModalCollection = () => {
     if (modalCollection) {
       setModalCollection(false);

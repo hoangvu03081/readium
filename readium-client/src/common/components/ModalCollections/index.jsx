@@ -12,11 +12,11 @@ import PuffLoader from "../PuffLoader";
 import DownArrow from "./DownArrow";
 
 const Layout = styled.div`
-  width: 180px;
+  width: 185px;
   height: fit-content;
   position: absolute;
   top: 0;
-  left: -185px;
+  left: -190px;
   z-index: 9;
   &.show {
     opacity: 1;
@@ -30,7 +30,7 @@ const Layout = styled.div`
 `;
 
 const CollectionContainer = styled.div`
-  width: 180px;
+  width: 185px;
   height: auto;
   min-height: 31px;
   max-height: 128px;
@@ -86,10 +86,10 @@ export default function ModalCollection({
   }
   const allCollections = getAllCollections.data.data;
 
-  const handleAddCollection = (event) => {
+  const handleAddCollection = (collectionId) => {
     addCollection.mutate({
       postId,
-      collectionName: event.target.innerHTML,
+      collectionId,
     });
     handleTrigger();
   };
@@ -98,7 +98,12 @@ export default function ModalCollection({
     <Layout className={trigger ? "show" : "hide"}>
       <CollectionContainer>
         {allCollections.map((item, index) => (
-          <Collection key={index} onClick={handleAddCollection}>
+          <Collection
+            key={index}
+            onClick={() => {
+              handleAddCollection(item.id);
+            }}
+          >
             {item.name}
           </Collection>
         ))}

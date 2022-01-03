@@ -86,7 +86,7 @@ export function useDraft(id, auth) {
       refetchOnMount: true,
       enabled: !!id && !!auth,
       refetchOnWindowFocus: false,
-      retry: 2,
+      retry: 1,
     }
   );
   return [res1, res2];
