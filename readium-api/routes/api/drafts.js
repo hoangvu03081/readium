@@ -428,7 +428,6 @@ router.put("/:id/tags", authMiddleware, checkOwnPost, async (req, res) => {
     await post.save();
     return res.send();
   } catch (err) {
-    console.log(err);
     return res
       .status(500)
       .send({ message: "Something went wrong when updating post's tags" });
