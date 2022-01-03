@@ -11,7 +11,7 @@ export default function SearchPage() {
   return (
     <>
       <Body
-        contentLeft={<SearchBody query={query} />}
+        contentLeft={<SearchBody query={query.q} />}
         contentRight={
           <>
             <TrendingTopics />
