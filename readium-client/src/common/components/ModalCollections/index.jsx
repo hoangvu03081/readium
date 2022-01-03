@@ -1,7 +1,8 @@
 /* eslint-disable react/no-array-index-key */
-import React, { useRef } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import { useAuth } from "../../hooks/useAuth";
 import {
   useAddCollection,
   useGetAllCollections,
@@ -11,11 +12,11 @@ import PuffLoader from "../PuffLoader";
 import DownArrow from "./DownArrow";
 
 const Layout = styled.div`
-  width: 180px;
+  width: 185px;
   height: fit-content;
   position: absolute;
   top: 0;
-  left: -185px;
+  left: -190px;
   z-index: 9;
   &.show {
     opacity: 1;
@@ -29,7 +30,7 @@ const Layout = styled.div`
 `;
 
 const CollectionContainer = styled.div`
-  width: 180px;
+  width: 185px;
   height: auto;
   min-height: 31px;
   max-height: 128px;
@@ -43,12 +44,17 @@ const CollectionContainer = styled.div`
 `;
 
 const Collection = styled.p`
+  width: 100%;
   margin: 0;
   font-family: "Raleway";
   font-weight: bold;
   font-size: 18px;
-
   padding: 5px 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
   transition: all 0.3s;
   &:hover {
     cursor: pointer;
@@ -63,11 +69,12 @@ export default function ModalCollection({
   trigger,
   handleTrigger,
   handleCloseTrigger,
+  modalCollectionRef,
 }) {
-  const modalCollection = useRef(null);
-  const getAllCollections = useGetAllCollections();
+  const { auth } = useAuth();
+  const getAllCollections = useGetAllCollections(auth);
   const addCollection = useAddCollection();
-  useOutsideClickAlerter(modalCollection, () => {
+  useOutsideClickAlerter(modalCollectionRef, () => {
     handleCloseTrigger();
   });
 
@@ -79,24 +86,29 @@ export default function ModalCollection({
   }
   const allCollections = getAllCollections.data.data;
 
-  const handleAddCollection = (event) => {
+  const handleAddCollection = (collectionId) => {
     addCollection.mutate({
       postId,
-      collectionName: event.target.innerHTML,
+      collectionId,
     });
     handleTrigger();
   };
 
   return (
-    <Layout ref={modalCollection} className={trigger ? "show" : "hide"}>
+    <Layout className={trigger ? "show" : "hide"}>
       <CollectionContainer>
         {allCollections.map((item, index) => (
-          <Collection key={index} onClick={handleAddCollection}>
+          <Collection
+            key={index}
+            onClick={() => {
+              handleAddCollection(item.id);
+            }}
+          >
             {item.name}
           </Collection>
         ))}
       </CollectionContainer>
-      <DownArrow className={allCollections.length > 4 ? "d-block" : "d-none"} />
+      <DownArrow length={allCollections.length} />
     </Layout>
   );
 }
@@ -106,4 +118,5 @@ ModalCollection.propTypes = {
   trigger: PropTypes.bool.isRequired,
   handleTrigger: PropTypes.func.isRequired,
   handleCloseTrigger: PropTypes.func.isRequired,
+  modalCollectionRef: PropTypes.oneOfType([PropTypes.any]).isRequired,
 };

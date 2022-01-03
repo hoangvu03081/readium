@@ -1,13 +1,15 @@
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable jsx-a11y/img-redundant-alt */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 import Interactions from "../../../common/components/Buttons/Interactions";
 import TagBtn from "../../../common/components/Buttons/TagBtn";
 import ModalCollection from "../../../common/components/ModalCollections";
+import StyledLink from "../../../common/components/StyledLink";
 import { ReactComponent as AddCollectionBtn } from "../../../assets/icons/add_collection.svg";
 
 const Card = styled.div`
@@ -180,6 +182,7 @@ export default function PostDesktop({
   loveNumber,
   commentNumber,
 }) {
+  const modalCollectionRef = useRef(null);
   const [modalCollection, setModalCollection] = useState(false);
   const handleModalCollection = () => {
     if (modalCollection) {
@@ -208,8 +211,9 @@ export default function PostDesktop({
         <TopLeft className="col-9">
           <p onClick={handleReadPost}>{title}</p>
           {tags.map((item, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <TagBtn key={index}>{item}</TagBtn>
+            <StyledLink key={index} to={`search?q=${encodeURIComponent(item)}`}>
+              <TagBtn>{item}</TagBtn>
+            </StyledLink>
           ))}
         </TopLeft>
         <TopRight className="col-3">
@@ -233,13 +237,14 @@ export default function PostDesktop({
         </BottomRight>
       </Bottom>
 
-      <ButtonContainer>
+      <ButtonContainer ref={modalCollectionRef}>
         <AddCollectionBtn onClick={handleModalCollection} />
         <ModalCollection
           postId={postId}
           trigger={modalCollection}
           handleTrigger={handleModalCollection}
           handleCloseTrigger={handleCloseModalCollection}
+          modalCollectionRef={modalCollectionRef}
         />
       </ButtonContainer>
     </Card>

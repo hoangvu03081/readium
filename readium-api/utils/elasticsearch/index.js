@@ -50,6 +50,30 @@ function createPostMapping() {
               },
             },
           },
+          isPublished: {
+            type: "boolean",
+          },
+          author: {
+            type: "keyword",
+          },
+          views: {
+            type: "integer",
+          },
+          likes: {
+            type: "integer",
+          },
+          comments: {
+            type: "integer",
+          },
+          lastEdit: {
+            type: "date",
+          },
+          publishDate: {
+            type: "date",
+          },
+          duration: {
+            type: "integer",
+          },
         },
       },
       settings: {
@@ -160,12 +184,152 @@ function search(text = "", tag = "") {
   });
 }
 
+function getTrendingTopics(dayRange = 1) {
+  return client.search({
+    index: ["post"],
+    body: {
+      size: 0,
+      aggs: {
+        time_range: {
+          date_range: {
+            field: "publishDate",
+            ranges: [
+              {
+                from: `now-${dayRange}d/d`,
+                to: "now",
+              },
+            ],
+          },
+          aggs: {
+            popular_tags: {
+              terms: { field: "tags.keyword" },
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
 function deletePost(id) {
   return client.delete({
     id,
     index: "post",
   });
 }
+
+const SortType = {
+  ASCENDING: "asc",
+  DESCENDING: "desc",
+};
+
+const PostSortField = {
+  VIEWS: "views",
+  LIKES: "likes",
+  COMMENTS: "comments",
+  PUBLISH_DATE: "publishDate",
+};
+
+function searchProfilePost(
+  query,
+  authorId,
+  tags,
+  sortType = SortType.DESCENDING,
+  sortField = PostSortField.PUBLISH_DATE,
+  skip = 0
+) {
+  return client.search({
+    index: "post",
+    body: {
+      from: skip,
+      size: 5,
+      sort: [
+        {
+          [sortField]: sortType,
+        },
+      ],
+      query: {
+        bool: {
+          must: [
+            {
+              match: {
+                author: authorId,
+              },
+            },
+            ...(tags && {
+              match: {
+                tags: tags,
+              },
+            }),
+            {
+              match: {
+                isPublished: true,
+              },
+            },
+          ],
+          should: [
+            {
+              match: {
+                title: query,
+              },
+            },
+          ],
+        },
+      },
+    },
+  });
+}
+
+const DraftSortField = {
+  LAST_EDIT: "lastEdit",
+  DURATION: "duration",
+};
+
+function searchProfileDraft(
+  query,
+  authorId,
+  sortType = SortType.DESCENDING,
+  sortField = DraftSortField.LAST_EDIT,
+  skip=0
+) {
+  return client.search({
+    index: "post",
+    body: {
+      from: skip,
+      size: 5,
+      sort: [
+        {
+          [sortField]: sortType,
+        },
+      ],
+      query: {
+        bool: {
+          must: [
+            {
+              match: {
+                author: authorId,
+              },
+            },
+            {
+              match: {
+                isPublished: false,
+              },
+            },
+          ],
+          should: [
+            {
+              match: {
+                title: query,
+              },
+            },
+          ],
+        },
+      },
+    },
+  });
+}
+
+getTrendingTopics(1).then((data) => console.log(data));
 
 function deleteUser(id) {
   return client.delete({
@@ -180,4 +344,10 @@ module.exports = {
   deletePost,
   deleteUser,
   search,
+  getTrendingTopics,
+  DraftSortField,
+  PostSortField,
+  SortType,
+  searchProfileDraft,
+  searchProfilePost
 };

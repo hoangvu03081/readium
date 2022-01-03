@@ -12,10 +12,10 @@ router.get("/posts/:postId/comments/", async (req, res) => {
   */
   try {
     const { postId } = req.params;
-    const post = await Post.findById(postId, { comments: 1, isPublished: 1 }).populate(
-      "comments"
-    );
-    console.log(post);
+    const post = await Post.findById(postId, {
+      comments: 1,
+      isPublished: 1,
+    }).populate("comments");
 
     if (!post || !post.isPublished) {
       return res.status(404).send({
@@ -100,10 +100,10 @@ router.delete("/:commentId", authMiddleware, async (req, res) => {
     );
     if (commentIndex !== -1) {
       post.comments.splice(commentIndex, 1);
+      await post.save();
     }
 
     comment = await Comment.deleteOne({ _id: commentId });
-    await post.save();
     return res.send(await comment.getCommentDetails());
   } catch (err) {
     return res.status(500).send({

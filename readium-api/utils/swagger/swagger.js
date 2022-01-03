@@ -20,6 +20,14 @@ const doc = {
   // produces: ["application/json", "image/png"],
   tags: [
     {
+      name: "Notification",
+      description: "Notifications' related endpoints",
+    },
+    {
+      name: "Topic",
+      description: "Notifications' related endpoints",
+    },
+    {
       name: "Draft",
       description: "Posts' related endpoints",
     },
@@ -112,7 +120,7 @@ const doc = {
     },
     PostToCollection: {
       $postId: "post id",
-      $collectionName: "collection name",
+      $collectionId: "collection id",
     },
     Comment: {
       $content: "Comment Content",

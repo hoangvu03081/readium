@@ -5,6 +5,7 @@ const style = require("@dicebear/avatars-initials-sprites");
 const sharp = require("sharp");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
+const { ObjectId } = require("mongoose").Types;
 
 const {
   decrypt,
@@ -19,6 +20,7 @@ const {
   removeAccents,
 } = require("../utils");
 const User = require("../models/User");
+const Collection = require("../models/Collection");
 const { clientUrl } = require("../config/url");
 const { putUser } = require("../utils/elasticsearch");
 
@@ -81,8 +83,10 @@ router.get("/logout", authMiddleware, async (req, res, next) => {
     }]
    */
   const index = req.user.tokens.indexOf(req.headers.authorization);
-  if (index !== -1) req.user.tokens.splice(index, 1);
-  await req.user.save();
+  if (index !== -1) {
+    req.user.tokens.splice(index, 1);
+    await req.user.save();
+  }
 
   res.clearCookie("connect.sid");
   req.logOut();
@@ -167,15 +171,22 @@ router.post("/register", async (req, res) => {
       .png()
       .toBuffer();
 
+    let newUserId = new ObjectId();
+    const defaultCollection = new Collection({ user: newUserId });
     const newUser = new User({
+      _id: newUserId,
       avatar,
       email,
       password,
       profileId,
       displayName,
+      collections: [defaultCollection._id],
     });
 
-    const newUserId = newUser._id.toString();
+    await defaultCollection.save();
+    await newUser.save();
+
+    newUserId = newUserId.toString();
     const [iv, encryptedId] = encrypt(newUserId);
 
     const activationLink = `${clientUrl}/auth/confirm?iv=${iv}&id=${encryptedId}`;

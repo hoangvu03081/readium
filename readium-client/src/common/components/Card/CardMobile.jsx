@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
@@ -5,6 +6,7 @@ import { useHistory } from "react-router-dom";
 import Corner from "./Corner";
 import LoveComment from "../Buttons/LoveComment";
 import TagBtn from "../Buttons/TagBtn";
+import StyledLink from "../StyledLink";
 
 const Layout = styled.div`
   border: 2px solid ${({ theme }) => theme.colors.CardBlack};
@@ -130,8 +132,15 @@ export default function CardMobile({
         <BottomFlexContainer>
           <BottomLeft>
             {tags.map((item, index) => {
-              // eslint-disable-next-line react/no-array-index-key
-              if (index < 2) return <TagBtn key={index}>{item}</TagBtn>;
+              if (index < 2)
+                return (
+                  <StyledLink
+                    key={index}
+                    to={`search?q=${encodeURIComponent(item)}`}
+                  >
+                    <TagBtn>{item}</TagBtn>
+                  </StyledLink>
+                );
               return "";
             })}
           </BottomLeft>
