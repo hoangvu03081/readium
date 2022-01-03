@@ -1,4 +1,3 @@
-const Stream = require("stream");
 const router = require("express").Router();
 const Delta = require("quill-delta");
 const { ObjectId } = require("mongodb");
@@ -620,7 +619,7 @@ router.put("/:id/publish", authMiddleware, checkOwnPost, async (req, res) => {
       return res.send();
     }
     /// republish post
-
+    
     /// publish post
     post.publishDate = new Date();
     post.isPublished = true;

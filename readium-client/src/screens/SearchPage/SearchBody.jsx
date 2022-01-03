@@ -1,8 +1,12 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable react/no-array-index-key */
 import React from "react";
 import styled from "styled-components";
+import PropTypes from "prop-types";
+import { PuffLoader } from "react-spinners";
 import Card from "../../common/components/Card";
 import useSearch from "../../common/api/searchQuery";
-import { PuffLoader } from "react-spinners";
+import Writer from "./Writer";
 
 const SearchResultLayout = styled.div`
   width: 100%;
@@ -20,8 +24,8 @@ export default function SearchBody({ query }) {
       <h1 className="mt-0 mb-5">{query}</h1>
 
       <SearchResultLayout>
-        {data.map((result) => {
-          if (result.type === "post")
+        {data.map((result, index) => {
+          if (result.type === "post") {
             return (
               <Card
                 key={result.id}
@@ -40,6 +44,18 @@ export default function SearchBody({ query }) {
                 type="otherProfile"
               />
             );
+          }
+          if (result.type === "user") {
+            return (
+              <Writer
+                key={index}
+                profileId={result._id}
+                name={result.displayName}
+                job="Student"
+                profileUrl={result.url}
+              />
+            );
+          }
           return null;
         })}
         {isLoading && <PuffLoader />}
@@ -47,3 +63,7 @@ export default function SearchBody({ query }) {
     </>
   );
 }
+
+SearchBody.propTypes = {
+  query: PropTypes.string.isRequired,
+};

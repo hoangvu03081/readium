@@ -50,6 +50,30 @@ function createPostMapping() {
               },
             },
           },
+          isPublished: {
+            type: "boolean",
+          },
+          author: {
+            type: "keyword",
+          },
+          views: {
+            type: "integer",
+          },
+          likes: {
+            type: "integer",
+          },
+          comments: {
+            type: "integer",
+          },
+          lastEdit: {
+            type: "date",
+          },
+          publishDate: {
+            type: "date",
+          },
+          duration: {
+            type: "integer",
+          },
         },
       },
       settings: {
@@ -160,6 +184,33 @@ function search(text = "", tag = "") {
   });
 }
 
+function getTrendingTopics(dayRange = 1) {
+  return client.search({
+    index: ["post"],
+    body: {
+      size: 0,
+      aggs: {
+        time_range: {
+          date_range: {
+            field: "publishDate",
+            ranges: [
+              {
+                from: `now-${dayRange}d/d`,
+                to: "now",
+              },
+            ],
+          },
+          aggs: {
+            popular_tags: {
+              terms: { field: "tags.keyword" },
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
 function deletePost(id) {
   return client.delete({
     id,
@@ -180,4 +231,5 @@ module.exports = {
   deletePost,
   deleteUser,
   search,
+  getTrendingTopics,
 };

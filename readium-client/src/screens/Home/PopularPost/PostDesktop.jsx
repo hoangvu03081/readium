@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/img-redundant-alt */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
@@ -180,6 +180,7 @@ export default function PostDesktop({
   loveNumber,
   commentNumber,
 }) {
+  const modalCollectionRef = useRef(null);
   const [modalCollection, setModalCollection] = useState(false);
   const handleModalCollection = () => {
     if (modalCollection) {
@@ -233,13 +234,14 @@ export default function PostDesktop({
         </BottomRight>
       </Bottom>
 
-      <ButtonContainer>
+      <ButtonContainer ref={modalCollectionRef}>
         <AddCollectionBtn onClick={handleModalCollection} />
         <ModalCollection
           postId={postId}
           trigger={modalCollection}
           handleTrigger={handleModalCollection}
           handleCloseTrigger={handleCloseModalCollection}
+          modalCollectionRef={modalCollectionRef}
         />
       </ButtonContainer>
     </Card>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import PropTypes from "prop-types";
 import TagBtn from "../../Buttons/TagBtn";
 import ModalCollection from "../../ModalCollections";
@@ -10,6 +10,7 @@ import { Layout, Left, Right, RightLeft, RightRight } from "./styles";
 
 export default function PostBottom({ postId, tags, type, isMyself }) {
   const [isLoved, setIsLoved] = useState(false);
+  const modalCollectionRef = useRef(null);
   const [modalCollection, setModalCollection] = useState(false);
 
   // HANDLE ADD COLLECTION
@@ -42,7 +43,7 @@ export default function PostBottom({ postId, tags, type, isMyself }) {
         ))}
       </Left>
       <Right className={type === "preview" ? "d-none w-0" : "d-flex"}>
-        <RightLeft>
+        <RightLeft ref={modalCollectionRef}>
           <Love
             className={isLoved ? "d-none" : "d-block"}
             onClick={handleLovePost}
@@ -57,6 +58,7 @@ export default function PostBottom({ postId, tags, type, isMyself }) {
             trigger={modalCollection}
             handleTrigger={handleModalCollection}
             handleCloseTrigger={handleCloseModalCollection}
+            modalCollectionRef={modalCollectionRef}
           />
         </RightLeft>
         <RightRight className={isMyself ? "d-none" : "d-block"}>

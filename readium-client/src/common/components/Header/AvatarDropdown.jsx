@@ -15,7 +15,6 @@ const StyledAvatarDropdown = styled.nav`
   top: 40px;
   right: -100px;
   width: 240px;
-  height: 293px;
   background-color: white;
   border: 2px solid black;
   display: flex;
@@ -119,21 +118,27 @@ export default function AvatarDropdown({ handleToggleDropdown }) {
       >
         <FiSettings />
       </StyledDropdownItem>
-      <StyledDropdownItem
+      {/* <StyledDropdownItem
         toggleDropdown={handleToggleDropdown}
         to="/help"
         text="Help"
       >
         <BiHelpCircle />
-      </StyledDropdownItem>
-      <StyledDropdownItem
+      </StyledDropdownItem> */}
+      {/* <StyledDropdownItem
         toggleDropdown={handleToggleDropdown}
         to="/draft"
         text="My draft"
       >
         <RiDraftLine />
-      </StyledDropdownItem>
-      <div onClick={signOut} role="button" tabIndex={0} onKeyPress={signOut}>
+      </StyledDropdownItem> */}
+      <div
+        onClick={signOut}
+        role="button"
+        className="mb-3"
+        tabIndex={0}
+        onKeyPress={signOut}
+      >
         <StyledDropdownItem text="Logout" toggleDropdown={() => {}}>
           <AiOutlineLogout />
         </StyledDropdownItem>

@@ -2,12 +2,13 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import Modal from "react-modal";
+import { useAuth } from "../../common/hooks/useAuth";
 import useOutsideClickAlerter from "../../common/hooks/useOutsideClickAlerter";
 import {
   useGetAllCollections,
   useCreateCollection,
 } from "../../common/api/collectionQuery";
-import LoadingOverlay from "../../common/components/LoadingOverlay";
+import PuffLoader from "../../common/components/PuffLoader";
 import CollectionCardList from "./CollectionCardList";
 
 const Layout = styled.div`
@@ -173,7 +174,8 @@ const ModalNote = styled.p`
 Modal.setAppElement("#root");
 
 export default function Collection() {
-  const getAllCollections = useGetAllCollections();
+  const { auth } = useAuth();
+  const getAllCollections = useGetAllCollections(auth);
   const modalContainer = useRef(null);
   const modalInput = useRef(null);
   const [openModal, setOpenModal] = useState(false);
@@ -185,10 +187,10 @@ export default function Collection() {
   });
 
   if (getAllCollections.isFetching) {
-    return <LoadingOverlay isLoading />;
+    return <PuffLoader />;
   }
   if (!getAllCollections.data || getAllCollections.isError) {
-    return <div />;
+    return <PuffLoader />;
   }
 
   const handleCreateCollection = () => {

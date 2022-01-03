@@ -9,7 +9,7 @@ const StyledDraftCard = styled.div`
   width: 100%;
   border: solid 2px ${({ theme }) => theme.colors.lightGrey};
   display: relative;
-  padding-left: 33px;
+  padding-left: 28px;
   margin-bottom: 30px;
 `;
 

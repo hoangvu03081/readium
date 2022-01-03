@@ -115,8 +115,8 @@ function NavContent() {
       />
       <NavItem text="Write story" to="/write" icon={<FiEdit />} />
       <NavItem text="Settings" to="/settings" icon={<RiSettings3Line />} />
-      <NavItem text="Help" to="/help" icon={<BiHelpCircle />} />
-      <NavItem text="My draft" to="/draft" icon={<RiDraftLine />} />
+      {/* <NavItem text="Help" to="/help" icon={<BiHelpCircle />} />
+      <NavItem text="My draft" to="/draft" icon={<RiDraftLine />} /> */}
       <NavItem
         text="Logout"
         to="/"
