@@ -92,6 +92,7 @@ const MoreContent = styled.div`
 `;
 
 export default function CornerMyProfile({ postId }) {
+  const modalCollectionRef = useRef(null);
   const [modalCollection, setModalCollection] = useState(false);
   const [isMore, setIsMore] = useState(false);
   const moreBtnContainer = useRef(null);
@@ -133,13 +134,14 @@ export default function CornerMyProfile({ postId }) {
   };
 
   return (
-    <Layout>
+    <Layout ref={modalCollectionRef}>
       <AddCollection onClick={handleModalCollection} />
       <ModalCollection
         postId={postId}
         trigger={modalCollection}
         handleTrigger={handleModalCollection}
         handleCloseTrigger={handleCloseModalCollection}
+        modalCollectionRef={modalCollectionRef}
       />
 
       <MoreBtnContainer ref={moreBtnContainer}>

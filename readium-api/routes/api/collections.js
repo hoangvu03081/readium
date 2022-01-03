@@ -6,13 +6,13 @@ const { authMiddleware, getPostCoverImageUrl } = require("../../utils");
 
 const checkPostAndCollectionExist = async (req, res, next) => {
   try {
-    const { postId, collectionName } = req.body;
+    const { postId, collectionId } = req.body;
 
     if (!postId) {
       return res.status(400).send({ message: "Missing post id" });
     }
-    if (!collectionName) {
-      return res.status(400).send({ message: "Missing collection's name" });
+    if (!collectionId) {
+      return res.status(400).send({ message: "Missing collection's id" });
     }
 
     const post = await Post.findById(postId);
@@ -20,15 +20,15 @@ const checkPostAndCollectionExist = async (req, res, next) => {
       return res.status(404).send({ message: "Invalid post id" });
     }
 
-    const collection = await Collection.findOne({
-      name: collectionName,
-      user: req.user._id,
-    });
-    if (!collection) {
+    const cId = req.user.collections.find(
+      (cId) => cId.toString() === collectionId
+    );
+    if (!cId) {
       return res
         .status(404)
         .send({ message: "User doesn't have this collection." });
     }
+    const collection = await Collection.findById(cId);
 
     req.post = post;
     req.collection = collection;
@@ -54,16 +54,13 @@ router.get("/", authMiddleware, async (req, res) => {
     }).populate("posts", { _id: 1 });
 
     collections = collections.map((collection) => {
-      collection = collection.toObject();
-      collection.id = collection._id;
+      collection = collection.getCollection();
       collection.posts.map((post) => {
         post.id = post._id;
         post.coverImage = getPostCoverImageUrl(post.id);
         delete post._id;
         return post;
       });
-      delete collection._id;
-      delete collection.__v;
       return collection;
     });
     return res.send(collections);
@@ -117,7 +114,7 @@ router.post("/", authMiddleware, async (req, res) => {
 
     await collection.save();
     await req.user.save();
-    return res.send(collection);
+    return res.send(collection.getCollection());
   } catch (err) {
     return res
       .status(500)
@@ -151,7 +148,7 @@ router.post(
       const { postId } = req.body;
       const { collection } = req;
 
-      if (collection.posts.some((post) => post._id.toString() === postId)) {
+      if (collection.posts.some((pId) => pId.toString() === postId)) {
         return res
           .status(400)
           .send({ message: "Post is already added in the collection" });
@@ -199,7 +196,22 @@ router.put("/:collectionId/name", authMiddleware, async (req, res) => {
         .status(400)
         .send({ message: "Please provide name to edit collection's name" });
     }
+    await req.user.populate("collections", { name: 1 });
+    if (
+      req.user.collections.some(
+        (collection) =>
+          collection._id.toString() !== collectionId && collection.name === name
+      )
+    ) {
+      return res.status(400).send({
+        message:
+          "This name is already used by other collection, please input a new name.",
+      });
+    }
     const collection = await Collection.findById(collectionId);
+    if (collection.name === name) {
+      return res.send();
+    }
     collection.name = name;
     await collection.save();
     return res.send();
@@ -207,32 +219,6 @@ router.put("/:collectionId/name", authMiddleware, async (req, res) => {
     return res
       .status(500)
       .send({ message: "some errors occurred in edit collection name" });
-  }
-});
-
-router.delete("/:collectionId", authMiddleware, async (req, res) => {
-  /*
-    #swagger.tags = ['Collection']
-    #swagger.summary = 'Delete a collection'
-    #swagger.security = [{
-      "bearerAuth": []
-    }]
-  */
-  try {
-    const { collectionId } = req.params;
-    let collection = await Collection.findById(collectionId);
-    if (collection.user.toString() !== req.user._id.toString()) {
-      return res
-        .status(400)
-        .send({ message: "You do not own this collection to delete" });
-    }
-
-    collection = await Collection.deleteOne({ _id: collectionId });
-    return res.send(collection);
-  } catch (err) {
-    return res.send({
-      message: "Something went wrong when deleting a collection",
-    });
   }
 });
 
@@ -263,7 +249,7 @@ router.delete(
       const { collection } = req;
 
       const postIndex = collection.posts.findIndex(
-        (post) => post._id.toString() === postId
+        (pId) => pId.toString() === postId
       );
       if (postIndex === -1) {
         return res
@@ -273,7 +259,7 @@ router.delete(
 
       collection.posts.splice(postIndex, 1);
       await collection.save();
-      return res.send(collection);
+      return res.send();
     } catch (err) {
       return res.status(500).send({
         message: "Something went wrong when delete post from collection",
@@ -281,5 +267,42 @@ router.delete(
     }
   }
 );
+
+router.delete("/:collectionId", authMiddleware, async (req, res) => {
+  /*
+    #swagger.tags = ['Collection']
+    #swagger.summary = 'Delete a collection'
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+  */
+  try {
+    const { collectionId } = req.params;
+    let collection = await Collection.findById(collectionId);
+    if (!collection) {
+      return res.status(404).send({ message: "Collection not found" });
+    }
+    if (collection.user.toString() !== req.user._id.toString()) {
+      return res
+        .status(400)
+        .send({ message: "You do not own this collection to delete" });
+    }
+
+    const cId = req.user.collections.findIndex(
+      (cId) => cId.toString() === collectionId
+    );
+
+    if (cId !== -1) {
+      req.user.collections.splice(cId, 1);
+      await req.user.save();
+    }
+    collection = await Collection.deleteOne({ _id: collectionId });
+    return res.send();
+  } catch (err) {
+    return res.send({
+      message: "Something went wrong when deleting a collection",
+    });
+  }
+});
 
 module.exports = router;

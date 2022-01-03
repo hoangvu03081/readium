@@ -2,11 +2,16 @@ import { useMutation, useQuery } from "react-query";
 import axios from "axios";
 import { COLLECTION_API } from "./apiConstant";
 
-export function useGetAllCollections() {
+export function useGetAllCollections(auth) {
   return useQuery(
     "collections",
     () => axios.get(COLLECTION_API.GET_ALL_COLLECTION),
-    { staleTime: 0, refetchOnMount: true, refetchOnWindowFocus: false }
+    {
+      staleTime: Infinity,
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!auth,
+    }
   );
 }
 
@@ -17,7 +22,30 @@ export function useCreateCollection() {
 }
 
 export function useAddCollection() {
-  return useMutation(({ postId, collectionName }) =>
-    axios.post(COLLECTION_API.POST_POST_COLLECTION, { postId, collectionName })
+  return useMutation(({ postId, collectionId }) =>
+    axios.post(COLLECTION_API.POST_POST_COLLECTION, { postId, collectionId })
+  );
+}
+
+export function useRenameCollection() {
+  return useMutation(({ collectionId, newName }) =>
+    axios.put(COLLECTION_API.PUT_COLLECTION_NAME(collectionId), {
+      name: newName,
+    })
+  );
+}
+
+export function useDeleteCollection() {
+  return useMutation((collectionId) =>
+    axios.delete(COLLECTION_API.DELETE_COLLECTION(collectionId))
+  );
+}
+
+export function useDeletePostFromCollection() {
+  return useMutation((postId, collectionId) =>
+    axios.delete(COLLECTION_API.DELETE_POST_COLLECTION, {
+      postId,
+      collectionId,
+    })
   );
 }

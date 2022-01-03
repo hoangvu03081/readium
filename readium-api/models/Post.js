@@ -1,4 +1,3 @@
-const { ObjectId: mObjectId } = require("mongodb");
 const mongoose = require("mongoose");
 const {
   getAvatarUrl,
@@ -38,6 +37,7 @@ const postSchema = new Schema({
   coverImage: { type: Buffer, required: requiredArr },
   content: { type: String, default: "" },
   publishDate: { type: Date, required: requiredArr },
+  lastEdit: { type: Date, default: Date.now },
   publishedPost: { type: ObjectId, ref: "Post" },
   isPublished: { type: Boolean, default: false },
   views: { type: Number, default: 0 },
@@ -45,7 +45,7 @@ const postSchema = new Schema({
   comments: [{ type: ObjectId, ref: "Comment", required: true }],
   textConnection: [
     {
-      toPost: {
+      toPost: { 
         type: ObjectId,
         ref: "Post",
       },
@@ -69,9 +69,10 @@ postSchema.methods.getElastic = function () {
   const post = this.toObject();
   post.author = post.author.toString();
   if (post.publishDate) post.publishDate = post.publishDate.getTime();
+  if (post.lastEdit) post.lastEdit = post.lastEdit.getTime();
   if (post.publishedPost) post.publishedPost = post.publishedPost.toString();
-  post.likes = post.likes.map((userId) => userId.toString());
-  post.comments = post.comments.map((commentId) => commentId.toString());
+  post.likes = post.likes.length;
+  post.comments = post.comments.length;
   post.textConnection = post.textConnection.map((con) => {
     con.toPost = con.toPost.toString();
     return con;

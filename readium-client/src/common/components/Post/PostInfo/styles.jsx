@@ -69,7 +69,7 @@ export const FollowBtn = styled.button`
   }
 `;
 export const Right = styled.div`
-  width: 80px;
+  width: ${(props) => (props.isMyself ? "35px" : "80px")};
   height: 32px;
   position: relative;
   svg {
@@ -133,7 +133,7 @@ export const AdditionLeft = styled.div`
   }
 `;
 export const AdditionRight = styled.div`
-  width: 80px;
+  width: ${(props) => (props.isMyself ? "35px" : "80px")};
   height: 32px;
   position: relative;
   svg {
@@ -157,9 +157,5 @@ export const AdditionRight = styled.div`
   }
   @media (max-width: 550px) {
     display: block;
-    width: 70px;
-    svg {
-      font-size: 28px;
-    }
   }
 `;

@@ -123,7 +123,7 @@ export default function Post({ data, coverImageSrc, type }) {
       <PostDescription>{data.description}</PostDescription>
 
       <PostInfo
-        postId={data.postId}
+        postId={data.id}
         author={data.author}
         publishedDate={data.publishDate}
         duration={data.duration}
@@ -138,7 +138,7 @@ export default function Post({ data, coverImageSrc, type }) {
       <PostContent quillContent={data.textEditorContent} />
 
       <PostBottom
-        postId={data.postId}
+        postId={data.id}
         tags={data.tags}
         type={type}
         isMyself={isMyself()}

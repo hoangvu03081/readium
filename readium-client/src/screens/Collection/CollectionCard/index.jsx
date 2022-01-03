@@ -4,6 +4,7 @@
 import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import StyledLink from "../../../common/components/StyledLink";
 import { ReactComponent as EditName } from "../../../assets/icons/edit_name.svg";
 import { ReactComponent as Trash } from "../../../assets/icons/trash.svg";
 
@@ -15,7 +16,8 @@ const Layout = styled.div`
   border: 2px solid black;
   border-radius: 5px;
   @media (max-width: 600px) {
-    width: 100%;
+    width: 270px;
+    padding: 20px;
   }
 `;
 
@@ -34,6 +36,9 @@ const CollectionName = styled.p`
   font-family: "Raleway";
   font-weight: bold;
   font-size: 24px;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 const Buttons = styled.div`
   width: 71px;
@@ -62,9 +67,9 @@ const BottomDesktop = styled.div`
   width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
   @media (max-width: 600px) {
     display: none;
   }
@@ -73,23 +78,36 @@ const BottomMobile = styled.div`
   width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
   @media (min-width: 601px) {
     display: none;
   }
 `;
 const Image = styled.img`
   object-fit: cover;
-  width: 70px;
-  height: 70px;
+  width: 75px;
+  height: 75px;
   border-radius: 8px;
+  transition: all 0.2s;
+  &:hover {
+    opacity: 0.8;
+    transition: all 0.2s;
+  }
+  @media (max-width: 600px) {
+    width: 65px;
+    height: 65px;
+  }
 `;
 const MoreImage = styled.div`
-  width: 70px;
-  height: 70px;
+  width: 75px;
+  height: 75px;
   position: relative;
+  @media (max-width: 600px) {
+    width: 65px;
+    height: 65px;
+  }
 `;
 const Overlay = styled.div`
   width: 100%;
@@ -114,7 +132,12 @@ const Overlay = styled.div`
   }
 `;
 
-export default function CollectionCard({ collection }) {
+export default function CollectionCard({
+  collection,
+  openModalRename,
+  setRenameCollectionId,
+  setDeleteCollectionId,
+}) {
   const renderBottomDesktop = () => {
     if (collection.posts.length !== 0) {
       return (
@@ -122,19 +145,23 @@ export default function CollectionCard({ collection }) {
           {collection.posts.map((item, index) => {
             if (index < 4) {
               return (
-                <Image key={index} src={item.coverImage} alt="Cover Image" />
+                <StyledLink key={index} to={`/post/${item.id}`}>
+                  <Image src={item.coverImage} alt="Cover Image" />
+                </StyledLink>
               );
             }
             if (index === 4) {
               return (
-                <MoreImage>
-                  <Image key={index} src={item.coverImage} alt="Cover Image" />
-                  <Overlay>
-                    <div />
-                    <div />
-                    <div />
-                  </Overlay>
-                </MoreImage>
+                <StyledLink key={index} to={`/collection/${collection.id}`}>
+                  <MoreImage>
+                    <Image src={item.coverImage} alt="Cover Image" />
+                    <Overlay>
+                      <div />
+                      <div />
+                      <div />
+                    </Overlay>
+                  </MoreImage>
+                </StyledLink>
               );
             }
           })}
@@ -151,19 +178,23 @@ export default function CollectionCard({ collection }) {
           {collection.posts.map((item, index) => {
             if (index < 2) {
               return (
-                <Image key={index} src={item.coverImage} alt="Cover Image" />
+                <StyledLink key={index} to={`/post/${item.id}`}>
+                  <Image src={item.coverImage} alt="Cover Image" />
+                </StyledLink>
               );
             }
             if (index === 2) {
               return (
-                <MoreImage>
-                  <Image key={index} src={item.coverImage} alt="Cover Image" />
-                  <Overlay>
-                    <div />
-                    <div />
-                    <div />
-                  </Overlay>
-                </MoreImage>
+                <StyledLink key={index} to={`/collection/${collection.id}`}>
+                  <MoreImage>
+                    <Image src={item.coverImage} alt="Cover Image" />
+                    <Overlay>
+                      <div />
+                      <div />
+                      <div />
+                    </Overlay>
+                  </MoreImage>
+                </StyledLink>
               );
             }
           })}
@@ -176,10 +207,24 @@ export default function CollectionCard({ collection }) {
   return (
     <Layout>
       <Top>
-        <CollectionName>{collection.name}</CollectionName>
+        <CollectionName>
+          <StyledLink to={`/collection/${collection.id}`}>
+            {collection.name}
+          </StyledLink>
+        </CollectionName>
+
         <Buttons>
-          <EditName />
-          <Trash />
+          <EditName
+            onClick={() => {
+              openModalRename();
+              setRenameCollectionId(collection.id);
+            }}
+          />
+          <Trash
+            onClick={() => {
+              setDeleteCollectionId(collection.id);
+            }}
+          />
         </Buttons>
       </Top>
 
@@ -191,4 +236,7 @@ export default function CollectionCard({ collection }) {
 
 CollectionCard.propTypes = {
   collection: PropTypes.objectOf(PropTypes.any).isRequired,
+  openModalRename: PropTypes.func.isRequired,
+  setRenameCollectionId: PropTypes.func.isRequired,
+  setDeleteCollectionId: PropTypes.func.isRequired,
 };
