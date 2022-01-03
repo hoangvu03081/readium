@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
 import { AiOutlineFieldTime, AiOutlineRead } from "react-icons/ai";
 import StyledLink from "../../../common/components/StyledLink";
@@ -27,7 +27,15 @@ const DraftDescription = styled.div`
   align-items: center;
 `;
 
-export default function DraftCard({ id, title = "", duration = 0 }) {
+function getLastEdit(lastEdit) {
+  const editDate = Date.parse(lastEdit);
+  const nowDate = Date.now();
+  const dif = nowDate - editDate;
+  return Math.floor(dif / (1000 * 3600 * 24));
+}
+
+export default function DraftCard({ id, title = "", duration = 0, lastEdit }) {
+  const lastEditDay = useMemo(() => getLastEdit(lastEdit), [lastEdit]);
   return (
     <StyledDraftCard>
       <StyledLink to={`/edit/draft/${id}`}>
@@ -35,7 +43,7 @@ export default function DraftCard({ id, title = "", duration = 0 }) {
       </StyledLink>
       <DraftDescription>
         <AiOutlineFieldTime size={26} className="me-2" />
-        Last edited: 4 days ago
+        Last edited: {lastEditDay} days ago
       </DraftDescription>
       <DraftDescription>
         <AiOutlineRead size={26} className="me-2 mt-2" />
