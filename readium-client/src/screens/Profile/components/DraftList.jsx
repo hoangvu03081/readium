@@ -24,12 +24,13 @@ export default function DraftList() {
       <DraftListLayout>
         {data.pages.map((group, i) => (
           <React.Fragment key={i}>
-            {group.drafts.map(({ id, title, duration }) => (
+            {group.drafts.map(({ id, title, duration, lastEdit }) => (
               <DraftCard
                 id={id}
                 title={title === "" ? "Untitled" : title}
                 duration={duration}
                 key={id}
+                lastEdit={lastEdit}
               />
             ))}
           </React.Fragment>

@@ -31,6 +31,9 @@ export default function InsideCollection() {
   const { collectionId } = useParams();
   const { auth } = useAuth();
   const getAllCollections = useGetAllCollections(auth);
+  const refetchList = () => {
+    getAllCollections.refetch();
+  };
 
   if (getAllCollections.isFetching) {
     return <PuffLoader />;
@@ -52,7 +55,12 @@ export default function InsideCollection() {
             );
           }
           return collection.posts.map((post) => (
-            <CollectionCard key={post.id} post={post} />
+            <CollectionCard
+              key={post.id}
+              post={post}
+              collectionId={collection.id}
+              refetchList={refetchList}
+            />
           ));
         }
         return null;

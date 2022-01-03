@@ -1,4 +1,6 @@
+/* eslint-disable react/no-array-index-key */
 import React from "react";
+import PropTypes from "prop-types";
 import { PuffLoader } from "react-spinners";
 import styled from "styled-components";
 import { useGetProfilePost } from "../../../common/api/postQuery";
@@ -13,10 +15,15 @@ const PostListLayout = styled.div`
 `;
 
 export default function PostList({ userId }) {
-  const { data, error, fetchNextPage, isFetchingNextPage } =
+  const { data, error, fetchNextPage, isFetchingNextPage, refetch } =
     useGetProfilePost(userId);
   useScrollBottomDetect(fetchNextPage, 100);
   if (error) return <></>;
+  const refetchList = () => {
+    setTimeout(() => {
+      refetch();
+    }, 500);
+  };
   if (data)
     return (
       <PostListLayout>
@@ -37,7 +44,8 @@ export default function PostList({ userId }) {
                 userAvatar={post.author.avatar}
                 loveNumber={post.likes}
                 commentNumber={post.comments}
-                type="otherProfile"
+                type="myProfile"
+                refetchList={refetchList}
               />
             ))}
           </React.Fragment>
@@ -47,3 +55,7 @@ export default function PostList({ userId }) {
     );
   return <PuffLoader />;
 }
+
+PostList.propTypes = {
+  userId: PropTypes.string.isRequired,
+};

@@ -46,6 +46,15 @@ router.get("/comments", async (req, res) => {
   return res.send(comments);
 });
 
+router.get("/notifications", async (req, res) => {
+  /*
+    #swagger.tags = ['Dev']
+    #swagger.summary = "Get all notifications"
+  */
+  const notifications = await Notification.find();
+  return res.send(notifications);
+});
+
 router.delete("/users", async (req, res) => {
   /*
     #swagger.tags = ['Dev']
@@ -84,9 +93,11 @@ router.delete("/", async (req, res) => {
         return await Post.deleteOne({ _id });
       })
     );
+    await Comment.deleteMany();
+    await Notification.deleteMany();
+    await Collection.deleteMany();
     return res.send();
   } catch (err) {
-    console.log(err);
     return res.status(500).send();
   }
 });

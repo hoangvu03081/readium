@@ -91,6 +91,18 @@ module.exports = function (app, wss) {
           }
         } else {
           req.user.liked.splice(isLikedIndex, 1);
+          const notifications = await Notification.find({
+            content: `${req.user.displayName} liked ${post.title}`,
+          });
+          for (const notification of notifications) {
+            post.author.notifications.splice(
+              post.author.notifications.findIndex(
+                (nId) => nId.toString() === notification._id
+              ),
+              1
+            );
+            await post.author.save();
+          }
           await Notification.deleteMany({
             content: `${req.user.displayName} liked ${post.title}`,
           });
@@ -104,7 +116,6 @@ module.exports = function (app, wss) {
         await post.save();
         return res.send({ likes: post.likes.length });
       } catch (err) {
-        console.log(err);
         return res.status(500).send({ message: "Error in like post" });
       }
     });

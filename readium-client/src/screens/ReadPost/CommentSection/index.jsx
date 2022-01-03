@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import PropTypes from "prop-types";
+import Moment from "moment";
 import TextareaAutosize from "react-textarea-autosize";
 import { useAuth } from "../../../common/hooks/useAuth";
 import {
@@ -53,6 +54,14 @@ export default function CommentSection({ postId }) {
     }, 1000);
   };
 
+  const capitalizeFirstLetter = (string) =>
+    string.charAt(0).toUpperCase() + string.slice(1);
+  const formatPublishedDate = (timeStamp) => {
+    const dateTime = new Moment(timeStamp);
+    const result = capitalizeFirstLetter(dateTime.fromNow());
+    return result === "A few seconds ago" ? "Just now" : result;
+  };
+
   return (
     <Layout id="comment_section">
       <Title>
@@ -86,7 +95,7 @@ export default function CommentSection({ postId }) {
               <ReadRight>
                 <Info>
                   <Name>{item.user.displayName}</Name>
-                  <Time>Just now</Time>
+                  <Time>{formatPublishedDate(item.timestamp)}</Time>
                 </Info>
                 <Content>{item.content}</Content>
               </ReadRight>

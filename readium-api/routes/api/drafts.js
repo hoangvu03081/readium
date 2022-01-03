@@ -287,97 +287,6 @@ router.patch("/:id/diff", authMiddleware, checkOwnPost, async (req, res) => {
   }
 });
 
-router.patch(
-  "/:id",
-  authMiddleware,
-  uploadCover.single("coverImage"),
-  checkOwnPost,
-  async (req, res) => {
-    /*
-        #swagger.tags = ['Draft']
-        #swagger.summary = 'Update a draft'
-        #swagger.requestBody = {
-          required: true,
-          content: {
-            "multipart/form-data": {
-              schema: {
-                type: 'object',
-                properties: {
-                  coverImage: {
-                    type: 'file',
-                  },
-                  title: {
-                    type: 'string',
-                    example: "Post Title",
-                  },
-                  diff: {
-                    $ref: '#/definitions/TextEditorContent',
-                  },
-                  tags: {
-                    type: 'array',
-                    items: {
-                      type: 'string'
-                    },
-                    example: ['tag 1', 'tag 2']
-                  },
-                  description: {
-                    type: 'string',
-                    example: 'Post description',
-                  }
-                }
-              }
-            }
-          }
-        }
-        #swagger.security = [{
-          "bearerAuth": []
-        }]
-      */
-    try {
-      const { post } = req;
-
-      if (post.isPublished) {
-        return res.status(400).send({ message: "Can not edit published post" });
-      }
-
-      const {
-        title,
-        tags,
-        description,
-        diff = JSON.stringify({ ops: [] }),
-      } = req.body;
-
-      const diffContent = JSON.parse(diff);
-      const diffDelta = new Delta(diffContent);
-      const composedDelta = diffDelta.compose(
-        JSON.parse(post.textEditorContent)
-      );
-      post.textEditorContent = JSON.stringify(composedDelta);
-
-      post.content = composedDelta
-        .filter((op) => typeof op.insert === "string")
-        .map((op) => op.insert)
-        .join("");
-
-      const duration = Math.ceil(post.content.trim().split(/\s+/).length / 250);
-      post.duration = duration;
-
-      if (req.file) post.coverImage = req.file.buffer;
-      if (title) post.title = title;
-      if (tags) post.tags = tags;
-      if (description) post.description = description;
-
-      post.lastEdit = new Date();
-      await post.save();
-      return res.send();
-    } catch (err) {
-      return res
-        .status(500)
-        .send({ message: "Something went wrong when updating a post" });
-    }
-  }
-);
-
 router.put(
   "/:id/cover-image",
   authMiddleware,
@@ -495,7 +404,7 @@ router.put("/:id/tags", authMiddleware, checkOwnPost, async (req, res) => {
                   items: {
                     type: 'string'
                   },
-                  example: ['tag 1', 'tag 2']
+                  example: ['#tag1', '#tag2']
                 },
               }
             }
@@ -579,7 +488,7 @@ router.put(
 router.put("/:id/publish", authMiddleware, checkOwnPost, async (req, res) => {
   /*
     #swagger.tags = ['Draft']
-    #swagger.summary = 'Endpoint to publish the draft'
+    #swagger.summary = 'Endpoint to publish draft'
     #swagger.security = [{
       "bearerAuth": []
     }]
@@ -598,6 +507,16 @@ router.put("/:id/publish", authMiddleware, checkOwnPost, async (req, res) => {
         message: "Please provide a cover image for the post before publishing",
       });
     }
+
+    if (post.isPublished) {
+      return res
+        .status(400)
+        .send({
+          message:
+            "Post is already published. Please provide a draft to this endpoint.",
+        });
+    }
+
     const _id = req.params.id;
 
     /// republish post
@@ -619,7 +538,7 @@ router.put("/:id/publish", authMiddleware, checkOwnPost, async (req, res) => {
       return res.send();
     }
     /// republish post
-    
+
     /// publish post
     post.publishDate = new Date();
     post.isPublished = true;

@@ -22,7 +22,6 @@ router.get("/trending", async (req, res) => {
 
     return res.send(tags);
   } catch (err) {
-    console.log(err);
     return res.send({ message: "Some errors occurred in get trending topics" });
   }
 });

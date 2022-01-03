@@ -6,7 +6,6 @@ import debounce from "lodash.debounce";
 import TextareaAutosize from "react-textarea-autosize";
 import { WithContext as ReactTags } from "react-tag-input";
 import { useDropzone } from "react-dropzone";
-import Resizer from "react-image-file-resizer";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import {
   useTitleDraft,
@@ -167,27 +166,16 @@ const StoryInformation = React.forwardRef(
       (acceptedFiles) => {
         ref.current[3].classList.remove("d-block");
         ref.current[3].classList.add("d-none");
-        Resizer.imageFileResizer(
-          acceptedFiles[0],
-          2048,
-          2048,
-          "PNG",
-          100,
-          0,
-          (file) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-              setCoverImage(reader.result);
-            };
-            reader.readAsDataURL(file);
-            const coverImageDraft = new FormData();
-            coverImageDraft.append("coverImage", file);
-            resCoverImageDraft.mutate(coverImageDraft);
-            setCoverImageSaved(true);
-            ref.current[7] = coverImageSaved;
-          },
-          "file"
-        );
+        const reader = new FileReader();
+        reader.onload = () => {
+          setCoverImage(reader.result);
+        };
+        reader.readAsDataURL(acceptedFiles[0]);
+        const coverImageDraft = new FormData();
+        coverImageDraft.append("coverImage", acceptedFiles[0]);
+        resCoverImageDraft.mutate(coverImageDraft);
+        setCoverImageSaved(true);
+        ref.current[7] = coverImageSaved;
       },
       [id]
     );
