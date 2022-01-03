@@ -34,10 +34,14 @@ const Layout = styled.div`
   }
 `;
 
-export default function CornerCollection({ postId }) {
+export default function CornerCollection({
+  postId,
+  collectionId,
+  refetchList,
+}) {
   const modalCollectionRef = useRef(null);
   const [modalCollection, setModalCollection] = useState(false);
-  // const deletePostFromCollection = useDeletePostFromCollection();
+  const deletePostFromCollection = useDeletePostFromCollection();
 
   // HANDLE ADD COLLECTION
   const handleModalCollection = () => {
@@ -53,7 +57,13 @@ export default function CornerCollection({ postId }) {
 
   // HANDLE DELETE
   const handleDelete = () => {
-    // do something
+    if (!postId || !collectionId) {
+      alert("An error occurred while deleting post from collection.");
+    }
+    deletePostFromCollection.mutate({ postId, collectionId });
+    setTimeout(() => {
+      refetchList();
+    }, 500);
   };
 
   return (
@@ -73,6 +83,8 @@ export default function CornerCollection({ postId }) {
 
 CornerCollection.propTypes = {
   postId: PropTypes.string,
+  collectionId: PropTypes.string.isRequired,
+  refetchList: PropTypes.func.isRequired,
 };
 CornerCollection.defaultProps = {
   postId: "",

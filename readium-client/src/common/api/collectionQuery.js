@@ -42,10 +42,12 @@ export function useDeleteCollection() {
 }
 
 export function useDeletePostFromCollection() {
-  return useMutation((postId, collectionId) =>
+  return useMutation(({ postId, collectionId }) =>
     axios.delete(COLLECTION_API.DELETE_POST_COLLECTION, {
-      postId,
-      collectionId,
+      data: {
+        postId,
+        collectionId,
+      },
     })
   );
 }

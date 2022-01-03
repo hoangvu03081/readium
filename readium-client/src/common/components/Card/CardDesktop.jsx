@@ -215,6 +215,8 @@ export default function CardDesktop({
   commentNumber,
   type,
   isSuggestion,
+  refetchList,
+  collectionId,
 }) {
   const history = useHistory();
   const handleReadPost = () => {
@@ -257,7 +259,12 @@ export default function CardDesktop({
       </Right>
 
       <CornerContainer>
-        <Corner type={type} postId={postId} />
+        <Corner
+          type={type}
+          postId={postId}
+          collectionId={collectionId}
+          refetchList={refetchList}
+        />
       </CornerContainer>
 
       <LoveCommentContainer>
@@ -280,7 +287,11 @@ CardDesktop.propTypes = {
   commentNumber: PropTypes.number.isRequired,
   type: PropTypes.string.isRequired,
   isSuggestion: PropTypes.bool,
+  refetchList: PropTypes.func,
+  collectionId: PropTypes.string,
 };
 CardDesktop.defaultProps = {
   isSuggestion: false,
+  refetchList: () => {},
+  collectionId: "",
 };
