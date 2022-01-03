@@ -7,7 +7,7 @@ import CornerCollection from "./CornerCollection";
 
 export default function Corner({ type, postId, collectionId, refetchList }) {
   if (type === "myProfile") {
-    return <CornerMyProfile postId={postId} />;
+    return <CornerMyProfile postId={postId} refetchList={refetchList} />;
   }
   if (type === "otherProfile") {
     return <CornerOtherProfile postId={postId} />;

@@ -59,6 +59,7 @@ export default function CornerCollection({
   const handleDelete = () => {
     if (!postId || !collectionId) {
       alert("An error occurred while deleting post from collection.");
+      return;
     }
     deletePostFromCollection.mutate({ postId, collectionId });
     setTimeout(() => {
