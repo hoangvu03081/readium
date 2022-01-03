@@ -8,6 +8,7 @@ import { useHistory } from "react-router-dom";
 import TagBtn from "../Buttons/TagBtn";
 import Corner from "./Corner";
 import LoveComment from "../Buttons/LoveComment";
+import StyledLink from "../StyledLink";
 
 const Card = styled.div`
   border: 2px solid ${({ theme }) => theme.colors.CardBlack};
@@ -79,9 +80,6 @@ const Middle = styled.div`
     color: ${({ theme }) => theme.colors.CardContent};
   }
   > div {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -90,7 +88,8 @@ const Middle = styled.div`
     font-family: "Nunito";
     font-weight: bold;
     font-size: 30px;
-    > button {
+    line-height: 10px;
+    button {
       margin-right: 10px;
     }
   }
@@ -243,7 +242,9 @@ export default function CardDesktop({
         <div>
           {tags.map((item, index) => (
             // eslint-disable-next-line react/no-array-index-key
-            <TagBtn key={index}>{item}</TagBtn>
+            <StyledLink key={index} to={`search?q=${encodeURIComponent(item)}`}>
+              <TagBtn>{item}</TagBtn>
+            </StyledLink>
           ))}
         </div>
       </Middle>

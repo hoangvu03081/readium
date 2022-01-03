@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 import React, { useState, useRef } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
@@ -5,6 +6,7 @@ import { useHistory } from "react-router-dom";
 import Interactions from "../../../common/components/Buttons/Interactions";
 import TagBtn from "../../../common/components/Buttons/TagBtn";
 import ModalCollection from "../../../common/components/ModalCollections";
+import StyledLink from "../../../common/components/StyledLink";
 import { ReactComponent as AddCollectionBtn } from "../../../assets/icons/add_collection.svg";
 
 const Layout = styled.div`
@@ -184,8 +186,9 @@ export default function PostMobile({
       <PostTags>
         <div>
           {tags.map((item, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <TagBtn key={index}>{item}</TagBtn>
+            <StyledLink key={index} to={`search?q=${encodeURIComponent(item)}`}>
+              <TagBtn>{item}</TagBtn>
+            </StyledLink>
           ))}
         </div>
       </PostTags>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useHistory, useParams } from "react-router-dom";
-import { usePost } from "../../common/api/postQuery";
+import { usePostAndCoverImage } from "../../common/api/postQuery";
 import Post from "../../common/components/Post";
 import ToCommentBtn from "./ToCommentBtn";
 import PostSuggestion from "./PostSuggestion";
@@ -52,7 +52,7 @@ export default function ReadPost() {
       isError: isErrorCoverImage,
       remove: removeCoverImage,
     },
-  ] = usePost(id);
+  ] = usePostAndCoverImage(id);
 
   // COMPONENT UNMOUNT => CLEAR CACHE
   useEffect(

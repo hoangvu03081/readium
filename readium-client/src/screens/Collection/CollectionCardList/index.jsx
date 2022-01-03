@@ -6,11 +6,22 @@ import CollectionCard from "../CollectionCard";
 
 const Layout = styled.div``;
 
-export default function CollectionCardList({ data }) {
+export default function CollectionCardList({
+  data,
+  openModalRename,
+  setRenameCollectionId,
+  setDeleteCollectionId,
+}) {
   return (
     <Layout>
       {data.map((item, index) => (
-        <CollectionCard key={index} collection={item} />
+        <CollectionCard
+          key={index}
+          collection={item}
+          openModalRename={openModalRename}
+          setRenameCollectionId={setRenameCollectionId}
+          setDeleteCollectionId={setDeleteCollectionId}
+        />
       ))}
     </Layout>
   );
@@ -18,4 +29,7 @@ export default function CollectionCardList({ data }) {
 
 CollectionCardList.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  openModalRename: PropTypes.func.isRequired,
+  setRenameCollectionId: PropTypes.func.isRequired,
+  setDeleteCollectionId: PropTypes.func.isRequired,
 };

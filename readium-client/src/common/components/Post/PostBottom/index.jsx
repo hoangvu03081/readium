@@ -1,7 +1,9 @@
+/* eslint-disable react/no-array-index-key */
 import React, { useState, useRef } from "react";
 import PropTypes from "prop-types";
 import TagBtn from "../../Buttons/TagBtn";
 import ModalCollection from "../../ModalCollections";
+import StyledLink from "../../StyledLink";
 import { ReactComponent as Love } from "../../../../assets/icons/love.svg";
 import { ReactComponent as Loved } from "../../../../assets/icons/loved.svg";
 import { ReactComponent as AddCollection } from "../../../../assets/icons/add_collection.svg";
@@ -38,8 +40,9 @@ export default function PostBottom({ postId, tags, type, isMyself }) {
     <Layout>
       <Left className={type === "preview" ? "w-100" : ""}>
         {tags.map((item, index) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <TagBtn key={index}>{item}</TagBtn>
+          <StyledLink key={index} to={`search?q=${encodeURIComponent(item)}`}>
+            <TagBtn>{item}</TagBtn>
+          </StyledLink>
         ))}
       </Left>
       <Right className={type === "preview" ? "d-none w-0" : "d-flex"}>
