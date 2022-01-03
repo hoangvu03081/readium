@@ -1,23 +1,28 @@
 version: '3.0'
 
 services:
+  server:
+    build: ./readium-client
+    ports:
+      - "80:80"
   readium-api:
     build:
       context: ./readium-api
       args:
-        - NODE_ENV=development
+        - NODE_ENV=production
         - PORT=5000
-    command: bash -c "rm -rf /usr/local/app/node_modules/* &&  pm2-dev index.js"
-    ports:
-      - "5000:5000"
+    command: bash -c "rm -rf /usr/local/app/node_modules/* &&  pm2-runtime index.js"
+    env_file:
+      - ./secret.env
     environment:
       - MONGO_USERNAME=readium-oniichan
       - MONGO_PASSWORD=11410197100105117109451111101051059910497110
       - MONGO_HOSTNAME=readium-db
       - MONGO_DATABASE_NAME=readium
-      - MONGO_PORT=27017
+      - MONGO_PORT=27017    
+      - CLIENT_URL=http://localhost
+      - SERVER_URL=http://localhost/api
     volumes:
-      - ./readium-api/:/usr/local/app/
       - exclude:/usr/local/app/node_modules/
     depends_on:
       - readium-db
@@ -26,57 +31,35 @@ services:
   
   readium-db:
     image: mongo
-    ports:
-      - "27017:27017"
     environment:
     - MONGO_INITDB_ROOT_USERNAME=readium-oniichan
     - MONGO_INITDB_ROOT_PASSWORD=11410197100105117109451111101051059910497110
     - MONGO_INITDB_DATABASE=readium
 
   readium-rabbit:
-    image: rabbitmq:3.9.9-management
-    ports:
-      - "15672:15672"
-      - "5672:5672"
+    image: rabbitmq:3.9.9
 
   readium-ai-service:
     build:
       context: ./readium-ai-service
       args:
         - PORT=4000
-    ports:
-      - "4000:4000"
-    # command: ["-m", "flask", "run","--host=0.0.0.0","--port=4000"]
     environment:
       - MONGO_USERNAME=readium-oniichan
       - MONGO_PASSWORD=11410197100105117109451111101051059910497110
       - MONGO_HOSTNAME=readium-db
       - MONGO_DATABASE_NAME=readium
       - MONGO_PORT=27017
-      - FLASK_DEBUG=1
-      - FLASK_APP=app
-    volumes:
-      - ./readium-ai-service:/app
 
   elasticsearch:
     image: elasticsearch:7.14.2
     volumes:
       - elasticsearch:/usr/share/elasticsearch/data
-    ports:
-      - "9200:9200"
-      - "9300:9300"
     environment:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
       discovery.type: single-node
     depends_on:
       - readium-rabbit
-
-  kibana:
-    image: kibana:7.14.2
-    ports:
-      - "5601:5601"
-    depends_on:
-      - elasticsearch
 
 volumes:
   exclude:

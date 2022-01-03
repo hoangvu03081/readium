@@ -1,4 +1,4 @@
-FROM node
+FROM node:17
 
 ARG PORT=5000
 ENV PORT ${PORT}

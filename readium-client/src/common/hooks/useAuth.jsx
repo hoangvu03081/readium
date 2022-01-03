@@ -9,7 +9,7 @@ import Loading from "../components/Loading";
 
 const isDev = process.env.NODE_ENV === "development";
 const LOCAL_URL = "http://localhost:5000";
-const HOST_URL = "";
+const HOST_URL = "http://localhost/api";
 
 function getURL(endpoint) {
   return isDev ? LOCAL_URL + endpoint : HOST_URL + endpoint;
@@ -23,6 +23,7 @@ const FACEBOOK_API = getURL("/auth/facebook");
 const GOOGLE_API = getURL("/auth/google");
 const FORGET_API = getURL("/auth/forget");
 const RESET_API = (iv, id) => `${getURL("/auth/reset")}?iv=${iv}&id=${id}`;
+const CHECK_AUTHENTICATED = getURL("/users/protected");
 
 const authContext = createContext();
 
@@ -66,7 +67,7 @@ function useProvideAuth() {
       authenticateWs(token);
     }
     axios
-      .get(`${LOCAL_URL}/users/protected`, {
+      .get(CHECK_AUTHENTICATED, {
         headers: { "Cache-Control": "no-cache" },
       })
       .then(({ data: authResult }) => setAuth(authResult))

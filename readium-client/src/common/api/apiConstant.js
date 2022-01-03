@@ -1,7 +1,7 @@
 const isDev = process.env.NODE_ENV === "development";
 const LOCAL_URL = "http://localhost:5000";
-const HOST_URL = "";
-const WEBSOCKET = "ws://localhost:5000";
+const HOST_URL = "http://localhost/api";
+const WEBSOCKET = "ws://localhost/api";
 
 export default function getURL(endpoint) {
   return isDev ? LOCAL_URL + endpoint : HOST_URL + endpoint;
