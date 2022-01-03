@@ -46,7 +46,7 @@ export default function InsideCollection() {
         if (collection.id === collectionId) {
           if (collection.posts.length === 0) {
             return (
-              <p key="emptyCollection" className="text-center">
+              <p key="emptyCollection" style={{ textAlign: "center" }}>
                 This collection is empty.
               </p>
             );

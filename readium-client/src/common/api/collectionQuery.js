@@ -40,3 +40,12 @@ export function useDeleteCollection() {
     axios.delete(COLLECTION_API.DELETE_COLLECTION(collectionId))
   );
 }
+
+export function useDeletePostFromCollection() {
+  return useMutation((postId, collectionId) =>
+    axios.delete(COLLECTION_API.DELETE_POST_COLLECTION, {
+      postId,
+      collectionId,
+    })
+  );
+}

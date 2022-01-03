@@ -68,6 +68,9 @@ export default function Collection() {
       getAllCollections.refetch();
     }, 500);
   };
+  useEffect(() => {
+    getAllCollections.refetch();
+  }, []);
 
   // HANDLE DELETE COLLECTION
   useEffect(() => {
