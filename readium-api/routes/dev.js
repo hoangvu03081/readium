@@ -37,6 +37,15 @@ router.get("/posts", async (req, res) => {
   return res.send(posts);
 });
 
+router.get("/comments", async (req, res) => {
+  /*
+    #swagger.tags = ['Dev']
+    #swagger.summary = "Get all comments"
+  */
+  const comments = await Comment.find();
+  return res.send(comments);
+});
+
 router.delete("/users", async (req, res) => {
   /*
     #swagger.tags = ['Dev']

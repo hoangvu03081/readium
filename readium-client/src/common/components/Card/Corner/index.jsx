@@ -5,22 +5,26 @@ import CornerOtherProfile from "./CornerOtherProfile";
 import CornerGlobal from "./CornerGlobal";
 import CornerCollection from "./CornerCollection";
 
-export default function Corner({ type }) {
+export default function Corner({ type, postId }) {
   if (type === "myProfile") {
-    return <CornerMyProfile />;
+    return <CornerMyProfile postId={postId} />;
   }
   if (type === "otherProfile") {
-    return <CornerOtherProfile />;
+    return <CornerOtherProfile postId={postId} />;
   }
   if (type === "global") {
-    return <CornerGlobal />;
+    return <CornerGlobal postId={postId} />;
   }
   if (type === "collection") {
-    return <CornerCollection />;
+    return <CornerCollection postId={postId} />;
   }
   return <>Wrong Type</>;
 }
 
 Corner.propTypes = {
   type: PropTypes.string.isRequired,
+  postId: PropTypes.string,
+};
+Corner.defaultProps = {
+  postId: "",
 };

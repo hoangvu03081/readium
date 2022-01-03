@@ -22,7 +22,7 @@ const checkOwnPost = async (req, res, next) => {
   }
 };
 
-const checkValidSkipAndDate = async (req, res, next) => {
+const checkValidSkipAndDate = (req, res, next) => {
   let { date = new Date().toString(), skip = "0" } = req.query;
   skip = +skip;
   date = new Date(date);

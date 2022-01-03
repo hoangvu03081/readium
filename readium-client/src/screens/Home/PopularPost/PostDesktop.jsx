@@ -7,12 +7,11 @@ import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 import Interactions from "../../../common/components/Buttons/Interactions";
 import TagBtn from "../../../common/components/Buttons/TagBtn";
+import ModalCollection from "../../../common/components/ModalCollections";
 import { ReactComponent as AddCollectionBtn } from "../../../assets/icons/add_collection.svg";
-import { ReactComponent as AddedCollectionBtn } from "../../../assets/icons/added_collection.svg";
 
 const Card = styled.div`
   width: 100%;
-  margin-bottom: 50px;
   padding: 30px;
   border: 2px solid ${({ theme }) => theme.colors.PopularPostBlack};
   border-radius: 6px;
@@ -169,6 +168,7 @@ const ButtonContainer = styled.div`
 
 export default function PostDesktop({
   postId,
+  profileId,
   title,
   user,
   userAvatar,
@@ -180,13 +180,16 @@ export default function PostDesktop({
   loveNumber,
   commentNumber,
 }) {
-  const [isAddedCollection, setIsAddedCollection] = useState(false);
-  const handleAddCollection = () => {
-    if (isAddedCollection) {
-      setIsAddedCollection(false);
+  const [modalCollection, setModalCollection] = useState(false);
+  const handleModalCollection = () => {
+    if (modalCollection) {
+      setModalCollection(false);
     } else {
-      setIsAddedCollection(true);
+      setModalCollection(true);
     }
+  };
+  const handleCloseModalCollection = () => {
+    setModalCollection(false);
   };
 
   const history = useHistory();
@@ -196,7 +199,7 @@ export default function PostDesktop({
   const handleProfile = () => {
     // const indexOfUserId = userAvatar.lastIndexOf("/");
     // const userId = userAvatar.slice(indexOfUserId + 1);
-    history.push(`/profile/${user}`);
+    history.push(`/profile/${profileId}`);
   };
 
   return (
@@ -230,12 +233,13 @@ export default function PostDesktop({
         </BottomRight>
       </Bottom>
 
-      <ButtonContainer onClick={handleAddCollection}>
-        <AddCollectionBtn
-          className={isAddedCollection ? "d-none" : "d-block"}
-        />
-        <AddedCollectionBtn
-          className={isAddedCollection ? "d-block" : "d-none"}
+      <ButtonContainer>
+        <AddCollectionBtn onClick={handleModalCollection} />
+        <ModalCollection
+          postId={postId}
+          trigger={modalCollection}
+          handleTrigger={handleModalCollection}
+          handleCloseTrigger={handleCloseModalCollection}
         />
       </ButtonContainer>
     </Card>
@@ -244,6 +248,7 @@ export default function PostDesktop({
 
 PostDesktop.propTypes = {
   postId: PropTypes.string.isRequired,
+  profileId: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   user: PropTypes.string.isRequired,
   userAvatar: PropTypes.string.isRequired,

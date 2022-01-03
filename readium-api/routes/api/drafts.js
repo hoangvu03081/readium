@@ -636,4 +636,29 @@ router.put("/:id/publish", authMiddleware, checkOwnPost, async (req, res) => {
   }
 });
 
+router.delete("/:id", authMiddleware, checkOwnPost, async (req, res) => {
+  /*
+    #swagger.tags = ['Draft']
+    #swagger.summary = 'Endpoint to delete a draft'
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+  */
+  try {
+    if (req.post.isPublished)
+      return res.send({
+        message:
+          "Post is already published, this endpoint can only delete draft.",
+      });
+
+    const bucket = getBucket();
+    await bucket.delete(req.post.textEditorContent);
+    return res.send();
+  } catch (err) {
+    return res.send({
+      message: "Something went wrong while deleting the draft",
+    });
+  }
+});
+
 module.exports = router;

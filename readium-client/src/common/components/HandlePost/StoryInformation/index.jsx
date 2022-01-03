@@ -102,6 +102,12 @@ const StoryInformation = React.forwardRef(
       }, 2000),
       [id]
     );
+    const handleFormatTags = (tag) => {
+      if (tag.text.indexOf("#") === 0) {
+        return tag;
+      }
+      return { id: `#${tag.id}`, text: `#${tag.text}` };
+    };
     const handleTagsChange = (newTags) => {
       if (newTags.length === 5) {
         setTagsValidation(false);
@@ -113,6 +119,7 @@ const StoryInformation = React.forwardRef(
       if (tagsValidation) {
         setTagsSaved(false);
         ref.current[6] = tagsSaved;
+        tag = handleFormatTags(tag);
         const newTags = [...tags, tag];
         setTags(newTags);
         handleTagsChange(newTags);
@@ -137,14 +144,18 @@ const StoryInformation = React.forwardRef(
       debounceSendTagsDraft(newTags);
     };
     const handleAddTagsBtn = () => {
-      const tagInputData = {
-        id: document.getElementsByClassName("ReactTags__tagInputField")[0]
-          .value,
-        text: document.getElementsByClassName("ReactTags__tagInputField")[0]
-          .value,
-      };
-      handleAddition(tagInputData);
-      document.getElementsByClassName("ReactTags__tagInputField")[0].value = "";
+      const tagInputData = document.getElementsByClassName(
+        "ReactTags__tagInputField"
+      )[0].value;
+      if (tagInputData) {
+        const newTags = {
+          id: tagInputData,
+          text: tagInputData,
+        };
+        handleAddition(newTags);
+        document.getElementsByClassName("ReactTags__tagInputField")[0].value =
+          "";
+      }
     };
 
     // COVER IMAGE
@@ -183,6 +194,7 @@ const StoryInformation = React.forwardRef(
     const { getRootProps, getInputProps, isDragActive, inputRef } = useDropzone(
       {
         onDrop,
+        accept: "image/jpeg, image/jpg, image/png",
       }
     );
     ref.current[3] = inputRef;
@@ -190,7 +202,7 @@ const StoryInformation = React.forwardRef(
     // BINDING DATA
     const descriptionRef = useRef(null);
     useEffect(() => {
-      if (data && dataCoverImage) {
+      if (data || dataCoverImage) {
         // title
         ref.current[0].value = data.title;
 
@@ -202,14 +214,19 @@ const StoryInformation = React.forwardRef(
           result.push({ id: item, text: item });
           return result;
         }, []);
+        if (tagsData.length === 5) {
+          setTagsValidation(false);
+        }
         setTags(tagsData);
 
         // cover image
-        const reader = new FileReader();
-        reader.readAsDataURL(dataCoverImage);
-        reader.onloadend = () => {
-          setCoverImage(reader.result);
-        };
+        if (dataCoverImage) {
+          const reader = new FileReader();
+          reader.readAsDataURL(dataCoverImage);
+          reader.onloadend = () => {
+            setCoverImage(reader.result);
+          };
+        }
       }
     }, []);
 
@@ -273,7 +290,7 @@ const StoryInformation = React.forwardRef(
             handleDrag={handleDrag}
             allowUnique={false}
             inputFieldPosition="top"
-            placeholder="Enter to create a tag"
+            placeholder="Enter or click + to create a tag"
             autofocus={false}
             autocomplete
           />

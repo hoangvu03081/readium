@@ -83,8 +83,10 @@ router.get("/logout", authMiddleware, async (req, res, next) => {
     }]
    */
   const index = req.user.tokens.indexOf(req.headers.authorization);
-  if (index !== -1) req.user.tokens.splice(index, 1);
-  await req.user.save();
+  if (index !== -1) {
+    req.user.tokens.splice(index, 1);
+    await req.user.save();
+  }
 
   res.clearCookie("connect.sid");
   req.logOut();

@@ -1,12 +1,14 @@
 import React, { useRef } from "react";
 import PropTypes from "prop-types";
 import TextareaAutosize from "react-textarea-autosize";
-import { ReactComponent as SendBtn } from "../../../assets/icons/send.svg";
-import { useMyAvatar } from "../../../common/api/useAvatar";
+import { useAuth } from "../../../common/hooks/useAuth";
 import {
+  useGetMyAvatar,
   useGetComment,
   usePostComment,
 } from "../../../common/api/commentQuery";
+import PuffLoader from "../../../common/components/PuffLoader";
+import { ReactComponent as SendBtn } from "../../../assets/icons/send.svg";
 import {
   Comment,
   Content,
@@ -26,14 +28,19 @@ import {
 
 export default function CommentSection({ postId }) {
   const commentRef = useRef(null);
-  const getMyAvatar = useMyAvatar();
+  const { auth } = useAuth();
+  const getMyAvatar = useGetMyAvatar(auth);
   const getComment = useGetComment(postId);
   const postComment = usePostComment();
   if (getMyAvatar.isFetching || getComment.isFetching) {
-    return <p id="comment_section">Loading comment section...</p>;
+    return (
+      <div id="comment_section">
+        <PuffLoader />
+      </div>
+    );
   }
-  if (!getMyAvatar.data || !getComment.data) {
-    return <p id="comment_section">Error loading comment section...</p>;
+  if (!getComment.data) {
+    return <div id="comment_section" />;
   }
   const myAvatar = getMyAvatar.data;
   const comments = getComment.data.data;
@@ -43,7 +50,7 @@ export default function CommentSection({ postId }) {
     commentRef.current.value = "";
     setTimeout(() => {
       getComment.refetch();
-    }, 2000);
+    }, 1000);
   };
 
   return (
@@ -54,7 +61,7 @@ export default function CommentSection({ postId }) {
           : `${comments.length} comment`}
       </Title>
 
-      <WriteComment>
+      <WriteComment className={auth ? "d-flex" : "d-none"}>
         <WriteLeft src={myAvatar} alt="Avatar" />
         <WriteRight>
           <Input>
@@ -70,18 +77,21 @@ export default function CommentSection({ postId }) {
       </WriteComment>
 
       <ReadComment>
-        {comments.map((item) => (
-          <Comment key={item.id}>
-            <ReadLeft src={myAvatar} alt="Avatar" />
-            <ReadRight>
-              <Info>
-                <Name>{item.user}</Name>
-                <Time>Just now</Time>
-              </Info>
-              <Content>{item.content}</Content>
-            </ReadRight>
-          </Comment>
-        ))}
+        {comments
+          .slice()
+          .reverse()
+          .map((item) => (
+            <Comment key={item.id}>
+              <ReadLeft src={item.user.avatar} alt="Avatar" />
+              <ReadRight>
+                <Info>
+                  <Name>{item.user.displayName}</Name>
+                  <Time>Just now</Time>
+                </Info>
+                <Content>{item.content}</Content>
+              </ReadRight>
+            </Comment>
+          ))}
       </ReadComment>
     </Layout>
   );

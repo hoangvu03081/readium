@@ -9,6 +9,7 @@ import Avatar from "./Avatar";
 import { modalOpened } from "../../../slices/sign-in-slice";
 import { IconLink, Logo, SearchInput, SignInButton } from "./styles";
 import OnClickRequireAuth from "../OnClickRequireAuth";
+import SearchBar from "./SearchBar";
 
 const Nav = styled.nav`
   position: fixed;
@@ -45,7 +46,7 @@ export default function DesktopHeader({ isLogin }) {
           <Avatar />
         </>
       )}
-      <SearchInput type="text" placeholder="Search" className="ms-sm-4" />
+      <SearchBar />
       <OnClickRequireAuth>
         <IconLink to="/write" className="ms-sm-4">
           <FiEdit size={26} />

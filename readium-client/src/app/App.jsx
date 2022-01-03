@@ -13,10 +13,13 @@ import PreviewPost from "../screens/PreviewPost";
 import EditDraft from "../screens/EditDraft";
 import EditPost from "../screens/EditPost";
 import ReadPost from "../screens/ReadPost";
+import Collection from "../screens/Collection";
+import Notifications from "../screens/Notifications";
 import ResetPassword from "../screens/ResetPassword";
 import Settings from "../screens/Settings";
 import SecureRoute from "../common/components/SecureRoute";
 import "./App.css";
+import SearchPage from "../screens/SearchPage";
 
 function App() {
   return (
@@ -50,31 +53,37 @@ function App() {
           <Route exact path="/">
             <Home />
           </Route>
+          <Route path="/search">
+            <SearchPage />
+          </Route>
           <SecureRoute path="/write">
             <WritePost />
           </SecureRoute>
-          <SecureRoute path="/preview">
+          <SecureRoute path="/preview/:draftId">
             <PreviewPost />
           </SecureRoute>
-          <SecureRoute path="/edit/draft">
+          <SecureRoute path="/edit/draft/:draftId">
             <EditDraft />
           </SecureRoute>
           <SecureRoute path="/edit/post">
             <EditPost />
           </SecureRoute>
           <Redirect from="/post/:postId/reload" to="/post/:postId" />
-          <SecureRoute path="/post/:postId">
+          <Route path="/post/:postId">
             <ReadPost />
-          </SecureRoute>
+          </Route>
           <SecureRoute path="/settings">
             <Settings />
           </SecureRoute>
           <SecureRoute path="/profile/:profileId?">
             <Profile />
           </SecureRoute>
-          <Route path="/post">post</Route>
-          <SecureRoute path="/notifications">notifications</SecureRoute>
-          <SecureRoute path="/collections">collections</SecureRoute>
+          <SecureRoute path="/collections">
+            <Collection />
+          </SecureRoute>
+          <SecureRoute path="/notifications">
+            <Notifications />
+          </SecureRoute>
           <Route path="*">
             <Redirect to="/404" />
           </Route>

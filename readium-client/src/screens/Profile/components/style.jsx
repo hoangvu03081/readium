@@ -26,6 +26,7 @@ export const Avatar = styled.img`
   text-align: center;
   border-radius: 50%;
   border: 2px solid white;
+  object-fit: cover;
   background-color: ${({ theme }) => theme.colors.lightGrey};
 `;
 

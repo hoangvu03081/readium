@@ -6,7 +6,7 @@ const Outline = styled.div`
   border-radius: 6px;
   width: 300px;
   height: 39px;
-  margin: 50px 0 42px 0;
+  margin: 50px 0;
   display: flex;
   flex-direction: row;
   justify-content: space-around;

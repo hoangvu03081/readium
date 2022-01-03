@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { useAuth } from "../../common/hooks/useAuth";
 import { useDraft, usePublish } from "../../common/api/draftQuery";
 import LoadingOverlay from "../../common/components/LoadingOverlay";
@@ -23,13 +23,33 @@ const SubHeader = styled.div`
   z-index: 9;
   position: fixed;
   top: 80px;
+  @media (max-width: 290px) {
+    height: 100px;
+  }
 `;
 
 const SubHeaderContainer = styled.div`
+  width: 60%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  @media (max-width: 1200px) {
+    width: 70%;
+  }
+  @media (max-width: 900px) {
+    width: 80%;
+  }
+  @media (max-width: 767px) {
+    width: 90%;
+  }
+  @media (max-width: 650px) {
+    width: 92%;
+  }
+  @media (max-width: 290px) {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
 `;
 
 const ContinueEditingBtn = styled.button`
@@ -50,9 +70,13 @@ const ContinueEditingBtn = styled.button`
   }
   @media (max-width: 400px) {
     font-size: 16px;
+    padding: 5px 15px;
   }
-  @media (max-width: 300px) {
-    font-size: 14px;
+  @media (max-width: 330px) {
+    font-size: 15px;
+  }
+  @media (max-width: 290px) {
+    width: 100%;
   }
 `;
 
@@ -74,15 +98,19 @@ const PublishBtn = styled.button`
   }
   @media (max-width: 400px) {
     font-size: 16px;
+    padding: 5px 15px;
   }
-  @media (max-width: 300px) {
-    font-size: 14px;
+  @media (max-width: 330px) {
+    font-size: 15px;
+  }
+  @media (max-width: 290px) {
+    width: 100%;
   }
 `;
 
 const PostContainer = styled.div`
   width: 60%;
-  margin-top: 140px;
+  margin-top: 150px;
   margin-bottom: 50px;
   padding-top: 15px;
   @media (max-width: 1200px) {
@@ -97,24 +125,33 @@ const PostContainer = styled.div`
   @media (max-width: 650px) {
     width: 92%;
   }
+  @media (max-width: 290px) {
+    margin-top: 185px;
+  }
 `;
 // -----------------------------------------------------------------
 
 export default function PreviewPost() {
   const { auth } = useAuth();
+  const { draftId } = useParams();
   const history = useHistory();
-  const id = history.location.state;
+  const [id, setId] = useState(history.location.state);
   const [isLoading, setIsLoading] = useState(false);
-
-  // CHECKING
   if (!id) {
+    setId(draftId);
+  }
+  if (id === "published") {
     return <LoadingOverlay isLoading text="No post found" />;
   }
 
   // GET DRAFT & COVER IMAGE DRAFT
   const [
-    { isFetched: isFetchedDraft, data: dataDraft },
-    { isFetched: isFetchedCoverImage, data: dataCoverImage },
+    { isFetched: isFetchedDraft, data: dataDraft, isError: isErrorDraft },
+    {
+      isFetched: isFetchedCoverImage,
+      data: dataCoverImage,
+      isError: isErrorCoverImage,
+    },
   ] = useDraft(id, auth);
 
   //  HANDLE PUBLISH
@@ -124,7 +161,7 @@ export default function PreviewPost() {
       publish.mutate();
       setIsLoading(true);
       setTimeout(() => {
-        history.replace({ pathname: "/preview", state: null });
+        history.replace({ pathname: `/preview/${id}`, state: "published" });
         history.push(`/post/${id}`, id);
       }, 1250);
     } else {
@@ -135,12 +172,25 @@ export default function PreviewPost() {
 
   // HANDLE CONTINUE EDITING
   const handleContinueEditing = () => {
-    history.push("/edit/draft", id);
+    history.push(`/edit/draft/${id}`, id);
   };
 
   // WAIT FOR DATA
   if (!isFetchedDraft || !isFetchedCoverImage) {
     return <LoadingOverlay isLoading />;
+  }
+  if (
+    isErrorDraft ||
+    !dataDraft.data ||
+    isErrorCoverImage ||
+    !dataCoverImage.data
+  ) {
+    return (
+      <LoadingOverlay
+        isLoading
+        text="Some errors occurred while loading draft..."
+      />
+    );
   }
   const draft = dataDraft.data;
   const coverImageSrc = window.URL.createObjectURL(dataCoverImage.data);

@@ -4,8 +4,8 @@ import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import Interactions from "../../../common/components/Buttons/Interactions";
 import TagBtn from "../../../common/components/Buttons/TagBtn";
+import ModalCollection from "../../../common/components/ModalCollections";
 import { ReactComponent as AddCollectionBtn } from "../../../assets/icons/add_collection.svg";
-import { ReactComponent as AddedCollectionBtn } from "../../../assets/icons/added_collection.svg";
 
 const Layout = styled.div`
   border: 2px solid ${({ theme }) => theme.colors.PopularPostBlack};
@@ -135,6 +135,7 @@ const ButtonContainer = styled.div`
 
 export default function PostMobile({
   postId,
+  profileId,
   title,
   user,
   userAvatar,
@@ -145,13 +146,16 @@ export default function PostMobile({
   loveNumber,
   commentNumber,
 }) {
-  const [isAddedCollection, setIsAddedCollection] = useState(false);
-  const handleAddCollection = () => {
-    if (isAddedCollection) {
-      setIsAddedCollection(false);
+  const [modalCollection, setModalCollection] = useState(false);
+  const handleModalCollection = () => {
+    if (modalCollection) {
+      setModalCollection(false);
     } else {
-      setIsAddedCollection(true);
+      setModalCollection(true);
     }
+  };
+  const handleCloseModalCollection = () => {
+    setModalCollection(false);
   };
 
   const history = useHistory();
@@ -161,7 +165,7 @@ export default function PostMobile({
   const handleProfile = () => {
     // const indexOfUserId = userAvatar.lastIndexOf("/");
     // const userId = userAvatar.slice(indexOfUserId + 1);
-    history.push(`/profile/${user}`);
+    history.push(`/profile/${profileId}`);
   };
 
   return (
@@ -191,12 +195,13 @@ export default function PostMobile({
         commentNumber={commentNumber}
       />
 
-      <ButtonContainer onClick={handleAddCollection}>
-        <AddCollectionBtn
-          className={isAddedCollection ? "d-none" : "d-block"}
-        />
-        <AddedCollectionBtn
-          className={isAddedCollection ? "d-block" : "d-none"}
+      <ButtonContainer>
+        <AddCollectionBtn onClick={handleModalCollection} />
+        <ModalCollection
+          postId={postId}
+          trigger={modalCollection}
+          handleTrigger={handleModalCollection}
+          handleCloseTrigger={handleCloseModalCollection}
         />
       </ButtonContainer>
     </Layout>
@@ -205,6 +210,7 @@ export default function PostMobile({
 
 PostMobile.propTypes = {
   postId: PropTypes.string.isRequired,
+  profileId: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   user: PropTypes.string.isRequired,
   userAvatar: PropTypes.string.isRequired,

@@ -207,6 +207,17 @@
         "responses": {}
       }
     },
+    "/dev/comments": {
+      "get": {
+        "tags": [
+          "Dev"
+        ],
+        "summary": "Get all comments",
+        "description": "",
+        "parameters": [],
+        "responses": {}
+      }
+    },
     "/dev/": {
       "delete": {
         "tags": [
@@ -292,7 +303,7 @@
         }
       }
     },
-    "/posts/{postId}/comments": {
+    "/posts/{postId}/comments/": {
       "get": {
         "tags": [
           "Comment"
@@ -1359,7 +1370,11 @@
             "type": "string"
           }
         ],
-        "responses": {},
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        },
         "security": [
           {
             "bearerAuth": []
@@ -1397,7 +1412,11 @@
             "type": "string"
           }
         ],
-        "responses": {},
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          }
+        },
         "security": [
           {
             "bearerAuth": []
@@ -1696,6 +1715,9 @@
         "responses": {
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         },
         "security": [
@@ -1739,6 +1761,34 @@
           "Draft"
         ],
         "summary": "Create a draft based on published post",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Draft"
+        ],
+        "summary": "Endpoint to delete a draft",
         "description": "",
         "parameters": [
           {
@@ -2342,14 +2392,14 @@
             "type": "string",
             "example": "post id"
           },
-          "collectionName": {
+          "collectionId": {
             "type": "string",
-            "example": "collection name"
+            "example": "collection id"
           }
         },
         "required": [
           "postId",
-          "collectionName"
+          "collectionId"
         ]
       },
       "Comment": {

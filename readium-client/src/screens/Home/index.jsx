@@ -1,8 +1,7 @@
 import React from "react";
 import Body from "./Body";
 import PopularPost from "./PopularPost";
-import HorizontalLine from "./HorizontalLine";
-import FollowingRecommendedBtn from "../../common/components/Buttons/FollowingRecommendedBtn";
+import FollowingRecommendedBtn from "./FollowingRecommendedBtn";
 import CardList from "./CardList";
 import TrendingTopics from "./TrendingTopics";
 import RecommendedWriters from "./RecommendedWriters";
@@ -17,7 +16,6 @@ export default function Home() {
         contentLeft={
           <>
             <PopularPost />
-            <HorizontalLine />
             <FollowingRecommendedBtn to="/write" />
             <CardList />
           </>

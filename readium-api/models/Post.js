@@ -45,7 +45,7 @@ const postSchema = new Schema({
   comments: [{ type: ObjectId, ref: "Comment", required: true }],
   textConnection: [
     {
-      toPost: {
+      toPost: { 
         type: ObjectId,
         ref: "Post",
       },

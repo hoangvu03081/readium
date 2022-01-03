@@ -6,6 +6,7 @@ export const AvatarImage = styled.img`
   width: 34px;
   height: 34px;
   border-radius: 50%;
+  object-fit: cover;
 `;
 
 export const Logo = styled(Link)`

@@ -92,6 +92,7 @@ const CornerContainer = styled.div`
 
 export default function CardMobile({
   postId,
+  profileId,
   title,
   content,
   tags,
@@ -113,7 +114,7 @@ export default function CardMobile({
   const handleProfile = () => {
     // const indexOfUserId = userAvatar.lastIndexOf("/");
     // const userId = userAvatar.slice(indexOfUserId + 1);
-    history.push(`/profile/${user}`);
+    history.push(`/profile/${profileId}`);
   };
 
   return (
@@ -152,6 +153,7 @@ export default function CardMobile({
 
 CardMobile.propTypes = {
   postId: PropTypes.string.isRequired,
+  profileId: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,

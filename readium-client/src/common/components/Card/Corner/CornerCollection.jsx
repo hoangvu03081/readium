@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import PropTypes from "prop-types";
+import ModalCollection from "../../ModalCollections";
 import { ReactComponent as AddCollection } from "../../../../assets/icons/add_collection.svg";
-import { ReactComponent as AddedCollection } from "../../../../assets/icons/added_collection.svg";
 import { ReactComponent as Delete } from "../../../../assets/icons/delete.svg";
 
 const Layout = styled.div`
@@ -32,15 +33,18 @@ const Layout = styled.div`
   }
 `;
 
-export default function CornerCollection() {
+export default function CornerCollection({ postId }) {
   // HANDLE ADD COLLECTION
-  const [isAdded, setIsAdded] = useState(false);
-  const handleAddCollection = () => {
-    if (isAdded) {
-      setIsAdded(false);
+  const [modalCollection, setModalCollection] = useState(false);
+  const handleModalCollection = () => {
+    if (modalCollection) {
+      setModalCollection(false);
     } else {
-      setIsAdded(true);
+      setModalCollection(true);
     }
+  };
+  const handleCloseModalCollection = () => {
+    setModalCollection(false);
   };
 
   // HANDLE DELETE
@@ -50,15 +54,21 @@ export default function CornerCollection() {
 
   return (
     <Layout>
-      <AddCollection
-        className={isAdded ? "d-none" : "d-block"}
-        onClick={handleAddCollection}
-      />
-      <AddedCollection
-        className={isAdded ? "d-block" : "d-none"}
-        onClick={handleAddCollection}
+      <AddCollection onClick={handleModalCollection} />
+      <ModalCollection
+        postId={postId}
+        trigger={modalCollection}
+        handleTrigger={handleModalCollection}
+        handleCloseTrigger={handleCloseModalCollection}
       />
       <Delete onClick={handleDelete} />
     </Layout>
   );
 }
+
+CornerCollection.propTypes = {
+  postId: PropTypes.string,
+};
+CornerCollection.defaultProps = {
+  postId: "",
+};

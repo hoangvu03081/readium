@@ -7,6 +7,10 @@ export default function getURL(endpoint) {
   return isDev ? LOCAL_URL + endpoint : HOST_URL + endpoint;
 }
 
+const SEARCH_API = {
+  POST_SEARCH: getURL("/search"),
+};
+
 const USER_API = {
   GET_AVATAR: (id) => getURL(`/users/profiles/avatar/${id}`),
   GET_MY_AVATAR: getURL(`/users/profiles/avatar/`),
@@ -20,6 +24,7 @@ const PROFILE_API = {
   GET_MY_COVER_IMAGE: getURL("/users/profiles/cover-image)"),
   POST_UPLOAD_AVATAR: getURL("/users/profiles/avatar"),
   POST_UPLOAD_COVER_IMAGE: getURL("/users/profiles/cover-image"),
+  GET_MY_PROFILE: getURL(`/users/profiles`),
 };
 
 const SETTING_API = {
@@ -28,14 +33,18 @@ const SETTING_API = {
 };
 
 const POST_API = {
+  GET_PROFILE_POST: (userId, skip = 0) =>
+    getURL(`/posts/user/${userId}?skip=${skip}`),
   GET_POPULAR_POST: getURL(`/posts/popular`),
   GET_POSTS: (pageParam) => getURL(`/posts/?skip=${pageParam}`),
   GET_A_POST: (id) => getURL(`/posts/${id}`),
   GET_COVER_IMAGE_POST: (id) => getURL(`/posts/${id}/cover-image`),
+  DELETE_POST: (postId) => getURL(`/posts/${postId}`),
 };
 
 const DRAFT_API = {
-  GET_DRAFT_ID: getURL("/drafts"),
+  GET_MY_DRAFT: (skip = 0) => getURL(`/drafts/?skip=${skip}`),
+  POST_DRAFT_ID: getURL("/drafts"),
   PUT_TITLE: (id) => getURL(`/drafts/${id}/title`),
   PUT_DESCRIPTION: (id) => getURL(`/drafts/${id}/description`),
   PUT_TAGS: (id) => getURL(`/drafts/${id}/tags`),
@@ -47,8 +56,25 @@ const DRAFT_API = {
 };
 
 const COMMENT_API = {
+  GET_MY_AVATAR: getURL(`/users/profiles/avatar/`),
   POST_COMMENT: (postId) => getURL(`/posts/${postId}/comments`),
-  GET_COMMENT: (postId) => getURL(`/posts/${postId}/comments`),
+  GET_COMMENT: (postId) => getURL(`/posts/${postId}/comments/`),
+};
+
+const COLLECTION_API = {
+  GET_ALL_COLLECTION: getURL(`/users/collections/`),
+  POST_COLLECTION: getURL(`/users/collections/`),
+  POST_POST_COLLECTION: getURL(`/users/collections/posts`),
+  PUT_COLLECTION_NAME: (collectionId) =>
+    getURL(`/users/collections/${collectionId}/name`),
+  DELETE_POST_COLLECTION: getURL(`/users/collections/posts`),
+  DELETE_COLLECTION: (collectionId) =>
+    getURL(`/users/collections/${collectionId}`),
+};
+
+const OTHER_API = {
+  GET_TRENDING_TOPICS: getURL(`/topics/trending`),
+  GET_RECOMMENDED_WRITERS: getURL(`/users/recommended`),
 };
 
 export {
@@ -58,5 +84,8 @@ export {
   SETTING_API,
   DRAFT_API,
   COMMENT_API,
+  COLLECTION_API,
+  SEARCH_API,
+  OTHER_API,
   WEBSOCKET,
 };

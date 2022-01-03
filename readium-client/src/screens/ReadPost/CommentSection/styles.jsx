@@ -24,6 +24,7 @@ export const WriteLeft = styled.img`
   height: 34px;
   border-radius: 50%;
   object-fit: cover;
+  margin-top: 7px;
 `;
 export const WriteRight = styled.div`
   width: 100%;
@@ -55,7 +56,7 @@ export const Input = styled.div`
     width: 100%;
     height: 45px;
     border: none;
-    font-family: "PT Sans";
+    font-family: "Raleway";
     font-weight: 500;
     font-size: 14px;
     resize: none;
@@ -66,22 +67,22 @@ export const Input = styled.div`
       display: none;
     }
     ::-webkit-input-placeholder {
-      font-family: "PT Sans";
+      font-family: "Raleway";
       font-weight: 500;
       font-size: 14px;
     }
     :-moz-placeholder {
-      font-family: "PT Sans";
+      font-family: "Raleway";
       font-weight: 500;
       font-size: 14px;
     }
     ::-moz-placeholder {
-      font-family: "PT Sans";
+      font-family: "Raleway";
       font-weight: 500;
       font-size: 14px;
     }
     :-ms-input-placeholder {
-      font-family: "PT Sans";
+      font-family: "Raleway";
       font-weight: 500;
       font-size: 14px;
     }
@@ -112,7 +113,7 @@ export const ReadRight = styled.div`
 `;
 export const Info = styled.div``;
 export const Name = styled.span`
-  font-family: "PT Sans";
+  font-family: "Raleway";
   font-weight: bold;
   font-size: 14px;
   margin-right: 10px;
@@ -127,7 +128,7 @@ export const Time = styled.span`
   color: #9c9c9c;
 `;
 export const Content = styled.p`
-  font-family: "PT Sans";
+  font-family: "Raleway";
   font-weight: 500;
   font-size: 14px;
   margin: 0;

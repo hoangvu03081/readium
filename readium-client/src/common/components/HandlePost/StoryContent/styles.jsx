@@ -22,7 +22,14 @@ export const TextEditor = styled.div`
     min-height: 350px;
     font-family: "PT Sans";
     font-weight: 500;
-    font-size: 18px;
+    font-size: 21px;
+    .image-center {
+      display: block;
+      margin: 0 auto;
+    }
+    @media (max-width: 509px) {
+      font-size: 18px;
+    }
   }
   .ql-bubble .ql-tooltip {
     z-index: 1;
@@ -46,7 +53,7 @@ export const TextEditor = styled.div`
 
 export const Buttons = styled.div`
   position: absolute;
-  top: 7px;
+  top: 8px;
   left: -52px;
   height: 100%;
   div {

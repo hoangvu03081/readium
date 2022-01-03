@@ -120,7 +120,7 @@ const doc = {
     },
     PostToCollection: {
       $postId: "post id",
-      $collectionName: "collection name",
+      $collectionId: "collection id",
     },
     Comment: {
       $content: "Comment Content",

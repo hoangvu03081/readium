@@ -12,4 +12,12 @@ const collectionSchema = new Schema({
   posts: [{ type: ObjectId, ref: "Post", required: true }],
 });
 
+collectionSchema.methods.getCollection = function () {
+  const collection = this.toObject();
+  collection.id = collection._id;
+  delete collection._id;
+  delete collection.__v;
+  return collection;
+};
+
 module.exports = model("Collection", collectionSchema);
