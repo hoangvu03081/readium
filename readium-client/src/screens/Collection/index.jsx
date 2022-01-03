@@ -87,7 +87,7 @@ export default function Collection() {
     return <PuffLoader />;
   }
   if (!getAllCollections.data || getAllCollections.isError) {
-    return <PuffLoader />;
+    return <div />;
   }
 
   // HANDLE CREATE & RENAME COLLECTION

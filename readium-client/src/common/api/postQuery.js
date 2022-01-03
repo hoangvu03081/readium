@@ -25,21 +25,38 @@ export function useGetProfilePost(userId) {
 }
 
 export function usePost(id) {
-  const res1 = useQuery("post", () => axios.get(POST_API.GET_A_POST(id)), {
-    staleTime: 0,
-    refetchOnMount: true,
-    enabled: !!id,
-    refetchOnWindowFocus: false,
-  });
+  return useQuery(
+    ["collectionPost", id],
+    () => axios.get(POST_API.GET_A_POST(id)),
+    {
+      staleTime: 0,
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!id,
+    }
+  );
+}
+
+export function usePostAndCoverImage(id) {
+  const res1 = useQuery(
+    ["post", id],
+    () => axios.get(POST_API.GET_A_POST(id)),
+    {
+      staleTime: 0,
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!id,
+    }
+  );
   const res2 = useQuery(
-    "coverImagePost",
+    ["coverImagePost", id],
     () =>
       axios.get(POST_API.GET_COVER_IMAGE_POST(id), { responseType: "blob" }),
     {
       staleTime: 0,
       refetchOnMount: true,
-      enabled: !!id,
       refetchOnWindowFocus: false,
+      enabled: !!id,
     }
   );
   return [res1, res2];

@@ -7,7 +7,7 @@ export function useGetAllCollections(auth) {
     "collections",
     () => axios.get(COLLECTION_API.GET_ALL_COLLECTION),
     {
-      staleTime: 0,
+      staleTime: Infinity,
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       enabled: !!auth,

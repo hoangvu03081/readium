@@ -4,6 +4,7 @@
 import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import StyledLink from "../../../common/components/StyledLink";
 import { ReactComponent as EditName } from "../../../assets/icons/edit_name.svg";
 import { ReactComponent as Trash } from "../../../assets/icons/trash.svg";
 
@@ -35,6 +36,9 @@ const CollectionName = styled.p`
   font-family: "Raleway";
   font-weight: bold;
   font-size: 24px;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 const Buttons = styled.div`
   width: 71px;
@@ -86,6 +90,11 @@ const Image = styled.img`
   width: 75px;
   height: 75px;
   border-radius: 8px;
+  transition: all 0.2s;
+  &:hover {
+    opacity: 0.8;
+    transition: all 0.2s;
+  }
   @media (max-width: 600px) {
     width: 65px;
     height: 65px;
@@ -136,19 +145,23 @@ export default function CollectionCard({
           {collection.posts.map((item, index) => {
             if (index < 4) {
               return (
-                <Image key={index} src={item.coverImage} alt="Cover Image" />
+                <StyledLink key={index} to={`/post/${item.id}`}>
+                  <Image src={item.coverImage} alt="Cover Image" />
+                </StyledLink>
               );
             }
             if (index === 4) {
               return (
-                <MoreImage key={index}>
-                  <Image src={item.coverImage} alt="Cover Image" />
-                  <Overlay>
-                    <div />
-                    <div />
-                    <div />
-                  </Overlay>
-                </MoreImage>
+                <StyledLink key={index} to={`/collection/${collection.id}`}>
+                  <MoreImage>
+                    <Image src={item.coverImage} alt="Cover Image" />
+                    <Overlay>
+                      <div />
+                      <div />
+                      <div />
+                    </Overlay>
+                  </MoreImage>
+                </StyledLink>
               );
             }
           })}
@@ -165,19 +178,23 @@ export default function CollectionCard({
           {collection.posts.map((item, index) => {
             if (index < 2) {
               return (
-                <Image key={index} src={item.coverImage} alt="Cover Image" />
+                <StyledLink key={index} to={`/post/${item.id}`}>
+                  <Image src={item.coverImage} alt="Cover Image" />
+                </StyledLink>
               );
             }
             if (index === 2) {
               return (
-                <MoreImage key={index}>
-                  <Image src={item.coverImage} alt="Cover Image" />
-                  <Overlay>
-                    <div />
-                    <div />
-                    <div />
-                  </Overlay>
-                </MoreImage>
+                <StyledLink key={index} to={`/collection/${collection.id}`}>
+                  <MoreImage>
+                    <Image src={item.coverImage} alt="Cover Image" />
+                    <Overlay>
+                      <div />
+                      <div />
+                      <div />
+                    </Overlay>
+                  </MoreImage>
+                </StyledLink>
               );
             }
           })}
@@ -190,7 +207,12 @@ export default function CollectionCard({
   return (
     <Layout>
       <Top>
-        <CollectionName>{collection.name}</CollectionName>
+        <CollectionName>
+          <StyledLink to={`/collection/${collection.id}`}>
+            {collection.name}
+          </StyledLink>
+        </CollectionName>
+
         <Buttons>
           <EditName
             onClick={() => {

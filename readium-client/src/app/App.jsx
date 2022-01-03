@@ -14,6 +14,7 @@ import EditDraft from "../screens/EditDraft";
 import EditPost from "../screens/EditPost";
 import ReadPost from "../screens/ReadPost";
 import Collection from "../screens/Collection";
+import InsideCollection from "../screens/InsideCollection";
 import Notifications from "../screens/Notifications";
 import ResetPassword from "../screens/ResetPassword";
 import Settings from "../screens/Settings";
@@ -80,6 +81,9 @@ function App() {
           </SecureRoute>
           <SecureRoute path="/collections">
             <Collection />
+          </SecureRoute>
+          <SecureRoute path="/collection/:collectionId">
+            <InsideCollection />
           </SecureRoute>
           <SecureRoute path="/notifications">
             <Notifications />
