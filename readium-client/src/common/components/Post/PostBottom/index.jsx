@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import TagBtn from "../../Buttons/TagBtn";
 import ModalCollection from "../../ModalCollections";
 import StyledLink from "../../StyledLink";
+import OnClickRequireAuth from "../../OnClickRequireAuth";
 import { ReactComponent as Love } from "../../../../assets/icons/love.svg";
 import { ReactComponent as Loved } from "../../../../assets/icons/loved.svg";
 import { ReactComponent as AddCollection } from "../../../../assets/icons/add_collection.svg";
@@ -47,15 +48,19 @@ export default function PostBottom({ postId, tags, type, isMyself }) {
       </Left>
       <Right className={type === "preview" ? "d-none w-0" : "d-flex"}>
         <RightLeft ref={modalCollectionRef}>
-          <Love
-            className={isLoved ? "d-none" : "d-block"}
-            onClick={handleLovePost}
-          />
+          <OnClickRequireAuth>
+            <Love
+              className={isLoved ? "d-none" : "d-block"}
+              onClick={handleLovePost}
+            />
+          </OnClickRequireAuth>
           <Loved
             className={isLoved ? "d-block" : "d-none"}
             onClick={handleLovePost}
           />
-          <AddCollection onClick={handleModalCollection} />
+          <OnClickRequireAuth>
+            <AddCollection onClick={handleModalCollection} />
+          </OnClickRequireAuth>
           <ModalCollection
             postId={postId}
             trigger={modalCollection}
@@ -65,7 +70,9 @@ export default function PostBottom({ postId, tags, type, isMyself }) {
           />
         </RightLeft>
         <RightRight className={isMyself ? "d-none" : "d-block"}>
-          <Report />
+          <OnClickRequireAuth>
+            <Report />
+          </OnClickRequireAuth>
         </RightRight>
       </Right>
     </Layout>

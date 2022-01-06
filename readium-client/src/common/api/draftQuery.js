@@ -1,7 +1,14 @@
-import { useMutation, useQuery, useInfiniteQuery } from "react-query";
+import {
+  useMutation,
+  useQuery,
+  useInfiniteQuery,
+  useQueryClient,
+} from "react-query";
 import axios from "axios";
-import Delta from "quill-delta";
+import { Quill } from "react-quill";
 import { DRAFT_API } from "./apiConstant";
+
+const Delta = Quill.import("delta");
 
 export function useGetMyDraft() {
   return useInfiniteQuery(
@@ -10,6 +17,18 @@ export function useGetMyDraft() {
       axios.get(DRAFT_API.GET_MY_DRAFT(pageParam)).then(({ data }) => data),
     {
       getNextPageParam: (lastPage) => lastPage.next,
+    }
+  );
+}
+
+export function useDeleteDraft() {
+  const queryClient = useQueryClient();
+  return useMutation(
+    (draftId) => axios.delete(DRAFT_API.DELETE_DRAFT(draftId)),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("drafts");
+      },
     }
   );
 }

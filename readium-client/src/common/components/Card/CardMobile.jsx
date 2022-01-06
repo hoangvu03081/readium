@@ -7,6 +7,7 @@ import Corner from "./Corner";
 import LoveComment from "../Buttons/LoveComment";
 import TagBtn from "../Buttons/TagBtn";
 import StyledLink from "../StyledLink";
+import OnClickRequireAuth from "../OnClickRequireAuth";
 
 const Layout = styled.div`
   border: 2px solid ${({ theme }) => theme.colors.CardBlack};
@@ -124,8 +125,12 @@ export default function CardMobile({
   return (
     <Layout>
       <Top>
-        <UserAvatar src={userAvatar} onClick={handleProfile} />
-        <UserName onClick={handleProfile}>by {user}</UserName>
+        <OnClickRequireAuth>
+          <UserAvatar src={userAvatar} onClick={handleProfile} />
+        </OnClickRequireAuth>
+        <OnClickRequireAuth>
+          <UserName onClick={handleProfile}>by {user}</UserName>
+        </OnClickRequireAuth>
         <Title onClick={handleReadPost}>{title}</Title>
       </Top>
 

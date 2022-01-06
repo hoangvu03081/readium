@@ -18,6 +18,9 @@ import {
   Right,
   Time,
 } from "./styles";
+import { useFollow, useIsFollowAuth } from "../../../api/userQuery";
+import { useAuth } from "../../../hooks/useAuth";
+import OnClickRequireAuth from "../../OnClickRequireAuth";
 
 export default function PostInfo({
   postId,
@@ -27,9 +30,22 @@ export default function PostInfo({
   type,
   isMyself,
 }) {
+  const auth = useAuth();
   const history = useHistory();
   const modalCollectionRef = useRef(null);
   const [modalCollection, setModalCollection] = useState(false);
+
+  const indexOfUserId = author.avatar.lastIndexOf("/");
+  const userId = author.avatar.slice(indexOfUserId + 1);
+  const follow = useFollow(userId);
+  const isFollow = useIsFollowAuth(userId, auth.auth);
+  if (isFollow.isFetching) {
+    return <div />;
+  }
+  if (isFollow.isError) {
+    return <p>An error occurred while loading information...</p>;
+  }
+  const isFollowed = isFollow.data?.is_followed;
 
   // HANDLE ADD COLLECTION
   const handleModalCollection = () => {
@@ -50,7 +66,7 @@ export default function PostInfo({
 
   // HANDLE FOLLOW
   const handleFollow = () => {
-    console.log("Follow");
+    follow.mutate();
   };
 
   // HANDLE PUBLISHED DATE
@@ -70,7 +86,9 @@ export default function PostInfo({
           isMyself={isMyself}
           ref={modalCollectionRef}
         >
-          <AddCollection onClick={handleModalCollection} />
+          <OnClickRequireAuth>
+            <AddCollection onClick={handleModalCollection} />
+          </OnClickRequireAuth>
           <ModalCollection
             postId={postId}
             trigger={modalCollection}
@@ -78,24 +96,32 @@ export default function PostInfo({
             handleCloseTrigger={handleCloseModalCollection}
             modalCollectionRef={modalCollectionRef}
           />
-          <Report />
+          <OnClickRequireAuth>
+            <Report />
+          </OnClickRequireAuth>
         </Right>
       );
     }
     return (
       <AdditionRow>
-        <AdditionLeft
-          className={type === "preview" || isMyself ? "opacity-0" : "opacity-1"}
-          onClick={handleFollow}
-        >
-          Follow
-        </AdditionLeft>
+        <OnClickRequireAuth>
+          <AdditionLeft
+            className={
+              type === "preview" || isMyself ? "opacity-0" : "opacity-1"
+            }
+            onClick={handleFollow}
+          >
+            {isFollowed ? "Following" : "Follow"}
+          </AdditionLeft>
+        </OnClickRequireAuth>
         <AdditionRight
           className={type === "preview" ? "d-none" : "d-block"}
           isMyself={isMyself}
           ref={modalCollectionRef}
         >
-          <AddCollection onClick={handleModalCollection} />
+          <OnClickRequireAuth>
+            <AddCollection onClick={handleModalCollection} />
+          </OnClickRequireAuth>
           <ModalCollection
             postId={postId}
             trigger={modalCollection}
@@ -103,7 +129,9 @@ export default function PostInfo({
             handleCloseTrigger={handleCloseModalCollection}
             modalCollectionRef={modalCollectionRef}
           />
-          <Report />
+          <OnClickRequireAuth>
+            <Report />
+          </OnClickRequireAuth>
         </AdditionRight>
       </AdditionRow>
     );
@@ -112,9 +140,13 @@ export default function PostInfo({
   return (
     <Layout>
       <Left>
-        <Avatar src={author.avatar} onClick={handleProfile} />
+        <OnClickRequireAuth>
+          <Avatar src={author.avatar} onClick={handleProfile} />
+        </OnClickRequireAuth>
         <Info>
-          <Author onClick={handleProfile}>{author.displayName}</Author>
+          <OnClickRequireAuth>
+            <Author onClick={handleProfile}>{author.displayName}</Author>
+          </OnClickRequireAuth>
           <Time>
             {type === "preview"
               ? "Just now"
@@ -123,12 +155,14 @@ export default function PostInfo({
             {duration > 1 ? `${duration} mins read` : `${duration} min read`}
           </Time>
         </Info>
-        <FollowBtn
-          className={type === "preview" || isMyself ? "d-none" : "d-block"}
-          onClick={handleFollow}
-        >
-          Follow
-        </FollowBtn>
+        <OnClickRequireAuth>
+          <FollowBtn
+            className={type === "preview" || isMyself ? "d-none" : "d-block"}
+            onClick={handleFollow}
+          >
+            {isFollowed ? "Following" : "Follow"}
+          </FollowBtn>
+        </OnClickRequireAuth>
       </Left>
       {render()}
     </Layout>
