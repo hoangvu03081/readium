@@ -97,7 +97,7 @@ export default function Post({ data, coverImageSrc, type }) {
       return <PuffLoader />;
     }
     if (!getMyProfile.data || getMyProfile.isError) {
-      return <p>An error occured while loading author...</p>;
+      return <div />;
     }
     authId = getMyProfile.data.data.id;
   }

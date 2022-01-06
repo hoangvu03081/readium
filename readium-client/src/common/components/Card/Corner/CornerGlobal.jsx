@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import ModalCollection from "../../ModalCollections";
 import { ReactComponent as AddCollection } from "../../../../assets/icons/add_collection.svg";
 import { ReactComponent as Dismiss } from "../../../../assets/icons/dismiss.svg";
+import OnClickRequireAuth from "../../OnClickRequireAuth";
 
 const Layout = styled.div`
   width: 80px;
@@ -57,7 +58,9 @@ export default function CornerGlobal({ postId }) {
 
   return (
     <Layout ref={modalCollectionRef}>
-      <AddCollection onClick={handleModalCollection} />
+      <OnClickRequireAuth>
+        <AddCollection onClick={handleModalCollection} />
+      </OnClickRequireAuth>
       <ModalCollection
         postId={postId}
         trigger={modalCollection}
