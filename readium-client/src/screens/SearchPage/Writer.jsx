@@ -10,10 +10,10 @@ const Layout = styled.div`
   border: 2px solid black;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   gap: 15px;
-  width: 100%;
+  width: 60%;
   padding: 30px;
   margin-bottom: 40px;
 `;
@@ -66,7 +66,6 @@ export default function Writer({ profileId, name, job, profileUrl }) {
         </StyledLink>
         <Job>{job}</Job>
       </Info>
-      <FollowBtn />
     </Layout>
   );
 }

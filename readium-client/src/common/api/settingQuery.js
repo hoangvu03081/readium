@@ -3,6 +3,12 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { SETTING_API } from "./apiConstant";
 
+export function useResetPassword() {
+  return useMutation(["reset_password"], () =>
+    axios.get(SETTING_API.GET_RESET_PASSWORD)
+  );
+}
+
 export function useFetchProfile(profileId) {
   return useQuery(
     ["profile", profileId],

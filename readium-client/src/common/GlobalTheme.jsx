@@ -11,6 +11,7 @@ const theme = {
     middleGrey: "#C0C0C0",
     subtleGrey: "#EBEBEB",
     lightGrey: "#D4D4D4",
+    accept: "#7cfa5c",
 
     HeaderBackground: "#ffffff",
 
@@ -47,6 +48,8 @@ const theme = {
 
     MoreBackground: "#ffffff",
     MoreBlack: "#000000",
+
+    Notification: "#FEFEFE",
   },
 };
 
