@@ -11,6 +11,7 @@ import TagBtn from "../../../common/components/Buttons/TagBtn";
 import ModalCollection from "../../../common/components/ModalCollections";
 import StyledLink from "../../../common/components/StyledLink";
 import { ReactComponent as AddCollectionBtn } from "../../../assets/icons/add_collection.svg";
+import OnClickRequireAuth from "../../../common/components/OnClickRequireAuth";
 
 const Card = styled.div`
   width: 100%;
@@ -219,7 +220,9 @@ export default function PostDesktop({
         <TopRight className="col-3">
           <h1 onClick={handleReadPost}>{date}</h1>
           <h2 onClick={handleProfile}>by {user}</h2>
-          <img src={userAvatar} alt="Avatar" onClick={handleProfile} />
+          <OnClickRequireAuth>
+            <img src={userAvatar} alt="Avatar" onClick={handleProfile} />
+          </OnClickRequireAuth>
         </TopRight>
       </Top>
 
@@ -238,7 +241,9 @@ export default function PostDesktop({
       </Bottom>
 
       <ButtonContainer ref={modalCollectionRef}>
-        <AddCollectionBtn onClick={handleModalCollection} />
+        <OnClickRequireAuth>
+          <AddCollectionBtn onClick={handleModalCollection} />
+        </OnClickRequireAuth>
         <ModalCollection
           postId={postId}
           trigger={modalCollection}

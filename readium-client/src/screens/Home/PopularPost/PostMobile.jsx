@@ -8,6 +8,7 @@ import TagBtn from "../../../common/components/Buttons/TagBtn";
 import ModalCollection from "../../../common/components/ModalCollections";
 import StyledLink from "../../../common/components/StyledLink";
 import { ReactComponent as AddCollectionBtn } from "../../../assets/icons/add_collection.svg";
+import OnClickRequireAuth from "../../../common/components/OnClickRequireAuth";
 
 const Layout = styled.div`
   border: 2px solid ${({ theme }) => theme.colors.PopularPostBlack};
@@ -178,8 +179,12 @@ export default function PostMobile({
       <Preview src={preview} alt="Cover Image" onClick={handleReadPost} />
 
       <PostInfo>
-        <UserAvatar src={userAvatar} alt="Avatar" onClick={handleProfile} />
-        <UserName onClick={handleProfile}>by {user}</UserName>
+        <OnClickRequireAuth>
+          <UserAvatar src={userAvatar} alt="Avatar" onClick={handleProfile} />
+        </OnClickRequireAuth>
+        <OnClickRequireAuth>
+          <UserName onClick={handleProfile}>by {user}</UserName>
+        </OnClickRequireAuth>
         <Date onClick={handleReadPost}>{date}</Date>
       </PostInfo>
 

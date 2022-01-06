@@ -3,6 +3,9 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import FollowBtn from "./FollowBtn";
 import StyledLink from "../../../common/components/StyledLink";
+import { useFollow, useIsFollowAuth } from "../../../common/api/userQuery";
+import { useAuth } from "../../../common/hooks/useAuth";
+import OnClickRequireAuth from "../../../common/components/OnClickRequireAuth";
 
 const Card = styled.div`
   width: 100%;
@@ -48,24 +51,42 @@ const Info = styled.div`
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
   }
-  &:hover {
-    cursor: pointer;
-  }
 `;
 
 export default function Writer({ name, type, avatar, profileId }) {
+  // HANDLE FOLLOW
+  const { auth } = useAuth();
+  const indexOfUserId = avatar.lastIndexOf("/");
+  const userId = avatar.slice(indexOfUserId + 1);
+  const follow = useFollow(userId);
+  const isFollow = useIsFollowAuth(userId, auth);
+  if (isFollow.isFetching) {
+    return <div />;
+  }
+  if (isFollow.isError) {
+    return <p>An error occurred while loading information...</p>;
+  }
+  const isFollowed = isFollow.data?.is_followed;
+  const handleFollow = () => {
+    follow.mutate();
+  };
+
   return (
     <Card>
-      <StyledLink to={`/profile/${profileId}`}>
-        <img src={avatar} alt="Avatar" />
-      </StyledLink>
+      <OnClickRequireAuth>
+        <StyledLink to={`/profile/${profileId}`}>
+          <img src={avatar} alt="Avatar" />
+        </StyledLink>
+      </OnClickRequireAuth>
       <Info>
         <h1>
-          <StyledLink to={`/profile/${profileId}`}>{name}</StyledLink>
+          <OnClickRequireAuth>
+            <StyledLink to={`/profile/${profileId}`}>{name}</StyledLink>
+          </OnClickRequireAuth>
         </h1>
         <h2>{type}</h2>
       </Info>
-      <FollowBtn />
+      <FollowBtn isFollowed={isFollowed} handleFollow={handleFollow} />
     </Card>
   );
 }

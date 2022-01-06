@@ -1,7 +1,9 @@
 import { useMutation, useQuery, useInfiniteQuery } from "react-query";
 import axios from "axios";
-import Delta from "quill-delta";
+import { Quill } from "react-quill";
 import { DRAFT_API } from "./apiConstant";
+
+const Delta = Quill.import("delta");
 
 export function useGetMyDraft() {
   return useInfiniteQuery(
