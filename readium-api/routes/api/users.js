@@ -93,6 +93,20 @@ router.get("/follow/:userId", authMiddleware, async (req, res) => {
   return res.send({ is_followed });
 });
 
+router.get("/is-like/:postId", authMiddleware, async (req, res) => {
+  try {
+    const isLike = req.user.liked.some(
+      (postId) => postId.toString() === req.params.postId
+    );
+    return res.send({ isLike });
+  } catch (err) {
+    return res.status(500).send({
+      message:
+        "Something went wrong in checking out user like this post or not",
+    });
+  }
+});
+
 router.get("/recommended", async (req, res) => {
   /*
     #swagger.tags = ['User']
@@ -102,21 +116,35 @@ router.get("/recommended", async (req, res) => {
     }]
    */
   try {
+    let user;
+    if (req.isAuthenticated()) {
+      user = req.user;
+    } else {
+      const userId = req.session?.passport?.user;
+      user = await User.findById(userId);
+    }
+
     const count = await User.countDocuments();
 
     let random = Math.floor(Math.random() * count),
       acc = 0;
 
-    while (count - random < 10 && acc >= 1 && count > 10) {
+    while (count - random < 10 && acc < 1 && count > 10) {
       acc += 0.1;
       random = Math.floor((Math.random() - acc) * count);
     }
 
-    let users = await User.find().skip(random).limit(10);
-    users = users.map((user) => user.getPublicProfile());
+    let users = await User.find().skip(random).limit(11);
+    const result = [];
+    for (const u of users) {
+      if (u._id.toString() === user?._id.toString()) {
+        continue;
+      }
+      result.push(u.getPublicProfile());
+    }
 
     // #swagger.responses[200] = { description: 'Successfully recommend users' }
-    return res.send(users);
+    return res.send(result);
   } catch (err) {
     // #swagger.responses[500] = { description: 'Error while finding in mongoose.' }
     return res

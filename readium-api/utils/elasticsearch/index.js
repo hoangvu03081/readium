@@ -329,8 +329,6 @@ function searchProfileDraft(
   });
 }
 
-getTrendingTopics(1).then((data) => console.log(data));
-
 function deleteUser(id) {
   return client.delete({
     id,
