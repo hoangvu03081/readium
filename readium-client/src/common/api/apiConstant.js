@@ -40,6 +40,7 @@ const POST_API = {
   GET_POSTS: (pageParam) => getURL(`/posts/?skip=${pageParam}`),
   GET_A_POST: (id) => getURL(`/posts/${id}`),
   GET_COVER_IMAGE_POST: (id) => getURL(`/posts/${id}/cover-image`),
+  EDIT_POST: (postId) => getURL(`/drafts/${postId}`),
   DELETE_POST: (postId) => getURL(`/posts/${postId}`),
 };
 

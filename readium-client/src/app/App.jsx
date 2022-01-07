@@ -11,7 +11,6 @@ import Page404 from "../screens/Page404";
 import WritePost from "../screens/WritePost";
 import PreviewPost from "../screens/PreviewPost";
 import EditDraft from "../screens/EditDraft";
-import EditPost from "../screens/EditPost";
 import ReadPost from "../screens/ReadPost";
 import Collection from "../screens/Collection";
 import InsideCollection from "../screens/InsideCollection";
@@ -65,9 +64,6 @@ function App() {
           </SecureRoute>
           <SecureRoute path="/edit/draft/:draftId">
             <EditDraft />
-          </SecureRoute>
-          <SecureRoute path="/edit/post">
-            <EditPost />
           </SecureRoute>
           <Redirect from="/post/:postId/reload" to="/post/:postId" />
           <Route path="/post/:postId">

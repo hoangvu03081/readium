@@ -3,9 +3,10 @@
 import React, { useState, useRef } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import { useHistory } from "react-router-dom";
 import ModalCollection from "../../ModalCollections";
 import useOutsideClickAlerter from "../../../hooks/useOutsideClickAlerter";
-import { useDeletePost } from "../../../api/postQuery";
+import { useDeletePost, useEditPost } from "../../../api/postQuery";
 import { ReactComponent as AddCollection } from "../../../../assets/icons/add_collection.svg";
 import { ReactComponent as More } from "../../../../assets/icons/more.svg";
 
@@ -92,10 +93,12 @@ const MoreContent = styled.div`
 `;
 
 export default function CornerMyProfile({ postId, refetchList }) {
+  const history = useHistory();
   const modalCollectionRef = useRef(null);
   const [modalCollection, setModalCollection] = useState(false);
   const [isMore, setIsMore] = useState(false);
   const moreBtnContainer = useRef(null);
+  const editPost = useEditPost();
   const deletePost = useDeletePost(postId);
 
   // HANDLE ADD COLLECTION
@@ -124,7 +127,11 @@ export default function CornerMyProfile({ postId, refetchList }) {
 
   // HANDLE EDIT POST
   const handleEditPost = () => {
-    // do something
+    editPost.mutate(postId, {
+      onSuccess: ({ data }) => {
+        history.push(`/edit/draft/${data.id}`);
+      },
+    });
   };
 
   // HANDLE DELETE POST
