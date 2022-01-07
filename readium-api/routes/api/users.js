@@ -94,6 +94,13 @@ router.get("/follow/:userId", authMiddleware, async (req, res) => {
 });
 
 router.get("/is-like/:postId", authMiddleware, async (req, res) => {
+  /*
+    #swagger.tags = ["User"]
+    #swagger.summary = "Is user like post"
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+  */
   try {
     const isLike = req.user.liked.some(
       (postId) => postId.toString() === req.params.postId
