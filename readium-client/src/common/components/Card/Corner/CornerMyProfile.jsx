@@ -9,6 +9,7 @@ import useOutsideClickAlerter from "../../../hooks/useOutsideClickAlerter";
 import { useDeletePost, useEditPost } from "../../../api/postQuery";
 import { ReactComponent as AddCollection } from "../../../../assets/icons/add_collection.svg";
 import { ReactComponent as More } from "../../../../assets/icons/more.svg";
+import ModalConfirm from "../../ModalConfirm";
 
 const Layout = styled.div`
   width: 82px;
@@ -99,7 +100,8 @@ export default function CornerMyProfile({ postId, refetchList }) {
   const [isMore, setIsMore] = useState(false);
   const moreBtnContainer = useRef(null);
   const editPost = useEditPost();
-  const deletePost = useDeletePost(postId);
+  const deletePost = useDeletePost();
+  const [modalOpen, setModalOpen] = useState(false);
 
   // HANDLE ADD COLLECTION
   const handleModalCollection = () => {
@@ -135,13 +137,16 @@ export default function CornerMyProfile({ postId, refetchList }) {
   };
 
   // HANDLE DELETE POST
+  const deleteAndRefetch = () => {
+    deletePost.mutate(postId);
+    refetchList();
+  };
   const handleDeletePost = () => {
     setIsMore(false);
     if (!postId) {
       alert("An error occurred while deleting post.");
     }
-    deletePost.mutate(postId);
-    refetchList();
+    setModalOpen(true);
   };
 
   return (
@@ -162,6 +167,13 @@ export default function CornerMyProfile({ postId, refetchList }) {
           <p onClick={handleDeletePost}>Delete post</p>
         </MoreContent>
       </MoreBtnContainer>
+
+      <ModalConfirm
+        modalOpen={modalOpen}
+        setModalOpen={setModalOpen}
+        mutateFn={deletePost}
+        handleConfirm={deleteAndRefetch}
+      />
     </Layout>
   );
 }
