@@ -5,6 +5,7 @@ import { useDeletePostFromCollection } from "../../../api/collectionQuery";
 import ModalCollection from "../../ModalCollections";
 import { ReactComponent as AddCollection } from "../../../../assets/icons/add_collection.svg";
 import { ReactComponent as Delete } from "../../../../assets/icons/delete.svg";
+import ModalConfirm from "../../ModalConfirm";
 
 const Layout = styled.div`
   width: 82px;
@@ -42,6 +43,7 @@ export default function CornerCollection({
   const modalCollectionRef = useRef(null);
   const [modalCollection, setModalCollection] = useState(false);
   const deletePostFromCollection = useDeletePostFromCollection();
+  const [modalOpen, setModalOpen] = useState(false);
 
   // HANDLE ADD COLLECTION
   const handleModalCollection = () => {
@@ -56,15 +58,16 @@ export default function CornerCollection({
   };
 
   // HANDLE DELETE
+  const deleteAndRefetch = () => {
+    deletePostFromCollection.mutate({ postId, collectionId });
+    refetchList();
+  };
   const handleDelete = () => {
     if (!postId || !collectionId) {
       alert("An error occurred while deleting post from collection.");
       return;
     }
-    deletePostFromCollection.mutate({ postId, collectionId });
-    setTimeout(() => {
-      refetchList();
-    }, 500);
+    setModalOpen(true);
   };
 
   return (
@@ -77,7 +80,15 @@ export default function CornerCollection({
         handleCloseTrigger={handleCloseModalCollection}
         modalCollectionRef={modalCollectionRef}
       />
+
       <Delete onClick={handleDelete} />
+
+      <ModalConfirm
+        modalOpen={modalOpen}
+        setModalOpen={setModalOpen}
+        mutateFn={deletePostFromCollection}
+        handleConfirm={deleteAndRefetch}
+      />
     </Layout>
   );
 }

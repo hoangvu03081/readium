@@ -22,7 +22,7 @@ export default function PostList({ isMyProfile, userId }) {
   const refetchList = () => {
     setTimeout(() => {
       refetch();
-    }, 500);
+    }, 300);
   };
   if (data)
     return (

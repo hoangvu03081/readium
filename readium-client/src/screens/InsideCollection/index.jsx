@@ -32,7 +32,9 @@ export default function InsideCollection() {
   const { auth } = useAuth();
   const getAllCollections = useGetAllCollections(auth);
   const refetchList = () => {
-    getAllCollections.refetch();
+    setTimeout(() => {
+      getAllCollections.refetch();
+    }, 300);
   };
 
   if (getAllCollections.isFetching) {

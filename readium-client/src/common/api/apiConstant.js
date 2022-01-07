@@ -38,8 +38,11 @@ const POST_API = {
     getURL(`/posts/user/${userId}?skip=${skip}`),
   GET_POPULAR_POST: getURL(`/posts/popular`),
   GET_POSTS: (pageParam) => getURL(`/posts/?skip=${pageParam}`),
+  GET_FOLLOWING_POSTS: (pageParam) =>
+    getURL(`/users/following/posts/?skip=${pageParam}`),
   GET_A_POST: (id) => getURL(`/posts/${id}`),
   GET_COVER_IMAGE_POST: (id) => getURL(`/posts/${id}/cover-image`),
+  EDIT_POST: (postId) => getURL(`/drafts/${postId}`),
   DELETE_POST: (postId) => getURL(`/posts/${postId}`),
 };
 
@@ -55,6 +58,11 @@ const DRAFT_API = {
   GET_COVER_IMAGE_DRAFT: (id) => getURL(`/drafts/${id}/cover-image`),
   PUT_PUBLISH: (id) => getURL(`/drafts/${id}/publish`),
   DELETE_DRAFT: (id) => getURL(`/drafts/${id}`),
+};
+
+const LIKE_API = {
+  POST_LIKE: (postId) => getURL(`/posts/${postId}/like`),
+  GET_IS_LIKED: (postId) => getURL(`/users/is-like/${postId}`),
 };
 
 const COMMENT_API = {
@@ -85,6 +93,7 @@ export {
   POST_API,
   SETTING_API,
   DRAFT_API,
+  LIKE_API,
   COMMENT_API,
   COLLECTION_API,
   SEARCH_API,
