@@ -1,4 +1,7 @@
 const router = require("express").Router();
+const bcrypt = require("bcrypt");
+const passport = require("passport");
+
 const Post = require("../../models/Post");
 const User = require("../../models/User");
 const Notification = require("../../models/Notification");
@@ -93,31 +96,80 @@ router.get("/follow/:userId", authMiddleware, async (req, res) => {
   return res.send({ is_followed });
 });
 
-router.get("/recommended", async (req, res) => {
+router.get("/is-like/:postId", authMiddleware, async (req, res) => {
+  /*
+    #swagger.tags = ["User"]
+    #swagger.summary = "Is user like post"
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+  */
+  try {
+    const isLike = req.user.liked.some(
+      (postId) => postId.toString() === req.params.postId
+    );
+    return res.send({ isLike });
+  } catch (err) {
+    return res.status(500).send({
+      message:
+        "Something went wrong in checking out user like this post or not",
+    });
+  }
+});
+
+const middleware = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next();
+  } else {
+    passport.authenticate("jwt", { session: false }, function (
+      err,
+      user,
+      info
+    ) {
+      if (user) {
+        req.user = user;
+      }
+      return next();
+    })(req, res, next);
+  }
+};
+
+router.get("/recommended", middleware, async (req, res) => {
   /*
     #swagger.tags = ['User']
     #swagger.summary = 'Get recommended writers'
     #swagger.security = [{
       "bearerAuth": []
     }]
-   */
+  */
   try {
-    const count = await User.countDocuments();
+    const user = req.user;
 
-    let random = Math.floor(Math.random() * count),
-      acc = 0;
+    const count = await User.countDocuments({
+      followers: { $nin: user?._id },
+      _id: { $ne: user?._id },
+    });
+    let random = count > 11 ? Math.floor(Math.random() * (count + 1)) : 0;
 
-    while (count - random < 10 && acc >= 1 && count > 10) {
-      acc += 0.1;
-      random = Math.floor((Math.random() - acc) * count);
+    while (count - random < 11 && count > 11) {
+      random = Math.floor(Math.random() * (count + 1));
     }
 
-    let users = await User.find().skip(random).limit(10);
-    users = users.map((user) => user.getPublicProfile());
+    let users = await User.find({
+      followers: { $nin: user?._id },
+      _id: { $ne: user?._id },
+    })
+      .skip(random)
+      .limit(11);
+    const result = [];
+    for (const u of users) {
+      result.push(u.getPublicProfile());
+    }
 
     // #swagger.responses[200] = { description: 'Successfully recommend users' }
-    return res.send(users);
+    return res.send(result);
   } catch (err) {
+    console.log(err);
     // #swagger.responses[500] = { description: 'Error while finding in mongoose.' }
     return res
       .status(500)
@@ -182,11 +234,36 @@ router.delete("/", authMiddleware, async (req, res) => {
   /*
     #swagger.tags = ['User']
     #swagger.summary = "Delete account"
+    #swagger.requestBody = {
+      content: {
+        "application/json": {
+          schema: {
+            properties: {
+              password: {
+                type: 'string',
+                default: 'testing',
+              }
+            }
+          }  
+        }
+      }
+    }
     #swagger.security = [{
       "bearerAuth": []
     }]
   */
   try {
+    const { password } = req.body;
+    if (!password) {
+      return res.status(400).send({ message: "Please provide password" });
+    }
+    const isCorrect = await bcrypt.compare(password, req.user.password);
+    if (!isCorrect) {
+      return res.status(400).send({
+        message: "Your password is not correct, can not delete account!",
+      });
+    }
+
     const id = req.user._id.toString();
     const deletedUser = await User.findById(id);
 
@@ -253,6 +330,7 @@ router.delete("/", authMiddleware, async (req, res) => {
       user: deletedUser.getPublicProfile(),
     });
   } catch (err) {
+    console.log(err);
     return res
       .status(500)
       .send({ message: "Something went wrong when delete account" });

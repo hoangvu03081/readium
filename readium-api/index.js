@@ -11,8 +11,13 @@ const {
   NO_AUTH_TOKEN,
   getPostCoverImageUrl,
   getAvatarUrl,
+  authMiddleware,
 } = require("./utils");
-const { search } = require("./utils/elasticsearch");
+const {
+  search,
+  searchProfilePost,
+  searchProfileDraft,
+} = require("./utils/elasticsearch");
 
 const wss = new WebSocketServer({ noServer: true });
 
@@ -26,27 +31,27 @@ require("./routes/api/websocket-handler")(app, wss);
 
 app.post("/search", async (req, res) => {
   /*
-  #swagger.tags = ['Search']
-  #swagger.requestBody = {
-    required: true,
-    content: {
-      "application/json": {
-        schema: {
-          type: 'object',
-          properties: {
-            keyword: {
-              type: 'string'
+    #swagger.tags = ['Search']
+    #swagger.requestBody = {
+      required: true,
+      content: {
+        "application/json": {
+          schema: {
+            type: 'object',
+            properties: {
+              keyword: {
+                type: 'string'
+              }
             }
           }
         }
       }
     }
-  }
-*/
+  */
   try {
     const { keyword } = req.body;
     if (!keyword) {
-      return res.status(400).send();
+      return res.send([]);
     }
     const arr = req.body.keyword.split(" ");
     const text = arr.filter((word) => word[0] !== "#").join(" ");
@@ -103,6 +108,97 @@ app.post("/search", async (req, res) => {
     return res.send(arrResult);
   } catch (err) {
     return res.status(500).send({ message: "Error in search" });
+  }
+});
+
+app.post("/search-profile-post/:userId", async (req, res) => {
+  /*
+    #swagger.tags = ['Search']
+    #swagger.requestBody = {
+      required: true,
+      content: {
+        "application/json": {
+          schema: {
+            type: 'object',
+            properties: {
+              keyword: {
+                type: 'string'
+              }
+            }
+          }
+        }
+      }
+    }
+  */
+  try {
+    if (!req.body.keyword) {
+      let posts = await Post.find({
+        author: req.params.userId,
+        isPublished: true,
+      });
+      posts = await Promise.all(posts.map((post) => post.getPostPreview()));
+      return res.send(posts);
+    }
+    const arr = req.body.keyword.split(" ");
+    const query = arr.filter((word) => word[0] !== "#").join(" ");
+    const tags = arr.filter((word) => word[0] === "#").join(" ");
+    const result = await searchProfilePost(query, req.params.userId, tags);
+    let arrResult = await Promise.all(
+      result.body.hits.hits.map((doc) => Post.findById(doc._id))
+    );
+    arrResult = arrResult.map((post) => post.getProfilePost(req.params.userId));
+    return res.send(arrResult);
+  } catch (err) {
+    return res.status(500).send({ message: "Error in search profile posts" });
+  }
+});
+
+app.post("/search-profile-draft", authMiddleware, async (req, res) => {
+  /*
+    #swagger.tags = ['Search']
+    #swagger.requestBody = {
+      required: true,
+      content: {
+        "application/json": {
+          schema: {
+            type: 'object',
+            properties: {
+              keyword: {
+                type: 'string'
+              }
+            }
+          }
+        }
+      }
+    }
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+  */
+  try {
+    if (!req.body.keyword) {
+      let posts = await Post.find({
+        author: req.user._id,
+        isPublished: false,
+      });
+      posts = await Promise.all(posts.map((post) => post.getPostPreview()));
+      return res.send(posts);
+    }
+
+    const result = await searchProfileDraft(
+      req.body.keyword,
+      req.user._id.toString()
+    );
+
+    let arrResult = await Promise.all(
+      result.body.hits.hits.map((doc) => Post.findById(doc._id))
+    );
+    arrResult = arrResult.map((post) =>
+      post.getProfilePost(req.user._id.toString())
+    );
+    return res.send(arrResult);
+  } catch (err) {
+    return res.status(500).send({ message: "Error in search profile drafts" });
   }
 });
 
