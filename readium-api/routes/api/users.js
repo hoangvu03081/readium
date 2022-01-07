@@ -143,27 +143,33 @@ router.get("/recommended", middleware, async (req, res) => {
     }]
   */
   try {
-    let user = req.user;
+    const user = req.user;
 
-    const count = await User.countDocuments();
-    let random = 0;
+    const count = await User.countDocuments({
+      followers: { $nin: user?._id },
+      _id: { $ne: user?._id },
+    });
+    let random = count > 11 ? Math.floor(Math.random() * (count + 1)) : 0;
 
     while (count - random < 11 && count > 11) {
       random = Math.floor(Math.random() * (count + 1));
     }
 
-    let users = await User.find().skip(random).limit(11);
+    let users = await User.find({
+      followers: { $nin: user?._id },
+      _id: { $ne: user?._id },
+    })
+      .skip(random)
+      .limit(11);
     const result = [];
     for (const u of users) {
-      if (u._id.toString() === user?._id.toString()) {
-        continue;
-      }
       result.push(u.getPublicProfile());
     }
 
     // #swagger.responses[200] = { description: 'Successfully recommend users' }
     return res.send(result);
   } catch (err) {
+    console.log(err);
     // #swagger.responses[500] = { description: 'Error while finding in mongoose.' }
     return res
       .status(500)
