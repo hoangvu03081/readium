@@ -249,7 +249,9 @@ router.delete("/", authMiddleware, async (req, res) => {
     if (!password && req.user.password) {
       return res.status(400).send({ message: "Please provide password" });
     }
-    const isCorrect = await bcrypt.compare(password, req.user.password);
+    let isCorrect = true;
+    if (password && req.user.password)
+      isCorrect = await bcrypt.compare(password, req.user.password);
     if (!isCorrect && req.user.password) {
       return res.status(400).send({
         message: "Your password is not correct, can not delete account!",

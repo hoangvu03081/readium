@@ -20,7 +20,7 @@ export function useGetRecommendedWriters() {
     () => axios.get(OTHER_API.GET_RECOMMENDED_WRITERS),
     {
       staleTime: 0,
-      refetchOnMount: true,
+      refetchOnMount: "always",
       refetchOnWindowFocus: false,
     }
   );

@@ -25,6 +25,7 @@ import {
   Title,
   Top,
 } from "./styles";
+import ModalConfirm from "../../common/components/ModalConfirm";
 
 Modal.setAppElement("#root");
 const customStyles = {
@@ -59,30 +60,34 @@ export default function Collection() {
   const [renameCollectionId, setRenameCollectionId] = useState("");
   const [deleteCollectionId, setDeleteCollectionId] = useState("");
   const [modalNote, setModalNote] = useState(false);
+  const [modalDelete, setModalDelete] = useState(false);
   useOutsideClickAlerter(modalContainer, () => {
     setOpenModal(false);
     setModalNote(false);
   });
-  const refetchCollections = () => {
-    setTimeout(() => {
-      getAllCollections.refetch();
-    }, 500);
-  };
   useEffect(() => {
     getAllCollections.refetch();
   }, []);
 
   // HANDLE DELETE COLLECTION
-  useEffect(() => {
-    if (!deleteCollectionId) {
-      return;
-    }
+  const refetchCollections = () => {
+    setTimeout(() => {
+      getAllCollections.refetch();
+    }, 300);
+  };
+  const deleteAndRefetch = () => {
     deleteCollection.mutate(deleteCollectionId, {
       onSuccess: () => {
         setDeleteCollectionId("");
       },
     });
     refetchCollections();
+  };
+  useEffect(() => {
+    if (!deleteCollectionId) {
+      return;
+    }
+    setModalDelete(true);
   }, [deleteCollectionId]);
 
   // CHECKING
@@ -205,6 +210,13 @@ export default function Collection() {
           </ModalNote>
         </ModalContainer>
       </Modal>
+
+      <ModalConfirm
+        modalOpen={modalDelete}
+        setModalOpen={setModalDelete}
+        mutateFn={deleteCollection}
+        handleConfirm={deleteAndRefetch}
+      />
     </Layout>
   );
 }

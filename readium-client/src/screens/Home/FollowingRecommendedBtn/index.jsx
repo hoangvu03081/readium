@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 import styled from "styled-components";
+import OnClickRequireAuth from "../../../common/components/OnClickRequireAuth";
 
 const Outline = styled.div`
   border: 2px solid black;
@@ -68,29 +70,35 @@ const Button = styled.button`
 
 const Line = styled.div`
   position: absolute;
-  left: 132px;
+  left: 152px;
   top: 5px;
   border: 1px solid black;
   height: 25px;
 `;
 
-export default function FollowingRecommendedBtn() {
-  const [active, setActive] = useState(0);
+export default function FollowingRecommendedBtn({ recommend, setRecommend }) {
   return (
     <Outline>
       <Button
-        className={active === 0 ? "active" : ""}
-        onClick={() => setActive(0)}
+        className={recommend ? "active" : ""}
+        onClick={() => setRecommend(true)}
       >
-        FOLLOWING
+        RECOMMEND
       </Button>
       <Line />
-      <Button
-        className={active === 1 ? "active" : ""}
-        onClick={() => setActive(1)}
-      >
-        RECOMMENDED
-      </Button>
+      <OnClickRequireAuth>
+        <Button
+          className={recommend ? "" : "active"}
+          onClick={() => setRecommend(false)}
+        >
+          FOLLOWING
+        </Button>
+      </OnClickRequireAuth>
     </Outline>
   );
 }
+
+FollowingRecommendedBtn.propTypes = {
+  recommend: PropTypes.bool.isRequired,
+  setRecommend: PropTypes.func.isRequired,
+};

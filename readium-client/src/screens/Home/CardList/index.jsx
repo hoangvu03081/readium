@@ -1,12 +1,10 @@
 /* eslint-disable arrow-body-style */
 /* eslint-disable no-underscore-dangle */
 import React from "react";
-import useInfinitePosts from "../../../common/api/useInfinitePosts";
+import PropTypes from "prop-types";
 import Card from "../../../common/components/Card";
 
-export default function CardList() {
-  const data = useInfinitePosts();
-
+export default function CardList({ data }) {
   return (
     <>
       {data.reduce((result, item) => {
@@ -38,3 +36,7 @@ export default function CardList() {
     </>
   );
 }
+
+CardList.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.any).isRequired,
+};

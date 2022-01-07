@@ -70,6 +70,10 @@ export function useNumberOfPosts(skip) {
   });
 }
 
+export function useEditPost() {
+  return useMutation((postId) => axios.post(POST_API.EDIT_POST(postId)));
+}
+
 export function useDeletePost() {
   return useMutation((postId) => axios.delete(POST_API.DELETE_POST(postId)));
 }
