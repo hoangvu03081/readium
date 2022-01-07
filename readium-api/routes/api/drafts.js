@@ -12,7 +12,7 @@ const {
   checkOwnPost,
 } = require("../../middleware/posts-middleware");
 const { Readable } = require("stream");
-const { putPost } = require("../../utils/elasticsearch");
+const { putPost, deletePost } = require("../../utils/elasticsearch");
 
 const uploadCover = configMulter({
   limits: { fields: 6, fileSize: 12e6, files: 1 },
@@ -117,8 +117,8 @@ router.get("/:id", authMiddleware, async (req, res) => {
   }
 });
 
-const createInitialDraftEditorContent = () => {
-  const buf = Buffer.from('{ "ops": [] }', "utf8");
+const createInitialDraftEditorContent = (str = '{ "ops": [] }') => {
+  const buf = Buffer.from(str, "utf8");
   const readable = new Readable();
   readable._read = () => {};
   readable.push(buf);
@@ -148,6 +148,7 @@ router.post("/", authMiddleware, async (req, res) => {
     );
 
     await post.save();
+    await putPost(post._id.toString(), post.getElastic());
     return res.status(201).send({ id: post._id });
   } catch (err) {
     return res
@@ -165,6 +166,11 @@ router.post("/:id", authMiddleware, checkOwnPost, async (req, res) => {
     }]
   */
   try {
+    if (!req.post.isPublished) {
+      return res
+        .status(400)
+        .send({ message: "Post is not published to create a draft." });
+    }
     const {
       title,
       textEditorContent,
@@ -177,9 +183,19 @@ router.post("/:id", authMiddleware, checkOwnPost, async (req, res) => {
       description,
     } = req.post;
 
+    const bucket = getBucket();
+    const stream = bucket.openDownloadStream(textEditorContent);
+    const contentFromBucket = await streamToString(stream);
+    const readable = createInitialDraftEditorContent(contentFromBucket);
+
+    const textEditorContentId = new ObjectId();
+    readable.pipe(
+      bucket.openUploadStream("textEditorContent", { id: textEditorContentId })
+    );
+
     const newPost = new Post({
       title,
-      textEditorContent,
+      textEditorContent: textEditorContentId,
       publishedPost: _id,
       author,
       coverImage,
@@ -283,7 +299,7 @@ router.patch("/:id/diff", authMiddleware, checkOwnPost, async (req, res) => {
   } catch (err) {
     return res
       .status(500)
-      .send({ message: "Something went wrong when updating post's content" });
+      .send({ message: "Something went wrong when updating draft's content" });
   }
 });
 
@@ -374,6 +390,7 @@ router.put("/:id/title", authMiddleware, checkOwnPost, async (req, res) => {
     const { title } = req.body;
     if (title) post.title = title;
     else post.title = "";
+    await putPost(post._id.toString(), post.getElastic());
 
     post.lastEdit = new Date();
     await post.save();
@@ -509,32 +526,37 @@ router.put("/:id/publish", authMiddleware, checkOwnPost, async (req, res) => {
     }
 
     if (post.isPublished) {
-      return res
-        .status(400)
-        .send({
-          message:
-            "Post is already published. Please provide a draft to this endpoint.",
-        });
+      return res.status(400).send({
+        message:
+          "Post is already published. Please provide a draft to this endpoint.",
+      });
     }
 
     const _id = req.params.id;
 
     /// republish post
     if (post.publishedPost) {
-      const publishedPost = await Post.findById(post.publishedPost);
-      publishedPost.title = post.title;
-      publishedPost.textEditorContent = post.textEditorContent;
-      publishedPost.coverImage = post.coverImage;
-      publishedPost.content = post.content;
-      publishedPost.lastEdit = post.lastEdit;
-      publishedPost.duration = post.duration;
-      publishedPost.tags = post.tags;
-      publishedPost.description = post.description;
-      publishedPost.summary = post.summary;
-      await publishedPost.save();
-      const postObject = publishedPost.getElastic();
-      await putPost(publishedPost._id.toString(), postObject);
-      await Post.deleteOne({ _id });
+      // 1. xóa elastic
+      await deletePost(post.publishedPost.toString());
+      // 2. xóa post
+      const publishedPost = await Post.findByIdAndDelete(post.publishedPost);
+      console.log(publishedPost.title);
+      // 3. xóa bucket
+      const bucket = getBucket();
+      bucket.delete(publishedPost.textEditorContent);
+      // 4. update ref tới post mới
+      const posts = await Post.find({ publishedPost: publishedPost._id });
+      for (const p of posts) {
+        p.publishedPost = post._id;
+        await p.save();
+      }
+      // 5. putPost
+      await putPost(post._id.toString(), post.getElastic());
+      // 6. savePost
+      post.publishDate = publishedPost.publishDate;
+      post.isPublished = true;
+      post.publishedPost = undefined;
+      await post.save();
       return res.send();
     }
     /// republish post
@@ -548,6 +570,7 @@ router.put("/:id/publish", authMiddleware, checkOwnPost, async (req, res) => {
     return res.send();
     /// publish post
   } catch (err) {
+    console.log(err);
     return res.status(500).send({
       message: "Something went wrong when publishing the post",
     });
@@ -570,7 +593,9 @@ router.delete("/:id", authMiddleware, checkOwnPost, async (req, res) => {
       });
 
     const bucket = getBucket();
+    await deletePost(req.post._id.toString());
     await bucket.delete(req.post.textEditorContent);
+    await Post.deleteOne({ _id: req.params.id });
     return res.send();
   } catch (err) {
     return res.send({

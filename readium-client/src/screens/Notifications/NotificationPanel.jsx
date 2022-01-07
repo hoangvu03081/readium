@@ -19,12 +19,27 @@ const StyledPanel = styled.div`
   }
 `;
 
+const NotificationHeader = styled.h2`
+  margin-top: 40px;
+`;
+
+const MockData = [
+  {
+    from: "61d7d7ca2d12f47c61d5f6a7",
+    to: "61d7d6da2d12f47c61d5f644",
+    content: "Hoàng Vũ commented on ABC",
+    url: "unavailable",
+    createdAt: "2022-01-07T06:12:45.293Z",
+    id: "61d7d9dd2d12f47c61d5f86a",
+  },
+];
+
 export default function NotificationPanel() {
   const { notifications } = useWs();
   console.log(notifications);
   return (
     <StyledPanel>
-      <h2 className="mt-5">Notifications</h2>
+      <NotificationHeader>Notifications</NotificationHeader>
     </StyledPanel>
   );
 }

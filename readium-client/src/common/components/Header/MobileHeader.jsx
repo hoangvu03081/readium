@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { BiSearchAlt2 } from "react-icons/bi";
@@ -11,6 +11,8 @@ import { avatarClicked } from "../../../slices/navbar-slice";
 import { modalOpened } from "../../../slices/sign-in-slice";
 import { Logo, SearchButton, SignInButton, AvatarImage } from "./styles";
 import { useMyAvatar } from "../../api/useAvatar";
+import MobileSearchBar from "./components/MobileSearchBar";
+import useRouter from "../../hooks/useRouter";
 
 const HeaderNav = styled.nav`
   position: fixed;
@@ -54,17 +56,25 @@ export default function MobileHeader({ isLogin }) {
   const dispatch = useDispatch();
   const handleOpenModal = () => dispatch(modalOpened());
   const handleAvatarClicked = () => dispatch(avatarClicked());
+  const [isSearch, setIsSearch] = useState(false);
   const avatarQuery = useMyAvatar();
+  const { push, location } = useRouter();
+
+  useEffect(() => {
+    setIsSearch(false);
+  }, [location.pathname]);
   return (
     <>
       <HeaderNav>
-        <MobileLogo to="/" className="ms-4">
-          readium
-        </MobileLogo>
-        {isLogin && (
+        {!isSearch && (
+          <MobileLogo to="/" className="ms-4">
+            readium
+          </MobileLogo>
+        )}
+        {isLogin && !isSearch && (
           <>
             <div className="ms-auto me-4">
-              <SearchButton>
+              <SearchButton onClick={() => setIsSearch(true)}>
                 <BiSearchAlt2 size={20} />
               </SearchButton>
             </div>
@@ -81,6 +91,7 @@ export default function MobileHeader({ isLogin }) {
             </div>
           </>
         )}
+        {isLogin && isSearch && <MobileSearchBar setIsSearch={setIsSearch} />}
         {!isLogin && (
           <div className="ms-auto me-4">
             <MobileSignInButton onClick={handleOpenModal}>

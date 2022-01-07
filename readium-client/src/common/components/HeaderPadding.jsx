@@ -6,6 +6,7 @@ const HeaderPadding = styled.div`
 
   @media only screen and (max-width: 1000px) {
     padding-top: 64px;
+    padding-bottom: 50px;
   }
 `;
 
