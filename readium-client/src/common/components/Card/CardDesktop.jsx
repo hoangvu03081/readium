@@ -9,6 +9,7 @@ import TagBtn from "../Buttons/TagBtn";
 import Corner from "./Corner";
 import LoveComment from "../Buttons/LoveComment";
 import StyledLink from "../StyledLink";
+import OnClickRequireAuth from "../OnClickRequireAuth";
 
 const Card = styled.div`
   border: 2px solid ${({ theme }) => theme.colors.CardBlack};
@@ -255,7 +256,9 @@ export default function CardDesktop({
         <p onClick={handleReadPost}>
           {duration > 1 ? `${duration} mins read` : `${duration} min read`}
         </p>
-        <img src={userAvatar} alt="Avatar" onClick={handleProfile} />
+        <OnClickRequireAuth>
+          <img src={userAvatar} alt="Avatar" onClick={handleProfile} />
+        </OnClickRequireAuth>
       </Right>
 
       <CornerContainer>

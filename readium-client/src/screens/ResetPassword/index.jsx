@@ -71,7 +71,7 @@ export default function ResetPassword() {
   if (hasData)
     return (
       <LogoPage>
-        <h2>Your account has been successfully activated</h2>
+        <h2>Your password has been changed successfully</h2>
         <div>
           <Link to="/">Click here to go back to homepage</Link>
         </div>

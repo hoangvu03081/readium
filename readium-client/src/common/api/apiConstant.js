@@ -30,6 +30,7 @@ const PROFILE_API = {
 const SETTING_API = {
   GET_MY_PROFILE: getURL("/users/profiles"),
   PATCH_MY_PROFILE: getURL("/users/profiles"),
+  GET_RESET_PASSWORD: getURL("/auth/reset"),
 };
 
 const POST_API = {
@@ -53,6 +54,7 @@ const DRAFT_API = {
   GET_A_DRAFT: (id) => getURL(`/drafts/${id}`),
   GET_COVER_IMAGE_DRAFT: (id) => getURL(`/drafts/${id}/cover-image`),
   PUT_PUBLISH: (id) => getURL(`/drafts/${id}/publish`),
+  DELETE_DRAFT: (id) => getURL(`/drafts/${id}`),
 };
 
 const COMMENT_API = {
