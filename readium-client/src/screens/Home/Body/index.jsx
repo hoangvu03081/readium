@@ -18,6 +18,9 @@ const ColumnLeft = styled.div`
   align-items: center;
   border-right: 2px solid black;
   min-height: 100vh;
+  ::-webkit-scrollbar {
+    display: none;
+  }
   @media (max-width: 1399px) {
     padding: 30px 80px 30px 68px;
   }
