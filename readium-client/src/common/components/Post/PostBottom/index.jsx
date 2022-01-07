@@ -10,11 +10,20 @@ import { ReactComponent as Loved } from "../../../../assets/icons/loved.svg";
 import { ReactComponent as AddCollection } from "../../../../assets/icons/add_collection.svg";
 import { ReactComponent as Report } from "../../../../assets/icons/report.svg";
 import { Layout, Left, Right, RightLeft, RightRight } from "./styles";
+import { useIsLiked, useLikePost } from "../../../api/likeQuery";
+import { useAuth } from "../../../hooks/useAuth";
 
 export default function PostBottom({ postId, tags, type, isMyself }) {
-  const [isLoved, setIsLoved] = useState(false);
+  const { auth } = useAuth();
   const modalCollectionRef = useRef(null);
   const [modalCollection, setModalCollection] = useState(false);
+  const likePost = useLikePost();
+  const isLiked = useIsLiked(postId, auth);
+
+  if (isLiked.isFetching || isLiked.isError) {
+    return <div />;
+  }
+  const liked = isLiked.data?.data.isLike;
 
   // HANDLE ADD COLLECTION
   const handleModalCollection = () => {
@@ -28,13 +37,9 @@ export default function PostBottom({ postId, tags, type, isMyself }) {
     setModalCollection(false);
   };
 
-  // HANDLE LOVE POST
+  // HANDLE LIKE POST
   const handleLovePost = () => {
-    if (isLoved) {
-      setIsLoved(false);
-    } else {
-      setIsLoved(true);
-    }
+    likePost.mutate(postId);
   };
 
   return (
@@ -50,12 +55,12 @@ export default function PostBottom({ postId, tags, type, isMyself }) {
         <RightLeft ref={modalCollectionRef}>
           <OnClickRequireAuth>
             <Love
-              className={isLoved ? "d-none" : "d-block"}
+              className={liked ? "d-none" : "d-block"}
               onClick={handleLovePost}
             />
           </OnClickRequireAuth>
           <Loved
-            className={isLoved ? "d-block" : "d-none"}
+            className={liked ? "d-block" : "d-none"}
             onClick={handleLovePost}
           />
           <OnClickRequireAuth>

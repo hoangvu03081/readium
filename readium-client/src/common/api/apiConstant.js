@@ -57,6 +57,11 @@ const DRAFT_API = {
   DELETE_DRAFT: (id) => getURL(`/drafts/${id}`),
 };
 
+const LIKE_API = {
+  POST_LIKE: (postId) => getURL(`/posts/${postId}/like`),
+  GET_IS_LIKED: (postId) => getURL(`/users/is-like/${postId}`),
+};
+
 const COMMENT_API = {
   GET_MY_AVATAR: getURL(`/users/profiles/avatar/`),
   POST_COMMENT: (postId) => getURL(`/posts/${postId}/comments`),
@@ -85,6 +90,7 @@ export {
   POST_API,
   SETTING_API,
   DRAFT_API,
+  LIKE_API,
   COMMENT_API,
   COLLECTION_API,
   SEARCH_API,
