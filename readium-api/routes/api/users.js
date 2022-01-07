@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const bcrypt = require("bcrypt");
+const passport = require("passport");
 
 const Post = require("../../models/Post");
 const User = require("../../models/User");
@@ -116,31 +117,39 @@ router.get("/is-like/:postId", authMiddleware, async (req, res) => {
   }
 });
 
-router.get("/recommended", async (req, res) => {
+const middleware = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next();
+  } else {
+    passport.authenticate("jwt", { session: false }, function (
+      err,
+      user,
+      info
+    ) {
+      if (user) {
+        req.user = user;
+      }
+      return next();
+    })(req, res, next);
+  }
+};
+
+router.get("/recommended", middleware, async (req, res) => {
   /*
     #swagger.tags = ['User']
     #swagger.summary = 'Get recommended writers'
     #swagger.security = [{
       "bearerAuth": []
     }]
-   */
+  */
   try {
-    let user;
-    if (req.isAuthenticated()) {
-      user = req.user;
-    } else {
-      const userId = req.session?.passport?.user;
-      user = await User.findById(userId);
-    }
+    let user = req.user;
 
     const count = await User.countDocuments();
+    let random = 0;
 
-    let random = Math.floor(Math.random() * count),
-      acc = 0;
-
-    while (count - random < 10 && acc < 1 && count > 10) {
-      acc += 0.1;
-      random = Math.floor((Math.random() - acc) * count);
+    while (count - random < 11 && count > 11) {
+      random = Math.floor(Math.random() * (count + 1));
     }
 
     let users = await User.find().skip(random).limit(11);
