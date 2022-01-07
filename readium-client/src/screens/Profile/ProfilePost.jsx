@@ -26,9 +26,13 @@ export default function ProfilePost({ userId, isMyProfile }) {
       </div>
       <div className="row mt-5">
         <div className="col-md-8 d-flex align-items-center flex-column">
-          {isPost ? <PostList userId={userId} /> : <DraftList />}
+          {isPost ? (
+            <PostList isMyProfile={isMyProfile} userId={userId} />
+          ) : (
+            <DraftList />
+          )}
         </div>
-        <div className="col-md-4">
+        <div className="col-md-4 d-md-block d-none">
           <SearchForm />
         </div>
       </div>

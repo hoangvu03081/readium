@@ -177,7 +177,7 @@ function search(text = "", tag = "") {
                 displayName: text,
               },
             },
-          ],
+          ]
         },
       },
     },
@@ -290,7 +290,7 @@ function searchProfileDraft(
   authorId,
   sortType = SortType.DESCENDING,
   sortField = DraftSortField.LAST_EDIT,
-  skip=0
+  skip = 0
 ) {
   return client.search({
     index: "post",
@@ -329,8 +329,6 @@ function searchProfileDraft(
   });
 }
 
-getTrendingTopics(1).then((data) => console.log(data));
-
 function deleteUser(id) {
   return client.delete({
     id,
@@ -349,5 +347,5 @@ module.exports = {
   PostSortField,
   SortType,
   searchProfileDraft,
-  searchProfilePost
+  searchProfilePost,
 };

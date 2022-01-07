@@ -54,6 +54,13 @@ export const SearchButton = styled.button`
   background-color: white;
   vertical-align: middle;
   padding-top: 5px;
+  transition: all 0.05s;
+
+  &:active,
+  &:hover {
+    background-color: black;
+    color: white;
+  }
 `;
 
 export const SignInButton = styled.button`
