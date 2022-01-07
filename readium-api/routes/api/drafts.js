@@ -165,6 +165,11 @@ router.post("/:id", authMiddleware, checkOwnPost, async (req, res) => {
     }]
   */
   try {
+    if (!req.post.isPublished) {
+      return res
+        .status(400)
+        .send({ message: "Post is not published to create a draft." });
+    }
     const {
       title,
       textEditorContent,
