@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import PuffLoader from "react-spinners/PuffLoader";
+import { disablePageScroll, enablePageScroll } from "scroll-lock";
+import Writer from "../../../../screens/SearchPage/Writer";
 import Card from "../../Card";
 
 const StyledMobileSearchResult = styled.div`
@@ -8,13 +10,12 @@ const StyledMobileSearchResult = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100vh;
-  max-height: 100%;
+  height: calc(100vh - 64px);
   width: 100vw;
   top: 64px;
   z-index: 1000;
   background-color: white;
-  overflow: scroll;
+  overflow-y: scroll;
 `;
 
 const Center = styled.div`
@@ -30,12 +31,16 @@ const CardContainer = styled.div`
 `;
 
 const Spacer = styled.div`
-  height: 500px !important;
-  width: 100%;
+  height: 50px;
+  width: 10px;
+  margin-top: 20px;
 `;
 
 export default function MobileSearchResult({ data, isLoading }) {
-  console.log(data);
+  useEffect(() => {
+    disablePageScroll();
+    return () => enablePageScroll();
+  }, []);
   return (
     <StyledMobileSearchResult>
       {isLoading && (
@@ -70,10 +75,19 @@ export default function MobileSearchResult({ data, isLoading }) {
             );
           }
           if (result.type === "user") {
-            return null;
+            return (
+              <Writer
+                key={result._id}
+                profileId={result._id}
+                name={result.displayName}
+                job="Student"
+                profileUrl={result.url}
+              />
+            );
           }
           return null;
         })}
+      {data && <Spacer />}
     </StyledMobileSearchResult>
   );
 }
