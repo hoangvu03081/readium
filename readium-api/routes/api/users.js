@@ -53,25 +53,17 @@ router.get("/following/posts", authMiddleware, async (req, res) => {
       return res.send({ message: "Invalid date parameter" });
     }
 
-    let posts = JSON.parse(
-      JSON.stringify(
-        await Post.find(
-          {
-            isPublished: true,
-            publishDate: { $lte: date },
-            author: { $in: req.user.followings },
-          },
-          { coverImage: 0 }
-        )
-          .sort({ publishDate: -1 })
-          .skip(skip)
-          .limit(5)
-      )
-    );
-    posts = posts.map((post) => {
-      post.imageUrl = getPostCoverImageUrl(post.id);
-      return post;
-    });
+    let posts = await Post.find({
+      isPublished: true,
+      publishDate: { $lte: date },
+      author: { $in: req.user.followings },
+    })
+      .sort({ publishDate: -1 })
+      .skip(skip)
+      .limit(5);
+
+    posts = posts.map((post) => post.getPostPreview());
+    posts = await Promise.all(posts);
 
     if (posts.length === 0) return res.send({ posts });
     return res.send({ posts, next: skip + 5 });
@@ -254,11 +246,11 @@ router.delete("/", authMiddleware, async (req, res) => {
   */
   try {
     const { password } = req.body;
-    if (!password) {
+    if (!password && req.user.password) {
       return res.status(400).send({ message: "Please provide password" });
     }
     const isCorrect = await bcrypt.compare(password, req.user.password);
-    if (!isCorrect) {
+    if (!isCorrect && req.user.password) {
       return res.status(400).send({
         message: "Your password is not correct, can not delete account!",
       });
