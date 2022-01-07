@@ -1,4 +1,6 @@
 const router = require("express").Router();
+const bcrypt = require("bcrypt");
+
 const Post = require("../../models/Post");
 const User = require("../../models/User");
 const Notification = require("../../models/Notification");
@@ -217,11 +219,36 @@ router.delete("/", authMiddleware, async (req, res) => {
   /*
     #swagger.tags = ['User']
     #swagger.summary = "Delete account"
+    #swagger.requestBody = {
+      content: {
+        "application/json": {
+          schema: {
+            properties: {
+              password: {
+                type: 'string',
+                default: 'testing',
+              }
+            }
+          }  
+        }
+      }
+    }
     #swagger.security = [{
       "bearerAuth": []
     }]
   */
   try {
+    const { password } = req.body;
+    if (!password) {
+      return res.status(400).send({ message: "Please provide password" });
+    }
+    const isCorrect = await bcrypt.compare(password, req.user.password);
+    if (!isCorrect) {
+      return res.status(400).send({
+        message: "Your password is not correct, can not delete account!",
+      });
+    }
+
     const id = req.user._id.toString();
     const deletedUser = await User.findById(id);
 
@@ -288,6 +315,7 @@ router.delete("/", authMiddleware, async (req, res) => {
       user: deletedUser.getPublicProfile(),
     });
   } catch (err) {
+    console.log(err);
     return res
       .status(500)
       .send({ message: "Something went wrong when delete account" });

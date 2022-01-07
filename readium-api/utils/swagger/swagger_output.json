@@ -676,6 +676,33 @@
         ]
       }
     },
+    "/users/is-like/{postId}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Is user like post",
+        "description": "",
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/users/recommended": {
       "get": {
         "tags": [
@@ -707,12 +734,30 @@
         "summary": "Delete account",
         "description": "",
         "parameters": [],
-        "responses": {},
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        },
         "security": [
           {
             "bearerAuth": []
           }
-        ]
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "password": {
+                    "type": "string",
+                    "default": "testing"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/users/profiles/": {
