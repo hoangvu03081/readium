@@ -74,7 +74,7 @@ app.post("/search", async (req, res) => {
             likes: 1,
             comments: 1,
             isPublished: true,
-          }).populate("author", { _id: 1 });
+          }).populate("author", { _id: 1, displayName: 1, profileId: 1 });
           post = post?.toObject();
           if (post) {
             post.id = post._id;

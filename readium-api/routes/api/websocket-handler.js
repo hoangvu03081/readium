@@ -41,12 +41,12 @@ module.exports = function (app, wss) {
 
     app.post("/posts/:postId/like", authMiddleware, async (req, res) => {
       /*
-      #swagger.tags = ['Post']
-      #swagger.summary = 'Like post'
-      #swagger.security = [{
-        "bearerAuth": []
-      }]
-    */
+        #swagger.tags = ['Post']
+        #swagger.summary = 'Like post'
+        #swagger.security = [{
+          "bearerAuth": []
+        }]
+      */
       try {
         const postId = req.params.postId;
         let post = await Post.findById(postId).populate("author");
