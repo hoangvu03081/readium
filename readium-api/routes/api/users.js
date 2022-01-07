@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const bcrypt = require("bcrypt");
+const passport = require("passport");
 
 const Post = require("../../models/Post");
 const User = require("../../models/User");
@@ -116,45 +117,59 @@ router.get("/is-like/:postId", authMiddleware, async (req, res) => {
   }
 });
 
-router.get("/recommended", async (req, res) => {
+const middleware = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next();
+  } else {
+    passport.authenticate("jwt", { session: false }, function (
+      err,
+      user,
+      info
+    ) {
+      if (user) {
+        req.user = user;
+      }
+      return next();
+    })(req, res, next);
+  }
+};
+
+router.get("/recommended", middleware, async (req, res) => {
   /*
     #swagger.tags = ['User']
     #swagger.summary = 'Get recommended writers'
     #swagger.security = [{
       "bearerAuth": []
     }]
-   */
+  */
   try {
-    let user;
-    if (req.isAuthenticated()) {
-      user = req.user;
-    } else {
-      const userId = req.session?.passport?.user;
-      user = await User.findById(userId);
+    const user = req.user;
+
+    const count = await User.countDocuments({
+      followers: { $nin: user?._id },
+      _id: { $ne: user?._id },
+    });
+    let random = count > 11 ? Math.floor(Math.random() * (count + 1)) : 0;
+
+    while (count - random < 11 && count > 11) {
+      random = Math.floor(Math.random() * (count + 1));
     }
 
-    const count = await User.countDocuments();
-
-    let random = Math.floor(Math.random() * count),
-      acc = 0;
-
-    while (count - random < 10 && acc < 1 && count > 10) {
-      acc += 0.1;
-      random = Math.floor((Math.random() - acc) * count);
-    }
-
-    let users = await User.find().skip(random).limit(11);
+    let users = await User.find({
+      followers: { $nin: user?._id },
+      _id: { $ne: user?._id },
+    })
+      .skip(random)
+      .limit(11);
     const result = [];
     for (const u of users) {
-      if (u._id.toString() === user?._id.toString()) {
-        continue;
-      }
       result.push(u.getPublicProfile());
     }
 
     // #swagger.responses[200] = { description: 'Successfully recommend users' }
     return res.send(result);
   } catch (err) {
+    console.log(err);
     // #swagger.responses[500] = { description: 'Error while finding in mongoose.' }
     return res
       .status(500)

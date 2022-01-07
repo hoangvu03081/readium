@@ -45,7 +45,7 @@ const postSchema = new Schema({
   comments: [{ type: ObjectId, ref: "Comment", required: true }],
   textConnection: [
     {
-      toPost: { 
+      toPost: {
         type: ObjectId,
         ref: "Post",
       },
@@ -83,6 +83,30 @@ postSchema.methods.getElastic = function () {
   delete post.coverImage;
   delete post.textEditorContent;
   return post;
+};
+
+postSchema.methods.getProfilePost = function (userId) {
+  const postObject = this.toObject();
+
+  postObject.id = postObject._id;
+  postObject.likes = postObject.likes.length;
+  postObject.comments = postObject.comments.length;
+
+  if (postObject.coverImage) {
+    if (postObject.isPublished)
+      postObject.coverImage = getPostCoverImageUrl(postObject.id);
+    else postObject.coverImage = getDraftCoverImageUrl(postObject.id);
+  }
+  postObject.author = {};
+  postObject.author.id = userId;
+  postObject.author.avatar = getAvatarUrl(userId);
+
+  delete postObject.__v;
+  delete postObject._id;
+  delete postObject.textEditorContent;
+  delete postObject.textConnection;
+
+  return postObject;
 };
 
 postSchema.methods.getPostPreview = async function () {

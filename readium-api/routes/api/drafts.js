@@ -117,8 +117,8 @@ router.get("/:id", authMiddleware, async (req, res) => {
   }
 });
 
-const createInitialDraftEditorContent = () => {
-  const buf = Buffer.from('{ "ops": [] }', "utf8");
+const createInitialDraftEditorContent = (str = '{ "ops": [] }') => {
+  const buf = Buffer.from(str, "utf8");
   const readable = new Readable();
   readable._read = () => {};
   readable.push(buf);
@@ -165,6 +165,11 @@ router.post("/:id", authMiddleware, checkOwnPost, async (req, res) => {
     }]
   */
   try {
+    if (!req.post.isPublished) {
+      return res
+        .status(400)
+        .send({ message: "Post is not published to create a draft." });
+    }
     const {
       title,
       textEditorContent,
@@ -177,9 +182,19 @@ router.post("/:id", authMiddleware, checkOwnPost, async (req, res) => {
       description,
     } = req.post;
 
+    const bucket = getBucket();
+    const stream = bucket.openDownloadStream(textEditorContent);
+    const contentFromBucket = await streamToString(stream);
+    const readable = createInitialDraftEditorContent(contentFromBucket);
+
+    const textEditorContentId = new ObjectId();
+    readable.pipe(
+      bucket.openUploadStream("textEditorContent", { id: textEditorContentId })
+    );
+
     const newPost = new Post({
       title,
-      textEditorContent,
+      textEditorContent: textEditorContentId,
       publishedPost: _id,
       author,
       coverImage,
@@ -283,7 +298,7 @@ router.patch("/:id/diff", authMiddleware, checkOwnPost, async (req, res) => {
   } catch (err) {
     return res
       .status(500)
-      .send({ message: "Something went wrong when updating post's content" });
+      .send({ message: "Something went wrong when updating draft's content" });
   }
 });
 
@@ -374,6 +389,7 @@ router.put("/:id/title", authMiddleware, checkOwnPost, async (req, res) => {
     const { title } = req.body;
     if (title) post.title = title;
     else post.title = "";
+    putPost(post._id.toString(), post.getElastic());
 
     post.lastEdit = new Date();
     await post.save();
@@ -521,6 +537,9 @@ router.put("/:id/publish", authMiddleware, checkOwnPost, async (req, res) => {
     if (post.publishedPost) {
       const publishedPost = await Post.findById(post.publishedPost);
       publishedPost.title = post.title;
+
+      const bucket = getBucket();
+      bucket.delete(publishedPost.textEditorContent);
       publishedPost.textEditorContent = post.textEditorContent;
       publishedPost.coverImage = post.coverImage;
       publishedPost.content = post.content;

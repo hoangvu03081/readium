@@ -69,7 +69,8 @@ module.exports = function (app, wss) {
               from: userId,
               to: postAuthor,
               content: `${req.user.displayName} liked ${post.title}`,
-              url: "unavailable",
+              title: post.title,
+              url: `/post/${postId}`,
             });
             await notification.save();
             post.author.notifications.push(notification._id);
@@ -173,8 +174,9 @@ module.exports = function (app, wss) {
             const notification = new Notification({
               from: userId,
               to: postAuthor,
+              title: post.title,
               content: `${req.user.displayName} commented on ${post.title}`,
-              url: "unavailable",
+              url: `/post/${postId}`,
             });
             await notification.save();
             post.author.notifications.push(notification._id);
