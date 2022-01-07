@@ -194,8 +194,6 @@ router.post("/register", async (req, res) => {
     await newUser.hashPassword();
     await newUser.save();
     await sendWelcomeEmail({ to: email, url: activationLink });
-    const newUserObject = newUser.getElastic();
-    await putUser(newUserId, newUserObject);
 
     // #swagger.responses[201] = { description: 'Account created' }
     return res.status(201).send({
@@ -251,6 +249,7 @@ router.get("/confirm", async (req, res) => {
     user.activated = true;
 
     await user.save();
+    await putUser(user._id.toString(), user.getElastic());
     // #swagger.responses[200] = { description: 'Activate successfully' }
     return res.send({
       message: "You have activated your account successfully.",

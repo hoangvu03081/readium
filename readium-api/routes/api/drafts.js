@@ -12,7 +12,7 @@ const {
   checkOwnPost,
 } = require("../../middleware/posts-middleware");
 const { Readable } = require("stream");
-const { putPost } = require("../../utils/elasticsearch");
+const { putPost, deletePost } = require("../../utils/elasticsearch");
 
 const uploadCover = configMulter({
   limits: { fields: 6, fileSize: 12e6, files: 1 },
@@ -148,6 +148,7 @@ router.post("/", authMiddleware, async (req, res) => {
     );
 
     await post.save();
+    await putPost(post._id.toString(), post.getElastic());
     return res.status(201).send({ id: post._id });
   } catch (err) {
     return res
@@ -389,7 +390,7 @@ router.put("/:id/title", authMiddleware, checkOwnPost, async (req, res) => {
     const { title } = req.body;
     if (title) post.title = title;
     else post.title = "";
-    putPost(post._id.toString(), post.getElastic());
+    await putPost(post._id.toString(), post.getElastic());
 
     post.lastEdit = new Date();
     await post.save();
@@ -535,23 +536,27 @@ router.put("/:id/publish", authMiddleware, checkOwnPost, async (req, res) => {
 
     /// republish post
     if (post.publishedPost) {
-      const publishedPost = await Post.findById(post.publishedPost);
-      publishedPost.title = post.title;
-
+      // 1. xóa elastic
+      await deletePost(post.publishedPost.toString());
+      // 2. xóa post
+      const publishedPost = await Post.findByIdAndDelete(post.publishedPost);
+      console.log(publishedPost.title);
+      // 3. xóa bucket
       const bucket = getBucket();
       bucket.delete(publishedPost.textEditorContent);
-      publishedPost.textEditorContent = post.textEditorContent;
-      publishedPost.coverImage = post.coverImage;
-      publishedPost.content = post.content;
-      publishedPost.lastEdit = post.lastEdit;
-      publishedPost.duration = post.duration;
-      publishedPost.tags = post.tags;
-      publishedPost.description = post.description;
-      publishedPost.summary = post.summary;
-      await publishedPost.save();
-      const postObject = publishedPost.getElastic();
-      await putPost(publishedPost._id.toString(), postObject);
-      await Post.deleteOne({ _id });
+      // 4. update ref tới post mới
+      const posts = await Post.find({ publishedPost: publishedPost._id });
+      for (const p of posts) {
+        p.publishedPost = post._id;
+        await p.save();
+      }
+      // 5. putPost
+      await putPost(post._id.toString(), post.getElastic());
+      // 6. savePost
+      post.publishDate = publishedPost.publishDate;
+      post.isPublished = true;
+      post.publishedPost = undefined;
+      await post.save();
       return res.send();
     }
     /// republish post
@@ -565,6 +570,7 @@ router.put("/:id/publish", authMiddleware, checkOwnPost, async (req, res) => {
     return res.send();
     /// publish post
   } catch (err) {
+    console.log(err);
     return res.status(500).send({
       message: "Something went wrong when publishing the post",
     });
@@ -587,6 +593,7 @@ router.delete("/:id", authMiddleware, checkOwnPost, async (req, res) => {
       });
 
     const bucket = getBucket();
+    await deletePost(req.post._id.toString());
     await bucket.delete(req.post.textEditorContent);
     await Post.deleteOne({ _id: req.params.id });
     return res.send();
