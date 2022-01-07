@@ -1,6 +1,6 @@
 const isDev = process.env.NODE_ENV === "development";
 const LOCAL_URL = "http://localhost:5000";
-const HOST_URL = "http://localhost/api";
+const HOST_URL = "http://ec2-54-169-201-18.ap-southeast-1.compute.amazonaws.com/api";
 const WEBSOCKET = "ws://localhost/api";
 
 export default function getURL(endpoint) {

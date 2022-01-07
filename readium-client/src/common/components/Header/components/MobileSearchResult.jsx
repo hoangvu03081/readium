@@ -37,6 +37,7 @@ const Spacer = styled.div`
 `;
 
 export default function MobileSearchResult({ data, isLoading }) {
+  console.log(data)
   useEffect(() => {
     disablePageScroll();
     return () => enablePageScroll();
@@ -54,7 +55,6 @@ export default function MobileSearchResult({ data, isLoading }) {
           if (result.type === "post") {
             return (
               <CardContainer>
-                {" "}
                 <Card
                   key={result.id}
                   postId={result.id}
