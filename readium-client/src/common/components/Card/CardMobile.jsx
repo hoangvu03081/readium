@@ -143,7 +143,7 @@ export default function CardMobile({
                 return (
                   <StyledLink
                     key={index}
-                    to={`search?q=${encodeURIComponent(item)}`}
+                    to={`/search?q=${encodeURIComponent(item)}`}
                   >
                     <TagBtn>{item}</TagBtn>
                   </StyledLink>
