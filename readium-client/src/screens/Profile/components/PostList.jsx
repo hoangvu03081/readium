@@ -14,7 +14,7 @@ const PostListLayout = styled.div`
   align-items: center;
 `;
 
-export default function PostList({ userId }) {
+export default function PostList({ isMyProfile, userId }) {
   const { data, error, fetchNextPage, isFetchingNextPage, refetch } =
     useGetProfilePost(userId);
   useScrollBottomDetect(fetchNextPage, 100);
@@ -44,7 +44,7 @@ export default function PostList({ userId }) {
                 userAvatar={post.author.avatar}
                 loveNumber={post.likes}
                 commentNumber={post.comments}
-                type="myProfile"
+                type={isMyProfile ? "myProfile" : "otherProfile"}
                 refetchList={refetchList}
               />
             ))}
