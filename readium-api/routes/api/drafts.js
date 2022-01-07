@@ -509,12 +509,10 @@ router.put("/:id/publish", authMiddleware, checkOwnPost, async (req, res) => {
     }
 
     if (post.isPublished) {
-      return res
-        .status(400)
-        .send({
-          message:
-            "Post is already published. Please provide a draft to this endpoint.",
-        });
+      return res.status(400).send({
+        message:
+          "Post is already published. Please provide a draft to this endpoint.",
+      });
     }
 
     const _id = req.params.id;
@@ -571,6 +569,7 @@ router.delete("/:id", authMiddleware, checkOwnPost, async (req, res) => {
 
     const bucket = getBucket();
     await bucket.delete(req.post.textEditorContent);
+    await Post.deleteOne({ _id: req.params.id });
     return res.send();
   } catch (err) {
     return res.send({
