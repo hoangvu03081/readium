@@ -7,6 +7,7 @@ const User = require("../../models/User");
 const Post = require("../../models/Post");
 const Comment = require("../../models/Comment");
 const Notification = require("../../models/Notification");
+const { putPost } = require("../../utils/elasticsearch");
 let notifications = [];
 
 module.exports = function (app, wss) {
@@ -115,6 +116,9 @@ module.exports = function (app, wss) {
 
         await req.user.save();
         await post.save();
+        await post.depopulate("author");
+        await putPost(post._id.toString(), post.getElastic());
+
         return res.send({ likes: post.likes.length });
       } catch (err) {
         return res.status(500).send({ message: "Error in like post" });
@@ -167,6 +171,8 @@ module.exports = function (app, wss) {
 
           post.comments.push(commentObj._id);
           await post.save();
+          await post.depopulate("author");
+          await putPost(post._id.toString(), post.getElastic());
 
           const postAuthor = post.author._id.toString();
           if (userId !== postAuthor) {
