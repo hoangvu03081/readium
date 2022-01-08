@@ -47,7 +47,7 @@ export default function TrendingTopics() {
       <p>TRENDING TOPICS</p>
       <Content>
         {trendingTopics.map((item, index) => (
-          <StyledLink key={index} to={`search?q=${encodeURIComponent(item)}`}>
+          <StyledLink key={index} to={`/search?q=${encodeURIComponent(item)}`}>
             <TrendingBtn>{item}</TrendingBtn>
           </StyledLink>
         ))}

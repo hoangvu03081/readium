@@ -191,7 +191,10 @@ export default function PostMobile({
       <PostTags>
         <div>
           {tags.map((item, index) => (
-            <StyledLink key={index} to={`search?q=${encodeURIComponent(item)}`}>
+            <StyledLink
+              key={index}
+              to={`/search?q=${encodeURIComponent(item)}`}
+            >
               <TagBtn>{item}</TagBtn>
             </StyledLink>
           ))}

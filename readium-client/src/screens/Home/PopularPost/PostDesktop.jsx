@@ -212,7 +212,10 @@ export default function PostDesktop({
         <TopLeft className="col-9">
           <p onClick={handleReadPost}>{title}</p>
           {tags.map((item, index) => (
-            <StyledLink key={index} to={`search?q=${encodeURIComponent(item)}`}>
+            <StyledLink
+              key={index}
+              to={`/search?q=${encodeURIComponent(item)}`}
+            >
               <TagBtn>{item}</TagBtn>
             </StyledLink>
           ))}

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/img-redundant-alt */
@@ -244,8 +245,10 @@ export default function CardDesktop({
         <p>{content}</p>
         <div>
           {tags.map((item, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <StyledLink key={index} to={`search?q=${encodeURIComponent(item)}`}>
+            <StyledLink
+              key={index}
+              to={`/search?q=${encodeURIComponent(item)}`}
+            >
               <TagBtn>{item}</TagBtn>
             </StyledLink>
           ))}
